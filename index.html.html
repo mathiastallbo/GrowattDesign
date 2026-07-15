@@ -14,7 +14,7 @@
     --slate:#475569;
     --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
     --shadow:0 1px 2px rgba(16,27,45,.04),0 6px 18px rgba(16,27,45,.06);
-    --sbw:575px; --sbgap:16px;
+    --sbw:625px; --sbgap:16px;
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
@@ -25,6 +25,11 @@
   .aibtn{display:inline-flex;align-items:center;gap:7px;background:linear-gradient(135deg,#1a2f22,#0f1b2d);color:#8ffcb8;border:1px solid #2c9d5e;padding:9px 15px;border-radius:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0}
   .aibtn:hover{box-shadow:0 0 0 3px rgba(51,218,122,.18)}
   .opt.ai .name svg{color:var(--grn);vertical-align:-2px;margin-right:2px}
+  .opt.compact{padding:8px 9px}
+  .opt.compact .name{font-size:12px}
+  .opt.compact .meta{font-size:10px;margin-top:1px;line-height:1.3}
+  .dongrid{grid-template-columns:repeat(auto-fit,minmax(100px,1fr))}
+  @media(max-width:560px){.dongrid{grid-template-columns:1fr 1fr}}
 
   /* ===== Growatt AI info page \u2014 deliberately distinct visual language ===== */
   .aipage{margin:-22px -14px -96px;background:#0b1420;color:#e7edf5;min-height:100vh;font-family:inherit}
@@ -363,7 +368,7 @@ function acBreaker(){
 }
 
 // APX inputs: {mods,cols,c1,c2}. AXE inputs: {modules}. Shape depends on fam().battery.
-var state={page:'main',segment:null,multi:false,unit:0,units:[],panelW:450,panelCount:0,family:null,kw:null,dongle:null,metering:null,meterType:'TPM-C',backupOn:true,apx:'1.0',inputs:[],wantBattery:null};
+var state={page:'main',segment:null,multi:false,unit:0,units:[],panelW:450,panelCount:0,family:null,kw:null,dongle:null,metering:null,meterType:'TPM-C',backupOn:true,apx:'1.0',inputs:[],wantBattery:null,loadKw:0,backupMode:null};
 function snapshotUnit(){return {family:state.family,kw:state.kw,backupOn:state.backupOn,wantBattery:state.wantBattery,apx:state.apx,inputs:state.inputs};}
 function loadUnit(u){state.family=u.family;state.kw=u.kw;state.backupOn=u.backupOn;state.wantBattery=u.wantBattery;state.apx=u.apx;state.inputs=u.inputs;}
 function syncUnit(){state.units[state.unit]=snapshotUnit();}
@@ -385,11 +390,13 @@ function maxInputs(){if(!fam())return 0;var b=fam().battery;if(b!=='APX')return 
 function minMods(){return a2()?0:1;}
 function maxMods(){return a2()?5:6;}
 function inputKwh(inp){return (a2()?(inp.mods+1):inp.mods)*MODULE_KWH;}
+function battKw(kwh){return Math.round(kwh/2*10)/10;}
 function totalKWp(){return Math.round(state.panelCount*state.panelW/10)/100;}
 function maxKWp(){var s=sumKw();return s?s*2:0;}
 function pvRatio(){var s=sumKw();return s?(totalKWp()/s*100):0;}
 function pvOver(){return sumKw()>0&&totalKWp()>maxKWp()+1e-9;}
 function kwValid(kw){return state.panelCount<=0 || totalKWp()<=2*(kw+otherUnitsKw())+1e-9;}
+function maxOffgridKw(){if(!state.family||!state.kw)return 0;var bk=batteryTotals().kwh;if(!bk)return 0;return Math.round(Math.min(state.kw,bk/2)*10)/10;}
 function famValid(k){return FAMILIES[k].kw.some(kwValid);}
 function famMaxKWp(k){return 2*Math.max.apply(null,FAMILIES[k].kw);}
 function selInvalid(){return state.family&&state.kw&&state.panelCount>0&&!kwValid(state.kw);}
@@ -492,8 +499,8 @@ function buildText(){syncUnit();var saved=snapshotUnit();var s='GROWATT - SYSTEM
     if(state.family&&state.kw){var f=fam();s+=pre+'Growatt '+f.name+' '+state.kw+' kW ('+f.phase+')';var bk=acBreaker();if(bk)s+=' \u2014 AC breaker '+bk.a+' A';s+='\n';
       if(f.battery==='RISE'){s+='  Battery: RISE integrated 261 kWh LFP\n';}
       else if(state.inputs.length){var b=batteryTotals();
-        if(isAxeFam()){s+='  Battery: AXE \u2014 '+b.inputs+' cabinet(s), '+b.kwh+' kWh\n';}
-        else {s+='  Battery: APX '+state.apx+' \u2014 '+b.inputs+' input(s), '+b.kwh+' kWh, '+b.bms+' BMS, '+b.bases+' base(s)'+(b.cascades?', '+b.cascades+' series cable(s)':'')+'\n';
+        if(isAxeFam()){s+='  Battery: AXE \u2014 '+b.inputs+' cabinet(s), '+b.kwh+' kWh, up to '+battKw(b.kwh)+' kW\n';}
+        else {s+='  Battery: APX '+state.apx+' \u2014 '+b.inputs+' input(s), '+b.kwh+' kWh, up to '+battKw(b.kwh)+' kW, '+b.bms+' BMS, '+b.bases+' base(s)'+(b.cascades?', '+b.cascades+' series cable(s)':'')+'\n';
           state.inputs.forEach(function(inp,ix){var layout=inp.cols===2?(inp.c1+'+'+inp.c2+' split'):(inp.mods+' modules, 1 tower');s+='    BAT '+(ix+1)+': '+inputKwh(inp)+' kWh, '+layout+(a2()?' incl. BMS(5 kWh)':'')+'\n';});}
       }
       s+='  Backup: '+(isHU()?'Integrated':needsSyn()?synItem().split('|')[0]:'None')+'\n';
@@ -575,7 +582,7 @@ function dongleStep(){
   var multiLock=state.multi;
   var opts=Object.keys(DONGLES).filter(function(k){return !multiLock||k==='shinesem'||k==='shinemaster';});
   var locked=Object.keys(DONGLES).filter(function(k){return multiLock&&k!=='shinesem'&&k!=='shinemaster';});
-  var cards=opts.map(function(k){var d=DONGLES[k],on=state.dongle===k;return '<button class="opt '+(on?'on':'')+'" data-act="dongle" data-k="'+k+'"><div class="name">'+d.name+'</div><div class="meta">'+d.desc+'</div></button>';}).join('');
+  var cards=opts.map(function(k){var d=DONGLES[k],on=state.dongle===k;return '<button class="opt compact '+(on?'on':'')+'" data-act="dongle" data-k="'+k+'"><div class="name">'+d.name+'</div><div class="meta">'+d.desc+'</div></button>';}).join('');
   var lockedCards=locked.map(function(k){var d=DONGLES[k];return '<button class="opt crossed" disabled title="Not enough for multi\u2011inverter \u2014 use ShineSEM\u2011X or ShineMaster"><div class="name">'+d.name+'</div><div class="meta">'+d.desc+'</div></button>';}).join('');
   var hint;
   if(state.dongle==='shinesem')hint='<div class="notice g">'+ic('check',14)+'<span><b>ShineSEM\u2011X</b> added \u2014 <b>no smart meter is needed, metering is included</b>. You can still add a smart meter in step 5 for extra measurement.</span></div>';
@@ -585,7 +592,7 @@ function dongleStep(){
   else hint='<div class="note">'+ic('info',14)+'<span>Optional \u2014 add a Growatt dongle so the system reports to ShinePhone / server. <b>ShineWiFi\u2011X</b> is the standard WiFi stick.</span></div>';
   var lockNote=multiLock?'<div class="note" style="margin-top:11px">'+ic('info',14)+'<span>Only ShineSEM\u2011X / ShineMaster shown \u2014 required for multi\u2011inverter coordination. Grayed out below: '+lockedCards+'</span></div>':'';
   return '<div class="step" id="stp-online">'+stepHead(4,'wifi','Getting system online',multiLock?'ShineSEM\u2011X or ShineMaster required for multiple inverters':'Monitoring dongle / energy manager',multiLock?'Required':'Optional')+
-    '<div class="step-b">'+unitTabsHTML()+'<div class="grid g3">'+cards+'</div>'+hint+'</div></div>';
+    '<div class="step-b">'+unitTabsHTML()+'<div class="grid dongrid">'+cards+'</div>'+hint+'</div></div>';
 }
 function meterStep(){
   var m=state.metering;
@@ -594,7 +601,20 @@ function meterStep(){
   return '<div class="step" id="stp-meter">'+stepHead(5,'activity','Energy meter','How the system measures the grid')+
     '<div class="step-b">'+semNote+'<div class="grid g2"><button class="opt '+(m==='meter'?'on':'')+'" data-act="metering" data-m="meter"><div class="name">Smart Meter</div><div class="meta">TPM\u2011E / TPM\u2011C'+(state.dongle==='shinesem'?' \u2014 optional extra with ShineSEM':' \u2014 standard for MOD / MID')+'</div></button></div>'+sub+'</div></div>';
 }
-function backupStep(){
+function loadCalcHTML(){
+  var mo=maxOffgridKw();
+  if(!(state.loadKw>0))return '';
+  var covered=mo>=state.loadKw-1e-9;
+  if(state.backupMode==='whole'){
+    return covered
+      ?'<div class="notice g">'+ic('check',14)+'<span>Max off\u2011grid output <b>'+mo+' kW</b> covers the full <b>'+state.loadKw+' kW</b> load.</span></div>'
+      :'<div class="pverr">'+ic('alert',15)+'<span>Max off\u2011grid output is only <b>'+mo+' kW</b> \u2014 below the <b>'+state.loadKw+' kW</b> whole\u2011home load. Add battery modules, or switch to Partial backup.</span></div>';
+  } else if(state.backupMode==='partial'){
+    return '<div class="note">'+ic('info',14)+'<span>Up to <b>'+mo+' kW</b> available for the essential circuits wired to the LOAD port (not the whole property).</span></div>';
+  }
+  return '';
+}
+function backupBodyHTML(){
   var body;
   if(!state.family) body='<div class="placeholder"><span class="i">'+ic('info',15)+'</span>Choose an inverter first \u2014 backup depends on the model.</div>';
   else{var bt=backupType();
@@ -602,7 +622,21 @@ function backupStep(){
     else if(bt==='box-required') body='<div class="reqcard"><span class="ico">'+ic('alert',22)+'</span><div><div class="t">Backup not integrated \u2014 needs to be added</div><div class="s">'+fam().name+' requires a separate SYN box. Added automatically.</div></div></div><div class="notice g">'+ic('check',14)+'<span><b>'+synItem().split('|')[0]+'</b> added to your system.</span></div>';
     else body='<div class="switchrow"><div><div class="lab">Include SYN backup box</div><div class="s2">'+fam().name+' backup is <b>not integrated</b> \u2014 add a SYN box for off\u2011grid.</div></div><span class="sw '+(state.backupOn?'on':'')+'" data-act="backup"><span class="knob"></span></span></div>'+(state.backupOn?'<div class="notice g">'+ic('check',14)+'<span><b>Growatt SYN 100\u2011XH\u201130</b> (3\u2011phase) added. Switch time &lt; 0.5 s.</span></div>':'<div class="note">'+ic('info',14)+'<span>No backup box \u2014 grid\u2011tied only (no power during outages).</span></div>');
   }
-  return '<div class="step" id="stp-backup">'+stepHead(6,'plug','Backup (SYN)','Off\u2011grid capability')+'<div class="step-b">'+unitTabsHTML()+body+'</div></div>';
+  var loadSection='';
+  if(state.family&&has_('Battery')){
+    var modes=[['partial','Partial backup','Only essential circuits stay on \u2014 wired to the LOAD port'],['whole','Whole\u2011home backup','Every circuit in the property stays on during an outage']];
+    var mcards=modes.map(function(m){var on=state.backupMode===m[0];return '<button class="opt'+(on?' on':'')+'" data-act="backupmode" data-v="'+m[0]+'"><div class="name">'+m[1]+'</div><div class="meta">'+m[2]+'</div></button>';}).join('');
+    var mo=maxOffgridKw();
+    loadSection='<div class="note" style="margin-top:14px">'+ic('info',14)+'<span><b>Max off\u2011grid power: '+mo+' kW</b> \u2014 min(inverter rating, battery kWh \u00f7 2), per the Growatt off\u2011grid power table.</span></div>'+
+      '<div class="grid g2" style="margin-top:9px">'+mcards+'</div>'+
+      '<div class="field" style="margin-top:13px"><label>Property peak load (kW) \u2014 manual estimate</label><input id="loadKw" type="number" inputmode="decimal" min="0" max="999" step="0.5" value="'+(state.loadKw||'')+'" placeholder="e.g. 6"></div>'+
+      '<div id="loadCalc">'+loadCalcHTML()+'</div>';
+  }
+  return body+loadSection;
+}
+function has_(g){return buildBOM().some(function(r){return r.g===g;});}
+function backupStep(){
+  return '<div class="step" id="stp-backup">'+stepHead(6,'plug','Backup (SYN)','Off\u2011grid capability')+'<div class="step-b" id="backupBody">'+unitTabsHTML()+backupBodyHTML()+'</div></div>';
 }
 function blk(kind,label){var cls=kind==='mod'?'mod':kind==='pmb'?'pmb':kind==='pm'?'pm':'base';var i=kind==='mod'?ic('battery',11,'#fff'):(kind==='pm'||kind==='pmb')?ic('cpu',11,'#fff'):'';return '<div class="blk '+cls+'"><span>'+label+'</span>'+i+'</div>';}
 function inputDiagram(inp){
@@ -635,7 +669,7 @@ function batteryStep(){
     var mi=state.inputs[0]||{modules:3};
     var dn=mi.modules>1,up=mi.modules<6;
     var kwh=mi.modules*MODULE_KWH;
-    var modUI='<div class="tower"><div class="tower-h"><span class="nm">'+ic('battery',13,'var(--slate)')+'<span style="font-size:11px;color:var(--mut);font-weight:600">Stacked in the MODA cabinet</span></span><span class="kw">'+kwh+' kWh</span></div>'+
+    var modUI='<div class="tower"><div class="tower-h"><span class="nm">'+ic('battery',13,'var(--slate)')+'<span style="font-size:11px;color:var(--mut);font-weight:600">Stacked in the MODA cabinet</span></span><span class="kw">'+kwh+' kWh <small style="color:var(--mut);font-weight:600;font-family:inherit">\u00b7 max '+battKw(kwh)+' kW</small></span></div>'+
       '<div class="modrow"><span class="lab">Battery modules (5 kWh each)</span><div class="stepper"><button class="sbtn '+(dn?'active':'')+'" data-act="modamod" data-d="-1">'+ic('minus',16)+'</button><span class="sval">'+mi.modules+'</span><button class="sbtn '+(up?'active':'')+'" data-act="modamod" data-d="1">'+ic('plus',16)+'</button></div></div>'+
       '<div class="totrow">1\u20136 modules \u00b7 5\u201330 kWh total \u00b7 <b>APX HV Battery 2.0</b> only, no separate BMS needed</div></div>';
     return '<div class="step" id="stp-battery">'+stepHead(7,'layers','Battery','All\u2011in\u2011one \u2014 APX HV Battery 2.0 modules stacked in the cabinet')+'<div class="step-b">'+unitTabsHTML()+modUI+'</div></div>';
@@ -661,10 +695,10 @@ function batteryStep(){
         var dn=inp.modules>1,up=inp.modules<AXE_MAX_MODULES;
         var kwh=Math.round(inp.modules*AXE_MODULE_KWH*10)/10;
         var modUI='<div class="modrow"><span class="lab">Modules (\u22485.12 kWh each)</span><div class="stepper"><button class="sbtn '+(dn?'active':'')+'" data-act="axemod" data-i="'+i+'" data-d="-1">'+ic('minus',16)+'</button><span class="sval">'+inp.modules+'</span><button class="sbtn '+(up?'active':'')+'" data-act="axemod" data-i="'+i+'" data-d="1">'+ic('plus',16)+'</button></div></div>';
-        return '<div class="tower"><div class="tower-h"><span class="nm"><span class="batlabel">BAT '+(i+1)+'</span>'+ic('cpu',13,'var(--slate)')+'<span style="font-size:11px;color:var(--mut);font-weight:600">AXE cabinet</span></span><span class="kw">'+kwh+' kWh</span></div>'+modUI+axeDiagram(inp)+'</div>';
+        return '<div class="tower"><div class="tower-h"><span class="nm"><span class="batlabel">BAT '+(i+1)+'</span>'+ic('cpu',13,'var(--slate)')+'<span style="font-size:11px;color:var(--mut);font-weight:600">AXE cabinet</span></span><span class="kw">'+kwh+' kWh <small style="color:var(--mut);font-weight:600;font-family:inherit">\u00b7 max '+battKw(kwh)+' kW</small></span></div>'+modUI+axeDiagram(inp)+'</div>';
       }).join('');
       var b=batteryTotals();
-      var totalNote='<div class="note">'+ic('info',14)+'<span>Total: <b>'+b.kwh+' kWh</b> across '+b.inputs+' cabinet'+(b.inputs>1?'s':'')+'.</span></div>';
+      var totalNote='<div class="note">'+ic('info',14)+'<span>Total: <b>'+b.kwh+' kWh</b> across '+b.inputs+' cabinet'+(b.inputs>1?'s':'')+' \u2014 up to <b>'+battKw(b.kwh)+' kW</b> combined discharge.</span></div>';
       build='<div class="towers'+(state.inputs.length>1?' multi':'')+'">'+cards+'</div>'+axeNote+totalNote;
     }
     return '<div class="step" id="stp-battery">'+stepHead(7,'layers','Battery','AXE HV \u2014 outdoor cabinet, up to 12 modules each','Optional')+'<div class="step-b">'+unitTabsHTML()+gate+inSel+build+'</div></div>';
@@ -675,8 +709,8 @@ function batteryStep(){
   var capNote='';
   if(f.inputs===3){
     capNote=a2()
-      ?'<div class="note">'+ic('info',14)+'<span>This inverter has 3 battery inputs. <b>APX 2.0</b> can use all 3 \u2014 up to <b>90 kWh</b> total.</span></div>'
-      :'<div class="note">'+ic('info',14)+'<span>This inverter has 3 battery inputs, but <b>APX 1.0</b> supports <b>max 2</b> \u2014 up to <b>60 kWh</b>. Switch to <b>APX 2.0</b> to use all 3 (up to <b>90 kWh</b>).</span></div>';
+      ?'<div class="note">'+ic('info',14)+'<span>This inverter has 3 battery inputs. <b>APX 2.0</b> can use all 3 \u2014 up to <b>90 kWh</b> total (up to <b>'+battKw(90)+' kW</b> combined discharge).</span></div>'
+      :'<div class="note">'+ic('info',14)+'<span>This inverter has 3 battery inputs, but <b>APX 1.0</b> supports <b>max 2</b> \u2014 up to <b>60 kWh</b> (up to <b>'+battKw(60)+' kW</b>). Switch to <b>APX 2.0</b> to use all 3 (up to <b>90 kWh</b>, <b>'+battKw(90)+' kW</b>).</span></div>';
   }
   var inSel='<div class="sublabel">Battery inputs (BAT) <span style="font-weight:400;color:var(--faint)">\u2014 this inverter has '+f.inputs+'</span></div><div class="chips">'+inChips+'</div>';
   var build='';
@@ -699,12 +733,12 @@ function batteryStep(){
           '<div class="totrow">Total <b>'+(inp.c1+inp.c2)+'</b> / max '+mx+(a2()?' add\u2011on modules (+ BMS 5 kWh in Tower A)':' modules combined (e.g. 3+3, 4+2, 2+4)')+'</div>';
       }
       var sub=(inp.cols===2?'2 towers':('1 tower'+(a2()?' \u00b7 BMS on top':'')));
-      return '<div class="tower"><div class="tower-h"><span class="nm"><span class="batlabel">BAT '+(i+1)+'</span>'+ic('cpu',13,'var(--slate)')+'<span style="font-size:11px;color:var(--mut);font-weight:600">'+sub+'</span></span><span class="kw">'+inputKwh(inp)+' kWh</span></div>'+modUI+layoutHTML+inputDiagram(inp)+'</div>';
+      return '<div class="tower"><div class="tower-h"><span class="nm"><span class="batlabel">BAT '+(i+1)+'</span>'+ic('cpu',13,'var(--slate)')+'<span style="font-size:11px;color:var(--mut);font-weight:600">'+sub+'</span></span><span class="kw">'+inputKwh(inp)+' kWh <small style="color:var(--mut);font-weight:600;font-family:inherit">\u00b7 max '+battKw(inputKwh(inp))+' kW</small></span></div>'+modUI+layoutHTML+inputDiagram(inp)+'</div>';
     }).join('');
     var b=batteryTotals();
     var baseNote='<div class="notice g">'+ic('check',14)+'<span><b>'+b.bases+' \u00d7 APX Battery Base</b> added automatically \u2014 1 per tower.</span></div>';
     var casNote=b.cascades?'<div class="notice g">'+ic('cable',14)+'<span><b>'+b.cascades+' \u00d7 series cable set</b> added \u2014 links the split towers in series. Not a CANbus/communication cable \u2014 confirm exact spec &amp; rating with your distributor.</span></div>':'';
-    var bmsNote='<div class="note">'+ic('info',14)+'<span><b>'+b.bms+' \u00d7 BMS / Power Module</b> ('+(a2()?'each includes a 5 kWh module + heating, 1 tower each':'control unit, 1 per input')+'). Total: <b>'+b.kwh+' kWh</b> across '+b.inputs+' input'+(b.inputs>1?'s':'')+'.</span></div>';
+    var bmsNote='<div class="note">'+ic('info',14)+'<span><b>'+b.bms+' \u00d7 BMS / Power Module</b> ('+(a2()?'each includes a 5 kWh module + heating, 1 tower each':'control unit, 1 per input')+'). Total: <b>'+b.kwh+' kWh</b> across '+b.inputs+' input'+(b.inputs>1?'s':'')+' \u2014 up to <b>'+battKw(b.kwh)+' kW</b> combined discharge (per the Growatt off\u2011grid power table).</span></div>';
     build='<div class="towers'+(state.inputs.length>1?' multi':'')+'">'+cards+'</div>'+baseNote+casNote+bmsNote;
   }
   return '<div class="step" id="stp-battery">'+stepHead(7,'layers','Battery','APX HV \u2014 5 kWh modules'+(a2()?', BMS incl. 5 kWh, up to 5 add\u2011ons, 1 or 2 towers':', up to 6 per input, 1 or 2 towers'),'Optional')+'<div class="step-b">'+unitTabsHTML()+gate+typeSel+capNote+inSel+build+'</div></div>';
@@ -738,27 +772,24 @@ function commercialSceneHTML(){
   if(batOn&&f){
     if(f.battery==='APX'){
       state.inputs.forEach(function(inp){
-        if(inp.cols===2){towers.push({mods:inp.c1,bms:true});towers.push({mods:inp.c2,bms:false});}
-        else towers.push({mods:inp.mods,bms:true});
+        if(inp.cols===2){towers.push({mods:inp.c1,bms:true,role:'master'});towers.push({mods:inp.c2,bms:false,role:'slave'});}
+        else towers.push({mods:inp.mods,bms:true,role:'standalone'});
       });
     } else if(f.battery==='AXE'){
       state.inputs.forEach(function(inp){towers.push({mods:inp.modules,bms:false,axe:true});});
-    } else if(f.battery==='MODA'){
-      var modaMods=(state.inputs[0]&&state.inputs[0].modules)||0;
-      if(modaMods>0)towers.push({mods:modaMods,bms:false});
     }
   }
   towers=towers.slice(0,6);
   var b=batteryTotals();
   var isRise=f&&f.battery==='RISE';
+  var isModa=f&&f.battery==='MODA';
   var isWitHu=state.family==='WIT-HU';
 
-  var skx=17,sky=9;               // shared isometric depth skew for all equipment boxes
-  var baseY=452;                  // front-bottom baseline all equipment sits on
+  var skx=17,sky=9;
+  var baseY=452;
   var floorFL=[130,472],floorFR=[586,472],floorBR=[700,336],floorBL=[244,336];
 
-  // shared layout constants (computed up front so the feeder cable can reach the inverter box before it's drawn)
-  var ix=190,iw=54,ih=88, rx=290,rw=150,rh=112, tx0=326;
+  var ix=190,iw=54,ih=88, rx=290,rw=150,rh=112, tx0=316;
   var invAttachX=isRise?(rx+rw):(ix+iw), invAttachY=isRise?(baseY-rh*0.55):(baseY-ih*0.55);
   var poleX=660,poleTop=150,poleBase=300;
   var meterX=floorBR[0]-16,meterY=floorBR[1]-24;
@@ -776,7 +807,6 @@ function commercialSceneHTML(){
     '</svg>';
   s+='<svg class="olsvg" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none">';
 
-  // grid pole + meter together on the far (incoming) side of the pad; a feeder cable runs from the inverter across to the meter
   s+='<g class="gpole'+(metOn?' lit':'')+'"><line x1="'+poleX+'" y1="'+poleBase+'" x2="'+poleX+'" y2="'+poleTop+'"></line>'+
      '<line x1="'+(poleX-22)+'" y1="'+(poleTop+9)+'" x2="'+(poleX+22)+'" y2="'+(poleTop+9)+'"></line>'+
      '<line x1="'+(poleX-14)+'" y1="'+(poleTop+9)+'" x2="'+(poleX-14)+'" y2="'+poleTop+'"></line>'+
@@ -798,6 +828,25 @@ function commercialSceneHTML(){
     s+=drawIsoBox(rx,baseY,rw,rh,skx,sky,'#dbe7ea','#eef5f6','#aec4c9',invOn);
     s+='<line x1="'+rx+'" y1="'+(baseY-rh*0.62)+'" x2="'+(rx+rw)+'" y2="'+(baseY-rh*0.62)+'" stroke="#9db9be" stroke-width="1.5"></line>';
     s+=gauge(rx+rw-20,baseY-rh+20,9,invOn);
+  } else if(isModa){
+    if(invOn){
+      var mm=(state.inputs[0]&&state.inputs[0].modules)||0;
+      var mBaseH=13,mMh=15,mCapH=27,mTh=mBaseH+mm*mMh+mCapH;
+      var mBoxFaces=isoBox(ix,baseY,iw,mTh,skx,sky);
+      s+='<g class="eqbox lit"><polygon class="eqtop" points="'+ptsStr(mBoxFaces.top)+'" fill="#fbfcfd"></polygon><polygon class="eqside" points="'+ptsStr(mBoxFaces.side)+'" fill="#ccd4de"></polygon>';
+      var mcy=baseY;
+      s+='<rect x="'+ix+'" y="'+(mcy-mBaseH)+'" width="'+iw+'" height="'+(mBaseH-1)+'" fill="#a9b4bf" stroke="#7d8994" stroke-width="0.75"></rect>';
+      if(iw>=40)s+='<text x="'+(ix+iw/2)+'" y="'+(mcy-mBaseH/2+2.5)+'" text-anchor="middle" font-size="6.5" font-weight="700" fill="#f2f5f7">BASE</text>';
+      mcy-=mBaseH;
+      for(var mi=0;mi<mm;mi++){
+        s+='<rect x="'+ix+'" y="'+(mcy-mMh+1)+'" width="'+iw+'" height="'+(mMh-2)+'" fill="#f4f6f8" stroke="#bcc6d0" stroke-width="0.9"></rect>';
+        if(iw>=40)s+='<text x="'+(ix+iw/2)+'" y="'+(mcy-mMh/2+2.2)+'" text-anchor="middle" font-size="5.6" font-weight="600" fill="#7a8794">5 kWh</text>';
+        mcy-=mMh;
+      }
+      s+='<rect x="'+ix+'" y="'+(mcy-mCapH+1)+'" width="'+iw+'" height="'+(mCapH-2)+'" fill="#eef1f5" stroke="#33da7a" stroke-width="1.1"></rect>';
+      s+=gauge(ix+iw/2,mcy-mCapH/2,8,true);
+      s+='</g>';
+    }
   } else {
     if(invOn){
       if(isWitHu){
@@ -813,34 +862,55 @@ function commercialSceneHTML(){
       }
     }
     towers.forEach(function(t,i){
-      var tw=36,mh=t.axe?6:11,capH=t.bms?13:0,th=22+t.mods*mh+capH;
-      var x=tx0+i*(tw+14),y=baseY;
+      var tw=46,mh=t.axe?9:15,baseH=13,bmsH=t.bms?23:0,th=baseH+t.mods*mh+bmsH;
+      var x=tx0+i*(tw+7),y=baseY;
       if(i===0)s+='<path class="olcable'+(invOn?' lit':'')+'" d="M'+(ix+iw)+','+(baseY-16)+' Q'+((ix+iw+x)/2)+','+(baseY-6)+' '+(x+4)+','+(baseY-14)+'"></path>';
-      if(t.axe){
-        s+=drawIsoBox(x,y,tw,th,skx,sky,'#eceff2','#f7f9fb','#c2ccd3',true);
-        for(var m2=1;m2<t.mods;m2++){var ly2=y-m2*mh;
-          s+='<line x1="'+(x+2)+'" y1="'+ly2+'" x2="'+(x+tw-2)+'" y2="'+ly2+'" stroke="#aeb8c6" stroke-width="1"></line>';}
-      } else {
-        s+=drawIsoBox(x,y,tw,th,skx,sky,'#f8f9fb','#ffffff','#dde1e6',true);
-        s+=gauge(x+tw/2,y-th+16,6.5,true);
-        s+=screw(x+5,y-th+5)+screw(x+tw-5,y-th+5);
-        for(var m=1;m<t.mods;m++){var ly=y-capH-m*mh;
-          s+='<line x1="'+(x+2)+'" y1="'+ly+'" x2="'+(x+tw-2)+'" y2="'+ly+'" stroke="#c3ccd3" stroke-width="1"></line>';}
-        if(t.bms){var capY=y-th;
-          s+='<line x1="'+x+'" y1="'+(capY+capH)+'" x2="'+(x+tw)+'" y2="'+(capY+capH)+'" stroke="#9fabb8" stroke-width="1.5"></line>';}
+      var boxFaces=isoBox(x,y,tw,th,skx,sky);
+      s+='<g class="eqbox lit"><polygon class="eqtop" points="'+ptsStr(boxFaces.top)+'" fill="'+(t.axe?'#f7f9fb':'#fbfcfd')+'"></polygon><polygon class="eqside" points="'+ptsStr(boxFaces.side)+'" fill="'+(t.axe?'#c2ccd3':'#ccd4de')+'"></polygon>';
+      var cy=y;
+      s+='<rect x="'+x+'" y="'+(cy-baseH)+'" width="'+tw+'" height="'+(baseH-1)+'" fill="'+(t.axe?'#9aa7b3':'#a9b4bf')+'" stroke="#7d8994" stroke-width="0.75"></rect>';
+      if(tw>=40)s+='<text x="'+(x+tw/2)+'" y="'+(cy-baseH/2+2.5)+'" text-anchor="middle" font-size="6.5" font-weight="700" fill="#f2f5f7" letter-spacing=".03em">BASE</text>';
+      cy-=baseH;
+      for(var m=0;m<t.mods;m++){
+        s+='<rect x="'+x+'" y="'+(cy-mh+1)+'" width="'+tw+'" height="'+(mh-2)+'" fill="'+(t.axe?'#eceff2':'#f4f6f8')+'" stroke="'+(t.axe?'#b6c0c8':'#bcc6d0')+'" stroke-width="0.9"></rect>';
+        if(!t.axe&&tw>=40&&mh>=14)s+='<text x="'+(x+tw/2)+'" y="'+(cy-mh/2+2.2)+'" text-anchor="middle" font-size="5.6" font-weight="600" fill="#7a8794">5 kWh</text>';
+        cy-=mh;
       }
+      if(t.bms){
+        s+='<rect x="'+x+'" y="'+(cy-bmsH+1)+'" width="'+tw+'" height="'+(bmsH-2)+'" fill="#e3f3ea" stroke="#33da7a" stroke-width="1.1"></rect>';
+        s+=gauge(x+tw*0.32,cy-bmsH/2,7.5,true);
+        s+='<text x="'+(x+tw*0.68)+'" y="'+(cy-bmsH/2+2.6)+'" text-anchor="middle" font-size="7" font-weight="800" fill="#1f7a45">BMS</text>';
+        cy-=bmsH;
+      }
+      s+='</g>';
+      if(t.role==='master')s+='<text x="'+(x+tw/2)+'" y="'+(y-th-8)+'" text-anchor="middle" font-size="7.5" font-weight="800" fill="#1f7a45" letter-spacing=".04em">MASTER</text>';
+      else if(t.role==='slave')s+='<text x="'+(x+tw/2)+'" y="'+(y-th-8)+'" text-anchor="middle" font-size="7.5" font-weight="800" fill="#5d6b78" letter-spacing=".04em">SLAVE</text>';
     });
   }
+  var houseX=35,hBaseY=428,hbw=66,hbh=46,hRoofH=30;
+  s+='<path class="olcable'+(invOn?' lit':'')+'" d="M'+(isRise?rx:ix)+','+(baseY-26)+' Q'+((houseX+55+(isRise?rx:ix))/2)+','+(baseY-50)+' '+(houseX+hbw-6)+','+(hBaseY-hbh*0.4)+'"></path>';
+  var hBody=isoBox(houseX,hBaseY,hbw,hbh,skx,sky);
+  s+='<polygon points="'+ptsStr(hBody.side)+'" fill="#8b98a6"></polygon>';
+  s+='<polygon points="'+ptsStr(hBody.front)+'" fill="#aab6c1"></polygon>';
+  var rPeakF=[houseX+hbw/2,hBaseY-hbh-hRoofH],rPeakB=[rPeakF[0]+skx,rPeakF[1]-sky];
+  s+='<polygon points="'+ptsStr([[houseX+hbw,hBaseY-hbh],[houseX+hbw+skx,hBaseY-hbh-sky],rPeakB,rPeakF])+'" fill="#4d5c6a"></polygon>';
+  s+='<polygon points="'+ptsStr([[houseX,hBaseY-hbh],[houseX+hbw,hBaseY-hbh],rPeakF])+'" fill="#5c6e80"></polygon>';
+  s+='<rect x="'+(houseX+hbw*0.38)+'" y="'+(hBaseY-hbh*0.55)+'" width="'+(hbw*0.24)+'" height="'+(hbh*0.55)+'" fill="#3d4b58"></rect>';
+  s+='<rect x="'+(houseX+8)+'" y="'+(hBaseY-hbh*0.85)+'" width="'+(hbw*0.18)+'" height="'+(hbh*0.2)+'" fill="#cfe0ea" opacity=".85"></rect>';
+  s+='<rect x="'+(houseX+hbw-8-hbw*0.18)+'" y="'+(hBaseY-hbh*0.85)+'" width="'+(hbw*0.18)+'" height="'+(hbh*0.2)+'" fill="#cfe0ea" opacity=".85"></rect>';
   s+='</svg>';
 
   var invCx=isRise?365:217;
-  s+='<div class="complabel'+(invOn?' lit':'')+'" style="left:'+(invCx/W*100).toFixed(1)+'%;top:'+(( (isRise?baseY+18:baseY+14) )/H*100).toFixed(1)+'%">'+(isRise?'RISE ALL\u2011IN\u2011ONE':'INVERTER')+(invOn?(' \u00b7 '+state.kw+' kW'):'')+(state.multi&&state.units.length>1?' \u00d7'+state.units.length:'')+'</div>';
-  if(!isRise){
-    var batCx = towers.length? (tx0 + ((towers.length-1)*(36+14))/2 + 18) : 340;
+  s+='<div class="complabel'+(invOn?' lit':'')+'" style="left:'+(invCx/W*100).toFixed(1)+'%;top:'+(( (isRise?baseY+18:baseY+14) )/H*100).toFixed(1)+'%">'+(isRise?'RISE ALL\u2011IN\u2011ONE':(isModa?'MODA ALL\u2011IN\u2011ONE':'INVERTER'))+(invOn?(' \u00b7 '+state.kw+' kW'):'')+(state.multi&&state.units.length>1?' \u00d7'+state.units.length:'')+'</div>';
+  if(isModa){
+    if(invOn)s+='<div class="complabel lit" style="left:'+(invCx/W*100).toFixed(1)+'%;top:'+((baseY+30)/H*100).toFixed(1)+'%">BATTERY \u00b7 '+b.kwh+' kWh</div>';
+  } else if(!isRise){
+    var batCx = towers.length? (tx0 + ((towers.length-1)*(46+7))/2 + 23) : 340;
     s+='<div class="complabel'+(batOn?' lit':'')+'" style="left:'+(batCx/W*100).toFixed(1)+'%;top:'+((baseY+14)/H*100).toFixed(1)+'%">'+(batOn?('BATTERY \u00b7 '+b.kwh+' kWh'):'BATTERY')+'</div>';
   }
   s+='<div class="complabel'+(metOn?' lit':'')+'" style="left:'+((meterX-14)/W*100).toFixed(1)+'%;top:'+(((meterY+22)/H)*100).toFixed(1)+'%">METER</div>';
   s+='<div class="gridchip'+(metOn?' lit':'')+'" style="left:'+((poleX+2)/W*100).toFixed(1)+'%;top:'+(((poleTop-14)/H)*100).toFixed(1)+'%">GRID</div>';
+  s+='<div class="complabel'+(invOn?' lit':'')+'" style="left:'+((houseX+hbw/2)/W*100).toFixed(1)+'%;top:'+(((hBaseY+14)/H)*100).toFixed(1)+'%">PROPERTY'+(state.loadKw>0?(' \u00b7 '+state.loadKw+' kW'+(state.backupMode?(' \u00b7 '+(state.backupMode==='whole'?'whole\u2011home':'partial')+' backup'):'')):'')+'</div>';
   s+='<div class="complabel'+(backOn?' lit':'')+'" style="left:8%;top:88%">BACKUP</div>';
   s+='<div class="complabel'+(onlOn?' lit':'')+'" style="left:8%;top:80%">ONLINE</div>';
   s+='</div></div>';
@@ -879,7 +949,7 @@ function printRecapHTML(){syncUnit();var saved=snapshotUnit();
   state.units.forEach(function(u,i){loadUnit(u);var lbl=state.units.length>1?'Inverter '+(i+1):'Inverter';
     var inv=state.family&&state.kw?'Growatt '+fam().name+' '+state.kw+' kW':'(not selected)';
     var b=batteryTotals();
-    var bat=(state.family&&fam().battery==='RISE')?(state.kw?'RISE integrated 261 kWh':'\u2014'):(state.inputs.length?(isAxeFam()?('AXE \u00b7 '+b.inputs+' cab \u00b7 '+b.kwh+' kWh'):('APX '+state.apx+' \u00b7 '+b.kwh+' kWh')):'(none)');
+    var bat=(state.family&&fam().battery==='RISE')?(state.kw?'RISE integrated 261 kWh':'\u2014'):(state.inputs.length?(isAxeFam()?('AXE \u00b7 '+b.inputs+' cab \u00b7 '+b.kwh+' kWh \u00b7 up to '+battKw(b.kwh)+' kW'):('APX '+state.apx+' \u00b7 '+b.kwh+' kWh \u00b7 up to '+battKw(b.kwh)+' kW')):'(none)');
     out+=rr(lbl,inv+' \u00b7 battery: '+bat);
   });
   loadUnit(saved);
@@ -945,6 +1015,9 @@ function render(){
     '<div class="cartbar" id="cartbar">'+cartbarHTML()+'</div></div>';
   document.getElementById('app').innerHTML=html;
 }
+function onLoadKw(){
+  var el=document.getElementById('loadCalc');if(el)el.innerHTML=loadCalcHTML();
+}
 function onPanels(){
   if(state.family&&state.kw&&state.panelCount>0&&!kwValid(state.kw)){var v=fam().kw.filter(kwValid);if(v.length)state.kw=v[0];}
   var a=document.getElementById('pvTop');if(a)a.innerHTML=pvTopHTML();
@@ -969,6 +1042,7 @@ document.addEventListener('click',function(e){
   else if(a==='metering'){var m=el.getAttribute('data-m');state.metering=(state.metering===m)?null:m;render();if(state.metering)goStep('stp-backup');}
   else if(a==='mt'){state.meterType=el.getAttribute('data-t');render();}
   else if(a==='backup'){state.backupOn=!state.backupOn;render();goStep('stp-battery');}
+  else if(a==='backupmode'){var v=el.getAttribute('data-v');state.backupMode=(state.backupMode===v)?null:v;render();}
   else if(a==='apx'){state.apx=el.getAttribute('data-v');clampInputs();render();}
   else if(a==='inputs'){var n=+el.getAttribute('data-n');if(n>fam().inputs)return;if(!isAxeFam()&&n>maxInputs())return;var axe=isAxeFam();while(state.inputs.length<n)state.inputs.push(axe?{modules:6}:{mods:4,cols:1,c1:4,c2:0});state.inputs=state.inputs.slice(0,n);clampInputs();render();}
   else if(a==='mod'){var j=+el.getAttribute('data-i'),dd=+el.getAttribute('data-d');var inp=state.inputs[j];var cur=(typeof inp.mods==='number'&&!isNaN(inp.mods))?inp.mods:minMods();inp.mods=clamp(cur+dd,minMods(),maxMods());inp.c1=inp.mods;inp.c2=0;render();}
@@ -996,6 +1070,7 @@ function fb(t,d){var ta=document.createElement('textarea');ta.value=t;ta.style.p
 document.addEventListener('input',function(e){
   if(e.target.id==='panelW'){state.panelW=clamp(parseInt(e.target.value||'0',10)||0,0,800);onPanels();}
   else if(e.target.id==='panelCount'){state.panelCount=clamp(parseInt(e.target.value||'0',10)||0,0,400);onPanels();}
+  else if(e.target.id==='loadKw'){state.loadKw=clamp(parseFloat(e.target.value||'0')||0,0,999);onLoadKw();}
 });
 render();
 </script>
