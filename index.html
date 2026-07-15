@@ -25,10 +25,10 @@
   .aibtn{display:inline-flex;align-items:center;gap:7px;background:linear-gradient(135deg,#1a2f22,#0f1b2d);color:#8ffcb8;border:1px solid #2c9d5e;padding:9px 15px;border-radius:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0}
   .aibtn:hover{box-shadow:0 0 0 3px rgba(51,218,122,.18)}
   .opt.ai .name svg{color:var(--grn);vertical-align:-2px;margin-right:2px}
-  .opt.compact{padding:8px 9px}
-  .opt.compact .name{font-size:12px}
-  .opt.compact .meta{font-size:10px;margin-top:1px;line-height:1.3}
-  .dongrid{grid-template-columns:repeat(auto-fit,minmax(100px,1fr))}
+  .opt.compact{padding:7px 8px}
+  .opt.compact .name{font-size:11.5px}
+  .opt.compact .meta{font-size:9.5px;margin-top:1px;line-height:1.25}
+  .dongrid{grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:7px}
   @media(max-width:560px){.dongrid{grid-template-columns:1fr 1fr}}
 
   /* ===== Growatt AI info page \u2014 deliberately distinct visual language ===== */
@@ -313,6 +313,8 @@ var FAMILIES={
     note:'Larger residential / light\u2011commercial hybrid, 11\u201330 kW, with <b>2 battery interfaces</b> and support for <b>5\u201360 kWh</b> APX (per the datasheet). Note: with only <b>one</b> battery port connected, max battery power is <b>15 kW</b> \u2014 use both inputs on the larger models for full power. Backup needs a separate <b>SYN 100\u2011XH\u201130</b> box.'},
   'WIT-HU':{name:'WIT (H\u2011U)',phase:'3\u2011phase',backup:'box-required',inputs:3,battery:'APX',kw:[50,63,75,100],seg:'com',
     note:'Commercial 3\u2011phase hybrid with up to <b>3 battery inputs</b>, using <b>APX HV</b> storage. Backup is <b>not integrated</b> \u2014 a separate SYN box must be added. Verify exact battery\u2011input count with your distributor.'},
+  'MID-HU':{name:'MID\u2011HU',phase:'3\u2011phase',backup:'integrated',inputs:3,battery:'APX',kw:[29.9,30,33,36,40,50],seg:'com',
+    note:'Commercial 3\u2011phase hybrid with <b>integrated backup</b> \u2014 no SYN box, evolved from the \u2011XH series (per Growatt\u2019s own MID 29.9\u201150K\u2011HU product page &amp; datasheet). <b>3/4 MPPTs</b>, DC/AC up to 2.0. Supports up to <b>3 APX battery clusters</b> with the current APX M\u2011S3 system (per the APX manual). Verify exact per\u2011model battery\u2011power limits with your distributor.'},
   'WIT-XHU':{name:'WIT XHU',phase:'3\u2011phase',backup:'integrated',inputs:3,battery:'AXE',kw:[29.9,30,36,40,50],seg:'com',
     note:'Compact commercial hybrid, <b>29.9\u201350 kW</b>, with <b>integrated backup</b> \u2014 no SYN box needed. Uses <b>AXE HV</b> cabinet storage only (not APX). 3 battery inputs.'},
   'RISE-261':{name:'RISE 261H\u2011XH',phase:'3\u2011phase',backup:'integrated',inputs:1,battery:'RISE',kw:[50,63,85,125],seg:'com',
@@ -534,7 +536,7 @@ function pvTopHTML(){
   return '<div class="pvtop'+(over?' over':'')+'"><div class="pvrow"><div class="pvbig">'+kwp+'<small> kWp</small></div><div class="pvhint">vs Growatt '+fam().name+' '+state.kw+' kW'+(otherUnitsKw()?' (+'+otherUnitsKw()+' kW other inverters)':'')+'</div></div>'+gaugeHTML()+'</div>';
 }
 function segStep(){
-  var segs=[['res','Residential','Villa / bostad \u2014 MOD, MID &amp; MODA \u00b7 APX battery'],['com','Commercial','C&amp;I \u2014 WIT &amp; RISE \u00b7 APX, AXE &amp; RISE storage']];
+  var segs=[['res','Residential','Villa / bostad \u2014 MOD, MID &amp; MODA \u00b7 APX battery'],['com','Commercial','C&amp;I \u2014 MID, WIT &amp; RISE \u00b7 APX, AXE &amp; RISE storage']];
   var cards=segs.map(function(sg){var on=state.segment===sg[0];return '<button class="opt'+(on?' on':'')+'" data-act="seg" data-s="'+sg[0]+'"><div class="name">'+sg[1]+'</div><div class="meta">'+sg[2]+'</div></button>';}).join('');
   var adv='<div class="switchrow" style="margin-top:12px"><div><div class="lab">Advanced settings \u2014 multiple inverters</div><div class="s2">Duplicate the inverter you\u2019re working on and configure several \u2014 everything sums in \u201cYour system\u201d.</div></div><span class="sw '+(state.multi?'on':'')+'" data-act="multi"><span class="knob"></span></span></div>'+
     (state.multi?'<div class="notice g" style="margin-top:10px">'+ic('info',14)+'<span>Multi\u2011inverter systems require <b>ShineSEM\u2011X</b> or <b>ShineMaster</b> for coordinated monitoring \u2014 set in step 4. A regular dongle (WiFi/LAN/4G) alone isn\u2019t enough for multiple units.</span></div>':'');
@@ -761,6 +763,55 @@ function drawIsoBox(x,y,fw,h,skx,sky,cFront,cTop,cSide,lit){
   s+='</g>';
   return s;
 }
+function drawExtraUnitRow(u,rowIx,rowBaseY,scale,skx,sky){
+  var fm=FAMILIES[u.family];
+  if(!fm)return '';
+  var s='';
+  var iw=54*scale,ih=88*scale;
+  var isRiseU=fm.battery==='RISE',isModaU=fm.battery==='MODA';
+  if(isRiseU){
+    var rw=150*scale,rh=112*scale;
+    s+=drawIsoBox(rowIx,rowBaseY,rw,rh,skx*scale,sky*scale,'#dbe7ea','#eef5f6','#aec4c9',true);
+    return s;
+  }
+  s+=drawIsoBox(rowIx,rowBaseY,iw,ih,skx*scale,sky*scale,'#eef1f5','#f8fbfd','#c7cfd9',true);
+  s+='<circle cx="'+(rowIx+iw/2)+'" cy="'+(rowBaseY-ih+18*scale)+'" r="'+(4*scale)+'" fill="#33da7a"></circle>';
+  if(isModaU){
+    var mm=(u.inputs[0]&&u.inputs[0].modules)||0;
+    var mBaseH=13*scale,mMh=15*scale,mCapH=18*scale,mTh=mBaseH+mm*mMh+mCapH;
+    var mBoxFaces=isoBox(rowIx,rowBaseY,iw,mTh,skx*scale,sky*scale);
+    s+='<polygon points="'+ptsStr(mBoxFaces.top)+'" fill="#fbfcfd"></polygon><polygon points="'+ptsStr(mBoxFaces.side)+'" fill="#ccd4de"></polygon>';
+    var mcy=rowBaseY;
+    s+='<rect x="'+rowIx+'" y="'+(mcy-mBaseH)+'" width="'+iw+'" height="'+(mBaseH-1)+'" fill="#a9b4bf"></rect>';
+    mcy-=mBaseH;
+    for(var mi=0;mi<mm;mi++){s+='<rect x="'+rowIx+'" y="'+(mcy-mMh+1)+'" width="'+iw+'" height="'+(mMh-2)+'" fill="#f4f6f8" stroke="#bcc6d0" stroke-width="0.7"></rect>';mcy-=mMh;}
+    s+='<rect x="'+rowIx+'" y="'+(mcy-mCapH+1)+'" width="'+iw+'" height="'+(mCapH-2)+'" fill="#eef1f5" stroke="#33da7a" stroke-width="1"></rect>';
+    return s;
+  }
+  var towersU=[];
+  if(fm.battery==='APX'){
+    (u.inputs||[]).forEach(function(inp){
+      if(inp.cols===2){towersU.push({mods:inp.c1,bms:true});towersU.push({mods:inp.c2,bms:false});}
+      else towersU.push({mods:inp.mods,bms:true});
+    });
+  } else if(fm.battery==='AXE'){
+    (u.inputs||[]).forEach(function(inp){towersU.push({mods:inp.modules,bms:false,axe:true});});
+  }
+  towersU=towersU.slice(0,6);
+  var tx0u=rowIx+iw+22*scale;
+  towersU.forEach(function(t,i){
+    var tw=46*scale,mh=(t.axe?9:15)*scale,baseH=13*scale,bmsH=(t.bms?23:0)*scale,th=baseH+t.mods*mh+bmsH;
+    var x=tx0u+i*(tw+7*scale),y=rowBaseY;
+    var boxFaces=isoBox(x,y,tw,th,skx*scale,sky*scale);
+    s+='<polygon points="'+ptsStr(boxFaces.top)+'" fill="'+(t.axe?'#f7f9fb':'#fbfcfd')+'"></polygon><polygon points="'+ptsStr(boxFaces.side)+'" fill="'+(t.axe?'#c2ccd3':'#ccd4de')+'"></polygon>';
+    var cy=y;
+    s+='<rect x="'+x+'" y="'+(cy-baseH)+'" width="'+tw+'" height="'+(baseH-1)+'" fill="'+(t.axe?'#9aa7b3':'#a9b4bf')+'"></rect>';
+    cy-=baseH;
+    for(var m=0;m<t.mods;m++){s+='<rect x="'+x+'" y="'+(cy-mh+1)+'" width="'+tw+'" height="'+(mh-2)+'" fill="'+(t.axe?'#eceff2':'#f4f6f8')+'" stroke="'+(t.axe?'#b6c0c8':'#bcc6d0')+'" stroke-width="0.7"></rect>';cy-=mh;}
+    if(t.bms){s+='<rect x="'+x+'" y="'+(cy-bmsH+1)+'" width="'+tw+'" height="'+(bmsH-2)+'" fill="#e3f3ea" stroke="#33da7a" stroke-width="0.9"></rect>';cy-=bmsH;}
+  });
+  return s;
+}
 function commercialSceneHTML(){
   var bom=buildBOM();
   var has=function(g){return bom.some(function(r){return r.g===g;});};
@@ -831,7 +882,7 @@ function commercialSceneHTML(){
   } else if(isModa){
     if(invOn){
       var mm=(state.inputs[0]&&state.inputs[0].modules)||0;
-      var mBaseH=13,mMh=15,mCapH=27,mTh=mBaseH+mm*mMh+mCapH;
+      var mBaseH=13,mMh=15,mCapH=22,mTh=mBaseH+mm*mMh+mCapH;
       var mBoxFaces=isoBox(ix,baseY,iw,mTh,skx,sky);
       s+='<g class="eqbox lit"><polygon class="eqtop" points="'+ptsStr(mBoxFaces.top)+'" fill="#fbfcfd"></polygon><polygon class="eqside" points="'+ptsStr(mBoxFaces.side)+'" fill="#ccd4de"></polygon>';
       var mcy=baseY;
@@ -879,7 +930,8 @@ function commercialSceneHTML(){
       if(t.bms){
         s+='<rect x="'+x+'" y="'+(cy-bmsH+1)+'" width="'+tw+'" height="'+(bmsH-2)+'" fill="#e3f3ea" stroke="#33da7a" stroke-width="1.1"></rect>';
         s+=gauge(x+tw*0.32,cy-bmsH/2,7.5,true);
-        s+='<text x="'+(x+tw*0.68)+'" y="'+(cy-bmsH/2+2.6)+'" text-anchor="middle" font-size="7" font-weight="800" fill="#1f7a45">BMS</text>';
+        s+='<text x="'+(x+tw*0.68)+'" y="'+(cy-bmsH/2+(a2()?0:2.6))+'" text-anchor="middle" font-size="7" font-weight="800" fill="#1f7a45">BMS</text>';
+        if(a2())s+='<text x="'+(x+tw*0.68)+'" y="'+(cy-bmsH/2+8)+'" text-anchor="middle" font-size="5.5" font-weight="700" fill="#1f7a45">5 kWh</text>';
         cy-=bmsH;
       }
       s+='</g>';
@@ -887,8 +939,38 @@ function commercialSceneHTML(){
       else if(t.role==='slave')s+='<text x="'+(x+tw/2)+'" y="'+(y-th-8)+'" text-anchor="middle" font-size="7.5" font-weight="800" fill="#5d6b78" letter-spacing=".04em">SLAVE</text>';
     });
   }
-  var houseX=35,hBaseY=428,hbw=66,hbh=46,hRoofH=30;
+
+  var extraUnits=[];
+  if(state.multi&&state.units.length>1){
+    for(var uidx=0;uidx<state.units.length;uidx++){
+      if(uidx===state.unit)continue;
+      var uu=state.units[uidx];
+      extraUnits.push({family:uu.family,kw:uu.kw,inputs:uu.inputs||[],apx:uu.apx});
+    }
+  }
+  var shownExtra=extraUnits.slice(0,3);
+  shownExtra.forEach(function(u,ei){
+    var rowN=ei+1;
+    var rowScale=1-rowN*0.16;
+    var rowBaseY=baseY-rowN*66;
+    var rowIx=ix-rowN*10;
+    s+=drawExtraUnitRow(u,rowIx,rowBaseY,rowScale,skx,sky);
+  });
+
+  var houseX=32,hBaseY=408,hbw=78,hbh=54,hRoofH=36;
   s+='<path class="olcable'+(invOn?' lit':'')+'" d="M'+(isRise?rx:ix)+','+(baseY-26)+' Q'+((houseX+55+(isRise?rx:ix))/2)+','+(baseY-50)+' '+(houseX+hbw-6)+','+(hBaseY-hbh*0.4)+'"></path>';
+  var showPartial=state.backupMode==='partial';
+  if(showPartial){
+    var h2X=houseX+hbw+skx+15,h2BaseY=hBaseY-38,h2w=22,h2h=16,h2Roof=10;
+    s+='<path class="olcable'+(backOn?' lit':'')+'" d="M'+(isRise?rx:ix)+','+(baseY-20)+' Q'+((h2X+h2w+ix)/2)+','+(baseY-36)+' '+(h2X+h2w-4)+','+(h2BaseY-h2h*0.4)+'"></path>';
+    var h2Body=isoBox(h2X,h2BaseY,h2w,h2h,skx,sky);
+    s+='<polygon points="'+ptsStr(h2Body.side)+'" fill="#9aa5b0"></polygon>';
+    s+='<polygon points="'+ptsStr(h2Body.front)+'" fill="#b7c1ca"></polygon>';
+    var r2PeakF=[h2X+h2w/2,h2BaseY-h2h-h2Roof],r2PeakB=[r2PeakF[0]+skx,r2PeakF[1]-sky];
+    s+='<polygon points="'+ptsStr([[h2X+h2w,h2BaseY-h2h],[h2X+h2w+skx,h2BaseY-h2h-sky],r2PeakB,r2PeakF])+'" fill="#5c6e80"></polygon>';
+    s+='<polygon points="'+ptsStr([[h2X,h2BaseY-h2h],[h2X+h2w,h2BaseY-h2h],r2PeakF])+'" fill="#6b7d90"></polygon>';
+    s+='<rect x="'+(h2X+h2w*0.36)+'" y="'+(h2BaseY-h2h*0.5)+'" width="'+(h2w*0.28)+'" height="'+(h2h*0.5)+'" fill="#3d4b58"></rect>';
+  }
   var hBody=isoBox(houseX,hBaseY,hbw,hbh,skx,sky);
   s+='<polygon points="'+ptsStr(hBody.side)+'" fill="#8b98a6"></polygon>';
   s+='<polygon points="'+ptsStr(hBody.front)+'" fill="#aab6c1"></polygon>';
@@ -911,6 +993,7 @@ function commercialSceneHTML(){
   s+='<div class="complabel'+(metOn?' lit':'')+'" style="left:'+((meterX-14)/W*100).toFixed(1)+'%;top:'+(((meterY+22)/H)*100).toFixed(1)+'%">METER</div>';
   s+='<div class="gridchip'+(metOn?' lit':'')+'" style="left:'+((poleX+2)/W*100).toFixed(1)+'%;top:'+(((poleTop-14)/H)*100).toFixed(1)+'%">GRID</div>';
   s+='<div class="complabel'+(invOn?' lit':'')+'" style="left:'+((houseX+hbw/2)/W*100).toFixed(1)+'%;top:'+(((hBaseY+14)/H)*100).toFixed(1)+'%">PROPERTY'+(state.loadKw>0?(' \u00b7 '+state.loadKw+' kW'+(state.backupMode?(' \u00b7 '+(state.backupMode==='whole'?'whole\u2011home':'partial')+' backup'):'')):'')+'</div>';
+  if(showPartial)s+='<div class="complabel'+(backOn?' lit':'')+'" style="left:'+((houseX+hbw+skx+15+11)/W*100).toFixed(1)+'%;top:'+(((hBaseY-38+14)/H)*100).toFixed(1)+'%">BACKUP LOAD</div>';
   s+='<div class="complabel'+(backOn?' lit':'')+'" style="left:8%;top:88%">BACKUP</div>';
   s+='<div class="complabel'+(onlOn?' lit':'')+'" style="left:8%;top:80%">ONLINE</div>';
   s+='</div></div>';
