@@ -199,8 +199,8 @@
   .axecab-lbl{position:relative;z-index:1;display:flex;align-items:center;gap:6px;color:#fff;font-size:11px;font-weight:700;font-family:var(--mono);padding:9px;text-shadow:0 1px 2px rgba(0,0,0,.4)}
   .field{display:flex;flex-direction:column;gap:6px}
   .field label{font-size:12px;font-weight:600;color:var(--mut)}
-  .field input{border:1px solid var(--line2);border-radius:10px;padding:11px 12px;font-size:16px;font-family:var(--mono);font-weight:700;color:var(--text);background:#fff;width:100%}
-  .field input:focus{outline:none;border-color:var(--grn);box-shadow:0 0 0 3px var(--grnBg)}
+  .field input,.field select{border:1px solid var(--line2);border-radius:10px;padding:11px 12px;font-size:16px;font-family:var(--mono);font-weight:700;color:var(--text);background:#fff;width:100%}
+  .field input:focus,.field select:focus{outline:none;border-color:var(--grn);box-shadow:0 0 0 3px var(--grnBg)}
   .field .unit{font-size:11px;color:var(--faint);font-weight:500}
   .pverr{display:flex;align-items:center;gap:8px;background:var(--redBg);border:1px solid var(--redLine);color:var(--red);border-radius:10px;padding:11px 13px;font-size:12.5px;font-weight:600}
 
@@ -236,9 +236,9 @@
   .eqbox.lit{filter:drop-shadow(0 2px 4px rgba(20,40,30,.25))}
   .gpole.lit{opacity:1}
   .gpole line{stroke:#6f83a0;stroke-width:3;stroke-linecap:round}
-  .gpole .cable{stroke:#33da7a;stroke-width:2;stroke-dasharray:5 4;fill:none;stroke-linecap:round;animation:acflow 2.4s ease-in-out infinite}
+  .gpole .cable{stroke:#33da7a;stroke-width:2;stroke-dasharray:5 4;fill:none;stroke-linecap:round;animation:acflow 1.4s ease-in-out infinite}
   .olcable{stroke:#5b6b64;stroke-width:2;stroke-dasharray:5 4;fill:none;stroke-linecap:round;opacity:.4;transition:.3s}
-  .olcable.lit{stroke:#33da7a;opacity:1;animation:acflow 2.4s ease-in-out infinite}
+  .olcable.lit{stroke:#33da7a;opacity:1;animation:acflow 1.4s ease-in-out infinite}
   @keyframes acflow{0%,100%{stroke-dashoffset:0}50%{stroke-dashoffset:-9}}
   .legend{position:absolute;left:10px;top:8px;z-index:4;display:flex;flex-direction:row;align-items:center;gap:14px;background:rgba(255,255,255,.94);border:1px solid rgba(20,40,60,.13);border-radius:20px;padding:6px 15px;font-size:9px;font-weight:800;color:#42505f;letter-spacing:.06em;pointer-events:none;box-shadow:0 2px 10px rgba(16,27,45,.12)}
   .legend .lrow{display:flex;align-items:center;gap:6px;white-space:nowrap}
@@ -249,10 +249,13 @@
   .pvpanel line{stroke:#5b6875;stroke-width:.8}
   .pvpanel.lit rect{fill:#2e6fce}
   .pvpanel.lit line{stroke:#1c4d9c}
+  .combatt{stroke:#3b82f6;stroke-width:2;fill:none;stroke-linecap:round}
   .dcbatt{stroke:#232d3a;stroke-width:2;stroke-dasharray:5 4;fill:none;stroke-linecap:round;opacity:.95;animation:dcalt 20s linear infinite}
   @keyframes dcalt{0%{stroke-dashoffset:0}50%{stroke-dashoffset:-45}100%{stroke-dashoffset:0}}
-  .dccable{stroke:#232d3a;stroke-width:2;stroke-dasharray:5 4;fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:.95;animation:dcflow 1.4s linear infinite}
+  .dccable{stroke:#232d3a;stroke-width:2;stroke-dasharray:5 4;fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:.95;animation:dcflow 0.85s linear infinite}
   @keyframes dcflow{to{stroke-dashoffset:-9}}
+  .rfwave{stroke:#3b82f6;stroke-width:1.3;fill:none;stroke-linecap:round;animation:rfpulse 2.4s ease-in-out infinite}
+  @keyframes rfpulse{0%,100%{opacity:.25}50%{opacity:.95}}
   .commline{stroke:#e0584f;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:7 6;opacity:.9;animation:commflow 1.6s linear infinite,commpulse 2.6s ease-in-out infinite;filter:drop-shadow(0 0 3px rgba(224,88,79,.55))}
   .commline.rev{animation-direction:reverse,normal}
   @keyframes commflow{to{stroke-dashoffset:-13}}
@@ -343,8 +346,8 @@ var FAMILIES={
     note:'Commercial 3\u2011phase hybrid with up to <b>3 battery inputs</b>, using <b>APX HV</b> storage. Backup is <b>not integrated</b> \u2014 a separate SYN box must be added. Verify exact battery\u2011input count with your distributor.'},
   'MID-HU':{name:'MID\u2011HU',phase:'3\u2011phase',backup:'integrated',inputs:3,battery:'APX',kw:[29.9,30,33,36,40,50],seg:'com',
     note:'Commercial 3\u2011phase hybrid with <b>integrated backup</b> \u2014 no SYN box, evolved from the \u2011XH series (per Growatt\u2019s own MID 29.9\u201150K\u2011HU product page &amp; datasheet). <b>3/4 MPPTs</b>, DC/AC up to 2.0. Supports up to <b>3 APX battery clusters</b> with the current APX M\u2011S3 system (per the APX manual). Verify exact per\u2011model battery\u2011power limits with your distributor.'},
-  'WIT-XHU':{name:'WIT XHU',phase:'3\u2011phase',backup:'integrated',inputs:3,battery:'AXE',kw:[29.9,30,36,40,50],seg:'com',
-    note:'Compact commercial hybrid, <b>29.9\u201350 kW</b>, with <b>integrated backup</b> \u2014 no SYN box needed. Uses <b>AXE HV</b> cabinet storage only (not APX). 3 battery inputs.'},
+  'WIT-XHU':{name:'WIT XHU',phase:'3\u2011phase',backup:'box-required',inputs:3,battery:'AXE',kw:[29.9,30,36,40,50],seg:'com',
+    note:'Compact commercial hybrid, <b>29.9\u201350 kW</b>. Backup is <b>not integrated</b> \u2014 a separate <b>SYN box</b> is required. Uses <b>AXE HV</b> cabinet storage only (not APX). 3 battery inputs.'},
   'RISE-261':{name:'RISE 261H\u2011XH',phase:'3\u2011phase',backup:'integrated',inputs:1,battery:'RISE',kw:[50,63,85,125],seg:'com',
     note:'All\u2011in\u2011one C&I hybrid ESS: PCS + 10 MPPT + <b>261 kWh LFP battery</b> + UPS/STS + EMS in one IP55 cabinet. Integrated backup (&lt;10 ms), diesel\u2011generator support. Parallel up to <b>10 units \u2248 1.25 MW / 2.61 MWh</b> \u2014 add more units via Advanced settings. Verify availability with your distributor.'}
 };
@@ -353,7 +356,8 @@ var DONGLES={
   lan:{name:'Growatt ShineLAN\u2011X',desc:'LAN / Ethernet dongle'},
   '4g':{name:'Growatt Shine4G\u2011X',desc:'4G cellular dongle'},
   shinesem:{name:'Growatt ShineSEM\u2011X',desc:'Smart Energy Manager \u2014 metering included'},
-  shinemaster:{name:'Growatt ShineMaster',desc:'Multi\u2011inverter datalogger (C&I)'}
+  shinemaster:{name:'Growatt ShineMaster',desc:'Multi\u2011inverter datalogger (C&I)'},
+  grohome:{name:'GroHomeManager\u2011X',desc:'HEMS \u2014 CT + RF included'}
 };
 var GROUP_ORDER=['Inverter','Electrical','Connectivity','Metering','Backup','Battery'];
 var GICON={Inverter:'cpu',Electrical:'zap',Connectivity:'wifi',Metering:'activity',Backup:'shield',Battery:'battery'};
@@ -398,12 +402,13 @@ function acBreaker(){
 }
 
 // APX inputs: {mods,cols,c1,c2}. AXE inputs: {modules}. Shape depends on fam().battery.
-var state={page:'main',segment:null,multi:false,unit:0,units:[],panelW:450,panelCount:0,family:null,kw:null,dongle:null,metering:null,meterType:'TPM-C',backupOn:true,apx:'1.0',inputs:[],wantBattery:null,loadKw:0,backupMode:null,backupLoadKw:0,mainFuseA:null};
+var state={page:'main',segment:null,multi:false,thirdParty:false,tpCount:1,synOptIn:false,groHomeMode:'rs485',unit:0,units:[],panelW:450,panelCount:0,family:null,kw:null,dongle:null,metering:null,meterType:'TPM-C',backupOn:true,apx:'1.0',inputs:[],wantBattery:null,loadKw:0,backupMode:null,backupLoadKw:0,mainFuseA:null};
 function snapshotUnit(){return {family:state.family,kw:state.kw,backupOn:state.backupOn,backupMode:state.backupMode,backupLoadKw:state.backupLoadKw,panelW:state.panelW,panelCount:state.panelCount,wantBattery:state.wantBattery,apx:state.apx,inputs:state.inputs};}
 function loadUnit(u){state.family=u.family;state.kw=u.kw;state.backupOn=u.backupOn;state.backupMode=(u.backupMode!==undefined?u.backupMode:null);state.backupLoadKw=(u.backupLoadKw!==undefined?u.backupLoadKw:0);state.panelW=(u.panelW!==undefined?u.panelW:450);state.panelCount=(u.panelCount!==undefined?u.panelCount:0);state.wantBattery=u.wantBattery;state.apx=u.apx;state.inputs=u.inputs;}
 function syncUnit(){state.units[state.unit]=snapshotUnit();}
 function switchUnit(i){syncUnit();state.unit=i;loadUnit(state.units[i]);}
-function addUnit(){if(state.units.length>=10)return;syncUnit();var c=JSON.parse(JSON.stringify(snapshotUnit()));state.units.push(c);state.unit=state.units.length-1;loadUnit(state.units[state.unit]);}
+function unitCap(){syncUnit();var allRise=state.units.every(function(u){return !u.family||u.family==='RISE-261';});return allRise?10:6;}
+function addUnit(){if(state.family==='MODA')return;if(state.units.length>=unitCap())return;syncUnit();var c=JSON.parse(JSON.stringify(snapshotUnit()));state.units.push(c);state.unit=state.units.length-1;loadUnit(state.units[state.unit]);}
 function removeUnit(i){if(state.units.length<=1)return;syncUnit();state.units.splice(i,1);if(state.unit>=state.units.length)state.unit=state.units.length-1;loadUnit(state.units[state.unit]);}
 function otherUnitsKw(){if(!state.multi)return 0;var s=0;state.units.forEach(function(u,i){if(i!==state.unit&&u.family&&u.kw)s+=u.kw;});return s;}
 function sumKw(){return ((state.family&&state.kw)?state.kw:0)+otherUnitsKw();}
@@ -430,7 +435,7 @@ function maxOffgridKw(){if(!state.family||!state.kw)return 0;var bk=batteryTotal
 function famValid(k){return FAMILIES[k].kw.some(kwValid);}
 function famMaxKWp(k){return 2*Math.max.apply(null,FAMILIES[k].kw);}
 function selInvalid(){return state.family&&state.kw&&state.panelCount>0&&!kwValid(state.kw);}
-function synItem(){return state.family==='WIT-HU'?'Growatt SYN backup box (WIT \u2014 verify model)|separate, not integrated':'Growatt SYN 100\u2011XH\u201130|3\u2011phase backup box';}
+function synItem(){return (state.family==='WIT-HU'||state.family==='WIT-XHU')?'Growatt SYN backup box (WIT \u2014 verify model)|separate, not integrated':'Growatt SYN 100\u2011XH\u201130|3\u2011phase backup box';}
 function clampInputs(){
   if(!state.family)return;
   if(fam().battery==='RISE'){state.inputs=[];return;}
@@ -498,6 +503,12 @@ function unitBatteryKwh(u){
   return mods*MODULE_KWH+((u.apx==='2.0')?bms*MODULE_KWH:0);
 }
 function battMaxKw(kwh){return Math.round((kwh/2)*10)/10;}
+function totalBatteryKwh(){
+  syncUnit();
+  var t=0;
+  state.units.forEach(function(u){t+=unitBatteryKwh(u);});
+  return Math.round(t*10)/10;
+}
 function unitKwp(u){return Math.round((u.panelCount||0)*(u.panelW||0)/10)/100;}
 function unitTowerMaxH(u){
   var fm=FAMILIES[u.family];
@@ -525,7 +536,9 @@ function buildBOM(){var map={};function add(x){if(x.qty<=0)return;var k=x.g+'|'+
       if(f.battery==='RISE')add({g:'Battery',item:'RISE 261 kWh LFP battery|integrated in the cabinet \u2014 incl. UPS/EMS',qty:1});
     }
     if(needsSyn())add({g:'Backup',item:synItem(),qty:1});
-    if(state.family&&state.backupMode)add({g:'Backup',item:'Bypass breaker (recommended)|for backup service \u2014 mounted just outside the inverter',qty:1});
+    if(state.family==='MOD-HU'&&state.backupMode==='whole'&&state.units.length<=1&&state.synOptIn&&!needsSyn())add({g:'Backup',item:'Growatt SYN 100\u2011XH\u201130 (optional)|extra backup switching capacity alongside MOD\u2011HU\u2019s integrated backup',qty:1});
+    if(state.family&&state.backupMode&&state.family!=='MODA')add({g:'Backup',item:'Bypass breaker (recommended)|for backup service \u2014 mounted just outside the inverter',qty:1});
+    if(state.family==='MODA'&&state.backupMode)add({g:'Backup',item:'Integrated 63 A bypass|built into the MODA \u2014 grid can feed the backup load, auto\u2011switch on inverter fault',qty:1});
     if(state.inputs.length&&fam()&&fam().battery!=='RISE'&&fam().battery!=='MODA'){var t=batteryTotals();
       if(isAxeFam()){
         add({g:'Battery',item:'Growatt AXE HV battery module|\u22485.12 kWh, pre\u2011installed in cabinet',qty:t.mods});
@@ -548,8 +561,10 @@ function buildBOM(){var map={};function add(x){if(x.qty<=0)return;var k=x.g+'|'+
   });
   loadUnit(saved);
   if(state.dongle)add({g:'Connectivity',item:DONGLES[state.dongle].name+'|'+DONGLES[state.dongle].desc,qty:1});
+  if(state.dongle==='grohome')add({g:'Connectivity',item:'Growatt ShineRFStick\u2011X2|RF module, one per inverter',qty:Math.min(state.units.length||1,12)});
+  if(state.thirdParty&&state.units.some(function(u){return !!u.family;}))add({g:'Inverter',item:'Third\u2011party PV inverter (existing)|AC\u2011coupled \u2014 verify grid settings &amp; compatibility',qty:(state.tpCount||1)});
   if(state.units.length>1&&state.units.some(function(u){return u.backupMode==='whole';})&&state.units.every(function(u){return !u.family||!FAMILIES[u.family]||FAMILIES[u.family].backup==='integrated';}))add({g:'Backup',item:'Growatt SYN 100\u2011XH\u201130|whole\u2011home backup for multi\u2011inverter \u2014 up to 58 A',qty:1});
-  if(state.metering==='meter')add({g:'Metering',item:state.meterType==='TPM-E'?'Growatt Smart Meter TPM\u2011E|direct, 3\u2011phase':'Growatt Smart Meter TPM\u2011C|CT type (DTSU666), 3\u2011phase',qty:1});
+  if(state.metering==='meter')add({g:'Metering',item:state.meterType==='TPM-E'?'Growatt Smart Meter TPM\u2011E|direct, 3\u2011phase':(state.meterType==='TPM-6CT-C'?'Growatt Smart Meter TPM\u20116CT\u2011C|two CT clamps \u2014 MODA + third\u2011party inverter':'Growatt Smart Meter TPM\u2011C|CT type (DTSU666), 3\u2011phase'),qty:1});
   return Object.keys(map).map(function(k){return map[k];}).sort(function(a,b){return GROUP_ORDER.indexOf(a.g)-GROUP_ORDER.indexOf(b.g);});}
 function buildText(){syncUnit();var saved=snapshotUnit();var s='GROWATT - SYSTEM DESIGN\n'+new Date().toLocaleDateString()+'\n\n';
   s+='Segment: '+(state.segment==='res'?'Residential':state.segment==='com'?'Commercial':'(not chosen)')+'\n';
@@ -595,7 +610,11 @@ function pvTopHTML(){
 function segStep(){
   var segs=[['res','Residential','Villa / bostad \u2014 MOD, MID &amp; MODA \u00b7 APX battery'],['com','Commercial','C&amp;I \u2014 MID, WIT &amp; RISE \u00b7 APX, AXE &amp; RISE storage']];
   var cards=segs.map(function(sg){var on=state.segment===sg[0];return '<button class="opt'+(on?' on':'')+'" data-act="seg" data-s="'+sg[0]+'"><div class="name">'+sg[1]+'</div><div class="meta">'+sg[2]+'</div></button>';}).join('');
-  var adv='<div class="switchrow" style="margin-top:12px"><div><div class="lab">Advanced settings \u2014 multiple inverters</div><div class="s2">Duplicate the inverter you\u2019re working on and configure several \u2014 everything sums in \u201cYour system\u201d.</div></div><span class="sw '+(state.multi?'on':'')+'" data-act="multi"><span class="knob"></span></span></div>'+
+  var isModaFam=state.family==='MODA';
+  var adv=(isModaFam
+    ?'<div class="note" style="margin-top:12px">'+ic('info',14)+'<span><b>MODA supports one inverter only</b> \u2014 multiple MODA in series is not possible. Need more AC power? Add a <b>third\u2011party inverter</b> below.</span></div>'
+    :'<div class="switchrow" style="margin-top:12px"><div><div class="lab">Advanced settings \u2014 multiple inverters</div><div class="s2">Add inverters \u2014 each starts as a copy of the one you\u2019re working on, then configure each \u2014 everything sums in \u201cYour system\u201d.'+(state.units.some(function(u){return u.family==='RISE-261';})||state.family==='RISE-261'?' <b>RISE 261H\u2011XH: up to 10 units in parallel (\u2248 2.61 MWh).</b>':'')+'</div></div><span class="sw '+(state.multi?'on':'')+'" data-act="multi"><span class="knob"></span></span></div>')+
+    (state.family?'<div class="switchrow" style="margin-top:10px"><div><div class="lab">Third\u2011party inverter (AC\u2011coupled)</div><div class="s2">Add an existing third\u2011party PV inverter alongside the Growatt system.'+(state.family==='MODA'?' MODA works with <b>APX 2.0 only</b> \u2014 one battery stack.':'')+(state.units.length>1?' With multiple inverters a <b>smart meter</b> is required to measure it.':'')+'</div></div><span class="sw '+(state.thirdParty?'on':'')+'" data-act="thirdparty"><span class="knob"></span></span></div>'+(state.thirdParty?'<div class="chips" style="margin-top:8px">'+[1,2,3].map(function(n){return '<button class="chip sm '+(state.tpCount===n?'on':'')+'" data-act="tpcount" data-n="'+n+'">'+n+' \u00d7</button>';}).join('')+'</div>':''):'')+
     (state.multi?'<div class="notice g" style="margin-top:10px">'+ic('info',14)+'<span>Multi\u2011inverter systems require <b>ShineSEM\u2011X</b> or <b>ShineMaster</b> for coordinated monitoring \u2014 set in step 3. A regular dongle (WiFi/LAN/4G) alone isn\u2019t enough for multiple units.</span></div>':'');
   var aiCard='<button class="opt ai" data-act="goai"><div class="name">'+ic('cpu',14)+' Growatt AI</div><div class="meta">How Smart Scheduling Mode works</div></button>';
   return '<div class="step" id="stp-seg">'+stepHead(1,'layers','System type','Residential or Commercial \u2014 filters inverters &amp; batteries')+'<div class="step-b"><div class="grid g3">'+cards+aiCard+'</div>'+adv+'</div></div>';
@@ -607,16 +626,17 @@ function unitTabsHTML(){
     var lbl=u.family?(FAMILIES[u.family].name+' \u00b7 '+(u.kw||'?')+' kW'):('Inverter '+(i+1));
     return '<span class="uchip'+(i===state.unit?' on':'')+'" data-act="unit" data-i="'+i+'">'+(i+1)+'. '+lbl+(state.units.length>1?' <b data-act="unitdel" data-i="'+i+'">\u00d7</b>':'')+'</span>';
   }).join('');
-  var addBtn=state.units.length<10?'<button class="chip sm" data-act="unitadd">+ Duplicate</button>':'';
+  var addBtn=(state.units.length<unitCap()&&state.family!=='MODA')?'<button class="chip sm" data-act="unitadd">+ Add inverter</button>':'';
   return '<div class="unittabs">'+ic('layers',13)+chips+addBtn+'</div>';
 }
 function invFamSectionHTML(){
   var cards=Object.keys(FAMILIES).filter(function(k){return FAMILIES[k].seg===state.segment;}).map(function(k){
     var v=FAMILIES[k],valid=famValid(k),on=state.family===k;
-    var cls='opt';if(valid&&on)cls+=' on';if(!valid)cls+=' crossed';if(on&&!valid)cls+=' invalidsel';
+    var modaLock=(k==='MODA'&&state.multi&&state.units.length>1);
+    var cls='opt';if(valid&&on)cls+=' on';if(!valid||modaLock)cls+=' crossed';if(on&&!valid)cls+=' invalidsel';
     var badge=v.backup==='integrated'?'<span class="badge g">'+ic('shield',11)+'Integrated backup</span>':'<span class="badge a">'+ic('plug',11)+'Needs SYN box</span>';
-    var x=!valid?'<div class="x">'+ic('alert',11)+'Max '+famMaxKWp(k)+' kWp \u00b7 too small</div>':'';
-    return '<button class="'+cls+'" data-act="fam" data-k="'+k+'"><div class="name">'+v.name+'</div><div class="meta">'+v.phase+' \u00b7 '+v.inputs+' input'+(v.inputs>1?'s':'')+' \u00b7 '+v.battery+' battery</div>'+badge+x+'</button>';
+    var x=!valid?'<div class="x">'+ic('alert',11)+'Max '+famMaxKWp(k)+' kWp \u00b7 too small</div>':(modaLock?'<div class="x">'+ic('alert',11)+'Single inverter only \u2014 no series</div>':'');
+    return '<button class="'+cls+'" data-act="fam" data-k="'+k+'"'+(modaLock?' disabled title="MODA supports one inverter only \u2014 add a third\u2011party inverter instead"':'')+'><div class="name">'+v.name+'</div><div class="meta">'+v.phase+' \u00b7 '+v.inputs+' input'+(v.inputs>1?'s':'')+' \u00b7 '+v.battery+' battery</div>'+badge+x+'</button>';
   }).join('');
   var invSection;
   if(state.family){var f=fam();
@@ -639,33 +659,56 @@ function invStepBodyHTML(){
 }
 function invStep(){return '<div class="step" id="stp-inv">'+stepHead(2,'cpu','Panels &amp; inverter','Enter your panels first \u2014 it sets which inverters are suitable')+'<div class="step-b" id="invStepBody">'+invStepBodyHTML()+'</div></div>';}
 function dongleStep(){
-  var multiLock=state.multi;
-  var opts=Object.keys(DONGLES).filter(function(k){return !multiLock||k==='shinesem'||k==='shinemaster';});
-  var locked=Object.keys(DONGLES).filter(function(k){return multiLock&&k!=='shinesem'&&k!=='shinemaster';});
-  var cards=opts.map(function(k){var d=DONGLES[k],on=state.dongle===k;return '<button class="opt compact '+(on?'on':'')+'" data-act="dongle" data-k="'+k+'"><div class="name">'+d.name+'</div><div class="meta">'+d.desc+'</div></button>';}).join('');
-  var lockedCards=locked.map(function(k){var d=DONGLES[k];return '<button class="opt crossed" disabled title="Not enough for multi\u2011inverter \u2014 use ShineSEM\u2011X or ShineMaster"><div class="name">'+d.name+'</div><div class="meta">'+d.desc+'</div></button>';}).join('');
+  var multiLock=state.multi&&state.units.length>1;
+  var cards=Object.keys(DONGLES).map(function(k){
+    var d=DONGLES[k],on=state.dongle===k;
+    var lock=multiLock&&k!=='shinesem'&&k!=='shinemaster'&&k!=='grohome';
+    if(lock)return '<button class="opt compact crossed" disabled title="Not enough for multi\u2011inverter \u2014 use ShineSEM\u2011X or ShineMaster"><div class="name">'+d.name+'</div><div class="meta">'+d.desc+'</div><div class="x">'+ic('alert',11)+'Multi\u2011inverter \u2014 use ShineSEM / ShineMaster</div></button>';
+    return '<button class="opt compact '+(on?'on':'')+'" data-act="dongle" data-k="'+k+'"><div class="name">'+d.name+'</div><div class="meta">'+d.desc+'</div></button>';
+  }).join('');
   var hint;
   if(state.dongle==='shinesem')hint='<div class="notice g">'+ic('check',14)+'<span><b>ShineSEM\u2011X</b> added \u2014 <b>no smart meter is needed, metering is included</b>. You can still add a smart meter in step 4 for extra measurement.</span></div>';
   else if(state.dongle==='shinemaster')hint='<div class="notice g">'+ic('check',14)+'<span><b>ShineMaster</b> added \u2014 add a <b>Smart Meter in step 4</b> to bring the system online. Same placement and battery\u2011side functions as ShineSEM\u2011X, but metering is not included.</span></div>';
+  else if(state.dongle==='grohome')hint='<div class="notice g">'+ic('check',14)+'<span><b>GroHomeManager\u2011X</b> added \u2014 <b>CT metering is built in</b>, so the smart\u2011meter step is skipped entirely. A <b>ShineRFStick\u2011X2</b> is added to every inverter (up to 12).</span></div>'+
+    '<div class="sublabel" style="margin-top:10px">Connection to each inverter</div><div class="chips"><button class="chip sm '+(state.groHomeMode==='rs485'?'on':'')+'" data-act="grohomemode" data-v="rs485">RS485 \u00b7 wired</button><button class="chip sm '+(state.groHomeMode==='wireless'?'on':'')+'" data-act="grohomemode" data-v="wireless">Wireless \u00b7 RF</button></div>';
   else if(state.dongle)hint='<div class="notice g">'+ic('check',14)+'<span><b>'+DONGLES[state.dongle].name+'</b> added. Tap it again to remove.</span></div>';
   else if(multiLock)hint='<div class="pverr">'+ic('alert',15)+'Multi\u2011inverter systems require <b>ShineSEM\u2011X</b> or <b>ShineMaster</b> \u2014 pick one above.</div>';
   else hint='<div class="note">'+ic('info',14)+'<span>Add a Growatt dongle to get the system online \u2014 <b>ShineWiFi\u2011X</b> is the standard WiFi stick, and that\u2019s all a single inverter needs. A <b>smart meter is recommended</b> in step 4.</span></div>';
-  var lockNote=multiLock?'<div class="note" style="margin-top:11px">'+ic('info',14)+'<span>Only ShineSEM\u2011X / ShineMaster shown \u2014 required for multi\u2011inverter coordination. Grayed out below: '+lockedCards+'</span></div>':'';
+  var lockNote='';
   return '<div class="step" id="stp-online">'+stepHead(3,'wifi','Getting system online',multiLock?'ShineSEM\u2011X or ShineMaster required for multiple inverters':'Monitoring dongle / energy manager',multiLock?'Required':'Optional')+
     '<div class="step-b"><div class="grid dongrid">'+cards+'</div>'+hint+'</div></div>';
 }
 function meterStep(){
   var m=state.metering;
+  var singleInv=state.units.length<=1;
   var semNote='';
   if(state.dongle==='shinesem')semNote='<div class="notice g" style="margin-top:0;margin-bottom:12px">'+ic('info',14)+'<span><b>ShineSEM\u2011X selected</b> \u2014 no smart meter is needed, <b>metering is included</b>. You can still add one below for <b>extra measurement</b>.</span></div>';
-  else if(state.dongle==='shinemaster'&&m!=='meter')semNote='<div class="pverr" style="margin-top:0;margin-bottom:12px">'+ic('alert',15)+'<span><b>ShineMaster requires a smart meter</b> \u2014 add one below to bring the system online.</span></div>';
-  var sub=m==='meter'?'<div class="sublabel">Smart meter model</div><div class="chips"><button class="chip sm '+(state.meterType==='TPM-E'?'on':'')+'" data-act="mt" data-t="TPM-E">TPM\u2011E \u00b7 direct</button><button class="chip sm '+(state.meterType==='TPM-C'?'on':'')+'" data-act="mt" data-t="TPM-C">TPM\u2011C \u00b7 CT (DTSU666)</button></div>':'';
+  else if(state.dongle==='shinemaster'&&m!=='meter')semNote='<div class="pverr" style="margin-top:0;margin-bottom:12px">'+ic('alert',15)+'<span><b>ShineMaster requires a smart meter</b> at the incoming point to bring the system online.'+(singleInv?' With a <b>single inverter</b>, <b>TPM\u20116CT\u2011C</b> (2\u00d7CT) is recommended.':'')+'</span></div>';
+  var modaTp=state.family==='MODA'&&state.thirdParty;
+  if(state.thirdParty&&state.units.length>1&&m!=='meter')semNote+='<div class="pverr" style="margin-top:0;margin-bottom:12px">'+ic('alert',15)+'<span><b>Third\u2011party inverter with multiple inverters requires a smart meter</b> to measure it \u2014 add one below.</span></div>';
+  if(modaTp)semNote+=(m==='meter'&&state.meterType==='TPM-6CT-C')
+    ?'<div class="notice g" style="margin-top:0;margin-bottom:12px">'+ic('check',14)+'<span><b>TPM\u20116CT\u2011C</b> added \u2014 required for MODA + third\u2011party inverter. Its <b>two CT clamps</b> measure both: one in front of the third\u2011party inverter, one at the meter.</span></div>'
+    :'<div class="pverr" style="margin-top:0;margin-bottom:12px">'+ic('alert',15)+'<span><b>MODA + third\u2011party inverter requires a TPM\u20116CT\u2011C smart meter</b> (two CT clamps) \u2014 select it below.</span></div>';
+  else if(singleInv&&m==='meter')semNote+='<div class="note" style="margin-top:0;margin-bottom:12px">'+ic('info',14)+'<span>With a <b>single inverter</b>, <b>TPM\u20116CT\u2011C</b> is recommended \u2014 its <b>two CT clamps</b> measure both the grid feed and the inverter side.</span></div>';
+  var sub=m==='meter'?'<div class="sublabel">Smart meter model</div><div class="chips"><button class="chip sm '+(state.meterType==='TPM-E'?'on':'')+'" data-act="mt" data-t="TPM-E">TPM\u2011E \u00b7 direct</button><button class="chip sm '+(state.meterType==='TPM-C'?'on':'')+'" data-act="mt" data-t="TPM-C">TPM\u2011C \u00b7 CT (DTSU666)</button>'+((modaTp||singleInv)?'<button class="chip sm '+(state.meterType==='TPM-6CT-C'?'on':'')+'" data-act="mt" data-t="TPM-6CT-C">TPM\u20116CT\u2011C \u00b7 2\u00d7CT</button>':'')+'</div>':'';
   var metaTxt=state.dongle==='shinesem'?' \u2014 optional extra with ShineSEM':(state.dongle==='shinemaster'?' \u2014 required with ShineMaster':' \u2014 recommended');
   var isOptional=state.dongle==='shinesem';
-  var fuseField='<div class="field" style="margin-top:14px"><label>Main Fuse (A) \u2014 incoming cabinet</label><input id="mainFuseA" type="number" inputmode="numeric" min="0" max="1000" step="1" value="'+(state.mainFuseA||'')+'" placeholder="e.g. 25"></div>';
-  var meterBadge=state.dongle==='shinemaster'?'Required':(isOptional?'Optional':'Recommended');
-  return '<div class="step" id="stp-meter">'+stepHead(4,'activity','Energy meter','How the system measures the grid',meterBadge)+
-    '<div class="step-b">'+semNote+'<div class="grid g2"><button class="opt compact '+(m==='meter'?'on':'')+'" data-act="metering" data-m="meter"><div class="name">Smart Meter</div><div class="meta">TPM\u2011E / TPM\u2011C'+metaTxt+'</div></button></div>'+sub+fuseField+'</div></div>';
+  var FUSE_SIZES_ALL=[16,20,25,35,50,63,80,100,125,160,200,250,315,400];
+  var FUSE_SIZES=state.segment==='res'?FUSE_SIZES_ALL.filter(function(a){return a<=63;}):FUSE_SIZES_ALL;
+  if(state.segment==='res'&&state.mainFuseA>63)state.mainFuseA=null;
+  var fuseKw=state.mainFuseA>0?Math.round(state.mainFuseA*230*3/100)/10:0;
+  var fuseField='<div class="field" style="margin-top:14px"><label>Main Fuse (A) \u2014 incoming cabinet</label>'+
+    '<select id="mainFuseA"><option value="">Select size\u2026</option>'+FUSE_SIZES.map(function(a){return '<option value="'+a+'"'+(state.mainFuseA===a?' selected':'')+'>'+a+' A</option>';}).join('')+'</select>'+
+    (state.mainFuseA>0?('<div class="s2" style="margin-top:6px">Allowed power: <b>'+state.mainFuseA+'A \u00d7 230V \u00d7 3 = '+fuseKw+' kW</b></div>'):'')+
+    '</div>';
+  var meterBadge=(state.dongle==='shinemaster'||modaTp||(state.thirdParty&&state.units.length>1))?'Required':(isOptional?'Optional':'Recommended');
+  var hideMeterSection=state.dongle==='grohome';
+  if(hideMeterSection&&state.metering)state.metering=null;
+  var meterBody=hideMeterSection
+    ?'<div class="notice g">'+ic('check',14)+'<span><b>GroHomeManager\u2011X</b> already measures the grid through its built\u2011in CT clamps \u2014 a separate smart meter isn\u2019t needed here.</span></div>'
+    :(semNote+'<div class="grid g2"><button class="opt compact '+(m==='meter'?'on':'')+'" data-act="metering" data-m="meter"><div class="name">Smart Meter</div><div class="meta">TPM\u2011E / TPM\u2011C'+metaTxt+'</div></button></div>'+sub);
+  return '<div class="step" id="stp-meter">'+stepHead(4,'activity','Energy meter','How the system measures the grid',hideMeterSection?'Included':meterBadge)+
+    '<div class="step-b">'+meterBody+fuseField+'</div></div>';
 }
 function loadCalcHTML(){
   var mo=maxOffgridKw();
@@ -684,7 +727,7 @@ function backupGuidanceHTML(){
   if(!state.backupMode)return '';
   var bkw=state.backupLoadKw||0;
   var multi=state.multi&&state.units.length>1;
-  var SYN_FAMS={'MOD-XH':1,'MOD-HU':1,'WIT-HU':1};
+  var SYN_FAMS={'MOD-XH':1,'MOD-HU':1,'WIT-HU':1,'WIT-XHU':1};
   var out='';
   if(state.backupMode==='whole'){
     if(multi){
@@ -697,17 +740,26 @@ function backupGuidanceHTML(){
     } else if(state.family==='MOD-HU'){
       if(bkw>0&&state.kw&&bkw>state.kw) out+='<div class="pverr">'+ic('alert',15)+'<span>A <b>'+bkw+' kW</b> whole\u2011home load needs a <b>\u2265 '+bkw+' kW</b> inverter \u2014 this MOD\u2011HU is <b>'+state.kw+' kW</b>. Pick a higher power class in step 2.</span></div>';
       else if(bkw>0) out+='<div class="notice g">'+ic('check',14)+'<span><b>MOD\u2011HU integrated whole\u2011home backup</b> \u2014 the '+state.kw+' kW power class covers the '+bkw+' kW draw.</span></div>';
-    } else if(state.family==='WIT-HU'){
-      out+='<div class="note">'+ic('info',14)+'<span><b>WIT\u2011HU has no integrated backup</b> \u2014 the SYN box in this step handles whole\u2011home switching.</span></div>';
+      out+='<div class="switchrow" style="margin-top:10px"><div><div class="lab">Add a SYN box (optional)</div><div class="s2">Not required \u2014 MOD\u2011HU\u2019s backup is already integrated. Add one for extra switching capacity if you want it.</div></div><span class="sw '+(state.synOptIn?'on':'')+'" data-act="synoptin"><span class="knob"></span></span></div>';
+    } else if(state.family==='WIT-HU'||state.family==='WIT-XHU'){
+      out+='<div class="note">'+ic('info',14)+'<span><b>'+fam().name+' has no integrated backup</b> \u2014 the SYN box in this step handles whole\u2011home switching.</span></div>';
+    } else if(state.family==='MODA'){
+      if(bkw>0) out+='<div class="notice g">'+ic('check',14)+'<span><b>MODA integrated whole\u2011home backup</b> \u2014 up to <b>63 A</b> reserve power, with <b>150% peak output for up to 10 s</b>.</span></div>';
     }
   } else if(state.backupMode==='partial'){
     if(state.family==='MOD-HU'&&multi) out+='<div class="note">'+ic('info',14)+'<span>Several MOD\u2011HU with partial backup \u2014 <b>no limitations</b>.</span></div>';
-    if(state.family==='WIT-HU'){
-      out+='<div class="note">'+ic('info',14)+'<span>WIT\u2011HU has no integrated backup \u2014 partial backup runs through the <b>SYN box</b>.</span></div>';
+    if(state.family==='WIT-HU'||state.family==='WIT-XHU'){
+      out+='<div class="note">'+ic('info',14)+'<span>'+fam().name+' has no integrated backup \u2014 partial backup runs through the <b>SYN box</b>.</span></div>';
     }
+    if(state.family==='MODA') out+='<div class="notice g">'+ic('check',14)+'<span><b>MODA</b> supports both whole\u2011home (Main load) and selected circuits (partial load) \u2014 up to <b>63 A</b>, 150% peak for 10 s.</span></div>';
     if(bkw>0&&state.kw&&bkw>state.kw) out+='<div class="pverr">'+ic('alert',15)+'<span>Partial backup load <b>'+bkw+' kW</b> exceeds this inverter\u2019s <b>'+state.kw+' kW</b> rating.</span></div>';
   }
-  if(state.backupMode) out+='<div class="notice g">'+ic('check',14)+'<span><b>Bypass breaker (recommended)</b> \u2014 mounted just outside the inverter for backup service. Added to your system.</span></div>';
+  if(state.backupMode){
+    if(state.family==='MODA')
+      out+='<div class="notice g">'+ic('check',14)+'<span>The <b>MODA series has an integrated 63 A bypass</b>, so the backup load can be fed directly from the grid when needed: <b>1)</b> lets the grid supply the backup load, and <b>2)</b> switches to bypass mode automatically if the inverter operates abnormally or faults \u2014 ensuring uninterrupted power to the backup load. No external bypass breaker needed.</span></div>';
+    else
+      out+='<div class="notice g">'+ic('check',14)+'<span><b>Bypass breaker (recommended)</b> \u2014 mounted just outside the inverter for backup service. Added to your system.</span></div>';
+  }
   return out;
 }
 function backupBodyHTML(){
@@ -723,6 +775,24 @@ function backupBodyHTML(){
     var wholeDesc=(state.multi&&state.units.length>1)?'Every circuit stays on \u2014 <b>requires a SYN box</b> with multiple inverters':'Every circuit in the property stays on during an outage';
     var modes=[['partial','Partial backup','Only essential circuits stay on \u2014 wired to the LOAD port'],['whole','Whole\u2011home backup',wholeDesc]];
     var mcards=modes.map(function(m){var on=state.backupMode===m[0];return '<button class="opt'+(on?' on':'')+'" data-act="backupmode" data-v="'+m[0]+'"><div class="name">'+m[1]+'</div><div class="meta">'+m[2]+'</div></button>';}).join('');
+    var loadKwField='<div class="field" style="margin-top:13px"><label>Property peak load (kW) \u2014 manual estimate</label><input id="loadKw" type="number" inputmode="decimal" min="0" max="999" step="0.5" value="'+(state.loadKw||'')+'" placeholder="e.g. 6"></div>'+
+      '<div id="loadCalc">'+loadCalcHTML()+'</div>';
+    if(state.units.length>1){
+      var allModHu=state.units.every(function(u,i){var f=(i===state.unit)?state.family:u.family;return f==='MOD-HU';});
+      if(!allModHu){
+        state.backupMode=null;state.units.forEach(function(u){u.backupMode=null;});
+        loadSection='<div class="pverr" style="margin-top:14px">'+ic('alert',15)+'<span><b>Backup is not available with multiple inverters</b> of this type. Backup needs a <b>single inverter with a SYN box</b> \u2014 or <b>MOD\u2011HU inverters</b>, which always support <b>partial backup</b> even in a group.</span></div>'+loadKwField;
+        return body+loadSection;
+      }
+      if(state.backupMode==='whole'){state.backupMode=null;}
+      state.units.forEach(function(u){if(u.backupMode==='whole')u.backupMode=null;});
+      mcards='<button class="opt'+(state.backupMode==='partial'?' on':'')+'" data-act="backupmode" data-v="partial"><div class="name">Partial backup</div><div class="meta">Only essential circuits stay on \u2014 always available with MOD\u2011HU, per inverter</div></button>'+
+        '<button class="opt crossed" disabled title="Whole\u2011home backup needs a single inverter"><div class="name">Whole\u2011home backup</div><div class="meta">Needs a <b>single inverter</b> (SYN box or one MOD\u2011HU)</div><div class="x">'+ic('alert',11)+'Single inverter only</div></button>';
+    } else if(backupType()==='box'&&!state.backupOn){
+      state.backupMode=null;
+      loadSection='<div class="note" style="margin-top:14px">'+ic('info',14)+'<span><b>Enable the SYN backup box above</b> to configure backup \u2014 without it the system is grid\u2011tied only.</span></div>'+loadKwField;
+      return body+loadSection;
+    }
     var mo=maxOffgridKw();
     var backupLoadField='<div class="field" style="margin-top:14px"><label>Backup load \u2014 max power draw (kW)</label><input id="backupLoadKw" type="number" inputmode="decimal" min="0" max="99" step="0.1" value="'+(state.backupLoadKw||'')+'" placeholder="e.g. 5"></div>';
     loadSection=backupLoadField+
@@ -871,12 +941,25 @@ function nrTag(cx,by,num,sc,active){
   var fs=(6.8*Math.max(sc,0.7)).toFixed(1);
   return '<text x="'+cx+'" y="'+(by-5)+'" text-anchor="middle" font-size="'+fs+'" font-weight="800" letter-spacing=".04em" fill="'+(active?'#1f7a45':'#7a8794')+'">NR '+num+'</text>';
 }
-function drawExtraUnitRow(u,rowIx,rowBaseY,scale,skx,sky,active){
+function rfHat(x,y,mir2,wireless){
+  var hw=11,hh=7;
+  var hx=mir2?(x-hw+3):(x-3);
+  var s='<g><rect x="'+hx+'" y="'+(y-hh/2)+'" width="'+hw+'" height="'+hh+'" rx="2" fill="#e7ebf0" stroke="#8a97a6" stroke-width="1"></rect><circle cx="'+(hx+hw/2)+'" cy="'+y+'" r="1.3" fill="#5b6b74"></circle></g>';
+  if(wireless){
+    var wx=hx+hw/2, wy=y-hh/2-2;
+    s+='<path class="rfwave" d="M'+(wx-6)+','+(wy-2)+' A8 8 0 0 1 '+(wx+6)+','+(wy-2)+'" style="animation-delay:0s"></path>';
+    s+='<path class="rfwave" d="M'+(wx-11)+','+(wy-6)+' A15 15 0 0 1 '+(wx+11)+','+(wy-6)+'" style="animation-delay:.3s"></path>';
+    s+='<path class="rfwave" d="M'+(wx-16)+','+(wy-10)+' A22 22 0 0 1 '+(wx+16)+','+(wy-10)+'" style="animation-delay:.6s"></path>';
+    s+='<path class="rfwave" d="M'+(wx-21)+','+(wy-14)+' A29 29 0 0 1 '+(wx+21)+','+(wy-14)+'" style="animation-delay:.9s"></path>';
+  }
+  return s;
+}
+function drawExtraUnitRow(u,rowIx,rowBaseY,scale,skx,sky,active,mir){
   var fm=FAMILIES[u.family];
   if(!fm)return '';
   var s='';
   var tScale=Math.max(scale,0.68);
-  var iw=54*scale,ih=88*scale;
+  var iw=62*scale,ih=96*scale;
   var isRiseU=fm.battery==='RISE',isModaU=fm.battery==='MODA',isWitHuU=u.family==='WIT-HU';
   var a2u=u.apx==='2.0';
   if(isRiseU){
@@ -884,14 +967,17 @@ function drawExtraUnitRow(u,rowIx,rowBaseY,scale,skx,sky,active){
     s+=drawIsoBox(rowIx,rowBaseY,rw,rh,skx*scale,sky*scale,'#dbe7ea','#eef5f6','#aec4c9',true);
     s+=gauge(rowIx+rw-16*scale,rowBaseY-rh+16*scale,7*tScale,true);
     if(u.num)s+=nrTag(rowIx+rw/2,rowBaseY,u.num,scale,active);
+    if(state.dongle==='grohome')s+=rfHat(mir?rowIx:(rowIx+rw),rowBaseY-rh+10,mir,state.groHomeMode==='wireless');
     return s;
   }
   if(isWitHuU){
     s+=drawIsoBox(rowIx,rowBaseY,iw,ih,skx*scale,sky*scale,'#f7f9fb','#ffffff','#d7dde3',true);
     s+=gauge(rowIx+iw/2,rowBaseY-ih+22*scale,8.5*tScale,true);
+    if(u.kw)s+='<text x="'+(rowIx+iw/2)+'" y="'+(rowBaseY-ih*0.28-8)+'" text-anchor="middle" font-size="6" font-weight="800" fill="#5d6b78">INV</text><text x="'+(rowIx+iw/2)+'" y="'+(rowBaseY-ih*0.28)+'" text-anchor="middle" font-size="7.5" font-weight="800" fill="#2f3c4a">'+u.kw+'kW</text>';
   } else if(!isModaU){
     s+=drawIsoBox(rowIx,rowBaseY,iw,ih,skx*scale,sky*scale,'#eef1f5','#f8fbfd','#c7cfd9',true);
     s+='<circle cx="'+(rowIx+iw/2)+'" cy="'+(rowBaseY-ih+18*scale)+'" r="'+(4*scale)+'" fill="#33da7a"></circle>';
+    if(u.kw)s+='<text x="'+(rowIx+iw/2)+'" y="'+(rowBaseY-ih*0.32-8)+'" text-anchor="middle" font-size="6" font-weight="800" fill="#5d6b78">INV</text><text x="'+(rowIx+iw/2)+'" y="'+(rowBaseY-ih*0.32)+'" text-anchor="middle" font-size="7.5" font-weight="800" fill="#2f3c4a">'+u.kw+'kW</text>';
   }
   if(!isModaU&&u.num)s+=nrTag(rowIx+iw/2,rowBaseY-ih,u.num,scale,active);
   if(isModaU){
@@ -911,6 +997,7 @@ function drawExtraUnitRow(u,rowIx,rowBaseY,scale,skx,sky,active){
     s+='<rect x="'+rowIx+'" y="'+(mcy-mCapH+1)+'" width="'+iw+'" height="'+(mCapH-2)+'" fill="#eef1f5" stroke="#33da7a" stroke-width="1"></rect>';
     s+=gauge(rowIx+iw/2,mcy-mCapH/2,7*tScale,true);
     if(u.num)s+=nrTag(rowIx+iw/2,mcy-mCapH,u.num,scale,active);
+    if(state.dongle==='grohome')s+=rfHat(mir?rowIx:(rowIx+iw),mcy-mCapH+10,mir,state.groHomeMode==='wireless');
     return s;
   }
   var towersU=[];
@@ -924,10 +1011,10 @@ function drawExtraUnitRow(u,rowIx,rowBaseY,scale,skx,sky,active){
   }
   towersU=towersU.slice(0,6);
   var nT=towersU.length,tGap=7*scale;
-  var tAvail=rowIx-12-14;
+  var tAvail=mir?(458-(rowIx+iw+26)):(rowIx-26-14);
   var twU=nT?Math.min(46*scale,(tAvail-(nT-1)*tGap)/nT):0;
   var totTW=nT?nT*twU+(nT-1)*tGap:0;
-  var tx0u=rowIx-12-totTW;
+  var tx0u=mir?(rowIx+iw+26):(rowIx-26-totTW);
   towersU.forEach(function(t,i){
     var tw=twU,mh=(t.axe?9:15)*scale,baseH=13*scale,bmsH=(t.bms?23:0)*scale,th=baseH+t.mods*mh+bmsH;
     var x=tx0u+i*(tw+tGap),y=rowBaseY;
@@ -944,14 +1031,14 @@ function drawExtraUnitRow(u,rowIx,rowBaseY,scale,skx,sky,active){
     }
     if(t.bms){
       s+='<rect x="'+x+'" y="'+(cy-bmsH+1)+'" width="'+tw+'" height="'+(bmsH-2)+'" fill="#e3f3ea" stroke="#33da7a" stroke-width="0.9"></rect>';
-      s+=gauge(x+tw*0.32,cy-bmsH/2,6.5*tScale,true);
-      s+='<text x="'+(x+tw*0.68)+'" y="'+(cy-bmsH/2+(a2u?0:2.3*tScale))+'" text-anchor="middle" font-size="'+(6.3*tScale).toFixed(1)+'" font-weight="800" fill="#1f7a45">BMS</text>';
+      s+='<text x="'+(x+tw/2)+'" y="'+(cy-bmsH/2+(a2u?0:2.3*tScale))+'" text-anchor="middle" font-size="'+(6.3*tScale).toFixed(1)+'" font-weight="800" fill="#1f7a45">BMS</text>';
       if(a2u)s+='<text x="'+(x+tw*0.68)+'" y="'+(cy-bmsH/2+7*tScale)+'" text-anchor="middle" font-size="'+(4.9*tScale).toFixed(1)+'" font-weight="700" fill="#1f7a45">5 kWh</text>';
       cy-=bmsH;
     }
     if(t.role==='master')s+='<text x="'+(x+tw/2)+'" y="'+(y-th-6*tScale)+'" text-anchor="middle" font-size="'+(6.6*tScale).toFixed(1)+'" font-weight="800" fill="#1f7a45" letter-spacing=".03em">MASTER</text>';
     else if(t.role==='slave')s+='<text x="'+(x+tw/2)+'" y="'+(y-th-6*tScale)+'" text-anchor="middle" font-size="'+(6.6*tScale).toFixed(1)+'" font-weight="800" fill="#5d6b78" letter-spacing=".03em">SLAVE</text>';
   });
+  if(state.dongle==='grohome')s+=rfHat(mir?rowIx:(rowIx+iw),rowBaseY-ih+10,mir,state.groHomeMode==='wireless');
   return s;
 }
 function commercialSceneHTML(){
@@ -985,27 +1072,32 @@ function commercialSceneHTML(){
   var grayTop=H*0.5;
   var floorFL=[130,560],floorFR=[586,560],floorBR=[700,grayTop+13],floorBL=[244,grayTop+13];
 
-  var ix=330,iw=54,ih=88, rx=290,rw=150,rh=112;
-  var sN=towers.length,sGap=7,sAvail=ix-16-14;
+  var ix=330,iw=62,ih=98, rx=290,rw=150,rh=112;
+  var sBattGap=80;
+  var sN=towers.length,sGap=7,sAvail=ix-sBattGap-14;
   var sTw=sN?Math.min(46,(sAvail-(sN-1)*sGap)/sN):46;
   var sTotW=sN?sN*sTw+(sN-1)*sGap:0;
   var sTowerH=sN?Math.max.apply(null,towers.map(function(t){return 13+t.mods*(t.axe?9:15)+(t.bms?23:0);})):0;
-  var tx0=ix-16-sTotW;
+  var tx0=ix-sBattGap-sTotW;
   var invAttachX=isRise?(rx+rw):(ix+iw), invAttachY=isRise?(baseY-rh*0.55):(baseY-ih*0.55);
   var twX=655,twTop=78,twBase=170;
   var kwhX=638,kwhTopY=190,kwhW=34,kwhH=22;
   var feedX=655,feedY=240;
-  var cabX=606,cabBaseY=362,cabW=46,cabH=74;
+  var cabX=614,cabBaseY=362,cabW=30,cabH=38;
+  var cabBoxBase=cabBaseY-22;
   var mtrX=546,mtrBaseY=352,mtrW=28,mtrH=42;
   var isSem=state.dongle==='shinesem';
   var isMaster=state.dongle==='shinemaster';
+  var isGroHome=state.dongle==='grohome';
   var meterLabel=isMaster?'SHINEMASTER\u2011X':(isSem?'SHINESEM\u2011X':'SMART METER');
   var hasMeterSel=state.metering==='meter';
   var showSemBox=isSem||isMaster;
-  var showSmartAtFeed=!showSemBox&&hasMeterSel;
+  var showSmartAtFeed=!showSemBox&&!isGroHome&&hasMeterSel;
   var smW=24,smH=34,semBoxW=34,semBoxH=48;
-  var gridLit=metOn||showSemBox;
-  var monAttachX=showSemBox?(mtrX+semBoxW/2):(cabX+4), monAttachY=showSemBox?(mtrBaseY):(cabBaseY-cabH*0.55);
+  var groBoxH=40;
+  var groX=feedX-semBoxW/2,groBaseY=cabBoxBase-cabH-14;
+  var gridLit=metOn||showSemBox||isGroHome;
+  var monAttachX=showSemBox?(mtrX+semBoxW/2):(isGroHome?(groX+semBoxW/2):(cabX+cabW/2)), monAttachY=showSemBox?(mtrBaseY):(isGroHome?groBaseY:cabBaseY);
   var commPair=function(d){return '<path class="commline" d="'+d+'"></path><path class="commline rev" d="'+d+'" transform="translate(2.2,2.2)"></path>';};
 
   var s='<div class="housephoto"><div class="photostage" style="aspect-ratio:'+W+'/'+H+'">';
@@ -1029,17 +1121,19 @@ function commercialSceneHTML(){
      '<circle cx="679" cy="90.5" r="2.2" fill="#e4eaf0" stroke="#9aa5b1" stroke-width="0.7"></circle>'+
      (hasComp?'<path class="cable" d="M655,'+twBase+' L655,'+kwhTopY+'"></path>':'')+
      (hasComp?'<path class="cable" d="M655,'+(kwhTopY+kwhH)+' L'+feedX+','+(feedY-5)+'"></path>':'')+
-     (showSmartAtFeed?'':'<circle cx="'+feedX+'" cy="'+feedY+'" r="4.5" fill="#eef4f0" stroke="#33da7a" stroke-width="1.8"></circle>')+
-     (hasComp?'<path class="cable" d="M'+feedX+','+(feedY+5)+' L'+(cabX+cabW/2)+','+(cabBaseY-cabH+2)+'"></path>':'')+
+     ((showSmartAtFeed||isGroHome)?'':'<circle cx="'+feedX+'" cy="'+feedY+'" r="4.5" fill="#eef4f0" stroke="#33da7a" stroke-width="1.8"></circle>')+
+     (hasComp?'<path class="cable" d="M'+feedX+','+(feedY+5)+' L'+feedX+','+(cabBoxBase-cabH-18)+' L'+(cabX+cabW/2)+','+(cabBoxBase-cabH-18)+' L'+(cabX+cabW/2)+','+(cabBoxBase-cabH+2)+'"></path>':'')+
      '</g>';
   s+='<rect x="'+kwhX+'" y="'+kwhTopY+'" width="'+kwhW+'" height="'+kwhH+'" rx="3" fill="#eef1f5" stroke="'+(metOn?'#33da7a':'#9aa5b1')+'" stroke-width="1.6"></rect>';
   s+='<rect x="'+(kwhX+4)+'" y="'+(kwhTopY+4)+'" width="'+(kwhW-8)+'" height="7.5" rx="1.5" fill="#2b3440"></rect>';
   s+='<rect x="'+(kwhX+5.5)+'" y="'+(kwhTopY+6)+'" width="3.2" height="3.5" fill="#7fe6a8"></rect><rect x="'+(kwhX+10)+'" y="'+(kwhTopY+6)+'" width="3.2" height="3.5" fill="#7fe6a8"></rect><rect x="'+(kwhX+14.5)+'" y="'+(kwhTopY+6)+'" width="3.2" height="3.5" fill="#7fe6a8"></rect><rect x="'+(kwhX+19)+'" y="'+(kwhTopY+6)+'" width="3.2" height="3.5" fill="#7fe6a8"></rect>';
   s+='<rect x="'+(kwhX+4)+'" y="'+(kwhTopY+14)+'" width="'+(kwhW-8)+'" height="3" rx="1" fill="#c9d2dc"></rect>';
-  s+=drawIsoBox(cabX,cabBaseY,cabW,cabH,skx,sky,'#dfe5ec','#eef2f6','#c4ccd6',true);
-  s+='<line x1="'+(cabX+cabW/2)+'" y1="'+(cabBaseY-cabH+7)+'" x2="'+(cabX+cabW/2)+'" y2="'+(cabBaseY-7)+'" stroke="#b6c0cb" stroke-width="1"></line>';
-  s+='<rect x="'+(cabX+cabW*0.16)+'" y="'+(cabBaseY-cabH*0.82)+'" width="'+(cabW*0.68)+'" height="'+(cabH*0.16)+'" rx="1.5" fill="#aeb9c5"></rect>';
-  s+=screw(cabX+cabW-7,cabBaseY-cabH*0.5)+screw(cabX+7,cabBaseY-cabH*0.5);
+  s+='<rect x="'+(cabX+cabW/2-4)+'" y="'+(cabBoxBase-2)+'" width="8" height="'+(cabBaseY-cabBoxBase+2)+'" fill="#b8c1cc" stroke="#9aa5b1" stroke-width="1"></rect>';
+  s+='<rect x="'+(cabX+cabW/2-7)+'" y="'+(cabBaseY-3)+'" width="14" height="4" rx="1.5" fill="#9aa5b1"></rect>';
+  s+=drawIsoBox(cabX,cabBoxBase,cabW,cabH,skx*0.8,sky*0.8,'#dfe5ec','#eef2f6','#c4ccd6',true);
+  s+='<line x1="'+(cabX+cabW/2)+'" y1="'+(cabBoxBase-cabH+6)+'" x2="'+(cabX+cabW/2)+'" y2="'+(cabBoxBase-6)+'" stroke="#b6c0cb" stroke-width="1"></line>';
+  s+='<rect x="'+(cabX+cabW*0.18)+'" y="'+(cabBoxBase-cabH*0.8)+'" width="'+(cabW*0.64)+'" height="'+(cabH*0.15)+'" rx="1.5" fill="#aeb9c5"></rect>';
+  s+=screw(cabX+cabW-6,cabBoxBase-cabH*0.45)+screw(cabX+6,cabBoxBase-cabH*0.45);
   var showSynBox=bom.some(function(r){return r.g==='Backup'&&r.item.indexOf('SYN')>=0;});
   if(showSynBox){
     var synX=mtrX,synTop=mtrBaseY+14,synW=semBoxW,synH=44;
@@ -1050,13 +1144,30 @@ function commercialSceneHTML(){
     s+='<rect x="'+(synX+6)+'" y="'+(synTop+synH-7)+'" width="'+(synW-12)+'" height="3" rx="1" fill="#cfd7e0"></rect>';
     if(showSemBox)s+='<line x1="'+(synX+synW/2)+'" y1="'+mtrBaseY+'" x2="'+(synX+synW/2)+'" y2="'+synTop+'" stroke="#33da7a" stroke-width="1.4"></line>';
   }
+function ctg(cx,cy,tdx,dir){
+  var ah='';
+  if(dir==='up')ah='<polygon points="'+(cx-4.5)+','+(cy-8)+' '+(cx+4.5)+','+(cy-8)+' '+cx+','+(cy-16)+'" fill="#1f7a45" stroke="#fff" stroke-width="0.8"></polygon>';
+  else if(dir==='down')ah='<polygon points="'+(cx-4.5)+','+(cy+8)+' '+(cx+4.5)+','+(cy+8)+' '+cx+','+(cy+16)+'" fill="#1f7a45" stroke="#fff" stroke-width="0.8"></polygon>';
+  else if(dir==='right')ah='<polygon points="'+(cx+8)+','+(cy-4.5)+' '+(cx+8)+','+(cy+4.5)+' '+(cx+16)+','+cy+'" fill="#1f7a45" stroke="#fff" stroke-width="0.8"></polygon>';
+  else if(dir==='left')ah='<polygon points="'+(cx-8)+','+(cy-4.5)+' '+(cx-8)+','+(cy+4.5)+' '+(cx-16)+','+cy+'" fill="#1f7a45" stroke="#fff" stroke-width="0.8"></polygon>';
+  return '<g><circle cx="'+cx+'" cy="'+cy+'" r="5.5" fill="#eef4f0" stroke="#3d4c5c" stroke-width="3"></circle><circle cx="'+cx+'" cy="'+cy+'" r="1.6" fill="#8fa0b0"></circle>'+ah+'<text x="'+(cx+tdx)+'" y="'+(cy+2.5)+'" font-size="6.5" font-weight="800" fill="#3d4c5c">CT</text></g>';
+}
   if(showSemBox){
     s+='<rect x="'+mtrX+'" y="'+(mtrBaseY-semBoxH)+'" width="'+semBoxW+'" height="'+semBoxH+'" rx="4" fill="#f4f6f9" stroke="#33da7a" stroke-width="1.8"></rect>';
     s+='<rect x="'+(mtrX+5)+'" y="'+(mtrBaseY-semBoxH+6)+'" width="'+(semBoxW-10)+'" height="9" rx="1.5" fill="#2b3440"></rect>';
     s+='<circle cx="'+(mtrX+semBoxW*0.32)+'" cy="'+(mtrBaseY-semBoxH+11)+'" r="1.7" fill="#7fe6a8"></circle><circle cx="'+(mtrX+semBoxW*0.5)+'" cy="'+(mtrBaseY-semBoxH+11)+'" r="1.7" fill="#7fe6a8"></circle><circle cx="'+(mtrX+semBoxW*0.68)+'" cy="'+(mtrBaseY-semBoxH+11)+'" r="1.7" fill="#7fe6a8"></circle>';
     s+='<circle cx="'+(mtrX+semBoxW/2)+'" cy="'+(mtrBaseY-semBoxH+27)+'" r="6" fill="none" stroke="#2c9d5e" stroke-width="1.5"></circle>';
     s+='<rect x="'+(mtrX+6)+'" y="'+(mtrBaseY-semBoxH+38)+'" width="'+(semBoxW-12)+'" height="3" rx="1" fill="#cfd7e0"></rect>';
-    s+='<line x1="'+(cabX+2)+'" y1="'+(cabBaseY-cabH*0.42)+'" x2="'+(mtrX+semBoxW)+'" y2="'+(mtrBaseY-semBoxH*0.5)+'" stroke="#33da7a" stroke-width="1.4"></line>';
+    s+='<line x1="'+(cabX+2)+'" y1="'+(mtrBaseY-semBoxH*0.5)+'" x2="'+(mtrX+semBoxW)+'" y2="'+(mtrBaseY-semBoxH*0.5)+'" stroke="#33da7a" stroke-width="1.4"></line>';
+  } else if(isGroHome){
+    var groTop=groBaseY-groBoxH;
+    s+='<rect x="'+groX+'" y="'+groTop+'" width="'+semBoxW+'" height="'+groBoxH+'" rx="4" fill="#f4f6f9" stroke="#33da7a" stroke-width="1.8"></rect>';
+    s+='<rect x="'+(groX+5)+'" y="'+(groTop+5)+'" width="'+(semBoxW-10)+'" height="8" rx="1.5" fill="#2b3440"></rect>';
+    s+='<circle cx="'+(groX+semBoxW*0.32)+'" cy="'+(groTop+9)+'" r="1.5" fill="#7fe6a8"></circle><circle cx="'+(groX+semBoxW*0.5)+'" cy="'+(groTop+9)+'" r="1.5" fill="#7fe6a8"></circle><circle cx="'+(groX+semBoxW*0.68)+'" cy="'+(groTop+9)+'" r="1.5" fill="#7fe6a8"></circle>';
+    s+='<circle cx="'+(groX+semBoxW/2)+'" cy="'+(groTop+23)+'" r="5.5" fill="none" stroke="#2c9d5e" stroke-width="1.4"></circle>';
+    s+='<rect x="'+(groX+6)+'" y="'+(groTop+groBoxH-6)+'" width="'+(semBoxW-12)+'" height="2.6" rx="1" fill="#cfd7e0"></rect>';
+    s+='<line x1="'+(cabX+2)+'" y1="'+(groBaseY-groBoxH*0.5)+'" x2="'+(groX+semBoxW)+'" y2="'+(groBaseY-groBoxH*0.5)+'" stroke="#33da7a" stroke-width="1.4"></line>';
+    s+=ctg(feedX,groBaseY+11,14,'down');
   } else if(showSmartAtFeed){
     var smX=feedX-smW/2, smTopY=feedY-smH/2;
     s+='<rect x="'+smX+'" y="'+smTopY+'" width="'+smW+'" height="'+smH+'" rx="3.5" fill="#f4f6f9" stroke="#33da7a" stroke-width="1.8"></rect>';
@@ -1067,77 +1178,85 @@ function commercialSceneHTML(){
 
   
 
+  var singleBoxSVG='';
   if(!isMulti&&hasComp){
   if(isRise){
-    s+=drawIsoBox(rx,baseY,rw,rh,skx,sky,'#dbe7ea','#eef5f6','#aec4c9',invOn);
-    s+='<line x1="'+rx+'" y1="'+(baseY-rh*0.62)+'" x2="'+(rx+rw)+'" y2="'+(baseY-rh*0.62)+'" stroke="#9db9be" stroke-width="1.5"></line>';
-    s+=gauge(rx+rw-20,baseY-rh+20,9,invOn);
-    if(isMulti)s+=nrTag(rx+rw/2,baseY-rh,state.unit+1,1,true);
+    singleBoxSVG+=drawIsoBox(rx,baseY,rw,rh,skx,sky,'#dbe7ea','#eef5f6','#aec4c9',invOn);
+    singleBoxSVG+='<line x1="'+rx+'" y1="'+(baseY-rh*0.62)+'" x2="'+(rx+rw)+'" y2="'+(baseY-rh*0.62)+'" stroke="#9db9be" stroke-width="1.5"></line>';
+    singleBoxSVG+=gauge(rx+rw-20,baseY-rh+20,9,invOn);
+    if(isMulti)singleBoxSVG+=nrTag(rx+rw/2,baseY-rh,state.unit+1,1,true);
+    if(state.dongle==='grohome')singleBoxSVG+=rfHat(rx+rw,baseY-rh+10,false,state.groHomeMode==='wireless');
   } else if(isModa){
     if(invOn){
       var mm=(state.inputs[0]&&state.inputs[0].modules)||0;
       var mBaseH=13,mMh=15,mCapH=22,mTh=mBaseH+mm*mMh+mCapH;
       var mBoxFaces=isoBox(ix,baseY,iw,mTh,skx,sky);
-      s+='<g class="eqbox lit"><polygon class="eqtop" points="'+ptsStr(mBoxFaces.top)+'" fill="#fbfcfd"></polygon><polygon class="eqside" points="'+ptsStr(mBoxFaces.side)+'" fill="#ccd4de"></polygon>';
+      singleBoxSVG+='<g class="eqbox lit"><polygon class="eqtop" points="'+ptsStr(mBoxFaces.top)+'" fill="#fbfcfd"></polygon><polygon class="eqside" points="'+ptsStr(mBoxFaces.side)+'" fill="#ccd4de"></polygon>';
       var mcy=baseY;
-      s+='<rect x="'+ix+'" y="'+(mcy-mBaseH)+'" width="'+iw+'" height="'+(mBaseH-1)+'" fill="#a9b4bf" stroke="#7d8994" stroke-width="0.75"></rect>';
-      if(iw>=40)s+='<text x="'+(ix+iw/2)+'" y="'+(mcy-mBaseH/2+2.5)+'" text-anchor="middle" font-size="6.5" font-weight="700" fill="#f2f5f7">BASE</text>';
+      singleBoxSVG+='<rect x="'+ix+'" y="'+(mcy-mBaseH)+'" width="'+iw+'" height="'+(mBaseH-1)+'" fill="#a9b4bf" stroke="#7d8994" stroke-width="0.75"></rect>';
+      if(iw>=40)singleBoxSVG+='<text x="'+(ix+iw/2)+'" y="'+(mcy-mBaseH/2+2.5)+'" text-anchor="middle" font-size="6.5" font-weight="700" fill="#f2f5f7">BASE</text>';
       mcy-=mBaseH;
       for(var mi=0;mi<mm;mi++){
-        s+='<rect x="'+ix+'" y="'+(mcy-mMh+1)+'" width="'+iw+'" height="'+(mMh-2)+'" fill="#f4f6f8" stroke="#bcc6d0" stroke-width="0.9"></rect>';
-        if(iw>=40)s+='<text x="'+(ix+iw/2)+'" y="'+(mcy-mMh/2+2.2)+'" text-anchor="middle" font-size="5.6" font-weight="600" fill="#7a8794">5 kWh</text>';
+        singleBoxSVG+='<rect x="'+ix+'" y="'+(mcy-mMh+1)+'" width="'+iw+'" height="'+(mMh-2)+'" fill="#f4f6f8" stroke="#bcc6d0" stroke-width="0.9"></rect>';
+        if(iw>=40)singleBoxSVG+='<text x="'+(ix+iw/2)+'" y="'+(mcy-mMh/2+2.2)+'" text-anchor="middle" font-size="5.6" font-weight="600" fill="#7a8794">5 kWh</text>';
         mcy-=mMh;
       }
-      s+='<rect x="'+ix+'" y="'+(mcy-mCapH+1)+'" width="'+iw+'" height="'+(mCapH-2)+'" fill="#eef1f5" stroke="#33da7a" stroke-width="1.1"></rect>';
-      s+=gauge(ix+iw/2,mcy-mCapH/2,8,true);
-      if(isMulti)s+=nrTag(ix+iw/2,mcy-mCapH,state.unit+1,1,true);
-      s+='</g>';
+      singleBoxSVG+='<rect x="'+ix+'" y="'+(mcy-mCapH+1)+'" width="'+iw+'" height="'+(mCapH-2)+'" fill="#eef1f5" stroke="#33da7a" stroke-width="1.1"></rect>';
+      singleBoxSVG+=gauge(ix+iw/2,mcy-mCapH/2,8,true);
+      if(isMulti)singleBoxSVG+=nrTag(ix+iw/2,mcy-mCapH,state.unit+1,1,true);
+      if(state.dongle==='grohome')singleBoxSVG+=rfHat(ix+iw,mcy-mCapH+10,false,state.groHomeMode==='wireless');
+      singleBoxSVG+='</g>';
     }
   } else {
     if(invOn){
       if(isWitHu){
-        s+=drawIsoBox(ix,baseY,iw,ih,skx,sky,'#f7f9fb','#ffffff','#d7dde3',true);
-        s+=gauge(ix+iw/2,baseY-ih+26,11,true);
-        s+='<line x1="'+(ix+7)+'" y1="'+(baseY-14)+'" x2="'+(ix+iw-7)+'" y2="'+(baseY-14)+'" stroke="#c3ccd7" stroke-width="1.5"></line>';
-        s+=screw(ix+6,baseY-ih+6)+screw(ix+iw-6,baseY-ih+6)+screw(ix+6,baseY-6)+screw(ix+iw-6,baseY-6);
+        singleBoxSVG+=drawIsoBox(ix,baseY,iw,ih,skx,sky,'#f7f9fb','#ffffff','#d7dde3',true);
+        singleBoxSVG+=gauge(ix+iw/2,baseY-ih+26,11,true);
+        if(state.kw)singleBoxSVG+='<text x="'+(ix+iw/2)+'" y="'+(baseY-ih*0.4-12)+'" text-anchor="middle" font-size="8.5" font-weight="800" fill="#5d6b78">INV</text><text x="'+(ix+iw/2)+'" y="'+(baseY-ih*0.4)+'" text-anchor="middle" font-size="11" font-weight="800" fill="#2f3c4a">'+state.kw+'kW</text>';
+        singleBoxSVG+='<line x1="'+(ix+7)+'" y1="'+(baseY-14)+'" x2="'+(ix+iw-7)+'" y2="'+(baseY-14)+'" stroke="#c3ccd7" stroke-width="1.5"></line>';
+        singleBoxSVG+=screw(ix+6,baseY-ih+6)+screw(ix+iw-6,baseY-ih+6)+screw(ix+6,baseY-6)+screw(ix+iw-6,baseY-6);
       } else {
-        s+=drawIsoBox(ix,baseY,iw,ih,skx,sky,'#eef1f5','#f8fbfd','#c7cfd9',true);
-        s+='<circle cx="'+(ix+iw/2)+'" cy="'+(baseY-ih+22)+'" r="5" fill="#33da7a"></circle>';
-        s+='<line x1="'+(ix+8)+'" y1="'+(baseY-20)+'" x2="'+(ix+iw-8)+'" y2="'+(baseY-20)+'" stroke="#c3ccd7" stroke-width="2"></line>';
-        s+='<line x1="'+(ix+8)+'" y1="'+(baseY-12)+'" x2="'+(ix+iw-8)+'" y2="'+(baseY-12)+'" stroke="#c3ccd7" stroke-width="2"></line>';
+        singleBoxSVG+=drawIsoBox(ix,baseY,iw,ih,skx,sky,'#eef1f5','#f8fbfd','#c7cfd9',true);
+        singleBoxSVG+='<circle cx="'+(ix+iw/2)+'" cy="'+(baseY-ih+22)+'" r="5" fill="#33da7a"></circle>';
+        if(state.kw)singleBoxSVG+='<text x="'+(ix+iw/2)+'" y="'+(baseY-ih*0.42-12)+'" text-anchor="middle" font-size="8.5" font-weight="800" fill="#5d6b78">INV</text><text x="'+(ix+iw/2)+'" y="'+(baseY-ih*0.42)+'" text-anchor="middle" font-size="11" font-weight="800" fill="#2f3c4a">'+state.kw+'kW</text>';
+        singleBoxSVG+='<line x1="'+(ix+8)+'" y1="'+(baseY-20)+'" x2="'+(ix+iw-8)+'" y2="'+(baseY-20)+'" stroke="#c3ccd7" stroke-width="2"></line>';
+        singleBoxSVG+='<line x1="'+(ix+8)+'" y1="'+(baseY-12)+'" x2="'+(ix+iw-8)+'" y2="'+(baseY-12)+'" stroke="#c3ccd7" stroke-width="2"></line>';
       }
-      if(isMulti)s+=nrTag(ix+iw/2,baseY-ih,state.unit+1,1,true);
+      if(isMulti)singleBoxSVG+=nrTag(ix+iw/2,baseY-ih,state.unit+1,1,true);
+      if(state.dongle==='grohome')singleBoxSVG+=rfHat(ix+iw,baseY-ih+10,false,state.groHomeMode==='wireless');
     }
     towers.forEach(function(t,i){
       var tw=sTw,mh=t.axe?9:15,baseH=13,bmsH=t.bms?23:0,th=baseH+t.mods*mh+bmsH;
       var x=tx0+i*(tw+sGap),y=baseY;
       if(i===towers.length-1){
-        s+='<path class="dcbatt" d="M'+(x+tw-6)+','+(baseY-30)+' L'+(ix+6)+','+(baseY-30)+'"></path>';
-        s+=commPair('M'+(x+tw-6)+','+(baseY-16)+' L'+(ix+6)+','+(baseY-16));
+        singleBoxSVG+='<path class="dcbatt" d="M'+(x+tw-6)+','+(baseY-34)+' L'+(ix+6)+','+(baseY-34)+'"></path>';
+        singleBoxSVG+='<path class="combatt" d="M'+(x+tw-6)+','+(baseY-25)+' L'+(ix+6)+','+(baseY-25)+'"></path>';
+        singleBoxSVG+='<path class="dcbatt" d="M'+(x+tw-6)+','+(baseY-16)+' L'+(ix+6)+','+(baseY-16)+'"></path>';
+        singleBoxSVG+=commPair('M'+(x+tw-6)+','+(baseY-7)+' L'+(ix+6)+','+(baseY-7));
       }
       var boxFaces=isoBox(x,y,tw,th,skx,sky);
-      s+='<g class="eqbox lit"><polygon class="eqtop" points="'+ptsStr(boxFaces.top)+'" fill="'+(t.axe?'#f7f9fb':'#fbfcfd')+'"></polygon><polygon class="eqside" points="'+ptsStr(boxFaces.side)+'" fill="'+(t.axe?'#c2ccd3':'#ccd4de')+'"></polygon>';
+      singleBoxSVG+='<g class="eqbox lit"><polygon class="eqtop" points="'+ptsStr(boxFaces.top)+'" fill="'+(t.axe?'#f7f9fb':'#fbfcfd')+'"></polygon><polygon class="eqside" points="'+ptsStr(boxFaces.side)+'" fill="'+(t.axe?'#c2ccd3':'#ccd4de')+'"></polygon>';
       var cy=y;
-      s+='<rect x="'+x+'" y="'+(cy-baseH)+'" width="'+tw+'" height="'+(baseH-1)+'" fill="'+(t.axe?'#9aa7b3':'#a9b4bf')+'" stroke="#7d8994" stroke-width="0.75"></rect>';
-      if(tw>=40)s+='<text x="'+(x+tw/2)+'" y="'+(cy-baseH/2+2.5)+'" text-anchor="middle" font-size="6.5" font-weight="700" fill="#f2f5f7" letter-spacing=".03em">BASE</text>';
+      singleBoxSVG+='<rect x="'+x+'" y="'+(cy-baseH)+'" width="'+tw+'" height="'+(baseH-1)+'" fill="'+(t.axe?'#9aa7b3':'#a9b4bf')+'" stroke="#7d8994" stroke-width="0.75"></rect>';
+      if(tw>=40)singleBoxSVG+='<text x="'+(x+tw/2)+'" y="'+(cy-baseH/2+2.5)+'" text-anchor="middle" font-size="6.5" font-weight="700" fill="#f2f5f7" letter-spacing=".03em">BASE</text>';
       cy-=baseH;
       for(var m=0;m<t.mods;m++){
-        s+='<rect x="'+x+'" y="'+(cy-mh+1)+'" width="'+tw+'" height="'+(mh-2)+'" fill="'+(t.axe?'#eceff2':'#f4f6f8')+'" stroke="'+(t.axe?'#b6c0c8':'#bcc6d0')+'" stroke-width="0.9"></rect>';
-        if(!t.axe&&tw>=40&&mh>=14)s+='<text x="'+(x+tw/2)+'" y="'+(cy-mh/2+2.2)+'" text-anchor="middle" font-size="5.6" font-weight="600" fill="#7a8794">5 kWh</text>';
+        singleBoxSVG+='<rect x="'+x+'" y="'+(cy-mh+1)+'" width="'+tw+'" height="'+(mh-2)+'" fill="'+(t.axe?'#eceff2':'#f4f6f8')+'" stroke="'+(t.axe?'#b6c0c8':'#bcc6d0')+'" stroke-width="0.9"></rect>';
+        if(!t.axe&&tw>=40&&mh>=14)singleBoxSVG+='<text x="'+(x+tw/2)+'" y="'+(cy-mh/2+2.2)+'" text-anchor="middle" font-size="5.6" font-weight="600" fill="#7a8794">5 kWh</text>';
         cy-=mh;
       }
       if(t.bms){
-        s+='<rect x="'+x+'" y="'+(cy-bmsH+1)+'" width="'+tw+'" height="'+(bmsH-2)+'" fill="#e3f3ea" stroke="#33da7a" stroke-width="1.1"></rect>';
-        s+=gauge(x+tw*0.32,cy-bmsH/2,7.5,true);
-        s+='<text x="'+(x+tw*0.68)+'" y="'+(cy-bmsH/2+(a2()?0:2.6))+'" text-anchor="middle" font-size="7" font-weight="800" fill="#1f7a45">BMS</text>';
-        if(a2())s+='<text x="'+(x+tw*0.68)+'" y="'+(cy-bmsH/2+8)+'" text-anchor="middle" font-size="5.5" font-weight="700" fill="#1f7a45">5 kWh</text>';
+        singleBoxSVG+='<rect x="'+x+'" y="'+(cy-bmsH+1)+'" width="'+tw+'" height="'+(bmsH-2)+'" fill="#e3f3ea" stroke="#33da7a" stroke-width="1.1"></rect>';
+        singleBoxSVG+='<text x="'+(x+tw/2)+'" y="'+(cy-bmsH/2+(a2()?0:2.6))+'" text-anchor="middle" font-size="7" font-weight="800" fill="#1f7a45">BMS</text>';
+        if(a2())singleBoxSVG+='<text x="'+(x+tw*0.68)+'" y="'+(cy-bmsH/2+8)+'" text-anchor="middle" font-size="5.5" font-weight="700" fill="#1f7a45">5 kWh</text>';
         cy-=bmsH;
       }
-      s+='</g>';
-      if(t.role==='master')s+='<text x="'+(x+tw/2)+'" y="'+(y-th-8)+'" text-anchor="middle" font-size="7.5" font-weight="800" fill="#1f7a45" letter-spacing=".04em">MASTER</text>';
-      else if(t.role==='slave')s+='<text x="'+(x+tw/2)+'" y="'+(y-th-8)+'" text-anchor="middle" font-size="7.5" font-weight="800" fill="#5d6b78" letter-spacing=".04em">SLAVE</text>';
+      singleBoxSVG+='</g>';
+      if(t.role==='master')singleBoxSVG+='<text x="'+(x+tw/2)+'" y="'+(y-th-8)+'" text-anchor="middle" font-size="7.5" font-weight="800" fill="#1f7a45" letter-spacing=".04em">MASTER</text>';
+      else if(t.role==='slave')singleBoxSVG+='<text x="'+(x+tw/2)+'" y="'+(y-th-8)+'" text-anchor="middle" font-size="7.5" font-weight="800" fill="#5d6b78" letter-spacing=".04em">SLAVE</text>';
     });
   }
+  s+=singleBoxSVG;
   }
 
   var mainMaxH=isRise?rh:(isModa?(invOn?(13+(((state.inputs[0]&&state.inputs[0].modules)||0))*15+22):40):Math.max(invOn?ih:0, towers.length?Math.max.apply(null,towers.map(function(t){return 13+t.mods*(t.axe?9:15)+(t.bms?23:0);})):40));
@@ -1167,8 +1286,33 @@ function commercialSceneHTML(){
   var stackScale=0.5;
   var colX=[110,330];
   var houseX=510,houseTopY=isMulti?415:200,houseSize=76;
+  function drawHouse(cx,hb){
+    var h='';
+    h+='<ellipse cx="'+cx+'" cy="'+(hb+3)+'" rx="44" ry="7" fill="rgba(20,30,45,.14)"></ellipse>';
+    h+='<rect x="'+(cx-32)+'" y="'+(hb-34)+'" width="64" height="34" fill="#f5ecdb" stroke="#d8c9ae" stroke-width="1.1"></rect>';
+    h+='<rect x="'+(cx+14)+'" y="'+(hb-62)+'" width="9" height="14" fill="#b0553f" stroke="#8f4230" stroke-width="1"></rect>';
+    h+='<polygon points="'+(cx-40)+','+(hb-34)+' '+(cx+40)+','+(hb-34)+' '+(cx+24)+','+(hb-60)+' '+(cx-24)+','+(hb-60)+'" fill="#b95a49" stroke="#96453a" stroke-width="1.2"></polygon>';
+    h+='<line x1="'+(cx-24)+'" y1="'+(hb-60)+'" x2="'+(cx+24)+'" y2="'+(hb-60)+'" stroke="#7e352b" stroke-width="1.6"></line>';
+    var by=hb-37,ty=hb-57,bxl=cx-33,bxr=cx+33,txl=cx-21,txr=cx+21;
+    for(var pi2=0;pi2<3;pi2++){for(var pj=0;pj<2;pj++){
+      var f0=pi2/3+0.04,f1=(pi2+1)/3-0.04,g0=pj/2+0.09,g1=(pj+1)/2-0.09;
+      var y0=by+(ty-by)*g0,y1=by+(ty-by)*g1;
+      var l0=bxl+(txl-bxl)*g0,r0=bxr+(txr-bxr)*g0;
+      var l1=bxl+(txl-bxl)*g1,r1=bxr+(txr-bxr)*g1;
+      var ax=l0+(r0-l0)*f0,bx=l0+(r0-l0)*f1,cx2=l1+(r1-l1)*f1,dx=l1+(r1-l1)*f0;
+      h+='<polygon points="'+ax.toFixed(1)+','+y0.toFixed(1)+' '+bx.toFixed(1)+','+y0.toFixed(1)+' '+cx2.toFixed(1)+','+y1.toFixed(1)+' '+dx.toFixed(1)+','+y1.toFixed(1)+'" fill="#2e6fce" stroke="#1c4d9c" stroke-width="0.8"></polygon>';
+    }}
+    h+='<rect x="'+(cx-6)+'" y="'+(hb-19)+'" width="12" height="19" rx="1" fill="#8a5a3b" stroke="#6f4527" stroke-width="0.8"></rect>';
+    h+='<circle cx="'+(cx+2.5)+'" cy="'+(hb-10)+'" r="1" fill="#e8d9b8"></circle>';
+    h+='<rect x="'+(cx-27)+'" y="'+(hb-27)+'" width="13" height="11" rx="1" fill="#aecdf5" stroke="#7fa3cf" stroke-width="0.8"></rect>';
+    h+='<line x1="'+(cx-20.5)+'" y1="'+(hb-27)+'" x2="'+(cx-20.5)+'" y2="'+(hb-16)+'" stroke="#7fa3cf" stroke-width="0.7"></line>';
+    h+='<rect x="'+(cx+14)+'" y="'+(hb-27)+'" width="13" height="11" rx="1" fill="#aecdf5" stroke="#7fa3cf" stroke-width="0.8"></rect>';
+    h+='<line x1="'+(cx+20.5)+'" y1="'+(hb-27)+'" x2="'+(cx+20.5)+'" y2="'+(hb-16)+'" stroke="#7fa3cf" stroke-width="0.7"></line>';
+    return h;
+  }
   var houseBotAnchor=houseTopY+houseSize;
-  var rowPitch=138, firstRowBase=240, perCol=3, maxShow=6;
+  var rowPitch=138, perCol=3, maxShow=6;
+  var firstRowBase=(Math.min(state.units.length,maxShow)>2)?218:240;
   function unitPos(idx){
     var col=Math.floor(idx/perCol),row=idx%perCol;
     return {x:colX[col],y:firstRowBase+row*rowPitch};
@@ -1176,9 +1320,9 @@ function commercialSceneHTML(){
   var showPartial=state.backupMode==='partial';
   function unitWidth(u){
     var fm=FAMILIES[u.family];
-    if(!fm)return 54*stackScale;
+    if(!fm)return 62*stackScale;
     if(fm.battery==='RISE')return 150*stackScale;
-    return 54*stackScale;
+    return 62*stackScale;
   }
   function unitTowersW(u,ux){
     var fm=FAMILIES[u.family];
@@ -1188,13 +1332,13 @@ function commercialSceneHTML(){
     else if(fm.battery==='AXE')(u.inputs||[]).forEach(function(){t++;});
     if(t>6)t=6;
     if(!t)return 0;
-    var g=7*stackScale,av=ux-12-14;
+    var g=7*stackScale,av=arguments.length>2&&arguments[2]?(458-(ux+62*stackScale+26)):(ux-26-14);
     var tw=Math.min(46*stackScale,(av-(t-1)*g)/t);
     return t*tw+(t-1)*g;
   }
   var shownStack=[];
   var stackLabels='';
-  var unitCables='', unitBoxes='', commOverlay='';
+  var unitCables='', unitBoxes='', commOverlay='', boxTops='';
   var trunkX=Math.round((colX[0]+colX[1])/2)+13, trunkTopY=null;
   var bottomBusY=firstRowBase+(perCol-1)*rowPitch+40;
   for(var ei=0;ei<allUnits.length&&shownStack.length<maxShow;ei++){
@@ -1207,93 +1351,130 @@ function commercialSceneHTML(){
     var active=(u.num===state.unit+1);
     var uKwh=unitBatteryKwh(u);
     var uTowerH=unitTowerMaxH(u)*stackScale;
-    unitBoxes+=drawExtraUnitRow(u,ux,rowBaseY,stackScale,skx,sky,active);
+    var colIdx=Math.floor(idx/perCol), mirU=(colIdx===1);
+    var rowBoxStr=drawExtraUnitRow(u,ux,rowBaseY,stackScale,skx,sky,active,mirU);
+    unitBoxes+=rowBoxStr;
+    boxTops+=rowBoxStr;
     var unitCx=ux+30*stackScale;
-    var invBatY=rowBaseY-88*stackScale-12;
-    var totTW=unitTowersW(u,ux);
+    var invBatY=rowBaseY-96*stackScale-12;
+    var totTW=unitTowersW(u,ux,mirU);
+    var iwm=62*stackScale;
+    var bux=totTW>0?(mirU?(ux+iwm+26+totTW/2):(ux-26-totTW/2)):(mirU?(ux+iwm+58):(ux-58));
     if(totTW>0&&uKwh>0){
-      stackLabels+='<div class="complabel'+(active?' lit':'')+'" style="left:'+(unitCx/W*100).toFixed(1)+'%;top:'+((invBatY/H*100).toFixed(1))+'%;transform:translate(-50%,-50%)">INV '+u.kw+'kW</div>';
-      stackLabels+='<div class="complabel'+(active?' lit':'')+'" style="left:'+(Math.max(ux-12-totTW/2,60)/W*100).toFixed(1)+'%;top:'+(((rowBaseY-78)/H*100).toFixed(1))+'%;transform:translate(-50%,-50%)">BAT '+battMaxKw(uKwh)+'kW</div>';
+      stackLabels+='<div class="complabel'+(active?' lit':'')+'" style="left:'+(Math.min(Math.max(bux,60),690)/W*100).toFixed(1)+'%;top:'+(((rowBaseY-78)/H*100).toFixed(1))+'%;transform:translate(-50%,-50%);font-size:5.5px;padding:2px 6px">BAT '+battMaxKw(uKwh)+'kW</div>';
+      stackLabels+='<div class="complabel'+(active?' lit':'')+'" style="left:'+(Math.min(Math.max(bux,60),690)/W*100).toFixed(1)+'%;top:'+(((rowBaseY-70)/H*100).toFixed(1))+'%;transform:translate(-50%,-50%);font-size:5.5px;padding:2px 6px">'+uKwh+'kWh</div>';
     } else {
-      var invBatTxt='INV '+u.kw+'kW'+(uKwh>0?(' \u00b7 BAT '+battMaxKw(uKwh)+'kW'):'');
-      stackLabels+='<div class="complabel'+(active?' lit':'')+'" style="left:'+(unitCx/W*100).toFixed(1)+'%;top:'+((invBatY/H*100).toFixed(1))+'%;transform:translate(-50%,-50%)">'+invBatTxt+'</div>';
+      var fmU=FAMILIES[u.family];
+      if(fmU&&(fmU.battery==='RISE'||fmU.battery==='MODA')){
+        var invBatTxt=(fmU.battery==='RISE'?'RISE':'MODA')+' '+u.kw+'kW'+(uKwh>0?(' \u00b7 BAT '+battMaxKw(uKwh)+'kW'):'');
+        stackLabels+='<div class="complabel'+(active?' lit':'')+'" style="left:'+(unitCx/W*100).toFixed(1)+'%;top:'+((invBatY/H*100).toFixed(1))+'%;transform:translate(-50%,-50%)">'+invBatTxt+'</div>';
+      }
     }
-    var colIdx=Math.floor(idx/perCol);
-    var uAttachX=colIdx===0?(ux+unitWidth(u)):ux, uAttachY=rowBaseY-88*stackScale*0.55;
+    var uAttachX=colIdx===0?(ux+unitWidth(u)):ux, uAttachY=rowBaseY-96*stackScale*0.55;
     unitCables+='<path class="olcable'+(invOn?' lit':'')+'" d="M'+uAttachX+','+uAttachY+' L'+trunkX+','+uAttachY+'"></path>';
     trunkTopY=(trunkTopY===null)?uAttachY:Math.min(trunkTopY,uAttachY);
-    var bux=totTW>0?(ux-12-totTW/2):(ux-58);
     var buy=rowBaseY-12;
-    var midY=rowBaseY-88*stackScale*0.5;
-    var pvW=28,pvH=14;
+    var midY=rowBaseY-96*stackScale*0.5;
+    var pvW=42,pvH=20;
     var pvBy=totTW>0?(rowBaseY-Math.max(uTowerH+29,92)):(buy-30);
     if(totTW>0){
       var pvLineY=pvBy-pvH*0.5;
-      unitBoxes+='<path class="dccable" d="M'+(bux+pvW/2)+','+pvLineY+' L'+(ux+20)+','+pvLineY+' L'+(ux+20)+','+(rowBaseY-88*stackScale)+'"></path>';
-      unitBoxes+='<polygon points="'+(ux+16.5)+','+(rowBaseY-51)+' '+(ux+23.5)+','+(rowBaseY-51)+' '+(ux+20)+','+(rowBaseY-44)+'" fill="#232d3a"></polygon>';
+      var pvEx=mirU?(ux+iwm-20):(ux+20), pvSx=mirU?(bux-pvW/2):(bux+pvW/2);
+      unitBoxes+='<path class="dccable" d="M'+pvSx+','+pvLineY+' L'+pvEx+','+pvLineY+' L'+pvEx+','+(rowBaseY-96*stackScale)+'"></path>';
+      unitBoxes+='<polygon points="'+(pvEx-3.5)+','+(rowBaseY-55)+' '+(pvEx+3.5)+','+(rowBaseY-55)+' '+pvEx+','+(rowBaseY-48)+'" fill="#232d3a"></polygon>';
     } else {
-      unitBoxes+='<path class="dccable" d="M'+bux+','+(pvBy-pvH*0.5)+' L'+ux+','+midY+'"></path>';
-      unitBoxes+='<polygon points="'+(ux-7)+','+(midY-3.5)+' '+(ux-7)+','+(midY+3.5)+' '+ux+','+midY+'" fill="#232d3a"></polygon>';
+      var pvEnterX=mirU?(ux+iwm):ux;
+      unitBoxes+='<path class="dccable" d="M'+bux+','+(pvBy-pvH*0.5)+' L'+bux+','+midY+' L'+pvEnterX+','+midY+'"></path>';
+      if(mirU)unitBoxes+='<polygon points="'+(pvEnterX+7)+','+(midY-3.5)+' '+(pvEnterX+7)+','+(midY+3.5)+' '+pvEnterX+','+midY+'" fill="#232d3a"></polygon>';
+      else unitBoxes+='<polygon points="'+(pvEnterX-7)+','+(midY-3.5)+' '+(pvEnterX-7)+','+(midY+3.5)+' '+pvEnterX+','+midY+'" fill="#232d3a"></polygon>';
     }
     unitBoxes+='<g class="pvpanel lit"><rect x="'+(bux-pvW/2)+'" y="'+(pvBy-pvH)+'" width="'+pvW+'" height="'+pvH+'" rx="1.5"></rect>'+
       '<line x1="'+(bux-pvW/6)+'" y1="'+(pvBy-pvH)+'" x2="'+(bux-pvW/6)+'" y2="'+pvBy+'"></line>'+
       '<line x1="'+(bux+pvW/6)+'" y1="'+(pvBy-pvH)+'" x2="'+(bux+pvW/6)+'" y2="'+pvBy+'"></line>'+
       '<line x1="'+(bux-pvW/2)+'" y1="'+(pvBy-pvH/2)+'" x2="'+(bux+pvW/2)+'" y2="'+(pvBy-pvH/2)+'"></line>'+
       '</g>';
-    stackLabels+='<div class="complabel'+(active?' lit':'')+'" style="left:'+(Math.max(bux,78)/W*100).toFixed(1)+'%;top:'+((Math.min(pvBy-pvH-8,invBatY-22)/H*100).toFixed(1))+'%;transform:translate(-50%,-50%)">PV PANELS'+(unitKwp(u)>0?(' \u00b7 '+unitKwp(u)+'kWp'):'')+'</div>';
+    if(unitKwp(u)>0)unitBoxes+='<text x="'+bux+'" y="'+(pvBy-pvH/2+2.6)+'" text-anchor="middle" font-size="6.3" font-weight="800" fill="#7bf5a8" style="paint-order:stroke" stroke="#0d3320" stroke-width="1.4">'+unitKwp(u)+'kWp</text>';
     if(totTW>0){
-      commOverlay+='<path class="dcbatt" d="M'+(ux-17)+','+(rowBaseY-24)+' L'+(ux+5)+','+(rowBaseY-24)+'"></path>';
-      commOverlay+=commPair('M'+(ux-17)+','+(rowBaseY-15)+' L'+(ux+5)+','+(rowBaseY-15));
+      var bc0=mirU?(ux+iwm-5):(ux-30), bc1=mirU?(ux+iwm+30):(ux+5);
+      commOverlay+='<path class="dcbatt" d="M'+bc0+','+(rowBaseY-27)+' L'+bc1+','+(rowBaseY-27)+'"></path>';
+      commOverlay+='<path class="combatt" d="M'+bc0+','+(rowBaseY-20)+' L'+bc1+','+(rowBaseY-20)+'"></path>';
+      commOverlay+='<path class="dcbatt" d="M'+bc0+','+(rowBaseY-13)+' L'+bc1+','+(rowBaseY-13)+'"></path>';
+      commOverlay+=commPair('M'+bc0+','+(rowBaseY-6)+' L'+bc1+','+(rowBaseY-6));
     }
-    if(u.backupMode){
-      var bpx=(colIdx===0)?(trunkX-24):(trunkX+24),bpy=uAttachY;
+    var bpxPartial=null;
+    if(u.backupMode==='partial'){
+      var bhx=mirU?(ux-40):(ux+62*stackScale+36);
+      var ihm=96*stackScale, buyBk=rowBaseY-ihm-6, roofTop=buyBk-23;
+      bpxPartial=mirU?(bhx-24):(bhx+24);
+      unitCables+='<path class="olcable'+(backOn?' lit':'')+'" d="M'+(mirU?ux:(ux+62*stackScale))+','+(rowBaseY-40)+' L'+bpxPartial+','+(rowBaseY-40)+'"></path>';
+      unitCables+='<path class="olcable'+(backOn?' lit':'')+'" d="M'+bhx+','+(rowBaseY-40)+' L'+bhx+','+buyBk+'"></path>';
+      stackLabels+='<div class="housebox" style="left:'+(bhx/W*100).toFixed(1)+'%;top:'+((buyBk/H*100)).toFixed(1)+'%;font-size:23px">\ud83c\udfe0</div>';
+      stackLabels+='<div class="complabel'+(backOn?' lit':'')+'" style="left:'+(bhx/W*100).toFixed(1)+'%;top:'+(((buyBk+8)/H*100)).toFixed(1)+'%;transform:translate(-50%,-50%);font-size:6.5px;padding:2px 6px">BACKUP'+(u.backupLoadKw>0?(' '+u.backupLoadKw+'kW'):'')+'</div>';
+    }
+    if(u.backupMode&&u.family!=='MODA'){
+      var bpx=bpxPartial!==null?bpxPartial:(mirU?(ux-16):(ux+62*stackScale+11)),bpy=rowBaseY-40;
+      commOverlay+='<path class="olcable'+(backOn?' lit':'')+'" d="M'+bpx+','+bpy+' L'+bpx+','+uAttachY+'"></path>';
       commOverlay+='<g><rect x="'+(bpx-5)+'" y="'+(bpy-8)+'" width="10" height="15" rx="1.5" fill="#f4f6f9" stroke="#e0584f" stroke-width="1.1"></rect>'+
         '<rect x="'+(bpx-2.6)+'" y="'+(bpy-5.2)+'" width="5.2" height="3.2" rx="0.6" fill="#e0584f"></rect>'+
         '<rect x="'+(bpx-2.6)+'" y="'+(bpy+0.6)+'" width="5.2" height="3.2" rx="0.6" fill="#9aa5b1"></rect></g>';
-      stackLabels+='<div class="complabel'+(backOn?' lit':'')+'" style="left:'+(bpx/W*100).toFixed(1)+'%;top:'+(((rowBaseY-40)/H*100).toFixed(1))+'%;transform:translate(-50%,-50%)">BYPASS</div>';
-    }
-    if(u.backupMode==='partial'){
-      var bhx=ux+54*stackScale+36;
-      unitCables+='<path class="olcable'+(backOn?' lit':'')+'" d="M'+(ux+54*stackScale)+','+(rowBaseY-14)+' L'+bhx+','+(rowBaseY-14)+'"></path>';
-      stackLabels+='<div class="housebox" style="left:'+(bhx/W*100).toFixed(1)+'%;top:'+((buy/H*100)).toFixed(1)+'%;font-size:23px">\ud83c\udfe0</div>';
-      stackLabels+='<div class="complabel'+(backOn?' lit':'')+'" style="left:'+(bhx/W*100).toFixed(1)+'%;top:'+(((buy+11)/H*100)).toFixed(1)+'%;transform:translate(-50%,-50%)">BACKUP LOAD'+(u.backupLoadKw>0?(' \u00b7 '+u.backupLoadKw+' kW'):'')+'</div>';
+      stackLabels+='<div class="complabel'+(backOn?' lit':'')+'" style="left:'+(bpx/W*100).toFixed(1)+'%;top:'+(((rowBaseY-56)/H*100).toFixed(1))+'%;transform:translate(-50%,-50%);font-size:6.5px;padding:2px 6px">BYPASS</div>';
     }
   }
   var moreCount=allUnits.length-shownStack.length;
   if(moreCount>0)stackLabels+='<div class="complabel lit" style="left:'+((colX[1]+30)/W*100).toFixed(1)+'%;top:'+(((firstRowBase+(perCol-1)*rowPitch+24)/H*100)).toFixed(1)+'%;transform:translate(-50%,-50%)">+'+moreCount+' more</div>';
-  if(isMulti&&trunkTopY!==null){
-    unitCables+='<path class="olcable'+(invOn?' lit':'')+'" d="M'+trunkX+','+trunkTopY+' L'+trunkX+','+bottomBusY+' L'+houseX+','+bottomBusY+' L'+houseX+','+houseBotAnchor+'"></path>';
-    unitCables+='<path class="olcable'+(gridLit?' lit':'')+'" d="M'+monAttachX+','+monAttachY+' L'+monAttachX+','+(houseBotAnchor+31)+' L'+houseX+','+(houseBotAnchor+31)+'"></path>';
+  if(isMulti&&state.thirdParty&&trunkTopY!==null){
+    var tpN=Math.min(state.tpCount||1,3),tpmW=30,tpmH=34,tpmB=96;
+    var tpXs=[];for(var ti=0;ti<tpN;ti++)tpXs.push(trunkX-ti*48);
+    if(tpN>1)unitCables+='<path class="olcable'+(invOn?' lit':'')+'" d="M'+tpXs[tpN-1]+','+(tpmB+12)+' L'+trunkX+','+(tpmB+12)+'"></path>';
+    unitCables+='<path class="olcable'+(invOn?' lit':'')+'" d="M'+trunkX+','+(tpmB+12)+' L'+trunkX+','+trunkTopY+'"></path>';
+    tpXs.forEach(function(tpmCx,ti2){
+      unitCables+='<path class="olcable'+(invOn?' lit':'')+'" d="M'+tpmCx+','+tpmB+' L'+tpmCx+','+(tpmB+12)+'"></path>';
+      unitBoxes+=drawIsoBox(tpmCx-tpmW/2,tpmB,tpmW,tpmH,skx*0.6,sky*0.6,'#e2e6eb','#eef1f4','#b9c2cc',false);
+      unitBoxes+='<circle cx="'+tpmCx+'" cy="'+(tpmB-tpmH+10)+'" r="3" fill="#9aa5b1"></circle>';
+      unitBoxes+='<path class="dccable" d="M'+tpmCx+','+(tpmB-tpmH-22)+' L'+tpmCx+','+(tpmB-tpmH)+'"></path>';
+      unitBoxes+='<polygon points="'+(tpmCx-3.5)+','+(tpmB-tpmH-7)+' '+(tpmCx+3.5)+','+(tpmB-tpmH-7)+' '+tpmCx+','+(tpmB-tpmH)+'" fill="#232d3a"></polygon>';
+      unitBoxes+='<g class="pvpanel lit"><rect x="'+(tpmCx-14)+'" y="'+(tpmB-tpmH-36)+'" width="28" height="14" rx="1.5"></rect><line x1="'+(tpmCx-5)+'" y1="'+(tpmB-tpmH-36)+'" x2="'+(tpmCx-5)+'" y2="'+(tpmB-tpmH-22)+'"></line><line x1="'+(tpmCx+5)+'" y1="'+(tpmB-tpmH-36)+'" x2="'+(tpmCx+5)+'" y2="'+(tpmB-tpmH-22)+'"></line></g>';
+    });
+    stackLabels+='<div class="complabel" style="left:'+(trunkX/W*100).toFixed(1)+'%;top:'+((122/H*100).toFixed(1))+'%;transform:translate(-50%,-50%);font-size:6.5px;padding:2px 6px">THIRD\u2011PARTY'+(tpN>1?' \u00d7'+tpN:'')+'</div>';
   }
-  if(isMulti&&showSemBox&&shownStack.length){
+  if(isMulti&&trunkTopY!==null){
+    commOverlay+='<path class="olcable'+(invOn?' lit':'')+'" d="M'+trunkX+','+trunkTopY+' L'+trunkX+','+bottomBusY+' L'+houseX+','+bottomBusY+' L'+houseX+','+houseBotAnchor+'"></path>';
+    commOverlay+='<path class="olcable'+(gridLit?' lit':'')+'" d="M'+monAttachX+','+monAttachY+' L'+monAttachX+','+(houseBotAnchor+31)+' L'+houseX+','+(houseBotAnchor+31)+'"></path>';
+  }
+  var isWirelessGroHome=state.dongle==='grohome'&&state.groHomeMode==='wireless';
+  if(isMulti&&showSemBox&&shownStack.length&&!isWirelessGroHome){
     var nC=shownStack.length;
-    var cIR=function(di){var p=unitPos(di);return {x:p.x+54*stackScale,y:p.y-26};};
+    var cIR=function(di){var p=unitPos(di);return {x:p.x+62*stackScale,y:p.y-26};};
     var comm='';
     var semY1=mtrBaseY-semBoxH*0.5-4, semY2=mtrBaseY-semBoxH*0.5+4;
     var midOf=function(di){return unitPos(di).y-26;};
-    var ir1=colX[0]+54*stackScale, ir2=colX[1]+54*stackScale;
+    var ir1=colX[0]+62*stackScale, ir2=colX[1]+62*stackScale;
     var inD=5;
-    var n1=Math.min(nC,perCol), vx1=ir1+8;
+    var n1=Math.min(nC,perCol), vx1=ir1+5;
     comm+=commPair('M'+mtrX+','+semY1+' L486,'+semY1+' L486,147 L'+vx1+',147 L'+vx1+','+(midOf(0)-5)+' L'+(ir1-inD)+','+(midOf(0)-5));
     for(var h1=0;h1<n1-1;h1++){
       comm+=commPair('M'+(ir1-inD)+','+(midOf(h1)+5)+' L'+vx1+','+(midOf(h1)+5)+' L'+vx1+','+(midOf(h1+1)-5)+' L'+(ir1-inD)+','+(midOf(h1+1)-5));
     }
     if(nC>perCol){
-      var n2=nC-perCol, vx2=ir2+8;
-      comm+=commPair('M'+mtrX+','+semY2+' L480,'+semY2+' L480,'+(midOf(perCol)-5)+' L'+(ir2-inD)+','+(midOf(perCol)-5));
+      var n2=nC-perCol, il2=colX[1], vx2=il2-4;
+      var botOf=function(di){return unitPos(di).y-10;};
+      comm+=commPair('M'+mtrX+','+semY2+' L480,'+semY2+' L480,147 L'+vx2+',147 L'+vx2+','+(botOf(perCol)-5)+' L'+(il2+inD)+','+(botOf(perCol)-5));
       for(var h2=0;h2<n2-1;h2++){
-        comm+=commPair('M'+(ir2-inD)+','+(midOf(perCol+h2)+5)+' L'+vx2+','+(midOf(perCol+h2)+5)+' L'+vx2+','+(midOf(perCol+h2+1)-5)+' L'+(ir2-inD)+','+(midOf(perCol+h2+1)-5));
+        comm+=commPair('M'+(il2+inD)+','+(botOf(perCol+h2)+5)+' L'+vx2+','+(botOf(perCol+h2)+5)+' L'+vx2+','+(botOf(perCol+h2+1)-5)+' L'+(il2+inD)+','+(botOf(perCol+h2+1)-5));
       }
     }
     commOverlay+=comm;
   }
-  s+=unitCables+unitBoxes+commOverlay;
+  s+=unitCables+unitBoxes+commOverlay+boxTops;
 
   var showPartialSingle=showPartial&&!isMulti;
+  var wholeLit=state.backupMode==='whole'&&backOn;
   if(!isMulti&&hasComp){
-    s+='<path class="olcable'+(gridLit?' lit':'')+'" d="M'+invAttachX+','+invAttachY+' L'+monAttachX+','+invAttachY+' L'+monAttachX+','+monAttachY+'"></path>';
+    var invTopY=isRise?(baseY-rh+18):(baseY-ih+18);
+    if(state.backupMode==='whole')s+='<path class="olcable'+(wholeLit?' lit':'')+'" d="M'+invAttachX+','+invTopY+' L'+houseX+','+invTopY+' L'+houseX+','+invAttachY+'"></path>';
+    s+='<path class="olcable'+((gridLit||wholeLit)?' lit':'')+'" d="M'+invAttachX+','+invAttachY+' L'+monAttachX+','+invAttachY+' L'+monAttachX+','+monAttachY+'"></path>';
     s+='<path class="olcable'+(gridLit?' lit':'')+'" d="M'+houseX+','+invAttachY+' L'+houseX+','+houseBotAnchor+'"></path>';
-    if(invOn&&(showSemBox||showSmartAtFeed)){
+    if(invOn&&(showSemBox||showSmartAtFeed)&&!isWirelessGroHome){
       var rSx=showSemBox?mtrX:(feedX-smW/2);
       var rSy=showSemBox?(mtrBaseY-semBoxH*0.5-6):feedY;
       var rVx=showSemBox?470:598;
@@ -1304,14 +1485,14 @@ function commercialSceneHTML(){
   var hasLeftTowers=sN>0&&!isRise&&!isModa;
   var bx2=hasLeftTowers?(tx0+sTotW/2):((isRise?rx:ix)-95), by2=baseY-mainMaxH*0.55, midY2=baseY-mainMaxH*0.5;
   if(!isMulti&&hasComp){
-    var pvW2=30,pvH2=16;
+    var pvW2=50,pvH2=25;
     var pvBy2=hasLeftTowers?(baseY-Math.max(sTowerH,ih)-24):(by2-30);
     if(hasLeftTowers){
       var pvLineY2=pvBy2-pvH2*0.5;
       s+='<path class="dccable" d="M'+(bx2+pvW2/2)+','+pvLineY2+' L'+(ix+27)+','+pvLineY2+' L'+(ix+27)+','+(baseY-ih)+'"></path>';
       s+='<polygon points="'+(ix+23)+','+(baseY-ih-8)+' '+(ix+31)+','+(baseY-ih-8)+' '+(ix+27)+','+(baseY-ih)+'" fill="#232d3a"></polygon>';
     } else {
-      s+='<path class="dccable" d="M'+bx2+','+(pvBy2-pvH2*0.5)+' L'+(isRise?rx:ix)+','+midY2+'"></path>';
+      s+='<path class="dccable" d="M'+bx2+','+(pvBy2-pvH2*0.5)+' L'+bx2+','+midY2+' L'+(isRise?rx:ix)+','+midY2+'"></path>';
       s+='<polygon points="'+((isRise?rx:ix)-8)+','+(midY2-4)+' '+((isRise?rx:ix)-8)+','+(midY2+4)+' '+(isRise?rx:ix)+','+midY2+'" fill="#232d3a"></polygon>';
     }
     s+='<g class="pvpanel lit"><rect x="'+(bx2-pvW2/2)+'" y="'+(pvBy2-pvH2)+'" width="'+pvW2+'" height="'+pvH2+'" rx="1.5"></rect>'+
@@ -1319,14 +1500,39 @@ function commercialSceneHTML(){
       '<line x1="'+(bx2+pvW2/6)+'" y1="'+(pvBy2-pvH2)+'" x2="'+(bx2+pvW2/6)+'" y2="'+pvBy2+'"></line>'+
       '<line x1="'+(bx2-pvW2/2)+'" y1="'+(pvBy2-pvH2/2)+'" x2="'+(bx2+pvW2/2)+'" y2="'+(pvBy2-pvH2/2)+'"></line>'+
       '</g>';
+    if(totalKWp()>0)s+='<text x="'+bx2+'" y="'+(pvBy2-pvH2/2+3)+'" text-anchor="middle" font-size="7.5" font-weight="800" fill="#7bf5a8" style="paint-order:stroke" stroke="#0d3320" stroke-width="1.8">'+totalKWp()+'kWp</text>';
   }
-  var showBypass=!isMulti&&hasComp&&!!state.backupMode;
+  if(!isMulti&&hasComp&&state.metering==='meter'&&state.meterType==='TPM-6CT-C'&&showSmartAtFeed)s+=ctg(feedX,feedY+30,14,'down');
+  if(!isMulti&&hasComp&&state.thirdParty){
+    var tpN=Math.min(state.tpCount||1,3),tpW=40,tpH=60;
+    for(var tpi=0;tpi<tpN;tpi++){
+      var tpX=100-tpi*45,tpCx=tpX+tpW/2;
+      s+=drawIsoBox(tpX,baseY,tpW,tpH,skx*0.8,sky*0.8,'#e2e6eb','#eef1f4','#b9c2cc',false);
+      s+='<line x1="'+(tpX+7)+'" y1="'+(baseY-16)+'" x2="'+(tpX+tpW-7)+'" y2="'+(baseY-16)+'" stroke="#aab4bf" stroke-width="1.6"></line>';
+      s+='<circle cx="'+tpCx+'" cy="'+(baseY-tpH+15)+'" r="4" fill="#9aa5b1"></circle>';
+      var tpPvY=baseY-tpH-26,tpPvW=24,tpPvH=13;
+      s+='<path class="dccable" d="M'+tpCx+','+(tpPvY)+' L'+tpCx+','+(baseY-tpH)+'"></path>';
+      s+='<polygon points="'+(tpCx-3.5)+','+(baseY-tpH-7)+' '+(tpCx+3.5)+','+(baseY-tpH-7)+' '+tpCx+','+(baseY-tpH)+'" fill="#232d3a"></polygon>';
+      s+='<g class="pvpanel lit"><rect x="'+(tpCx-tpPvW/2)+'" y="'+(tpPvY-tpPvH)+'" width="'+tpPvW+'" height="'+tpPvH+'" rx="1.5"></rect>'+
+        '<line x1="'+(tpCx-tpPvW/6)+'" y1="'+(tpPvY-tpPvH)+'" x2="'+(tpCx-tpPvW/6)+'" y2="'+tpPvY+'"></line>'+
+        '<line x1="'+(tpCx+tpPvW/6)+'" y1="'+(tpPvY-tpPvH)+'" x2="'+(tpCx+tpPvW/6)+'" y2="'+tpPvY+'"></line>'+
+        '<line x1="'+(tpCx-tpPvW/2)+'" y1="'+(tpPvY-tpPvH/2)+'" x2="'+(tpCx+tpPvW/2)+'" y2="'+(tpPvY-tpPvH/2)+'"></line></g>';
+      s+='<path class="olcable'+(invOn?' lit':'')+'" d="M'+tpCx+','+baseY+' L'+tpCx+','+(baseY+58-tpi*8)+' L'+houseX+','+(baseY+58-tpi*8)+' L'+houseX+','+invAttachY+'"></path>';
+      if(tpi===0&&((state.metering==='meter'&&state.meterType==='TPM-6CT-C')||isGroHome))s+=ctg(tpCx,baseY+38,10,'up');
+    }
+  }
+  var showBypass=!isMulti&&hasComp&&!!state.backupMode&&state.family!=='MODA';
   var bhx2=(isRise?rx+rw:ix+iw)+54;
+  var buyS=baseY-8, bpJoinX=bhx2+48;
+  var bpx2,bpy2;
   if(showPartialSingle){
-    s+='<path class="olcable'+(backOn?' lit':'')+'" d="M'+(isRise?rx+rw:ix+iw)+','+(baseY-16)+' L'+(bhx2-12)+','+(baseY-16)+'"></path>';
+    s+='<path class="olcable'+(backOn?' lit':'')+'" d="M'+(isRise?rx+rw:ix+iw)+','+(baseY-20)+' L'+bhx2+','+(baseY-20)+' L'+bhx2+','+(buyS-23)+'"></path>';
+    s+='<path class="olcable'+(backOn?' lit':'')+'" d="M'+(bhx2+12)+','+(buyS-12)+' L'+bpJoinX+','+(buyS-12)+' L'+bpJoinX+','+invAttachY+'"></path>';
+    bpx2=bpJoinX;bpy2=Math.round((buyS-12+invAttachY)/2);
+  } else {
+    bpx2=invAttachX+106;bpy2=invTopY;
   }
   if(showBypass){
-    var bpx2=(isRise?rx+rw:ix+iw)+18,bpy2=invAttachY;
     s+='<g><rect x="'+(bpx2-7)+'" y="'+(bpy2-11)+'" width="14" height="21" rx="2" fill="#f4f6f9" stroke="#e0584f" stroke-width="1.4"></rect>'+
       '<rect x="'+(bpx2-3.6)+'" y="'+(bpy2-7)+'" width="7.2" height="4.4" rx="0.8" fill="#e0584f"></rect>'+
       '<rect x="'+(bpx2-3.6)+'" y="'+(bpy2+1)+'" width="7.2" height="4.4" rx="0.8" fill="#9aa5b1"></rect></g>';
@@ -1350,6 +1556,8 @@ function commercialSceneHTML(){
     s+='<g class="cloudicon'+onlLit+'"><rect x="'+(phoneX-7)+'" y="'+(phoneY-14)+'" width="14" height="26" rx="3"></rect>'+
       '<circle class="scr" cx="'+phoneX+'" cy="'+(phoneY+7)+'" r="1.6"></circle></g>';
   }
+  s+=drawHouse(houseX,houseBotAnchor);
+  s+=singleBoxSVG;
   s+='</svg>';
   s+=stackLabels;
   s+='<div class="legend">'+
@@ -1367,18 +1575,18 @@ function commercialSceneHTML(){
   }
   if(!isMulti&&hasComp){
     var invLabelY=(isRise?baseY-rh-20:baseY-ih-20);
-    s+='<div class="complabel'+(invOn?' lit':'')+'" style="left:'+(bx2/W*100).toFixed(1)+'%;top:'+((Math.min(pvBy2-pvH2-9,invLabelY-26)/H*100).toFixed(1))+'%;transform:translate(-50%,-50%)">PV PANELS'+(totalKWp()>0?(' \u00b7 '+totalKWp()+'kWp'):'')+'</div>';
   }
-  if(showBypass)s+='<div class="complabel'+(backOn?' lit':'')+'" style="left:'+(((isRise?rx+rw:ix+iw)+18)/W*100).toFixed(1)+'%;top:'+(((invAttachY-24)/H*100)).toFixed(1)+'%;transform:translate(-50%,-50%)">BYPASS</div>';
+  if(!isMulti&&hasComp&&state.thirdParty)s+='<div class="complabel" style="left:'+(100/W*100).toFixed(1)+'%;top:'+(((baseY+14)/H*100)).toFixed(1)+'%;transform:translate(-50%,-50%);font-size:6.5px;padding:2px 6px">THIRD\u2011PARTY'+((state.tpCount||1)>1?' \u00d7'+(state.tpCount||1):'')+'</div>';
+  if(showBypass)s+='<div class="complabel'+(backOn?' lit':'')+'" style="left:'+(bpx2/W*100).toFixed(1)+'%;top:'+(((bpy2-20)/H*100)).toFixed(1)+'%;transform:translate(-50%,-50%);font-size:6.5px;padding:2px 6px">BYPASS</div>';
   if(showPartialSingle){
-    s+='<div class="housebox" style="left:'+(bhx2/W*100).toFixed(1)+'%;top:'+((baseY-10)/H*100).toFixed(1)+'%;font-size:23px">\ud83c\udfe0</div>';
-    s+='<div class="complabel'+(backOn?' lit':'')+'" style="left:'+(bhx2/W*100).toFixed(1)+'%;top:'+(((baseY+2)/H*100)).toFixed(1)+'%;transform:translate(-50%,-50%)">BACKUP LOAD'+(state.backupLoadKw>0?(' \u00b7 '+state.backupLoadKw+' kW'):'')+'</div>';
+    s+='<div class="housebox" style="left:'+(bhx2/W*100).toFixed(1)+'%;top:'+((buyS/H*100)).toFixed(1)+'%;font-size:23px">\ud83c\udfe0</div>';
+    s+='<div class="complabel'+(backOn?' lit':'')+'" style="left:'+(bhx2/W*100).toFixed(1)+'%;top:'+(((buyS+11)/H*100)).toFixed(1)+'%;transform:translate(-50%,-50%)">BACKUP'+(state.backupLoadKw>0?(' '+state.backupLoadKw+'kW'):'')+'</div>';
   }
-  s+='<div class="housebox" style="left:'+(houseX/W*100).toFixed(1)+'%;top:'+(houseBotAnchor/H*100).toFixed(1)+'%;font-size:'+houseSize+'px">\ud83c\udfe0</div>';
+
 
   var invCx=isRise?365:(ix+iw/2);
   if(!isMulti&&hasComp){
-    s+='<div class="complabel'+(invOn?' lit':'')+'" style="left:'+(invCx/W*100).toFixed(1)+'%;top:'+((invLabelY/H*100).toFixed(1))+'%">'+(isRise?'RISE ALL\u2011IN\u2011ONE':(isModa?'MODA ALL\u2011IN\u2011ONE':'INVERTER'))+(invOn?(' \u00b7 '+state.kw+' kW'):'')+'</div>';
+    if(isRise||isModa)s+='<div class="complabel'+(invOn?' lit':'')+'" style="left:'+(invCx/W*100).toFixed(1)+'%;top:'+((invLabelY/H*100).toFixed(1))+'%">'+(isRise?'RISE ALL\u2011IN\u2011ONE':'MODA ALL\u2011IN\u2011ONE')+(invOn?(' \u00b7 '+state.kw+' kW'):'')+'</div>';
     if(isModa){
       if(invOn){
         var modaH=13+(((state.inputs[0]&&state.inputs[0].modules)||0))*15+22;
@@ -1395,12 +1603,18 @@ function commercialSceneHTML(){
   }
   s+='<div class="gridchip'+(metOn?' lit':'')+'" style="left:'+((twX)/W*100).toFixed(1)+'%;top:'+(((twTop-16)/H)*100).toFixed(1)+'%;transform:translate(-50%,-50%)">GRID</div>';
   s+='<div class="complabel'+(metOn?' lit':'')+'" style="left:'+((kwhX+kwhW+6)/W*100).toFixed(1)+'%;top:'+(((kwhTopY+kwhH/2)/H)*100).toFixed(1)+'%;transform:translate(0,-50%)">kWh METER</div>';
-  s+='<div class="complabel'+(metOn?' lit':'')+'" style="left:'+(feedX/W*100).toFixed(1)+'%;top:'+(((feedY-18)/H)*100).toFixed(1)+'%;transform:translate(-50%,-50%)">FEED\u2011IN POINT</div>';
-  s+='<div class="complabel" style="left:'+((cabX+cabW/2)/W*100).toFixed(1)+'%;top:'+(((cabBaseY+16)/H)*100).toFixed(1)+'%;transform:translate(-50%,-50%)">CABINET'+(state.mainFuseA>0?(' \u00b7 Main Fuse '+state.mainFuseA+'A'):'')+'</div>';
+  s+='<div class="complabel'+(metOn?' lit':'')+'" style="left:'+((feedX+16)/W*100).toFixed(1)+'%;top:'+((feedY/H*100)).toFixed(1)+'%;transform:translate(0,-50%)">FEED\u2011IN POINT</div>';
+  s+='<div class="complabel" style="left:'+((cabX+cabW+6)/W*100).toFixed(1)+'%;top:'+(((cabBaseY+16)/H)*100).toFixed(1)+'%;transform:translate(0,-50%)">CABINET'+(state.mainFuseA>0?(' \u00b7 Main Fuse '+state.mainFuseA+'A'):'')+'</div>';
+  if(state.mainFuseA>0){
+    var sceneFuseKw=Math.round(state.mainFuseA*230*3/100)/10;
+    s+='<div class="complabel" style="left:'+((cabX+cabW+6)/W*100).toFixed(1)+'%;top:'+(((cabBaseY+28)/H)*100).toFixed(1)+'%;transform:translate(0,-50%);font-size:6.5px;padding:2px 6px">'+state.mainFuseA+'A \u00d7 230V \u00d7 3 = '+sceneFuseKw+'kW</div>';
+  }
   if(showSemBox){
     s+='<div class="complabel lit" style="left:'+((mtrX+semBoxW/2)/W*100).toFixed(1)+'%;top:'+(((mtrBaseY-semBoxH-13)/H)*100).toFixed(1)+'%;transform:translate(-50%,-50%)">'+meterLabel+'</div>';
+  } else if(isGroHome){
+    s+='<div class="complabel lit" style="left:'+((groX+semBoxW/2)/W*100).toFixed(1)+'%;top:'+(((groBaseY-groBoxH-11)/H)*100).toFixed(1)+'%;transform:translate(-50%,-50%);font-size:6.5px;padding:2px 6px">GROHOMEMANAGER\u2011X</div>';
   } else if(showSmartAtFeed){
-    s+='<div class="complabel lit" style="left:'+(feedX/W*100).toFixed(1)+'%;top:'+(((feedY+smH/2+11)/H)*100).toFixed(1)+'%;transform:translate(-50%,-50%)">SMART METER</div>';
+    s+='<div class="complabel lit" style="left:'+((feedX+smW/2+8)/W*100).toFixed(1)+'%;top:'+(((feedY+smH/2)/H)*100).toFixed(1)+'%;transform:translate(0,-50%)">SMART METER</div>';
   }
   s+='<div class="complabel'+(invOn?' lit':'')+'" style="left:'+(houseX/W*100).toFixed(1)+'%;top:'+(((houseTopY-11)/H)*100).toFixed(1)+'%;transform:translate(-50%,-50%)">MAIN LOAD'+(state.loadKw>0?(' \u00b7 '+state.loadKw+' kW'):'')+'</div>';
   s+='</div></div>';
@@ -1535,18 +1749,25 @@ function onPanels(){
 }
 document.addEventListener('click',function(e){
   var el=e.target.closest&&e.target.closest('[data-act]');if(!el)return;var a=el.getAttribute('data-act');
-  if(a==='fam'){var k=el.getAttribute('data-k');if(!famValid(k))return;state.family=k;var f=FAMILIES[k];var v=f.kw.filter(kwValid);state.kw=v.length?v[0]:f.kw[0];state.inputs=(f.battery==='MODA')?state.inputs:state.inputs.slice(0,f.inputs);if(f.battery==='MODA')state.wantBattery=true;clampInputs();render();}
+  if(a==='fam'){var k=el.getAttribute('data-k');if(!famValid(k))return;if(k==='MODA'&&state.multi&&state.units.length>1)return;state.family=k;var f=FAMILIES[k];var v=f.kw.filter(kwValid);state.kw=v.length?v[0]:f.kw[0];state.inputs=(f.battery==='MODA')?state.inputs:state.inputs.slice(0,f.inputs);if(f.battery==='MODA')state.wantBattery=true;clampInputs();render();}
   else if(a==='kw'){var p=+el.getAttribute('data-p');if(!kwValid(p))return;state.kw=p;render();}
   else if(a==='seg'){var sg=el.getAttribute('data-s');state.segment=sg;syncUnit();
     state.units.forEach(function(u){if(u.family&&FAMILIES[u.family].seg!==sg){u.family=null;u.kw=null;u.inputs=[];u.wantBattery=null;}});
     loadUnit(state.units[state.unit]);render();goStep('stp-inv');}
+  else if(a==='tpcount'){state.tpCount=parseInt(el.getAttribute('data-n'),10)||1;render();}
+  else if(a==='synoptin'){state.synOptIn=!state.synOptIn;render();}
+  else if(a==='grohomemode'){state.groHomeMode=el.getAttribute('data-v');render();}
+  else if(a==='thirdparty'){state.thirdParty=!state.thirdParty;
+    if(state.thirdParty){state.metering='meter';state.meterType=(state.family==='MODA')?'TPM-6CT-C':state.meterType;}
+    else if(state.meterType==='TPM-6CT-C'){state.meterType='TPM-C';}
+    render();}
   else if(a==='multi'){state.multi=!state.multi;if(state.multi&&state.dongle!=='shinesem'&&state.dongle!=='shinemaster')state.dongle=null;if(!state.multi){syncUnit();state.units=[state.units[state.unit]];state.unit=0;loadUnit(state.units[0]);}render();}
   else if(a==='unit'){switchUnit(+el.getAttribute('data-i'));var wasInInvStep=!!el.closest('#stp-inv');render();if(wasInInvStep){var pv1=document.getElementById('pvInputsTop');if(pv1)pv1.scrollIntoView({block:'start',behavior:'smooth'});}}
   else if(a==='unitadd'){var wasInInvStep2=!!el.closest('#stp-inv');addUnit();render();if(wasInInvStep2){var pv2=document.getElementById('pvInputsTop');if(pv2)pv2.scrollIntoView({block:'start',behavior:'smooth'});}}
   else if(a==='unitdel'){removeUnit(+el.getAttribute('data-i'));render();}
   else if(a==='goai'){state.page='ai';render();}
   else if(a==='goback'){state.page='main';render();}
-  else if(a==='dongle'){var k=el.getAttribute('data-k');var wasNull=!state.dongle;state.dongle=(state.dongle===k)?null:k;render();if(state.dongle)goStep('stp-meter');}
+  else if(a==='dongle'){var k=el.getAttribute('data-k');if(state.multi&&state.units.length>1&&k!=='shinesem'&&k!=='shinemaster'&&k!=='grohome')return;var wasNull=!state.dongle;state.dongle=(state.dongle===k)?null:k;render();if(state.dongle)goStep('stp-meter');}
   else if(a==='metering'){var m=el.getAttribute('data-m');state.metering=(state.metering===m)?null:m;render();if(state.metering)goStep('stp-backup');}
   else if(a==='mt'){state.meterType=el.getAttribute('data-t');render();}
   else if(a==='backup'){state.backupOn=!state.backupOn;render();goStep('stp-battery');}
