@@ -402,7 +402,7 @@ function acBreaker(){
 }
 
 // APX inputs: {mods,cols,c1,c2}. AXE inputs: {modules}. Shape depends on fam().battery.
-var state={page:'main',segment:null,multi:false,thirdParty:false,tpCount:1,synOptIn:false,groHomeMode:'rs485',unit:0,units:[],panelW:450,panelCount:0,family:null,kw:null,dongle:null,metering:null,meterType:'TPM-C',backupOn:true,apx:'1.0',inputs:[],wantBattery:null,loadKw:0,backupMode:null,backupLoadKw:0,mainFuseA:null};
+var state={page:'main',segment:null,multi:false,thirdParty:false,tpCount:1,synOptIn:false,groHomeMode:'rs485',unit:0,units:[],panelW:450,panelCount:0,family:null,kw:null,dongle:null,metering:null,meterType:'TPM-6CT-C',backupOn:true,apx:'1.0',inputs:[],wantBattery:null,loadKw:0,backupMode:null,backupLoadKw:0,mainFuseA:null};
 function snapshotUnit(){return {family:state.family,kw:state.kw,backupOn:state.backupOn,backupMode:state.backupMode,backupLoadKw:state.backupLoadKw,panelW:state.panelW,panelCount:state.panelCount,wantBattery:state.wantBattery,apx:state.apx,inputs:state.inputs};}
 function loadUnit(u){state.family=u.family;state.kw=u.kw;state.backupOn=u.backupOn;state.backupMode=(u.backupMode!==undefined?u.backupMode:null);state.backupLoadKw=(u.backupLoadKw!==undefined?u.backupLoadKw:0);state.panelW=(u.panelW!==undefined?u.panelW:450);state.panelCount=(u.panelCount!==undefined?u.panelCount:0);state.wantBattery=u.wantBattery;state.apx=u.apx;state.inputs=u.inputs;}
 function syncUnit(){state.units[state.unit]=snapshotUnit();}
@@ -419,7 +419,7 @@ function fam(){return state.family?FAMILIES[state.family]:null;}
 function isAxeFam(){return !!(fam()&&fam().battery==='AXE');}
 function backupType(){return state.family?fam().backup:null;}
 function isHU(){return backupType()==='integrated';}
-function needsSyn(){var b=backupType();return b==='box-required'||(b==='box'&&state.backupOn);}
+function needsSyn(){var b=backupType();return b==='box-required'||(b==='box'&&state.backupOn)||(!!state.synOptIn&&state.units.length<=1);}
 function a2(){return state.apx==='2.0';}
 function maxInputs(){if(!fam())return 0;var b=fam().battery;if(b!=='APX')return fam().inputs;return Math.min(fam().inputs,a2()?3:2);}
 function minMods(){return a2()?0:1;}
@@ -536,8 +536,7 @@ function buildBOM(){var map={};function add(x){if(x.qty<=0)return;var k=x.g+'|'+
       if(f.battery==='RISE')add({g:'Battery',item:'RISE 261 kWh LFP battery|integrated in the cabinet \u2014 incl. UPS/EMS',qty:1});
     }
     if(needsSyn())add({g:'Backup',item:synItem(),qty:1});
-    if(state.family==='MOD-HU'&&state.backupMode==='whole'&&state.units.length<=1&&state.synOptIn&&!needsSyn())add({g:'Backup',item:'Growatt SYN 100\u2011XH\u201130 (optional)|extra backup switching capacity alongside MOD\u2011HU\u2019s integrated backup',qty:1});
-    if(state.family&&state.backupMode&&state.family!=='MODA')add({g:'Backup',item:'Bypass breaker (recommended)|for backup service \u2014 mounted just outside the inverter',qty:1});
+    if(state.family&&state.backupMode&&state.family!=='MODA'&&!needsSyn())add({g:'Backup',item:'Bypass breaker (recommended)|for backup service \u2014 mounted just outside the inverter',qty:1});
     if(state.family==='MODA'&&state.backupMode)add({g:'Backup',item:'Integrated 63 A bypass|built into the MODA \u2014 grid can feed the backup load, auto\u2011switch on inverter fault',qty:1});
     if(state.inputs.length&&fam()&&fam().battery!=='RISE'&&fam().battery!=='MODA'){var t=batteryTotals();
       if(isAxeFam()){
@@ -564,7 +563,7 @@ function buildBOM(){var map={};function add(x){if(x.qty<=0)return;var k=x.g+'|'+
   if(state.dongle==='grohome')add({g:'Connectivity',item:'Growatt ShineRFStick\u2011X2|RF module, one per inverter',qty:Math.min(state.units.length||1,12)});
   if(state.thirdParty&&state.units.some(function(u){return !!u.family;}))add({g:'Inverter',item:'Third\u2011party PV inverter (existing)|AC\u2011coupled \u2014 verify grid settings &amp; compatibility',qty:(state.tpCount||1)});
   if(state.units.length>1&&state.units.some(function(u){return u.backupMode==='whole';})&&state.units.every(function(u){return !u.family||!FAMILIES[u.family]||FAMILIES[u.family].backup==='integrated';}))add({g:'Backup',item:'Growatt SYN 100\u2011XH\u201130|whole\u2011home backup for multi\u2011inverter \u2014 up to 58 A',qty:1});
-  if(state.metering==='meter')add({g:'Metering',item:state.meterType==='TPM-E'?'Growatt Smart Meter TPM\u2011E|direct, 3\u2011phase':(state.meterType==='TPM-6CT-C'?'Growatt Smart Meter TPM\u20116CT\u2011C|two CT clamps \u2014 MODA + third\u2011party inverter':'Growatt Smart Meter TPM\u2011C|CT type (DTSU666), 3\u2011phase'),qty:1});
+  if(state.metering==='meter')add({g:'Metering',item:'Growatt Smart Meter TPM\u20116CT\u2011C|two CT clamps \u2014 grid feed + inverter/third\u2011party side',qty:1});
   return Object.keys(map).map(function(k){return map[k];}).sort(function(a,b){return GROUP_ORDER.indexOf(a.g)-GROUP_ORDER.indexOf(b.g);});}
 function buildText(){syncUnit();var saved=snapshotUnit();var s='GROWATT - SYSTEM DESIGN\n'+new Date().toLocaleDateString()+'\n\n';
   s+='Segment: '+(state.segment==='res'?'Residential':state.segment==='com'?'Commercial':'(not chosen)')+'\n';
@@ -690,7 +689,7 @@ function meterStep(){
     ?'<div class="notice g" style="margin-top:0;margin-bottom:12px">'+ic('check',14)+'<span><b>TPM\u20116CT\u2011C</b> added \u2014 required for MODA + third\u2011party inverter. Its <b>two CT clamps</b> measure both: one in front of the third\u2011party inverter, one at the meter.</span></div>'
     :'<div class="pverr" style="margin-top:0;margin-bottom:12px">'+ic('alert',15)+'<span><b>MODA + third\u2011party inverter requires a TPM\u20116CT\u2011C smart meter</b> (two CT clamps) \u2014 select it below.</span></div>';
   else if(singleInv&&m==='meter')semNote+='<div class="note" style="margin-top:0;margin-bottom:12px">'+ic('info',14)+'<span>With a <b>single inverter</b>, <b>TPM\u20116CT\u2011C</b> is recommended \u2014 its <b>two CT clamps</b> measure both the grid feed and the inverter side.</span></div>';
-  var sub=m==='meter'?'<div class="sublabel">Smart meter model</div><div class="chips"><button class="chip sm '+(state.meterType==='TPM-E'?'on':'')+'" data-act="mt" data-t="TPM-E">TPM\u2011E \u00b7 direct</button><button class="chip sm '+(state.meterType==='TPM-C'?'on':'')+'" data-act="mt" data-t="TPM-C">TPM\u2011C \u00b7 CT (DTSU666)</button>'+((modaTp||singleInv)?'<button class="chip sm '+(state.meterType==='TPM-6CT-C'?'on':'')+'" data-act="mt" data-t="TPM-6CT-C">TPM\u20116CT\u2011C \u00b7 2\u00d7CT</button>':'')+'</div>':'';
+  var sub='';
   var metaTxt=state.dongle==='shinesem'?' \u2014 optional extra with ShineSEM':(state.dongle==='shinemaster'?' \u2014 required with ShineMaster':' \u2014 recommended');
   var isOptional=state.dongle==='shinesem';
   var FUSE_SIZES_ALL=[16,20,25,35,50,63,80,100,125,160,200,250,315,400];
@@ -701,12 +700,14 @@ function meterStep(){
     '<select id="mainFuseA"><option value="">Select size\u2026</option>'+FUSE_SIZES.map(function(a){return '<option value="'+a+'"'+(state.mainFuseA===a?' selected':'')+'>'+a+' A</option>';}).join('')+'</select>'+
     (state.mainFuseA>0?('<div class="s2" style="margin-top:6px">Allowed power: <b>'+state.mainFuseA+'A \u00d7 230V \u00d7 3 = '+fuseKw+' kW</b></div>'):'')+
     '</div>';
-  var meterBadge=(state.dongle==='shinemaster'||modaTp||(state.thirdParty&&state.units.length>1))?'Required':(isOptional?'Optional':'Recommended');
+  var hasSynBox=needsSyn();
+  var meterBadge=(state.dongle==='shinemaster'||modaTp||(state.thirdParty&&state.units.length>1)||hasSynBox)?'Required':(isOptional?'Optional':'Recommended');
   var hideMeterSection=state.dongle==='grohome';
   if(hideMeterSection&&state.metering)state.metering=null;
-  var meterBody=hideMeterSection
+  var synMeterNote=hasSynBox?'<div class="notice g" style="margin-top:0;margin-bottom:12px">'+ic('check',14)+'<span>With a <b>SYN backup box</b>, a <b>smart meter is needed</b> for the battery to operate correctly.</span></div>':'';
+  var meterBody=state.dongle==='grohome'
     ?'<div class="notice g">'+ic('check',14)+'<span><b>GroHomeManager\u2011X</b> already measures the grid through its built\u2011in CT clamps \u2014 a separate smart meter isn\u2019t needed here.</span></div>'
-    :(semNote+'<div class="grid g2"><button class="opt compact '+(m==='meter'?'on':'')+'" data-act="metering" data-m="meter"><div class="name">Smart Meter</div><div class="meta">TPM\u2011E / TPM\u2011C'+metaTxt+'</div></button></div>'+sub);
+    :(synMeterNote+semNote+'<div class="grid g2"><button class="opt compact '+(m==='meter'?'on':'')+'" data-act="metering" data-m="meter"><div class="name">Smart Meter</div><div class="meta">TPM\u20116CT\u2011C \u00b7 2\u00d7CT'+metaTxt+'</div></button></div>'+sub);
   return '<div class="step" id="stp-meter">'+stepHead(4,'activity','Energy meter','How the system measures the grid',hideMeterSection?'Included':meterBadge)+
     '<div class="step-b">'+meterBody+fuseField+'</div></div>';
 }
@@ -740,11 +741,13 @@ function backupGuidanceHTML(){
     } else if(state.family==='MOD-HU'){
       if(bkw>0&&state.kw&&bkw>state.kw) out+='<div class="pverr">'+ic('alert',15)+'<span>A <b>'+bkw+' kW</b> whole\u2011home load needs a <b>\u2265 '+bkw+' kW</b> inverter \u2014 this MOD\u2011HU is <b>'+state.kw+' kW</b>. Pick a higher power class in step 2.</span></div>';
       else if(bkw>0) out+='<div class="notice g">'+ic('check',14)+'<span><b>MOD\u2011HU integrated whole\u2011home backup</b> \u2014 the '+state.kw+' kW power class covers the '+bkw+' kW draw.</span></div>';
-      out+='<div class="switchrow" style="margin-top:10px"><div><div class="lab">Add a SYN box (optional)</div><div class="s2">Not required \u2014 MOD\u2011HU\u2019s backup is already integrated. Add one for extra switching capacity if you want it.</div></div><span class="sw '+(state.synOptIn?'on':'')+'" data-act="synoptin"><span class="knob"></span></span></div>';
     } else if(state.family==='WIT-HU'||state.family==='WIT-XHU'){
       out+='<div class="note">'+ic('info',14)+'<span><b>'+fam().name+' has no integrated backup</b> \u2014 the SYN box in this step handles whole\u2011home switching.</span></div>';
     } else if(state.family==='MODA'){
       if(bkw>0) out+='<div class="notice g">'+ic('check',14)+'<span><b>MODA integrated whole\u2011home backup</b> \u2014 up to <b>63 A</b> reserve power, with <b>150% peak output for up to 10 s</b>.</span></div>';
+    } else if(needsSyn()){
+      out+='<div class="notice g">'+ic('check',14)+'<span><b>Growatt SYN 100\u2011XH\u201130</b> handles whole\u2011home switching \u2014 max <b>40 kW</b>.</span></div>';
+      if(bkw>40) out+='<div class="pverr">'+ic('alert',15)+'<span><b>'+bkw+' kW</b> backup load exceeds the SYN 100\u2011XH\u201130 limit of <b>40 kW</b>.</span></div>';
     }
   } else if(state.backupMode==='partial'){
     if(state.family==='MOD-HU'&&multi) out+='<div class="note">'+ic('info',14)+'<span>Several MOD\u2011HU with partial backup \u2014 <b>no limitations</b>.</span></div>';
@@ -757,6 +760,8 @@ function backupGuidanceHTML(){
   if(state.backupMode){
     if(state.family==='MODA')
       out+='<div class="notice g">'+ic('check',14)+'<span>The <b>MODA series has an integrated 63 A bypass</b>, so the backup load can be fed directly from the grid when needed: <b>1)</b> lets the grid supply the backup load, and <b>2)</b> switches to bypass mode automatically if the inverter operates abnormally or faults \u2014 ensuring uninterrupted power to the backup load. No external bypass breaker needed.</span></div>';
+    else if(needsSyn())
+      out+='<div class="notice g">'+ic('check',14)+'<span>The <b>SYN box has an integrated bypass breaker</b> \u2014 no separate external bypass unit is needed.</span></div>';
     else
       out+='<div class="notice g">'+ic('check',14)+'<span><b>Bypass breaker (recommended)</b> \u2014 mounted just outside the inverter for backup service. Added to your system.</span></div>';
   }
@@ -766,7 +771,10 @@ function backupBodyHTML(){
   var body;
   if(!state.family) body='<div class="placeholder"><span class="i">'+ic('info',15)+'</span>Choose an inverter first \u2014 backup depends on the model.</div>';
   else{var bt=backupType();
-    if(bt==='integrated') body='<div class="locked"><span class="ico">'+ic('shield',22)+'</span><div><div class="t">Backup already integrated</div><div class="s">'+fam().name+' has built\u2011in off\u2011grid backup \u2014 no SYN box required.</div></div></div>';
+    if(bt==='integrated') body='<div class="locked"><span class="ico">'+ic('shield',22)+'</span><div><div class="t">Backup already integrated</div><div class="s">'+fam().name+' has built\u2011in off\u2011grid backup \u2014 no SYN box required.</div></div></div>'+
+      (state.units.length>1
+        ?'<div class="note" style="margin-top:10px">'+ic('info',14)+'<span>A SYN box can only be added with a <b>single inverter</b> \u2014 not available with multiple '+fam().name+' units.</span></div>'
+        :'<div class="switchrow" style="margin-top:10px"><div><div class="lab">Add a SYN box (optional)</div><div class="s2">Not required \u2014 '+fam().name+'\u2019s backup is already integrated. Add one anyway for extra switching capacity if you want it.</div></div><span class="sw '+(state.synOptIn?'on':'')+'" data-act="synoptin"><span class="knob"></span></span></div>');
     else if(bt==='box-required') body='<div class="reqcard"><span class="ico">'+ic('alert',22)+'</span><div><div class="t">Backup not integrated \u2014 needs to be added</div><div class="s">'+fam().name+' requires a separate SYN box. Added automatically.</div></div></div><div class="notice g">'+ic('check',14)+'<span><b>'+synItem().split('|')[0]+'</b> added to your system.</span></div>';
     else body='<div class="switchrow"><div><div class="lab">Include SYN backup box</div><div class="s2">'+fam().name+' backup is <b>not integrated</b> \u2014 add a SYN box for off\u2011grid.</div></div><span class="sw '+(state.backupOn?'on':'')+'" data-act="backup"><span class="knob"></span></span></div>'+(state.backupOn?'<div class="notice g">'+ic('check',14)+'<span><b>Growatt SYN 100\u2011XH\u201130</b> (3\u2011phase) added. Switch time &lt; 0.5 s.</span></div>':'<div class="note">'+ic('info',14)+'<span>No backup box \u2014 grid\u2011tied only (no power during outages).</span></div>');
   }
@@ -1081,11 +1089,13 @@ function commercialSceneHTML(){
   var tx0=ix-sBattGap-sTotW;
   var invAttachX=isRise?(rx+rw):(ix+iw), invAttachY=isRise?(baseY-rh*0.55):(baseY-ih*0.55);
   var twX=655,twTop=78,twBase=170;
-  var kwhX=638,kwhTopY=190,kwhW=34,kwhH=22;
-  var feedX=655,feedY=240;
-  var cabX=614,cabBaseY=362,cabW=30,cabH=38;
+  var towerShift=104;
+  twBase-=towerShift;
+  var kwhX=638,kwhTopY=190-towerShift,kwhW=34,kwhH=22;
+  var feedX=655,feedY=180;
+  var cabX=640,cabBaseY=340,cabW=30,cabH=38;
   var cabBoxBase=cabBaseY-22;
-  var mtrX=546,mtrBaseY=352,mtrW=28,mtrH=42;
+  var mtrX=576,mtrBaseY=340,mtrW=28,mtrH=42;
   var isSem=state.dongle==='shinesem';
   var isMaster=state.dongle==='shinemaster';
   var isGroHome=state.dongle==='grohome';
@@ -1097,7 +1107,7 @@ function commercialSceneHTML(){
   var groBoxH=40;
   var groX=feedX-semBoxW/2,groBaseY=cabBoxBase-cabH-14;
   var gridLit=metOn||showSemBox||isGroHome;
-  var monAttachX=showSemBox?(mtrX+semBoxW/2):(isGroHome?(groX+semBoxW/2):(cabX+cabW/2)), monAttachY=showSemBox?(mtrBaseY):(isGroHome?groBaseY:cabBaseY);
+  var monAttachX=showSemBox?(mtrX+semBoxW/2):(cabX+cabW/2), monAttachY=showSemBox?(mtrBaseY):cabBaseY;
   var commPair=function(d){return '<path class="commline" d="'+d+'"></path><path class="commline rev" d="'+d+'" transform="translate(2.2,2.2)"></path>';};
 
   var s='<div class="housephoto"><div class="photostage" style="aspect-ratio:'+W+'/'+H+'">';
@@ -1106,7 +1116,9 @@ function commercialSceneHTML(){
     '</svg>';
   s+='<svg class="olsvg" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none">';
 
-  s+='<g class="gpole'+(metOn?' lit':'')+'">'+
+  var gridChainSVG='';
+  gridChainSVG+='<g class="gpole'+(metOn?' lit':'')+'">'+
+     '<g transform="translate(0,-'+towerShift+')">'+
      '<path d="M683,88 Q715,96 748,84" fill="none" stroke="#7c8a9c" stroke-width="1.7"></path>'+
      '<path d="M683,93 Q715,104 748,95" fill="none" stroke="#7c8a9c" stroke-width="1.7"></path>'+
      '<path d="M683,98 Q715,112 748,106" fill="none" stroke="#7c8a9c" stroke-width="1.7"></path>'+
@@ -1119,31 +1131,23 @@ function commercialSceneHTML(){
      '<circle cx="631" cy="90.5" r="2.2" fill="#e4eaf0" stroke="#9aa5b1" stroke-width="0.7"></circle>'+
      '<circle cx="655" cy="90.5" r="2.2" fill="#e4eaf0" stroke="#9aa5b1" stroke-width="0.7"></circle>'+
      '<circle cx="679" cy="90.5" r="2.2" fill="#e4eaf0" stroke="#9aa5b1" stroke-width="0.7"></circle>'+
+     '</g>'+
      (hasComp?'<path class="cable" d="M655,'+twBase+' L655,'+kwhTopY+'"></path>':'')+
      (hasComp?'<path class="cable" d="M655,'+(kwhTopY+kwhH)+' L'+feedX+','+(feedY-5)+'"></path>':'')+
-     ((showSmartAtFeed||isGroHome)?'':'<circle cx="'+feedX+'" cy="'+feedY+'" r="4.5" fill="#eef4f0" stroke="#33da7a" stroke-width="1.8"></circle>')+
+     ((showSmartAtFeed||isGroHome||showSynBox)?'':'<circle cx="'+feedX+'" cy="'+feedY+'" r="4.5" fill="#eef4f0" stroke="#33da7a" stroke-width="1.8"></circle>')+
      (hasComp?'<path class="cable" d="M'+feedX+','+(feedY+5)+' L'+feedX+','+(cabBoxBase-cabH-18)+' L'+(cabX+cabW/2)+','+(cabBoxBase-cabH-18)+' L'+(cabX+cabW/2)+','+(cabBoxBase-cabH+2)+'"></path>':'')+
      '</g>';
-  s+='<rect x="'+kwhX+'" y="'+kwhTopY+'" width="'+kwhW+'" height="'+kwhH+'" rx="3" fill="#eef1f5" stroke="'+(metOn?'#33da7a':'#9aa5b1')+'" stroke-width="1.6"></rect>';
-  s+='<rect x="'+(kwhX+4)+'" y="'+(kwhTopY+4)+'" width="'+(kwhW-8)+'" height="7.5" rx="1.5" fill="#2b3440"></rect>';
-  s+='<rect x="'+(kwhX+5.5)+'" y="'+(kwhTopY+6)+'" width="3.2" height="3.5" fill="#7fe6a8"></rect><rect x="'+(kwhX+10)+'" y="'+(kwhTopY+6)+'" width="3.2" height="3.5" fill="#7fe6a8"></rect><rect x="'+(kwhX+14.5)+'" y="'+(kwhTopY+6)+'" width="3.2" height="3.5" fill="#7fe6a8"></rect><rect x="'+(kwhX+19)+'" y="'+(kwhTopY+6)+'" width="3.2" height="3.5" fill="#7fe6a8"></rect>';
-  s+='<rect x="'+(kwhX+4)+'" y="'+(kwhTopY+14)+'" width="'+(kwhW-8)+'" height="3" rx="1" fill="#c9d2dc"></rect>';
-  s+='<rect x="'+(cabX+cabW/2-4)+'" y="'+(cabBoxBase-2)+'" width="8" height="'+(cabBaseY-cabBoxBase+2)+'" fill="#b8c1cc" stroke="#9aa5b1" stroke-width="1"></rect>';
-  s+='<rect x="'+(cabX+cabW/2-7)+'" y="'+(cabBaseY-3)+'" width="14" height="4" rx="1.5" fill="#9aa5b1"></rect>';
-  s+=drawIsoBox(cabX,cabBoxBase,cabW,cabH,skx*0.8,sky*0.8,'#dfe5ec','#eef2f6','#c4ccd6',true);
-  s+='<line x1="'+(cabX+cabW/2)+'" y1="'+(cabBoxBase-cabH+6)+'" x2="'+(cabX+cabW/2)+'" y2="'+(cabBoxBase-6)+'" stroke="#b6c0cb" stroke-width="1"></line>';
-  s+='<rect x="'+(cabX+cabW*0.18)+'" y="'+(cabBoxBase-cabH*0.8)+'" width="'+(cabW*0.64)+'" height="'+(cabH*0.15)+'" rx="1.5" fill="#aeb9c5"></rect>';
-  s+=screw(cabX+cabW-6,cabBoxBase-cabH*0.45)+screw(cabX+6,cabBoxBase-cabH*0.45);
-  var showSynBox=bom.some(function(r){return r.g==='Backup'&&r.item.indexOf('SYN')>=0;});
-  if(showSynBox){
-    var synX=mtrX,synTop=mtrBaseY+14,synW=semBoxW,synH=44;
-    s+='<rect x="'+synX+'" y="'+synTop+'" width="'+synW+'" height="'+synH+'" rx="4" fill="#f4f6f9" stroke="#33da7a" stroke-width="1.8"></rect>';
-    s+='<rect x="'+(synX+5)+'" y="'+(synTop+5)+'" width="'+(synW-10)+'" height="7" rx="1.5" fill="#2b3440"></rect>';
-    s+='<text x="'+(synX+synW/2)+'" y="'+(synTop+23)+'" text-anchor="middle" font-size="8" font-weight="800" fill="#1f7a45" letter-spacing=".04em">SYN</text>';
-    s+='<text x="'+(synX+synW/2)+'" y="'+(synTop+33)+'" text-anchor="middle" font-size="7" font-weight="700" fill="#5d6b78">100\u2011XH</text>';
-    s+='<rect x="'+(synX+6)+'" y="'+(synTop+synH-7)+'" width="'+(synW-12)+'" height="3" rx="1" fill="#cfd7e0"></rect>';
-    if(showSemBox)s+='<line x1="'+(synX+synW/2)+'" y1="'+mtrBaseY+'" x2="'+(synX+synW/2)+'" y2="'+synTop+'" stroke="#33da7a" stroke-width="1.4"></line>';
-  }
+  gridChainSVG+='<rect x="'+kwhX+'" y="'+kwhTopY+'" width="'+kwhW+'" height="'+kwhH+'" rx="3" fill="#eef1f5" stroke="'+(metOn?'#33da7a':'#9aa5b1')+'" stroke-width="1.6"></rect>';
+  gridChainSVG+='<rect x="'+(kwhX+4)+'" y="'+(kwhTopY+4)+'" width="'+(kwhW-8)+'" height="7.5" rx="1.5" fill="#2b3440"></rect>';
+  gridChainSVG+='<rect x="'+(kwhX+5.5)+'" y="'+(kwhTopY+6)+'" width="3.2" height="3.5" fill="#7fe6a8"></rect><rect x="'+(kwhX+10)+'" y="'+(kwhTopY+6)+'" width="3.2" height="3.5" fill="#7fe6a8"></rect><rect x="'+(kwhX+14.5)+'" y="'+(kwhTopY+6)+'" width="3.2" height="3.5" fill="#7fe6a8"></rect><rect x="'+(kwhX+19)+'" y="'+(kwhTopY+6)+'" width="3.2" height="3.5" fill="#7fe6a8"></rect>';
+  gridChainSVG+='<rect x="'+(kwhX+4)+'" y="'+(kwhTopY+14)+'" width="'+(kwhW-8)+'" height="3" rx="1" fill="#c9d2dc"></rect>';
+  gridChainSVG+='<rect x="'+(cabX+cabW/2-4)+'" y="'+(cabBoxBase-2)+'" width="8" height="'+(cabBaseY-cabBoxBase+2)+'" fill="#b8c1cc" stroke="#9aa5b1" stroke-width="1"></rect>';
+  gridChainSVG+='<rect x="'+(cabX+cabW/2-7)+'" y="'+(cabBaseY-3)+'" width="14" height="4" rx="1.5" fill="#9aa5b1"></rect>';
+  gridChainSVG+=drawIsoBox(cabX,cabBoxBase,cabW,cabH,skx*0.8,sky*0.8,'#dfe5ec','#eef2f6','#c4ccd6',true);
+  gridChainSVG+='<line x1="'+(cabX+cabW/2)+'" y1="'+(cabBoxBase-cabH+6)+'" x2="'+(cabX+cabW/2)+'" y2="'+(cabBoxBase-6)+'" stroke="#b6c0cb" stroke-width="1"></line>';
+  gridChainSVG+='<rect x="'+(cabX+cabW*0.18)+'" y="'+(cabBoxBase-cabH*0.8)+'" width="'+(cabW*0.64)+'" height="'+(cabH*0.15)+'" rx="1.5" fill="#aeb9c5"></rect>';
+  gridChainSVG+=screw(cabX+cabW-6,cabBoxBase-cabH*0.45)+screw(cabX+6,cabBoxBase-cabH*0.45);
+  var showSynBox=bom.some(function(r){return r.g==='Backup'&&r.item.indexOf('SYN')>=0;})&&!isGroHome;
 function ctg(cx,cy,tdx,dir){
   var ah='';
   if(dir==='up')ah='<polygon points="'+(cx-4.5)+','+(cy-8)+' '+(cx+4.5)+','+(cy-8)+' '+cx+','+(cy-16)+'" fill="#1f7a45" stroke="#fff" stroke-width="0.8"></polygon>';
@@ -1153,28 +1157,34 @@ function ctg(cx,cy,tdx,dir){
   return '<g><circle cx="'+cx+'" cy="'+cy+'" r="5.5" fill="#eef4f0" stroke="#3d4c5c" stroke-width="3"></circle><circle cx="'+cx+'" cy="'+cy+'" r="1.6" fill="#8fa0b0"></circle>'+ah+'<text x="'+(cx+tdx)+'" y="'+(cy+2.5)+'" font-size="6.5" font-weight="800" fill="#3d4c5c">CT</text></g>';
 }
   if(showSemBox){
-    s+='<rect x="'+mtrX+'" y="'+(mtrBaseY-semBoxH)+'" width="'+semBoxW+'" height="'+semBoxH+'" rx="4" fill="#f4f6f9" stroke="#33da7a" stroke-width="1.8"></rect>';
-    s+='<rect x="'+(mtrX+5)+'" y="'+(mtrBaseY-semBoxH+6)+'" width="'+(semBoxW-10)+'" height="9" rx="1.5" fill="#2b3440"></rect>';
-    s+='<circle cx="'+(mtrX+semBoxW*0.32)+'" cy="'+(mtrBaseY-semBoxH+11)+'" r="1.7" fill="#7fe6a8"></circle><circle cx="'+(mtrX+semBoxW*0.5)+'" cy="'+(mtrBaseY-semBoxH+11)+'" r="1.7" fill="#7fe6a8"></circle><circle cx="'+(mtrX+semBoxW*0.68)+'" cy="'+(mtrBaseY-semBoxH+11)+'" r="1.7" fill="#7fe6a8"></circle>';
-    s+='<circle cx="'+(mtrX+semBoxW/2)+'" cy="'+(mtrBaseY-semBoxH+27)+'" r="6" fill="none" stroke="#2c9d5e" stroke-width="1.5"></circle>';
-    s+='<rect x="'+(mtrX+6)+'" y="'+(mtrBaseY-semBoxH+38)+'" width="'+(semBoxW-12)+'" height="3" rx="1" fill="#cfd7e0"></rect>';
-    s+='<line x1="'+(cabX+2)+'" y1="'+(mtrBaseY-semBoxH*0.5)+'" x2="'+(mtrX+semBoxW)+'" y2="'+(mtrBaseY-semBoxH*0.5)+'" stroke="#33da7a" stroke-width="1.4"></line>';
+    gridChainSVG+='<rect x="'+mtrX+'" y="'+(mtrBaseY-semBoxH)+'" width="'+semBoxW+'" height="'+semBoxH+'" rx="4" fill="#f4f6f9" stroke="#33da7a" stroke-width="1.8"></rect>';
+    gridChainSVG+='<rect x="'+(mtrX+5)+'" y="'+(mtrBaseY-semBoxH+6)+'" width="'+(semBoxW-10)+'" height="9" rx="1.5" fill="#2b3440"></rect>';
+    gridChainSVG+='<circle cx="'+(mtrX+semBoxW*0.32)+'" cy="'+(mtrBaseY-semBoxH+11)+'" r="1.7" fill="#7fe6a8"></circle><circle cx="'+(mtrX+semBoxW*0.5)+'" cy="'+(mtrBaseY-semBoxH+11)+'" r="1.7" fill="#7fe6a8"></circle><circle cx="'+(mtrX+semBoxW*0.68)+'" cy="'+(mtrBaseY-semBoxH+11)+'" r="1.7" fill="#7fe6a8"></circle>';
+    gridChainSVG+='<circle cx="'+(mtrX+semBoxW/2)+'" cy="'+(mtrBaseY-semBoxH+27)+'" r="6" fill="none" stroke="#2c9d5e" stroke-width="1.5"></circle>';
+    gridChainSVG+='<rect x="'+(mtrX+6)+'" y="'+(mtrBaseY-semBoxH+38)+'" width="'+(semBoxW-12)+'" height="3" rx="1" fill="#cfd7e0"></rect>';
+    gridChainSVG+='<path d="M'+(mtrX+semBoxW/2)+','+mtrBaseY+' L'+(mtrX+semBoxW/2)+','+(cabBaseY+16)+' L'+(cabX+cabW/2)+','+(cabBaseY+16)+' L'+(cabX+cabW/2)+','+cabBaseY+'" fill="none" stroke="#33da7a" stroke-width="1.4"></path>';
   } else if(isGroHome){
-    var groTop=groBaseY-groBoxH;
-    s+='<rect x="'+groX+'" y="'+groTop+'" width="'+semBoxW+'" height="'+groBoxH+'" rx="4" fill="#f4f6f9" stroke="#33da7a" stroke-width="1.8"></rect>';
-    s+='<rect x="'+(groX+5)+'" y="'+(groTop+5)+'" width="'+(semBoxW-10)+'" height="8" rx="1.5" fill="#2b3440"></rect>';
-    s+='<circle cx="'+(groX+semBoxW*0.32)+'" cy="'+(groTop+9)+'" r="1.5" fill="#7fe6a8"></circle><circle cx="'+(groX+semBoxW*0.5)+'" cy="'+(groTop+9)+'" r="1.5" fill="#7fe6a8"></circle><circle cx="'+(groX+semBoxW*0.68)+'" cy="'+(groTop+9)+'" r="1.5" fill="#7fe6a8"></circle>';
-    s+='<circle cx="'+(groX+semBoxW/2)+'" cy="'+(groTop+23)+'" r="5.5" fill="none" stroke="#2c9d5e" stroke-width="1.4"></circle>';
-    s+='<rect x="'+(groX+6)+'" y="'+(groTop+groBoxH-6)+'" width="'+(semBoxW-12)+'" height="2.6" rx="1" fill="#cfd7e0"></rect>';
-    s+='<line x1="'+(cabX+2)+'" y1="'+(groBaseY-groBoxH*0.5)+'" x2="'+(groX+semBoxW)+'" y2="'+(groBaseY-groBoxH*0.5)+'" stroke="#33da7a" stroke-width="1.4"></line>';
-    s+=ctg(feedX,groBaseY+11,14,'down');
+    var smX=feedX-smW/2, smTopY=feedY-smH/2;
+    gridChainSVG+='<rect x="'+smX+'" y="'+smTopY+'" width="'+smW+'" height="'+smH+'" rx="3.5" fill="#f4f6f9" stroke="#33da7a" stroke-width="1.8"></rect>';
+    gridChainSVG+='<circle cx="'+(smX+smW/2)+'" cy="'+(smTopY+12)+'" r="5" fill="none" stroke="#2c9d5e" stroke-width="1.5"></circle>';
+    gridChainSVG+='<rect x="'+(smX+4)+'" y="'+(smTopY+21)+'" width="'+(smW-8)+'" height="2.6" rx="1" fill="#cfd7e0"></rect>';
+    gridChainSVG+='<rect x="'+(smX+4)+'" y="'+(smTopY+26)+'" width="'+(smW-8)+'" height="2.6" rx="1" fill="#cfd7e0"></rect>';
   } else if(showSmartAtFeed){
     var smX=feedX-smW/2, smTopY=feedY-smH/2;
-    s+='<rect x="'+smX+'" y="'+smTopY+'" width="'+smW+'" height="'+smH+'" rx="3.5" fill="#f4f6f9" stroke="#33da7a" stroke-width="1.8"></rect>';
-    s+='<circle cx="'+(smX+smW/2)+'" cy="'+(smTopY+12)+'" r="5" fill="none" stroke="#2c9d5e" stroke-width="1.5"></circle>';
-    s+='<rect x="'+(smX+4)+'" y="'+(smTopY+21)+'" width="'+(smW-8)+'" height="2.6" rx="1" fill="#cfd7e0"></rect>';
-    s+='<rect x="'+(smX+4)+'" y="'+(smTopY+26)+'" width="'+(smW-8)+'" height="2.6" rx="1" fill="#cfd7e0"></rect>';
+    gridChainSVG+='<rect x="'+smX+'" y="'+smTopY+'" width="'+smW+'" height="'+smH+'" rx="3.5" fill="#f4f6f9" stroke="#33da7a" stroke-width="1.8"></rect>';
+    gridChainSVG+='<circle cx="'+(smX+smW/2)+'" cy="'+(smTopY+12)+'" r="5" fill="none" stroke="#2c9d5e" stroke-width="1.5"></circle>';
+    gridChainSVG+='<rect x="'+(smX+4)+'" y="'+(smTopY+21)+'" width="'+(smW-8)+'" height="2.6" rx="1" fill="#cfd7e0"></rect>';
+    gridChainSVG+='<rect x="'+(smX+4)+'" y="'+(smTopY+26)+'" width="'+(smW-8)+'" height="2.6" rx="1" fill="#cfd7e0"></rect>';
   }
+  var synX2=feedX-smW/2;
+  var synTopY2=showSmartAtFeed?(feedY+smH/2+35):(feedY-smH/2);
+  if(showSynBox){
+    gridChainSVG+='<rect x="'+synX2+'" y="'+synTopY2+'" width="'+smW+'" height="'+smH+'" rx="3.5" fill="#f4f6f9" stroke="#33da7a" stroke-width="1.8"></rect>';
+    gridChainSVG+='<circle cx="'+(synX2+smW/2)+'" cy="'+(synTopY2+12)+'" r="5" fill="none" stroke="#2c9d5e" stroke-width="1.5"></circle>';
+    gridChainSVG+='<rect x="'+(synX2+4)+'" y="'+(synTopY2+21)+'" width="'+(smW-8)+'" height="2.6" rx="1" fill="#cfd7e0"></rect>';
+    gridChainSVG+='<rect x="'+(synX2+4)+'" y="'+(synTopY2+26)+'" width="'+(smW-8)+'" height="2.6" rx="1" fill="#cfd7e0"></rect>';
+  }
+  s+=gridChainSVG;
 
   
 
@@ -1288,26 +1298,35 @@ function ctg(cx,cy,tdx,dir){
   var houseX=510,houseTopY=isMulti?415:200,houseSize=76;
   function drawHouse(cx,hb){
     var h='';
-    h+='<ellipse cx="'+cx+'" cy="'+(hb+3)+'" rx="44" ry="7" fill="rgba(20,30,45,.14)"></ellipse>';
-    h+='<rect x="'+(cx-32)+'" y="'+(hb-34)+'" width="64" height="34" fill="#f5ecdb" stroke="#d8c9ae" stroke-width="1.1"></rect>';
-    h+='<rect x="'+(cx+14)+'" y="'+(hb-62)+'" width="9" height="14" fill="#b0553f" stroke="#8f4230" stroke-width="1"></rect>';
-    h+='<polygon points="'+(cx-40)+','+(hb-34)+' '+(cx+40)+','+(hb-34)+' '+(cx+24)+','+(hb-60)+' '+(cx-24)+','+(hb-60)+'" fill="#b95a49" stroke="#96453a" stroke-width="1.2"></polygon>';
-    h+='<line x1="'+(cx-24)+'" y1="'+(hb-60)+'" x2="'+(cx+24)+'" y2="'+(hb-60)+'" stroke="#7e352b" stroke-width="1.6"></line>';
-    var by=hb-37,ty=hb-57,bxl=cx-33,bxr=cx+33,txl=cx-21,txr=cx+21;
+    var k=1.1; // ~10% larger overall
+    h+='<ellipse cx="'+cx+'" cy="'+(hb+3)+'" rx="'+(48*k)+'" ry="'+(7*k)+'" fill="rgba(20,30,45,.16)"></ellipse>';
+    // main white body
+    h+='<rect x="'+(cx-35*k)+'" y="'+(hb-37*k)+'" width="'+(70*k)+'" height="'+(37*k)+'" fill="#eef0f2" stroke="#c7ccd2" stroke-width="1.1"></rect>';
+    // low-pitch modern roof with slight overhang
+    h+='<polygon points="'+(cx-40*k)+','+(hb-37*k)+' '+(cx+40*k)+','+(hb-37*k)+' '+(cx+34*k)+','+(hb-49*k)+' '+(cx-34*k)+','+(hb-49*k)+'" fill="#5b6570" stroke="#454d56" stroke-width="1.2"></polygon>';
+    h+='<rect x="'+(cx-34*k)+'" y="'+(hb-51.5*k)+'" width="'+(68*k)+'" height="'+(3*k)+'" fill="#454d56"></rect>';
+    // solar panels on the roof
+    var by=hb-38.5*k,ty=hb-48.5*k,bxl=cx-31*k,bxr=cx+31*k,txl=cx-26*k,txr=cx+26*k;
     for(var pi2=0;pi2<3;pi2++){for(var pj=0;pj<2;pj++){
-      var f0=pi2/3+0.04,f1=(pi2+1)/3-0.04,g0=pj/2+0.09,g1=(pj+1)/2-0.09;
+      var f0=pi2/3+0.035,f1=(pi2+1)/3-0.035,g0=pj/2+0.08,g1=(pj+1)/2-0.08;
       var y0=by+(ty-by)*g0,y1=by+(ty-by)*g1;
       var l0=bxl+(txl-bxl)*g0,r0=bxr+(txr-bxr)*g0;
       var l1=bxl+(txl-bxl)*g1,r1=bxr+(txr-bxr)*g1;
       var ax=l0+(r0-l0)*f0,bx=l0+(r0-l0)*f1,cx2=l1+(r1-l1)*f1,dx=l1+(r1-l1)*f0;
-      h+='<polygon points="'+ax.toFixed(1)+','+y0.toFixed(1)+' '+bx.toFixed(1)+','+y0.toFixed(1)+' '+cx2.toFixed(1)+','+y1.toFixed(1)+' '+dx.toFixed(1)+','+y1.toFixed(1)+'" fill="#2e6fce" stroke="#1c4d9c" stroke-width="0.8"></polygon>';
+      h+='<polygon points="'+ax.toFixed(1)+','+y0.toFixed(1)+' '+bx.toFixed(1)+','+y0.toFixed(1)+' '+cx2.toFixed(1)+','+y1.toFixed(1)+' '+dx.toFixed(1)+','+y1.toFixed(1)+'" fill="#2e6fce" stroke="#173a6e" stroke-width="0.8"></polygon>';
     }}
-    h+='<rect x="'+(cx-6)+'" y="'+(hb-19)+'" width="12" height="19" rx="1" fill="#8a5a3b" stroke="#6f4527" stroke-width="0.8"></rect>';
-    h+='<circle cx="'+(cx+2.5)+'" cy="'+(hb-10)+'" r="1" fill="#e8d9b8"></circle>';
-    h+='<rect x="'+(cx-27)+'" y="'+(hb-27)+'" width="13" height="11" rx="1" fill="#aecdf5" stroke="#7fa3cf" stroke-width="0.8"></rect>';
-    h+='<line x1="'+(cx-20.5)+'" y1="'+(hb-27)+'" x2="'+(cx-20.5)+'" y2="'+(hb-16)+'" stroke="#7fa3cf" stroke-width="0.7"></line>';
-    h+='<rect x="'+(cx+14)+'" y="'+(hb-27)+'" width="13" height="11" rx="1" fill="#aecdf5" stroke="#7fa3cf" stroke-width="0.8"></rect>';
-    h+='<line x1="'+(cx+20.5)+'" y1="'+(hb-27)+'" x2="'+(cx+20.5)+'" y2="'+(hb-16)+'" stroke="#7fa3cf" stroke-width="0.7"></line>';
+    // large glass sliding door / window (right side, full height, modern feel)
+    h+='<rect x="'+(cx+2*k)+'" y="'+(hb-33*k)+'" width="'+(26*k)+'" height="'+(33*k)+'" fill="#cfe0ee" stroke="#8fa9bf" stroke-width="1"></rect>';
+    h+='<line x1="'+(cx+15*k)+'" y1="'+(hb-33*k)+'" x2="'+(cx+15*k)+'" y2="'+hb+'" stroke="#8fa9bf" stroke-width="0.8"></line>';
+    h+='<rect x="'+(cx+4*k)+'" y="'+(hb-14*k)+'" width="'+(9*k)+'" height="'+(14*k)+'" fill="#3a3f46"></rect>';
+    // door (left-center)
+    h+='<rect x="'+(cx-9*k)+'" y="'+(hb-24*k)+'" width="'+(12*k)+'" height="'+(24*k)+'" rx="1" fill="#5a4632" stroke="#3f3221" stroke-width="0.8"></rect>';
+    h+='<circle cx="'+(cx-1.5*k)+'" cy="'+(hb-12*k)+'" r="1" fill="#d8c9a8"></circle>';
+    // small square window (left)
+    h+='<rect x="'+(cx-31*k)+'" y="'+(hb-31*k)+'" width="'+(15*k)+'" height="'+(13*k)+'" fill="#cfe0ee" stroke="#8fa9bf" stroke-width="1"></rect>';
+    h+='<line x1="'+(cx-23.5*k)+'" y1="'+(hb-31*k)+'" x2="'+(cx-23.5*k)+'" y2="'+(hb-18*k)+'" stroke="#8fa9bf" stroke-width="0.7"></line>';
+    // ground-floor accent strip
+    h+='<rect x="'+(cx-35*k)+'" y="'+(hb-4*k)+'" width="'+(70*k)+'" height="'+(4*k)+'" fill="#d7dade"></rect>';
     return h;
   }
   var houseBotAnchor=houseTopY+houseSize;
@@ -1411,7 +1430,7 @@ function ctg(cx,cy,tdx,dir){
       stackLabels+='<div class="housebox" style="left:'+(bhx/W*100).toFixed(1)+'%;top:'+((buyBk/H*100)).toFixed(1)+'%;font-size:23px">\ud83c\udfe0</div>';
       stackLabels+='<div class="complabel'+(backOn?' lit':'')+'" style="left:'+(bhx/W*100).toFixed(1)+'%;top:'+(((buyBk+8)/H*100)).toFixed(1)+'%;transform:translate(-50%,-50%);font-size:6.5px;padding:2px 6px">BACKUP'+(u.backupLoadKw>0?(' '+u.backupLoadKw+'kW'):'')+'</div>';
     }
-    if(u.backupMode&&u.family!=='MODA'){
+    if(u.backupMode&&u.family!=='MODA'&&!(FAMILIES[u.family]&&FAMILIES[u.family].backup==='box-required')){
       var bpx=bpxPartial!==null?bpxPartial:(mirU?(ux-16):(ux+62*stackScale+11)),bpy=rowBaseY-40;
       commOverlay+='<path class="olcable'+(backOn?' lit':'')+'" d="M'+bpx+','+bpy+' L'+bpx+','+uAttachY+'"></path>';
       commOverlay+='<g><rect x="'+(bpx-5)+'" y="'+(bpy-8)+'" width="10" height="15" rx="1.5" fill="#f4f6f9" stroke="#e0584f" stroke-width="1.1"></rect>'+
@@ -1474,10 +1493,10 @@ function ctg(cx,cy,tdx,dir){
     if(state.backupMode==='whole')s+='<path class="olcable'+(wholeLit?' lit':'')+'" d="M'+invAttachX+','+invTopY+' L'+houseX+','+invTopY+' L'+houseX+','+invAttachY+'"></path>';
     s+='<path class="olcable'+((gridLit||wholeLit)?' lit':'')+'" d="M'+invAttachX+','+invAttachY+' L'+monAttachX+','+invAttachY+' L'+monAttachX+','+monAttachY+'"></path>';
     s+='<path class="olcable'+(gridLit?' lit':'')+'" d="M'+houseX+','+invAttachY+' L'+houseX+','+houseBotAnchor+'"></path>';
-    if(invOn&&(showSemBox||showSmartAtFeed)&&!isWirelessGroHome){
+    if(invOn&&(showSemBox||showSmartAtFeed||showSynBox||isGroHome)&&!isWirelessGroHome){
       var rSx=showSemBox?mtrX:(feedX-smW/2);
       var rSy=showSemBox?(mtrBaseY-semBoxH*0.5-6):feedY;
-      var rVx=showSemBox?470:598;
+      var rVx=showSemBox?470:560;
       var rEx=isRise?(rx+rw):(ix+iw);
       s+=commPair('M'+rSx+','+rSy+' L'+rVx+','+rSy+' L'+rVx+',392 L'+(rEx-5)+',392');
     }
@@ -1502,7 +1521,8 @@ function ctg(cx,cy,tdx,dir){
       '</g>';
     if(totalKWp()>0)s+='<text x="'+bx2+'" y="'+(pvBy2-pvH2/2+3)+'" text-anchor="middle" font-size="7.5" font-weight="800" fill="#7bf5a8" style="paint-order:stroke" stroke="#0d3320" stroke-width="1.8">'+totalKWp()+'kWp</text>';
   }
-  if(!isMulti&&hasComp&&state.metering==='meter'&&state.meterType==='TPM-6CT-C'&&showSmartAtFeed)s+=ctg(feedX,feedY+30,14,'down');
+  if(!isMulti&&hasComp&&state.metering==='meter'&&state.meterType==='TPM-6CT-C'&&showSmartAtFeed)s+=ctg(feedX,feedY+smH/2+9,14,'down');
+  if(!isMulti&&hasComp&&isGroHome)s+=ctg(feedX,feedY+smH/2+9,14,'down');
   if(!isMulti&&hasComp&&state.thirdParty){
     var tpN=Math.min(state.tpCount||1,3),tpW=40,tpH=60;
     for(var tpi=0;tpi<tpN;tpi++){
@@ -1521,7 +1541,7 @@ function ctg(cx,cy,tdx,dir){
       if(tpi===0&&((state.metering==='meter'&&state.meterType==='TPM-6CT-C')||isGroHome))s+=ctg(tpCx,baseY+38,10,'up');
     }
   }
-  var showBypass=!isMulti&&hasComp&&!!state.backupMode&&state.family!=='MODA';
+  var showBypass=!isMulti&&hasComp&&!!state.backupMode&&state.family!=='MODA'&&!needsSyn();
   var bhx2=(isRise?rx+rw:ix+iw)+54;
   var buyS=baseY-8, bpJoinX=bhx2+48;
   var bpx2,bpy2;
@@ -1540,11 +1560,12 @@ function ctg(cx,cy,tdx,dir){
   if(hasComp){
     var isOnline=onlOn&&(state.dongle!=='shinemaster'||state.metering==='meter');
     var onlLit=isOnline?' lit':'';
-    var cloudCX=608,cloudCY=486,monX=668,monY=444,phoneX=688,phoneY=524;
+    var cloudCX=isMulti?600:355,cloudCY=isMulti?540:112,monX=isMulti?668:410,monY=isMulti?486:72,phoneX=isMulti?672:432,phoneY=isMulti?550:132;
     s+='<path class="cloudline'+onlLit+'" d="M'+(cloudCX+22)+','+(cloudCY-6)+' L'+(monX-16)+','+monY+'"></path>';
     s+='<path class="cloudline'+onlLit+'" d="M'+(cloudCX+20)+','+(cloudCY+8)+' L'+(phoneX-11)+','+phoneY+'"></path>';
     s+='<path class="cloudline'+onlLit+'" d="M'+(cloudCX-14)+','+(cloudCY+10)+' L'+(houseX+26)+','+(houseTopY+houseSize*0.55)+'"></path>';
     if(showSemBox)s+='<path class="cloudline'+onlLit+'" d="M'+(mtrX+semBoxW-6)+','+mtrBaseY+' L'+(cloudCX-8)+','+(cloudCY-16)+'"></path>';
+    if(isGroHome)s+='<path class="cloudline'+onlLit+'" d="M'+(cabX+cabW/2)+','+cabBaseY+' L'+(cloudCX-8)+','+(cloudCY-16)+'"></path>';
     s+='<g class="cloudicon'+onlLit+'"><ellipse cx="'+cloudCX+'" cy="'+(cloudCY+3)+'" rx="27" ry="9"></ellipse>'+
       '<circle cx="'+(cloudCX-15)+'" cy="'+cloudCY+'" r="10"></circle>'+
       '<circle cx="'+cloudCX+'" cy="'+(cloudCY-5)+'" r="13"></circle>'+
@@ -1558,6 +1579,7 @@ function ctg(cx,cy,tdx,dir){
   }
   s+=drawHouse(houseX,houseBotAnchor);
   s+=singleBoxSVG;
+  s+=gridChainSVG;
   s+='</svg>';
   s+=stackLabels;
   s+='<div class="legend">'+
@@ -1568,7 +1590,7 @@ function ctg(cx,cy,tdx,dir){
     '</div>';
   if(hasComp){
     var onlLit2=(onlOn&&(state.dongle!=='shinemaster'||state.metering==='meter'))?' litb':'';
-    var cloudCX2=608,cloudCY2=486,monX2=668,monY2=444,phoneX2=688,phoneY2=524;
+    var cloudCX2=isMulti?600:355,cloudCY2=isMulti?540:112,monX2=isMulti?668:436,monY2=isMulti?486:72,phoneX2=isMulti?672:432,phoneY2=isMulti?550:132;
     s+='<div class="complabel'+onlLit2+'" style="left:'+(cloudCX2/W*100).toFixed(1)+'%;top:'+(((cloudCY2+22)/H)*100).toFixed(1)+'%;transform:translate(-50%,-50%)">CLOUD SERVER</div>';
     s+='<div class="complabel'+onlLit2+'" style="left:'+(monX2/W*100).toFixed(1)+'%;top:'+(((monY2-22)/H)*100).toFixed(1)+'%;transform:translate(-50%,-50%)">SHINESERVER &amp; OSS</div>';
     s+='<div class="complabel'+onlLit2+'" style="left:'+(phoneX2/W*100).toFixed(1)+'%;top:'+(((phoneY2+22)/H)*100).toFixed(1)+'%;transform:translate(-50%,-50%)">SHINEPHONE</div>';
@@ -1603,7 +1625,7 @@ function ctg(cx,cy,tdx,dir){
   }
   s+='<div class="gridchip'+(metOn?' lit':'')+'" style="left:'+((twX)/W*100).toFixed(1)+'%;top:'+(((twTop-16)/H)*100).toFixed(1)+'%;transform:translate(-50%,-50%)">GRID</div>';
   s+='<div class="complabel'+(metOn?' lit':'')+'" style="left:'+((kwhX+kwhW+6)/W*100).toFixed(1)+'%;top:'+(((kwhTopY+kwhH/2)/H)*100).toFixed(1)+'%;transform:translate(0,-50%)">kWh METER</div>';
-  s+='<div class="complabel'+(metOn?' lit':'')+'" style="left:'+((feedX+16)/W*100).toFixed(1)+'%;top:'+((feedY/H*100)).toFixed(1)+'%;transform:translate(0,-50%)">FEED\u2011IN POINT</div>';
+  s+='<div class="complabel'+(metOn?' lit':'')+'" style="left:'+((feedX+16)/W*100).toFixed(1)+'%;top:'+(((feedY-7)/H*100)).toFixed(1)+'%;transform:translate(0,-50%);font-size:6.5px;padding:2px 6px">FEED\u2011IN POINT</div>';
   s+='<div class="complabel" style="left:'+((cabX+cabW+6)/W*100).toFixed(1)+'%;top:'+(((cabBaseY+16)/H)*100).toFixed(1)+'%;transform:translate(0,-50%)">CABINET'+(state.mainFuseA>0?(' \u00b7 Main Fuse '+state.mainFuseA+'A'):'')+'</div>';
   if(state.mainFuseA>0){
     var sceneFuseKw=Math.round(state.mainFuseA*230*3/100)/10;
@@ -1612,9 +1634,12 @@ function ctg(cx,cy,tdx,dir){
   if(showSemBox){
     s+='<div class="complabel lit" style="left:'+((mtrX+semBoxW/2)/W*100).toFixed(1)+'%;top:'+(((mtrBaseY-semBoxH-13)/H)*100).toFixed(1)+'%;transform:translate(-50%,-50%)">'+meterLabel+'</div>';
   } else if(isGroHome){
-    s+='<div class="complabel lit" style="left:'+((groX+semBoxW/2)/W*100).toFixed(1)+'%;top:'+(((groBaseY-groBoxH-11)/H)*100).toFixed(1)+'%;transform:translate(-50%,-50%);font-size:6.5px;padding:2px 6px">GROHOMEMANAGER\u2011X</div>';
+    s+='<div class="complabel lit" style="left:'+((feedX+smW/2+8)/W*100).toFixed(1)+'%;top:'+(((feedY+smH/2)/H)*100).toFixed(1)+'%;transform:translate(0,-50%);font-size:6.5px;padding:2px 6px">GROHOMEMANAGER\u2011X</div>';
   } else if(showSmartAtFeed){
-    s+='<div class="complabel lit" style="left:'+((feedX+smW/2+8)/W*100).toFixed(1)+'%;top:'+(((feedY+smH/2)/H)*100).toFixed(1)+'%;transform:translate(0,-50%)">SMART METER</div>';
+    s+='<div class="complabel lit" style="left:'+((feedX+smW/2+8)/W*100).toFixed(1)+'%;top:'+(((feedY+smH/2)/H)*100).toFixed(1)+'%;transform:translate(0,-50%);font-size:6.5px;padding:2px 6px">SMART METER</div>';
+  }
+  if(showSynBox){
+    s+='<div class="complabel lit" style="left:'+((synX2+smW/2+8)/W*100).toFixed(1)+'%;top:'+(((synTopY2+smH/2)/H)*100).toFixed(1)+'%;transform:translate(0,-50%);font-size:6.5px;padding:2px 6px">SYN 100\u2011XH\u201130</div>';
   }
   s+='<div class="complabel'+(invOn?' lit':'')+'" style="left:'+(houseX/W*100).toFixed(1)+'%;top:'+(((houseTopY-11)/H)*100).toFixed(1)+'%;transform:translate(-50%,-50%)">MAIN LOAD'+(state.loadKw>0?(' \u00b7 '+state.loadKw+' kW'):'')+'</div>';
   s+='</div></div>';
@@ -1768,7 +1793,7 @@ document.addEventListener('click',function(e){
   else if(a==='goai'){state.page='ai';render();}
   else if(a==='goback'){state.page='main';render();}
   else if(a==='dongle'){var k=el.getAttribute('data-k');if(state.multi&&state.units.length>1&&k!=='shinesem'&&k!=='shinemaster'&&k!=='grohome')return;var wasNull=!state.dongle;state.dongle=(state.dongle===k)?null:k;render();if(state.dongle)goStep('stp-meter');}
-  else if(a==='metering'){var m=el.getAttribute('data-m');state.metering=(state.metering===m)?null:m;render();if(state.metering)goStep('stp-backup');}
+  else if(a==='metering'){var m=el.getAttribute('data-m');state.metering=(state.metering===m)?null:m;if(state.metering==='meter')state.meterType='TPM-6CT-C';render();if(state.metering)goStep('stp-backup');}
   else if(a==='mt'){state.meterType=el.getAttribute('data-t');render();}
   else if(a==='backup'){state.backupOn=!state.backupOn;render();goStep('stp-battery');}
   else if(a==='backupmode'){var v=el.getAttribute('data-v');state.backupMode=(state.backupMode===v)?null:v;render();}
