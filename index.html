@@ -229,6 +229,8 @@
   .complabel{position:absolute;transform:translate(-50%,-50%);font-size:12.5px;font-weight:800;letter-spacing:.03em;color:#c3cfdd;background:rgba(13,22,38,.88);border:1.5px solid rgba(255,255,255,.22);border-radius:20px;padding:4px 10px;pointer-events:none;opacity:.9;transition:.3s;white-space:nowrap;z-index:3;backdrop-filter:blur(2px)}
   .complabel.litb{color:#9cc4ff;background:rgba(13,24,44,.88);border-color:#3b82f6;box-shadow:0 0 10px rgba(59,130,246,.5);opacity:1}
   .complabel.lit{color:#8ffcb8;background:rgba(10,26,18,.85);border-color:#33da7a;box-shadow:0 0 10px rgba(51,218,122,.5);opacity:1}
+  .netlabel{position:absolute;transform:translate(-50%,-100%);font-size:9px;font-weight:800;letter-spacing:.03em;color:#1f7a45;pointer-events:none;white-space:nowrap;z-index:3;text-shadow:0 0 4px #d6dee4,0 0 4px #d6dee4,0 1px 2px #d6dee4}
+  .netlabel.litb{text-shadow:0 0 4px #d6dee4,0 0 4px #d6dee4,0 1px 2px #d6dee4,0 0 6px rgba(31,122,69,.55)}
   .housebox{position:absolute;transform:translate(-50%,-100%);font-size:40px;line-height:1;pointer-events:none;z-index:2;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35))}
   .olsvg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:1}
   .opoly{fill:none;stroke:#33da7a;stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round;opacity:0;transition:opacity .35s ease;filter:drop-shadow(0 0 5px rgba(51,218,122,.85))}
@@ -294,7 +296,7 @@
   @keyframes dcflow{to{stroke-dashoffset:-9}}
   .rfwave{stroke:#3b82f6;stroke-width:1.3;fill:none;stroke-linecap:round;animation:rfpulse 2.4s ease-in-out infinite}
   @keyframes rfpulse{0%,100%{opacity:.25}50%{opacity:.95}}
-  .commline{stroke:#f08a1d;stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:7 6;opacity:.9;animation:commflow 1.6s linear infinite,commpulse 2.6s ease-in-out infinite;filter:drop-shadow(0 0 3px rgba(240,138,29,.55))}
+  .commline{stroke:#f08a1d;stroke-width:1.1;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:6 5;opacity:.6;animation:commflow 1.6s linear infinite,commpulse 2.6s ease-in-out infinite;filter:drop-shadow(0 0 1.5px rgba(240,138,29,.35))}
   .commline.rev{animation-direction:reverse,normal}
   @keyframes commflow{to{stroke-dashoffset:-13}}
   @keyframes commpulse{0%,100%{opacity:.95}50%{opacity:.4}}
@@ -443,7 +445,7 @@ function acBreaker(){
 }
 
 // APX inputs: {mods,cols,c1,c2}. AXE inputs: {modules}. Shape depends on fam().battery.
-var state={page:'main',openStep:'stp-seg',openHot:null,offGrid:false,segment:null,multi:false,thirdParty:false,tpCount:1,synOptIn:false,groHomeMode:'rs485',aiMode:false,aiSmart:false,aiPeak:false,aiUnbal:false,unit:0,units:[],panelW:450,panelCount:0,family:null,kw:null,dongle:null,metering:null,meterType:'TPM-6CT-C',backupOn:true,apx:'1.0',inputs:[],wantBattery:null,loadKw:0,backupMode:null,backupLoadKw:0,mainFuseA:null};
+var state={page:'main',openStep:'stp-seg',openHot:null,offGrid:false,inverterBroken:false,segment:null,multi:false,thirdParty:false,tpCount:1,tpLabels:['','',''],synOptIn:false,groHomeMode:'rs485',aiMode:false,aiSmart:false,aiPeak:false,aiUnbal:false,unit:0,units:[],panelW:450,panelCount:0,family:null,kw:null,dongle:null,metering:null,meterType:'TPM-6CT-C',backupOn:true,apx:'1.0',inputs:[],wantBattery:null,loadKw:0,backupMode:null,backupLoadKw:0,mainFuseA:null,highRes:false};
 function snapshotUnit(){return {family:state.family,kw:state.kw,backupOn:state.backupOn,backupMode:state.backupMode,backupLoadKw:state.backupLoadKw,panelW:state.panelW,panelCount:state.panelCount,wantBattery:state.wantBattery,apx:state.apx,inputs:state.inputs};}
 function loadUnit(u){state.family=u.family;state.kw=u.kw;state.backupOn=u.backupOn;state.backupMode=(u.backupMode!==undefined?u.backupMode:null);state.backupLoadKw=(u.backupLoadKw!==undefined?u.backupLoadKw:0);state.panelW=(u.panelW!==undefined?u.panelW:450);state.panelCount=(u.panelCount!==undefined?u.panelCount:0);state.wantBattery=u.wantBattery;state.apx=u.apx;state.inputs=u.inputs;}
 function syncUnit(){state.units[state.unit]=snapshotUnit();}
@@ -492,7 +494,7 @@ function modelName(famKey,kw){
 function isAxeFam(){return !!(fam()&&fam().battery==='AXE');}
 function backupType(){return state.family?fam().backup:null;}
 function isHU(){return backupType()==='integrated';}
-function needsSyn(){var b=backupType();return b==='box-required'||(b==='box'&&state.backupOn)||(!!state.synOptIn&&state.units.length<=1);}
+function needsSyn(){var b=backupType();return b==='box-required'||(b==='box'&&state.backupOn)||(!!state.synOptIn&&state.units.length<=1&&state.family!=='MODA');}
 function a2(){return state.apx==='2.0';}
 function maxInputs(){if(!fam())return 0;var b=fam().battery;if(b!=='APX')return fam().inputs;return Math.min(fam().inputs,a2()?3:2);}
 function minMods(){return a2()?0:1;}
@@ -533,9 +535,11 @@ function clampInputs(){
     if(typeof inp.c1!=='number'||isNaN(inp.c1))inp.c1=inp.mods;
     if(typeof inp.c2!=='number'||isNaN(inp.c2))inp.c2=0;
     if(a2()){
+      // APX 2.0: stacks like 1.0 \u2014 1 or 2 towers per input.
+      // Cap stays at 5 add\u2011on modules per input (the BMS carries its own 5 kWh on top).
       if(inp.cols===2){
-        inp.c1=clamp(inp.c1,0,4);inp.c2=clamp(inp.c2||1,1,5);
-        if(inp.c1+inp.c2>5){if(inp.c1>=inp.c2)inp.c1=Math.max(0,5-inp.c2);else inp.c2=Math.max(1,5-inp.c1);}
+        inp.c1=clamp(inp.c1||0,0,4);inp.c2=clamp(inp.c2||1,1,5);
+        if(inp.c1+inp.c2>5){if(inp.c1>=inp.c2)inp.c1=5-inp.c2;else inp.c2=5-inp.c1;}
         inp.mods=inp.c1+inp.c2;
       } else {
         inp.cols=1;inp.mods=clamp(inp.mods,0,5);inp.c1=inp.mods;inp.c2=0;
@@ -703,8 +707,9 @@ function segStep(){
   var adv=(isModaFam
     ?'<div class="note" style="margin-top:12px">'+ic('info',14)+'<span><b>MODA supports one inverter only</b> \u2014 multiple MODA in series is not possible. Need more AC power? Add a <b>third\u2011party inverter</b> below.</span></div>'
     :'<div class="switchrow" style="margin-top:12px"><div><div class="lab">Advanced settings \u2014 multiple inverters</div><div class="s2">Add inverters \u2014 each starts as a copy of the one you\u2019re working on, then configure each \u2014 everything sums in \u201cYour system\u201d.'+(state.units.some(function(u){return u.family==='RISE-261';})||state.family==='RISE-261'?' <b>RISE 261H\u2011XH: up to 10 units in parallel (\u2248 2.61 MWh).</b>':'')+'</div></div><span class="sw '+(state.multi?'on':'')+'" data-act="multi"><span class="knob"></span></span></div>')+
-    (state.family?'<div class="switchrow" style="margin-top:10px"><div><div class="lab">Third\u2011party inverter (AC\u2011coupled)</div><div class="s2">Add an existing third\u2011party PV inverter alongside the Growatt system.'+(state.family==='MODA'?' MODA works with <b>APX 2.0 only</b> \u2014 one battery stack.':'')+(state.units.length>1?' With multiple inverters a <b>smart meter</b> is required to measure it.':'')+'</div></div><span class="sw '+(state.thirdParty?'on':'')+'" data-act="thirdparty"><span class="knob"></span></span></div>'+(state.thirdParty?'<div class="chips" style="margin-top:8px">'+[1,2,3].map(function(n){return '<button class="chip sm '+(state.tpCount===n?'on':'')+'" data-act="tpcount" data-n="'+n+'">'+n+' \u00d7</button>';}).join('')+'</div>':''):'')+
-    (state.multi?'<div class="notice g" style="margin-top:10px">'+ic('info',14)+'<span>Multi\u2011inverter systems require <b>ShineSEM\u2011X</b> or <b>ShineMaster</b> for coordinated monitoring \u2014 set in step 3. A regular dongle (WiFi/LAN/4G) alone isn\u2019t enough for multiple units.</span></div>':'');
+    ('<div class="switchrow" style="margin-top:10px"><div><div class="lab">Third\u2011party inverter (AC\u2011coupled)</div><div class="s2">Add an existing third\u2011party PV inverter alongside the Growatt system.'+(state.family==='MODA'?' MODA works with <b>APX 2.0 only</b> \u2014 one battery stack.':'')+(state.units.length>1?' With multiple inverters a <b>smart meter</b> is required to measure it.':'')+'</div></div><span class="sw '+(state.thirdParty?'on':'')+'" data-act="thirdparty"><span class="knob"></span></span></div>'+(state.thirdParty?'<div class="chips" style="margin-top:8px">'+[1,2,3].map(function(n){return '<button class="chip sm '+(state.tpCount===n?'on':'')+'" data-act="tpcount" data-n="'+n+'">'+n+' \u00d7</button>';}).join('')+'</div>'+'<div style="margin-top:8px;display:flex;flex-direction:column;gap:6px">'+Array.apply(null,{length:state.tpCount||1}).map(function(_,i){return '<input id="tpLabel'+i+'" type="text" maxlength="24" placeholder="Inverter '+(i+1)+' \u2014 e.g. Huawei 10kW" value="'+escHtml((state.tpLabels&&state.tpLabels[i])||'')+'" style="border:1px solid var(--line2);border-radius:10px;padding:9px 11px;font-size:13px;font-family:var(--mono);font-weight:700;color:var(--text);background:#fff;width:100%">';}).join('')+'<div class="s2" style="margin-top:-2px">Brand + power \u2014 shown on that inverter in the diagram.</div></div>':''))+
+    (state.multi?'<div class="notice g" style="margin-top:10px">'+ic('info',14)+'<span>Multi\u2011inverter systems require <b>ShineSEM\u2011X</b> or <b>ShineMaster</b> for coordinated monitoring \u2014 set in step 3. A regular dongle (WiFi/LAN/4G) alone isn\u2019t enough for multiple units.</span></div>':'')+
+    (state.segment==='res'&&!state.multi?'<div class="switchrow" style="margin-top:10px"><div><div class="lab">High resolution AC <span style="font-weight:600;color:var(--mut)">(experimental)</span></div><div class="s2">Diagram only, fully independent of everything else. Draws the AC connection as 5 conductors \u2014 L1, L2, L3, N, PE \u2014 instead of one line. Single inverter only.</div></div><span class="sw '+(state.highRes?'on':'')+'" data-act="highres"><span class="knob"></span></span></div>':'');
   var aiCard='<button class="opt ai" data-act="goai"><div class="name">'+ic('cpu',14)+' Growatt AI</div><div class="meta">How Smart Scheduling Mode works</div></button>';
   return '<div class="step'+(stepOpen('stp-seg')?'':' collapsed')+'" id="stp-seg">'+stepHead(1,'layers','System type','Residential or Commercial \u2014 filters inverters &amp; batteries',null,'stp-seg')+'<div class="step-b"><div class="grid g3">'+cards+aiCard+'</div>'+adv+'</div></div>';
 }
@@ -876,9 +881,11 @@ function backupBodyHTML(){
   if(!state.family) body='<div class="placeholder"><span class="i">'+ic('info',15)+'</span>Choose an inverter first \u2014 backup depends on the model.</div>';
   else{var bt=backupType();
     if(bt==='integrated') body='<div class="locked"><span class="ico">'+ic('shield',22)+'</span><div><div class="t">Backup already integrated</div><div class="s">'+fam().name+' has built\u2011in off\u2011grid backup \u2014 no SYN box required.</div></div></div>'+
-      (state.units.length>1
-        ?'<div class="note" style="margin-top:10px">'+ic('info',14)+'<span>A SYN box can only be added with a <b>single inverter</b> \u2014 not available with multiple '+fam().name+' units.</span></div>'
-        :'<div class="switchrow" style="margin-top:10px"><div><div class="lab">Add a SYN box (optional)</div><div class="s2">Not required \u2014 '+fam().name+'\u2019s backup is already integrated. Add one anyway for extra switching capacity if you want it.</div></div><span class="sw '+(state.synOptIn?'on':'')+'" data-act="synoptin"><span class="knob"></span></span></div>');
+      (state.family==='MODA'
+        ?'<div class="note" style="margin-top:10px">'+ic('info',14)+'<span>A separate SYN box <b>isn\u2019t needed with MODA</b> \u2014 the same switching &amp; backup functions are already built in.</span></div>'
+        :state.units.length>1
+          ?'<div class="note" style="margin-top:10px">'+ic('info',14)+'<span>A SYN box can only be added with a <b>single inverter</b> \u2014 not available with multiple '+fam().name+' units.</span></div>'
+          :'<div class="switchrow" style="margin-top:10px"><div><div class="lab">Add a SYN box (optional)</div><div class="s2">Not required \u2014 '+fam().name+'\u2019s backup is already integrated. Add one anyway for extra switching capacity if you want it.</div></div><span class="sw '+(state.synOptIn?'on':'')+'" data-act="synoptin"><span class="knob"></span></span></div>');
     else if(bt==='box-required') body='<div class="reqcard"><span class="ico">'+ic('alert',22)+'</span><div><div class="t">Backup not integrated \u2014 needs to be added</div><div class="s">'+fam().name+' requires a separate SYN box. Added automatically.</div></div></div><div class="notice g">'+ic('check',14)+'<span><b>'+synItem().split('|')[0]+'</b> added to your system.</span></div>';
     else body='<div class="switchrow"><div><div class="lab">Include SYN backup box</div><div class="s2">'+fam().name+' backup is <b>not integrated</b> \u2014 add a SYN box for off\u2011grid.</div></div><span class="sw '+(state.backupOn?'on':'')+'" data-act="backup"><span class="knob"></span></span></div>'+(state.backupOn?'<div class="notice g">'+ic('check',14)+'<span><b>Growatt SYN 100\u2011XH\u201130</b> (3\u2011phase) added. Switch time &lt; 0.5 s.</span></div>':'<div class="note">'+ic('info',14)+'<span>No backup box \u2014 grid\u2011tied only (no power during outages).</span></div>');
   }
@@ -994,7 +1001,7 @@ function batteryStep(){
   }
 
   function apxc(v,nm,ds){return '<button class="opt '+(state.apx===v?'on':'')+'" data-act="apx" data-v="'+v+'"><div class="name">'+nm+'</div><div class="meta">'+ds+'</div></button>';}
-  var typeSel='<div class="sublabel">Battery type</div><div class="grid g2">'+apxc('1.0','APX 1.0','Separate BMS \u00b7 1\u20136 modules \u00b7 1 or 2 towers')+apxc('2.0','APX 2.0','BMS incl. 5 kWh + heating \u00b7 1 or 2 towers \u00b7 up to 5 add\u2011ons')+'</div>';
+  var typeSel='<div class="sublabel">Battery type</div><div class="grid g2">'+apxc('1.0','APX 1.0','Separate BMS \u00b7 1\u20136 modules \u00b7 1 or 2 towers')+apxc('2.0','APX 2.0','BMS incl. 5 kWh + heating \u00b7 1\u20112 towers per input \u00b7 up to 5 add\u2011ons')+'</div>';
   var capNote='';
   if(f.inputs===3){
     capNote=a2()
@@ -1009,7 +1016,7 @@ function batteryStep(){
     var mx=maxMods();
     var cards=state.inputs.map(function(inp,i){
       var currentTotal=inp.cols===2?(inp.c1+inp.c2):inp.mods;
-      var canSplit=a2()?currentTotal>=1:currentTotal>=2;
+      var canSplit=currentTotal>=2;
       var layoutHTML=canSplit?('<div class="sublabel" style="margin:12px 0 7px">Layout</div><div class="chips"><button class="chip sm '+(inp.cols===1?'on':'')+'" data-act="cols" data-i="'+i+'" data-c="1">1 tower</button><button class="chip sm '+(inp.cols===2?'on':'')+'" data-act="cols" data-i="'+i+'" data-c="2">2 towers'+(inp.cols===2?' \u00b7 '+inp.c1+'+'+inp.c2:'')+'</button></div>'):'';
       var modUI;
       if(inp.cols===1){
@@ -1039,7 +1046,30 @@ function isoBox(x,y,fw,h,skx,sky){
     side:[[x+fw,y-h],[x+fw+skx,y-h-sky],[x+fw+skx,y-sky],[x+fw,y]]
   };
 }
+function escHtml(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function ptsStr(pts){return pts.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);}).join(' ');}
+function riseDetailSVG(x,y,fw,h){
+  // x,y = bottom\u2011left of the RISE front face; fw,h = front face size. Modeled on the physical RISE cabinet photo.
+  var s='<g class="risedetail">';
+  var fs=Math.max(3,fw*0.072);
+  s+='<text x="'+(x+fw*0.05)+'" y="'+(y-h*0.87)+'" font-size="'+fs.toFixed(1)+'" font-weight="800" font-style="italic" fill="#1f9d4e">GROWATT</text>';
+  var dW=fw*0.024,dH=h*0.028,dGap=fw*0.032;
+  for(var i=0;i<4;i++){s+='<rect x="'+(x+fw*0.07+i*dGap)+'" y="'+(y-h*0.79)+'" width="'+dW+'" height="'+dH+'" fill="#33da7a"></rect>';}
+  s+='<circle cx="'+(x+fw*0.88)+'" cy="'+(y-h*0.89)+'" r="'+(fw*0.045)+'" fill="#2a2f36"></circle>';
+  s+='<circle cx="'+(x+fw*0.88)+'" cy="'+(y-h*0.89)+'" r="'+(fw*0.045)+'" fill="none" stroke="#4a525c" stroke-width="'+(fw*0.006)+'"></circle>';
+  s+='<circle cx="'+(x+fw*0.14)+'" cy="'+(y-h*0.56)+'" r="'+(fw*0.042)+'" fill="#e0473f" stroke="#a83027" stroke-width="'+(fw*0.008)+'"></circle>';
+  var wtx=x+fw*0.06,wty=y-h*0.14,wts=fw*0.09;
+  s+='<polygon points="'+wtx+','+(wty)+' '+(wtx+wts)+','+wty+' '+(wtx+wts/2)+','+(wty-wts*0.87)+'" fill="#f4c430" stroke="#8a6d00" stroke-width="'+(fw*0.005)+'"></polygon>';
+  s+='<text x="'+(wtx+wts/2)+'" y="'+(wty-wts*0.18)+'" text-anchor="middle" font-size="'+(wts*0.75).toFixed(1)+'" font-weight="800" fill="#5a4600">!</text>';
+  var doorX=x+fw*0.5,midDoor=x+fw*0.75;
+  s+='<line x1="'+doorX+'" y1="'+(y-h*0.04)+'" x2="'+doorX+'" y2="'+(y-h*0.97)+'" stroke="#b9c3cd" stroke-width="'+(fw*0.01)+'"></line>';
+  s+='<line x1="'+midDoor+'" y1="'+(y-h*0.04)+'" x2="'+midDoor+'" y2="'+(y-h*0.97)+'" stroke="#b9c3cd" stroke-width="'+(fw*0.01)+'"></line>';
+  s+='<rect x="'+(midDoor-fw*0.016)+'" y="'+(y-h*0.58)+'" width="'+(fw*0.032)+'" height="'+(h*0.2)+'" rx="'+(fw*0.008)+'" fill="#5a6472"></rect>';
+  s+='<rect x="'+(x+fw*0.965)+'" y="'+(y-h*0.58)+'" width="'+(fw*0.032)+'" height="'+(h*0.2)+'" rx="'+(fw*0.008)+'" fill="#5a6472"></rect>';
+  s+='<rect x="'+x+'" y="'+(y-h*0.065)+'" width="'+fw+'" height="'+(h*0.065)+'" fill="#2c343d"></rect>';
+  s+='</g>';
+  return s;
+}
 function drawIsoBox(x,y,fw,h,skx,sky,cFront,cTop,cSide,lit){
   var b=isoBox(x,y,fw,h,skx,sky);
   var cls='eqbox'+(lit?' lit':'');
@@ -1053,7 +1083,7 @@ function drawIsoBox(x,y,fw,h,skx,sky,cFront,cTop,cSide,lit){
 function gauge(cx,cy,r,lit){
   var rr=r-2,circ=2*Math.PI*rr,fillLen=circ*0.62;
   return '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="#182420" stroke="#3d4b46" stroke-width="1"></circle>'+
-    '<circle cx="'+cx+'" cy="'+cy+'" r="'+rr+'" fill="none" stroke="'+(lit?'#33da7a':'#5b6b64')+'" stroke-width="1.8" stroke-dasharray="'+fillLen.toFixed(1)+' '+(circ-fillLen).toFixed(1)+'" stroke-linecap="round" transform="rotate(-90 '+cx+' '+cy+')"></circle>';
+    '<circle cx="'+cx+'" cy="'+cy+'" r="'+rr+'" fill="none" stroke="'+(lit?'#33da7a':'#5b6b64')+'" stroke-width="1.8" stroke-dasharray="'+fillLen.toFixed(1)+' '+(circ-fillLen).toFixed(1)+'" stroke-linecap="round" transform="rotate(-90,'+cx+','+cy+')"></circle>';
 }
 function screw(cx,cy){return '<circle cx="'+cx+'" cy="'+cy+'" r="1.3" fill="#b7c0cb"></circle>';}
 function nrTag(cx,by,num,sc,active){
@@ -1066,12 +1096,85 @@ function rfHat(x,y,mir2,wireless){
   var s='<g><rect x="'+hx+'" y="'+(y-hh/2)+'" width="'+hw+'" height="'+hh+'" rx="2" fill="#e7ebf0" stroke="#8a97a6" stroke-width="1"></rect><circle cx="'+(hx+hw/2)+'" cy="'+y+'" r="1.3" fill="#5b6b74"></circle></g>';
   if(wireless){
     var wx=hx+hw/2, wy=y-hh/2-2;
-    s+='<path class="rfwave" d="M'+(wx-6)+','+(wy-2)+' A8 8 0 0 1 '+(wx+6)+','+(wy-2)+'" style="animation-delay:0s"></path>';
-    s+='<path class="rfwave" d="M'+(wx-11)+','+(wy-6)+' A15 15 0 0 1 '+(wx+11)+','+(wy-6)+'" style="animation-delay:.3s"></path>';
-    s+='<path class="rfwave" d="M'+(wx-16)+','+(wy-10)+' A22 22 0 0 1 '+(wx+16)+','+(wy-10)+'" style="animation-delay:.6s"></path>';
-    s+='<path class="rfwave" d="M'+(wx-21)+','+(wy-14)+' A29 29 0 0 1 '+(wx+21)+','+(wy-14)+'" style="animation-delay:.9s"></path>';
+    s+='<path class="rfwave" d="M'+(wx-6)+','+(wy-2)+' A8,8,0,0,1,'+(wx+6)+','+(wy-2)+'" style="animation-delay:0s"></path>';
+    s+='<path class="rfwave" d="M'+(wx-11)+','+(wy-6)+' A15,15,0,0,1,'+(wx+11)+','+(wy-6)+'" style="animation-delay:.3s"></path>';
+    s+='<path class="rfwave" d="M'+(wx-16)+','+(wy-10)+' A22,22,0,0,1,'+(wx+16)+','+(wy-10)+'" style="animation-delay:.6s"></path>';
+    s+='<path class="rfwave" d="M'+(wx-21)+','+(wy-14)+' A29,29,0,0,1,'+(wx+21)+','+(wy-14)+'" style="animation-delay:.9s"></path>';
+    s+='<text x="'+(hx+hw/2)+'" y="'+(y+hh/2+6)+'" text-anchor="middle" font-size="4.4" font-weight="800" fill="#5d6b78" letter-spacing=".01em">ShineRFStick\u2011X2</text>';
   }
   return s;
+}
+function phaseOffsetPath(d,idx,spacing){
+  var nums=d.match(/-?\d+\.?\d*/g).map(Number);
+  var points=[];
+  for(var i=0;i<nums.length;i+=2)points.push([nums[i],nums[i+1]]);
+  var off=idx*spacing;
+  var out=points.map(function(p,i){
+    var dx=0,dy=0;
+    if(i>0){var prev=points[i-1];if(prev[1]===p[1])dy=off;else if(prev[0]===p[0])dx=off;}
+    if(i<points.length-1){var next=points[i+1];if(next[1]===p[1])dy=off;else if(next[0]===p[0])dx=off;}
+    return [p[0]+dx,p[1]+dy];
+  });
+  return 'M'+out.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);}).join(' L');
+}
+var PHASE_WIRES=[{n:'L1',c:'#e8c11a'},{n:'L2',c:'#2ea043'},{n:'L3',c:'#e0473f'},{n:'N',c:'#2b6fce'},{n:'PE',c:'#9db32e'}];
+var PHASE_SPACING=7.5;
+function acGridLit(){
+  return state.metering==='meter'||state.dongle==='shinesem'||state.dongle==='shinemaster'||state.dongle==='grohome';
+}
+function acOp(lit,exempt){
+  if(state.offGrid)return exempt?0.95:0.2;
+  if(!acGridLit())return 0.4;
+  return lit?0.95:0.4;
+}
+function acCable(d,lit,cls,exempt,noPE){
+  cls=cls||'olcable';
+  if(!(state.highRes&&!(state.multi&&state.units.length>1)))return '<path class="'+cls+(lit?' lit':'')+'" d="'+d+'"></path>';
+  var out='';
+  var op=acOp(lit,exempt);
+  for(var i=0;i<(noPE?4:5);i++){
+    var pd=phaseOffsetPath(d,i-2,PHASE_SPACING);
+    if(i===4){
+      out+='<path d="'+pd+'" fill="none" stroke="#e8c11a" stroke-width="1.4" stroke-dasharray="3 3" opacity="'+op+'"></path>';
+      out+='<path d="'+pd+'" fill="none" stroke="#2ea043" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="3" opacity="'+op+'"></path>';
+    } else {
+      out+='<path d="'+pd+'" fill="none" stroke="'+PHASE_WIRES[i].c+'" stroke-width="1.3" stroke-dasharray="4 2.5" stroke-linecap="round" opacity="'+op+'"></path>';
+    }
+  }
+  return out;
+}
+function acCable3(d,lit,cls,exempt){
+  cls=cls||'olcable';
+  if(!(state.highRes&&!(state.multi&&state.units.length>1)))return '<path class="'+cls+(lit?' lit':'')+'" d="'+d+'"></path>';
+  var out='';
+  var op=acOp(lit,exempt);
+  for(var i=0;i<3;i++){
+    var pd=phaseOffsetPath(d,i-2,PHASE_SPACING);
+    out+='<path d="'+pd+'" fill="none" stroke="'+PHASE_WIRES[i].c+'" stroke-width="1.3" stroke-dasharray="4 2.5" stroke-linecap="round" opacity="'+op+'"></path>';
+  }
+  return out;
+}
+function dcCable(d){
+  if(!(state.highRes&&!(state.multi&&state.units.length>1)))return '<path class="dccable" d="'+d+'"></path>';
+  var pos=phaseOffsetPath(d,-1,3), neg=phaseOffsetPath(d,1,3);
+  return '<path d="'+pos+'" fill="none" stroke="#c0392b" stroke-width="1.7" stroke-dasharray="5 3" stroke-linecap="round"></path>'+
+    '<path d="'+neg+'" fill="none" stroke="#1a1a1a" stroke-width="1.7" stroke-dasharray="5 3" stroke-linecap="round"></path>';
+}
+function commDongleSVG(x,y){
+  var lbl={wifi:'WiFi',lan:'LAN','4g':'4G'}[state.dongle]||'';
+  var bw=17,bh=6.4;
+  var ledX=bw*0.3;
+  var g='<g transform="translate('+x+','+y+') rotate(-14)">'+
+    '<rect x="-4" y="'+(-bh/2+0.6).toFixed(1)+'" width="4.4" height="'+(bh-1.2).toFixed(1)+'" fill="#b7bfc8" stroke="#818b95" stroke-width="0.6"></rect>'+
+    '<rect x="0" y="'+(-bh/2).toFixed(1)+'" width="'+bw+'" height="'+bh+'" rx="3" fill="#23262b" stroke="#0d0f12" stroke-width="0.7"></rect>'+
+    '<circle cx="'+ledX.toFixed(1)+'" cy="0" r="1.15" fill="#33da7a"></circle>'+
+    '<rect x="'+(bw*0.52).toFixed(1)+'" y="'+(-bh/2+0.7).toFixed(1)+'" width="'+(bw*0.4).toFixed(1)+'" height="0.8" rx="0.4" fill="rgba(255,255,255,.18)"></rect>'+
+    '<path class="rfwave" d="M'+(ledX-4).toFixed(1)+',-4.5 A6,6,0,0,1,'+(ledX+4).toFixed(1)+',-4.5" style="animation-delay:0s"></path>'+
+    '<path class="rfwave" d="M'+(ledX-7).toFixed(1)+',-7.5 A10,10,0,0,1,'+(ledX+7).toFixed(1)+',-7.5" style="animation-delay:.3s"></path>'+
+    '<path class="rfwave" d="M'+(ledX-10).toFixed(1)+',-10.5 A14,14,0,0,1,'+(ledX+10).toFixed(1)+',-10.5" style="animation-delay:.6s"></path>'+
+    '</g>';
+  if(lbl)g+='<text x="'+(x+bw*0.55).toFixed(1)+'" y="'+(y-7)+'" text-anchor="middle" font-size="6" font-weight="800" fill="#5d6b78" letter-spacing=".01em">'+lbl+'</text>';
+  return g;
 }
 function drawExtraUnitRow(u,rowIx,rowBaseY,scale,skx,sky,active,mir){
   var fm=FAMILIES[u.family];
@@ -1084,11 +1187,11 @@ function drawExtraUnitRow(u,rowIx,rowBaseY,scale,skx,sky,active,mir){
   var a2u=u.apx==='2.0';
   if(isRiseU){
     var rw=150*scale,rh=112*scale;
-    s+=drawIsoBox(rowIx,rowBaseY,rw,rh,skx*scale,sky*scale,'#dbe7ea','#eef5f6','#aec4c9',true);
-    s+=gauge(rowIx+rw-16*scale,rowBaseY-rh+16*scale,7*tScale,true);
+    s+=drawIsoBox(rowIx,rowBaseY,rw,rh,skx*scale,sky*scale,'#e9edf1','#f6f8fa','#c7cdd4',true);
+    s+=riseDetailSVG(rowIx,rowBaseY,rw,rh);
     if(u.kw){
-      s+=invModelSVG(rowIx+rw*0.42,rowBaseY-rh*0.55,rw*0.8,modelName('RISE-261',u.kw),7.4);
-      s+='<text x="'+(rowIx+rw*0.42)+'" y="'+(rowBaseY-rh*0.28)+'" text-anchor="middle" font-size="6" font-weight="800" fill="#2f3c4a">'+u.kw+' kW \u00b7 261 kWh</text>';
+      s+='<text x="'+(rowIx+rw*0.29)+'" y="'+(rowBaseY-rh*0.37)+'" text-anchor="middle" font-size="'+(6.6*tScale).toFixed(1)+'" font-weight="800" fill="#2f3c4a">'+u.kw+' kW</text>';
+      s+='<text x="'+(rowIx+rw*0.29)+'" y="'+(rowBaseY-rh*0.29)+'" text-anchor="middle" font-size="'+(5.4*tScale).toFixed(1)+'" font-weight="700" fill="#5b6570">261 kWh</text>';
     }
     if(u.num)s+=nrTag(rowIx+rw/2,rowBaseY,u.num,scale,active);
     if(state.dongle==='grohome'&&state.groHomeMode==='wireless')s+=rfHat(mir?rowIx:(rowIx+rw),rowBaseY-rh+10,mir,state.groHomeMode==='wireless');
@@ -1112,7 +1215,7 @@ function drawExtraUnitRow(u,rowIx,rowBaseY,scale,skx,sky,active,mir){
     s+='<polygon points="'+ptsStr(mBoxFaces.top)+'" fill="#fbfcfd"></polygon><polygon points="'+ptsStr(mBoxFaces.side)+'" fill="#ccd4de"></polygon>';
     var mcy=rowBaseY;
     s+='<rect x="'+rowIx+'" y="'+(mcy-mBaseH)+'" width="'+iw+'" height="'+(mBaseH-1)+'" fill="#a9b4bf" stroke="#7d8994" stroke-width="0.6"></rect>';
-    if(iw*tScale/scale>=34)s+='<text x="'+(rowIx+iw/2)+'" y="'+(mcy-mBaseH/2+2.2*tScale)+'" text-anchor="middle" font-size="'+(6*tScale).toFixed(1)+'" font-weight="700" fill="#f2f5f7">BASE</text>';
+    s+='<text x="'+(rowIx+iw/2)+'" y="'+(mcy-mBaseH/2+2.2*tScale)+'" text-anchor="middle" font-size="'+(6*tScale).toFixed(1)+'" font-weight="700" fill="#f2f5f7">BASE</text>';
     mcy-=mBaseH;
     for(var mi=0;mi<mm;mi++){
       s+='<rect x="'+rowIx+'" y="'+(mcy-mMh+1)+'" width="'+iw+'" height="'+(mMh-2)+'" fill="#f4f6f8" stroke="#bcc6d0" stroke-width="0.7"></rect>';
@@ -1146,17 +1249,22 @@ function drawExtraUnitRow(u,rowIx,rowBaseY,scale,skx,sky,active,mir){
     s+='<polygon points="'+ptsStr(boxFaces.top)+'" fill="'+(t.axe?'#f7f9fb':'#fbfcfd')+'"></polygon><polygon points="'+ptsStr(boxFaces.side)+'" fill="'+(t.axe?'#c2ccd3':'#ccd4de')+'"></polygon>';
     var cy=y;
     s+='<rect x="'+x+'" y="'+(cy-baseH)+'" width="'+tw+'" height="'+(baseH-1)+'" fill="'+(t.axe?'#9aa7b3':'#a9b4bf')+'" stroke="#7d8994" stroke-width="0.6"></rect>';
-    if(tw/scale>=40)s+='<text x="'+(x+tw/2)+'" y="'+(cy-baseH/2+2.2*tScale)+'" text-anchor="middle" font-size="'+(6*tScale).toFixed(1)+'" font-weight="700" fill="#f2f5f7">BASE</text>';
+    s+='<text x="'+(x+tw/2)+'" y="'+(cy-baseH/2+2.2*tScale)+'" text-anchor="middle" font-size="'+(6*tScale).toFixed(1)+'" font-weight="700" fill="#f2f5f7">BASE</text>';
     cy-=baseH;
     for(var m=0;m<t.mods;m++){
       s+='<rect x="'+x+'" y="'+(cy-mh+1)+'" width="'+tw+'" height="'+(mh-2)+'" fill="'+(t.axe?'#eceff2':'#f4f6f8')+'" stroke="'+(t.axe?'#b6c0c8':'#bcc6d0')+'" stroke-width="0.7"></rect>';
-      if(!t.axe&&tw/scale>=40&&mh/scale>=14)s+='<text x="'+(x+tw/2)+'" y="'+(cy-mh/2+2*tScale)+'" text-anchor="middle" font-size="'+(5*tScale).toFixed(1)+'" font-weight="600" fill="#7a8794">5 kWh</text>';
+      if(!t.axe)s+='<text x="'+(x+tw/2)+'" y="'+(cy-mh/2+2*tScale)+'" text-anchor="middle" font-size="'+(5*tScale).toFixed(1)+'" font-weight="600" fill="#7a8794">5 kWh</text>';
       cy-=mh;
     }
     if(t.bms){
       s+='<rect x="'+x+'" y="'+(cy-bmsH+1)+'" width="'+tw+'" height="'+(bmsH-2)+'" fill="#e3f3ea" stroke="#33da7a" stroke-width="0.9"></rect>';
       var bTop=cy-bmsH, bcx=x+tw/2, fsM=(bmsH*0.26).toFixed(1);
-      s+='<text x="'+bcx+'" y="'+(bTop+(a2u?bmsH*0.4:bmsH*0.62))+'" text-anchor="middle" font-size="'+fsM+'" font-weight="800" fill="#1f7a45">BMS</text>';
+      if(t.role==='standalone'){
+        s+='<text x="'+(x+2.4*tScale)+'" y="'+(bTop+(a2u?bmsH*0.4:bmsH*0.62))+'" text-anchor="start" font-size="'+(bmsH*0.2).toFixed(1)+'" font-weight="800" fill="#1f7a45">BMS</text>';
+        s+='<text x="'+(x+tw-2.4*tScale)+'" y="'+(bTop+(a2u?bmsH*0.4:bmsH*0.62))+'" text-anchor="end" font-size="'+(bmsH*0.16).toFixed(1)+'" font-weight="800" fill="#1f7a45">'+(a2u?'APX 2.0':'APX 1.0')+'</text>';
+      } else {
+        s+='<text x="'+bcx+'" y="'+(bTop+(a2u?bmsH*0.4:bmsH*0.62))+'" text-anchor="middle" font-size="'+fsM+'" font-weight="800" fill="#1f7a45">BMS</text>';
+      }
       if(a2u)s+='<text x="'+bcx+'" y="'+(bTop+bmsH*0.8)+'" text-anchor="middle" font-size="'+(bmsH*0.23).toFixed(1)+'" font-weight="800" fill="#2f3c4a">5 kWh</text>';
       cy-=bmsH;
     }
@@ -1193,24 +1301,26 @@ function commercialSceneHTML(){
 
   var skx=17,sky=9;
   var isMulti=state.multi&&state.units.length>1;
-  var baseY=isMulti?418:452;
+  var baseY=(isMulti?418:452)+((state.highRes&&!isMulti)?30:0)-((state.highRes&&!isMulti&&!isModa)?35:0);
   var grayTop=H*0.5;
   var floorFL=[130,560],floorFR=[586,560],floorBR=[700,grayTop+13],floorBL=[244,grayTop+13];
 
-  var ix=330,iw=62,ih=98, rx=290,rw=150,rh=112;
-  var sBattGap=80;
+  var hrShift=(state.highRes&&!isMulti)?50:0;
+  var hrBig=(state.highRes&&!isMulti);
+  var ix=330-hrShift,iw=hrBig?(isModa?102:88):62,ih=hrBig?(isModa?380:164):98, rx=290-hrShift,rw=150,rh=112;
+  var sBattGap=hrBig?45:80;
   var sN=towers.length,sGap=7,sAvail=ix-sBattGap-14;
   var sTw=sN?Math.min(46,(sAvail-(sN-1)*sGap)/sN):46;
   var sTotW=sN?sN*sTw+(sN-1)*sGap:0;
   var sTowerH=sN?Math.max.apply(null,towers.map(function(t){return 13+t.mods*(t.axe?9:15)+(t.bms?23:0);})):0;
   var tx0=ix-sBattGap-sTotW;
-  var invAttachX=isRise?(rx+rw):(ix+iw), invAttachY=isRise?(baseY-rh*0.55):(baseY-ih*0.55);
+  var invAttachX=isRise?(rx+rw):(ix+iw), invAttachY=isRise?(baseY-rh*0.55):(baseY-ih*((isModa&&hrBig)?0.275:0.55));
   var twX=655,twTop=78,twBase=170;
   var towerShift=58, gridDX=52;
   twBase-=towerShift;
-  var kwhW=48,kwhH=31,kwhX=655-kwhW/2,kwhTopY=190-towerShift;
+  var kwhW=48,kwhH=31,kwhX=655-kwhW/2,kwhTopY=190-towerShift+((state.highRes&&!isMulti)?20:0);
   var feedX=655,feedY=180;
-  var cabX=622,cabBaseY=352,cabW=66,cabH=84;
+  var cabX=622,cabBaseY=352-((state.highRes&&!isMulti)?20:0),cabW=66,cabH=84;
   var cabBoxBase=cabBaseY-22;
   var mtrX=576,mtrBaseY=340,mtrW=28,mtrH=42;
   var isSem=state.dongle==='shinesem';
@@ -1227,7 +1337,7 @@ function commercialSceneHTML(){
   var groBoxH=40;
   var groX=feedX-semBoxW/2,groBaseY=cabBoxBase-cabH-14;
   var gridLit=metOn||showSemBox||isGroHome;
-  var monAttachX=cabX+cabW/2, monAttachY=cabBaseY;
+  var monAttachX=cabX+cabW/2, monAttachY=(state.highRes&&!isMulti)?(cabBoxBase-cabH-10):cabBaseY;
   var commPair=function(d){return '<path class="commline" d="'+d+'"></path><path class="commline rev" d="'+d+'" transform="translate(2.2,2.2)"></path>';};
 
   var s='<div class="housephoto"><div class="photostage" style="aspect-ratio:'+W+'/'+H+'">';
@@ -1253,17 +1363,19 @@ function commercialSceneHTML(){
      '<circle cx="655" cy="90.5" r="2.2" fill="#e4eaf0" stroke="#9aa5b1" stroke-width="0.7"></circle>'+
      '<circle cx="679" cy="90.5" r="2.2" fill="#e4eaf0" stroke="#9aa5b1" stroke-width="0.7"></circle>'+
      '</g>'+
-     (state.offGrid?'':'<path class="cable" d="M'+(655+gridDX)+','+twBase+' L'+(655+gridDX)+','+(kwhTopY-16)+' L655,'+(kwhTopY-16)+' L655,'+kwhTopY+'"></path>')+
-     (state.offGrid?'':'<path class="cable" d="M655,'+(kwhTopY+kwhH)+' L'+feedX+','+(feedY-5)+'"></path>')+
+     (state.offGrid?'':acCable('M'+(655+gridDX)+','+twBase+' L'+(655+gridDX)+','+(kwhTopY-16)+' L655,'+(kwhTopY-16)+' L655,'+kwhTopY,true,'cable'))+
+     (state.offGrid?'':acCable('M655,'+(kwhTopY+kwhH)+' L'+feedX+','+(feedY-5),true,'cable'))+
      ((showSmartAtFeed||isGroHome||showSemBox||showSynBox)?'':'<circle cx="'+feedX+'" cy="'+feedY+'" r="4.5" fill="#eef4f0" stroke="#33da7a" stroke-width="1.8"></circle>')+
-     (state.offGrid?'':'<path class="cable" d="M'+feedX+','+(feedY+5)+' L'+feedX+','+(cabBoxBase-cabH-18)+' L'+(cabX+cabW/2)+','+(cabBoxBase-cabH-18)+' L'+(cabX+cabW/2)+','+(cabBoxBase-cabH+2)+'"></path>')+
+     (state.offGrid?'':acCable('M'+feedX+','+(feedY+5)+' L'+feedX+','+(cabBoxBase-cabH-28)+' L'+(cabX+cabW/2)+','+(cabBoxBase-cabH-28)+' L'+(cabX+cabW/2)+','+(cabBoxBase-cabH+2),true,'cable'))+
      '</g>';
   gridChainSVG+='<rect x="'+kwhX+'" y="'+kwhTopY+'" width="'+kwhW+'" height="'+kwhH+'" rx="3" fill="#eef1f5" stroke="'+(metOn?'#33da7a':'#9aa5b1')+'" stroke-width="1.6"></rect>';
   gridChainSVG+='<rect x="'+(kwhX+4)+'" y="'+(kwhTopY+4)+'" width="'+(kwhW-8)+'" height="7.5" rx="1.5" fill="#2b3440"></rect>';
   gridChainSVG+='<rect x="'+(kwhX+5.5)+'" y="'+(kwhTopY+6)+'" width="3.2" height="3.5" fill="#7fe6a8"></rect><rect x="'+(kwhX+10)+'" y="'+(kwhTopY+6)+'" width="3.2" height="3.5" fill="#7fe6a8"></rect><rect x="'+(kwhX+14.5)+'" y="'+(kwhTopY+6)+'" width="3.2" height="3.5" fill="#7fe6a8"></rect><rect x="'+(kwhX+19)+'" y="'+(kwhTopY+6)+'" width="3.2" height="3.5" fill="#7fe6a8"></rect>';
   gridChainSVG+='<text x="'+(kwhX+kwhW/2)+'" y="'+(kwhTopY+kwhH-6)+'" text-anchor="middle" font-size="5" font-weight="800" fill="#5d6b78" letter-spacing=".04em">UTILITY METER</text>';
-  gridChainSVG+='<rect x="'+(cabX+cabW/2-4)+'" y="'+(cabBoxBase-2)+'" width="8" height="'+(cabBaseY-cabBoxBase+2)+'" fill="#b8c1cc" stroke="#9aa5b1" stroke-width="1"></rect>';
-  gridChainSVG+='<rect x="'+(cabX+cabW/2-7)+'" y="'+(cabBaseY-3)+'" width="14" height="4" rx="1.5" fill="#9aa5b1"></rect>';
+  if(!(state.highRes&&!isMulti)){
+    gridChainSVG+='<rect x="'+(cabX+cabW/2-4)+'" y="'+(cabBoxBase-2)+'" width="8" height="'+(cabBaseY-cabBoxBase+2)+'" fill="#b8c1cc" stroke="#9aa5b1" stroke-width="1"></rect>';
+    gridChainSVG+='<rect x="'+(cabX+cabW/2-7)+'" y="'+(cabBaseY-3)+'" width="14" height="4" rx="1.5" fill="#9aa5b1"></rect>';
+  }
   gridChainSVG+=drawIsoBox(cabX,cabBoxBase,cabW,cabH,skx*0.8,sky*0.8,'#dfe5ec','#eef2f6','#c4ccd6',true);
   var mgrInside=showSemBox||isGroHome;
   if(!mgrInside){
@@ -1302,53 +1414,92 @@ function pvRealistic(cxCenter,bottomY,w,h){
   s+='<rect x="'+x0+'" y="'+y0+'" width="'+w+'" height="'+(h*0.3)+'" rx="1.6" fill="#ffffff" opacity=".05"></rect>';
   return s;
 }
-function invHotspotHTML(cxPct,cyPct,hotKey,uRef){
-  var f=fam(); if(!f)return '';
+function invHotspotHTML(cxPct,cyPct,hotKey,uRef,uIdx){
+  var f=uRef?FAMILIES[uRef.family]:fam(); if(!f)return '';
+  var uAttr=uRef?(' data-u="'+uIdx+'"'):'';
+  var effInputs=uRef?(uRef.inputs||[]):state.inputs;
+  var effApx=uRef?uRef.apx:state.apx;
+  var effA2=effApx==='2.0';
+  var effWantBat=uRef?uRef.wantBattery:state.wantBattery;
+  var effAxe=f.battery==='AXE';
+  var effKwh=uRef?unitBatteryKwh(uRef):batteryTotals().kwh;
+  var effKWp=uRef?unitKwp(uRef):totalKWp();
   var body='<div class="hh">Battery</div>';
   if(f.battery==='RISE'){
     body+='<div class="hrow"><span class="hlab">Integrated</span><span class="hval">261 kWh</span></div>'+
       '<div style="font-size:10.5px;color:var(--mut);line-height:1.35">Built into the RISE cabinet \u2014 nothing to configure.</div>';
   } else if(f.battery==='MODA'){
-    var mm=(state.inputs[0]&&state.inputs[0].modules)||0;
+    var mm=(effInputs[0]&&effInputs[0].modules)||0;
     body+='<div class="hrow"><span class="hlab">Modules</span><span class="hotstep">'+
-      '<button data-act="modamod" data-d="-1">'+ic('minus',13)+'</button><span class="hval">'+mm+'</span>'+
-      '<button data-act="modamod" data-d="1">'+ic('plus',13)+'</button></span></div>'+
+      '<button data-act="modamod" data-d="-1"'+uAttr+'>'+ic('minus',13)+'</button><span class="hval">'+mm+'</span>'+
+      '<button data-act="modamod" data-d="1"'+uAttr+'>'+ic('plus',13)+'</button></span></div>'+
       '<div class="hrow"><span class="hlab">Capacity</span><span class="hval">'+(mm*MODULE_KWH)+' kWh</span></div>';
-  } else if(state.wantBattery!==true){
-    body+='<button class="hotbtn" data-act="wantbat" data-v="yes">'+ic('plus',12)+' Add battery</button>';
-  } else if(isAxeFam()){
-    var am=(state.inputs[0]&&state.inputs[0].modules)||0;
+  } else if(effWantBat!==true){
+    body+='<button class="hotbtn" data-act="wantbat" data-v="yes"'+uAttr+'>'+ic('plus',12)+' Add battery</button>';
+  } else if(effAxe){
+    var am=(effInputs[0]&&effInputs[0].modules)||0;
     body+='<div class="hrow"><span class="hlab">Modules \u00b7 input 1</span><span class="hotstep">'+
-      '<button data-act="axemod" data-i="0" data-d="-1">'+ic('minus',13)+'</button><span class="hval">'+am+'</span>'+
-      '<button data-act="axemod" data-i="0" data-d="1">'+ic('plus',13)+'</button></span></div>'+
-      '<div class="hrow"><span class="hlab">Total</span><span class="hval">'+batteryTotals().kwh+' kWh</span></div>'+
-      '<button class="hotbtn danger" data-act="wantbat" data-v="no">Remove battery</button>';
+      '<button data-act="axemod" data-i="0" data-d="-1"'+uAttr+'>'+ic('minus',13)+'</button><span class="hval">'+am+'</span>'+
+      '<button data-act="axemod" data-i="0" data-d="1"'+uAttr+'>'+ic('plus',13)+'</button></span></div>'+
+      '<div class="hrow"><span class="hlab">Total</span><span class="hval">'+effKwh+' kWh</span></div>'+
+      '<button class="hotbtn danger" data-act="wantbat" data-v="no"'+uAttr+'>Remove battery</button>';
   } else {
-    var im=(state.inputs[0]&&typeof state.inputs[0].mods==='number')?state.inputs[0].mods:0;
-    body+='<div class="hrow"><span class="hlab">Modules \u00b7 input 1</span><span class="hotstep">'+
-      '<button data-act="mod" data-i="0" data-d="-1">'+ic('minus',13)+'</button><span class="hval">'+im+'</span>'+
-      '<button data-act="mod" data-i="0" data-d="1">'+ic('plus',13)+'</button></span></div>'+
-      '<div class="hrow"><span class="hlab">Total</span><span class="hval">'+batteryTotals().kwh+' kWh</span></div>'+
-      '<button class="hotbtn danger" data-act="wantbat" data-v="no">Remove battery</button>';
+    body+='<div class="hrow"><span class="hlab">Generation</span></div>'+
+      '<button class="hotbtn'+(!effA2?' on':'')+'" data-act="apx" data-v="1.0"'+uAttr+'>APX 1.0</button>'+
+      '<button class="hotbtn'+(effA2?' on':'')+'" data-act="apx" data-v="2.0"'+uAttr+'>APX 2.0</button>';
+    var inp0=effInputs[0]||{mods:0,cols:1,c1:0,c2:0};
+    var curTot0=inp0.cols===2?(inp0.c1+inp0.c2):inp0.mods;
+    var canSplit0=curTot0>=2;
+    if(canSplit0){
+      body+='<div class="hrow"><span class="hlab">Layout \u00b7 input 1</span></div>'+
+        '<button class="hotbtn'+(inp0.cols===1?' on':'')+'" data-act="cols" data-i="0" data-c="1"'+uAttr+'>1 tower</button>'+
+        '<button class="hotbtn'+(inp0.cols===2?' on':'')+'" data-act="cols" data-i="0" data-c="2"'+uAttr+'>2 towers'+(inp0.cols===2?' \u00b7 '+inp0.c1+'+'+inp0.c2:'')+'</button>';
+    }
+    if(inp0.cols===2){
+      body+='<div class="hrow" style="margin-top:'+(canSplit0?'6px':'0')+'"><span class="hlab">Tower A</span><span class="hotstep">'+
+        '<button data-act="colmod" data-i="0" data-col="c1" data-d="-1"'+uAttr+'>'+ic('minus',13)+'</button><span class="hval">'+inp0.c1+'</span>'+
+        '<button data-act="colmod" data-i="0" data-col="c1" data-d="1"'+uAttr+'>'+ic('plus',13)+'</button></span></div>'+
+        '<div class="hrow"><span class="hlab">Tower B</span><span class="hotstep">'+
+        '<button data-act="colmod" data-i="0" data-col="c2" data-d="-1"'+uAttr+'>'+ic('minus',13)+'</button><span class="hval">'+inp0.c2+'</span>'+
+        '<button data-act="colmod" data-i="0" data-col="c2" data-d="1"'+uAttr+'>'+ic('plus',13)+'</button></span></div>';
+    } else {
+      var im=(typeof inp0.mods==='number')?inp0.mods:0;
+      body+='<div class="hrow" style="margin-top:'+(canSplit0?'6px':'0')+'"><span class="hlab">Modules \u00b7 input 1</span><span class="hotstep">'+
+        '<button data-act="mod" data-i="0" data-d="-1"'+uAttr+'>'+ic('minus',13)+'</button><span class="hval">'+im+'</span>'+
+        '<button data-act="mod" data-i="0" data-d="1"'+uAttr+'>'+ic('plus',13)+'</button></span></div>';
+    }
+    body+='<div class="hrow"><span class="hlab">Total</span><span class="hval">'+effKwh+' kWh</span></div>'+
+      '<button class="hotbtn danger" data-act="wantbat" data-v="no"'+uAttr+'>Remove battery</button>';
   }
   body+='<div class="hh" style="margin-top:9px">Solar</div>'+
-    '<div class="hrow"><span class="hlab">Array</span><span class="hval">'+(totalKWp()>0?(totalKWp()+' kWp'):'\u2014')+'</span></div>'+
-    '<button class="hotbtn" data-act="gopv">'+ic('plus',12)+' '+(totalKWp()>0?'Edit PV in step 2':'Add PV in step 2')+'</button>';
+    '<div class="hrow"><span class="hlab">Array</span><span class="hval">'+(effKWp>0?(effKWp+' kWp'):'\u2014')+'</span></div>'+
+    '<button class="hotbtn" data-act="gopv"'+uAttr+'>'+ic('plus',12)+' '+(effKWp>0?'Edit PV in step 2':'Add PV in step 2')+'</button>';
+  var effBackupMode=uRef?uRef.backupMode:state.backupMode;
+  body+='<div class="hh" style="margin-top:9px">Backup</div>'+
+    '<button class="hotbtn'+(effBackupMode==='partial'?' on':'')+'" data-act="backupmode" data-v="partial"'+uAttr+'>Partial backup'+(effBackupMode==='partial'?' \u2014 on':' \u2014 off')+'</button>'+
+    '<div style="font-size:10px;color:var(--mut);margin-top:4px;line-height:1.3">Set the backup load (kW) in step 5 on the left.</div>';
   return hotWrap('inv'+(hotKey||''),cxPct,cyPct,body);
 }
 function hotWrap(id,cxPct,cyPct,body,icn){
-  return '<div class="hotwrap'+(state.openHot===id?' pinned':'')+'" data-hot="'+id+'" onmouseenter="hotIn(\''+id+'\')" onmouseleave="hotOut(\''+id+'\')" style="left:'+cxPct+'%;top:'+cyPct+'%">'+
-    '<div class="hotdot" tabindex="0">'+ic(icn||'gear',11)+'</div><div class="hotpop">'+body+'</div></div>';
+  return '<div class="hotwrap'+(state.openHot===id?' pinned':'')+'" data-hot="'+id+'" style="left:'+cxPct+'%;top:'+cyPct+'%">'+
+    '<div class="hotdot" tabindex="0" data-act="hottoggle" data-hot="'+id+'">'+ic(icn||'gear',11)+'</div><div class="hotpop">'+body+'</div></div>';
 }
-function hotIn(id){state.openHot=id;var el=document.querySelector('[data-hot="'+id+'"]');if(el)el.classList.add('pinned');}
-function hotOut(id){if(state.openHot===id)state.openHot=null;var el=document.querySelector('[data-hot="'+id+'"]');if(el)el.classList.remove('pinned');}
 function offGridHotspotHTML(cxPct,cyPct){
   var body='<div class="hh">Grid mode</div>'+
-    '<button class="hotbtn'+(!state.offGrid?' on':'')+'" data-act="offgrid">On\u2011grid \u2014 connected to utility</button>'+
-    '<button class="hotbtn'+(state.offGrid?' on':'')+'" data-act="offgrid">Off\u2011grid \u2014 island mode</button>'+
+    '<button class="hotbtn'+(!state.offGrid&&!state.inverterBroken?' on':'')+'" data-act="offgrid">On\u2011grid \u2014 connected to utility</button>'+
+    '<button class="hotbtn'+(state.offGrid&&!state.inverterBroken?' on':'')+'" data-act="offgrid">Off\u2011grid \u2014 island mode</button>'+
+    '<button class="hotbtn'+(state.inverterBroken?' on':'')+'" data-act="invbroken">Inverter broken</button>'+
     '<div style="font-size:10.5px;color:var(--mut);line-height:1.35;margin-top:6px">'+
-    (state.offGrid?'Utility feed is disconnected \u2014 the load is supplied from the inverters only.':'Normal operation \u2014 utility, inverters and load are all connected.')+'</div>';
+    (state.inverterBroken?'Inverter fault \u2014 shown greyed out and inactive.':(state.offGrid?'Utility feed is disconnected \u2014 the load is supplied from the inverters only.':'Normal operation \u2014 utility, inverters and load are all connected.'))+'</div>';
   return hotWrap('grid',cxPct,cyPct,body,'zap');
+}
+function highResHotspotHTML(cxPct,cyPct){
+  var body='<div class="hh">Diagram detail</div>'+
+    '<button class="hotbtn'+(!state.highRes?' on':'')+'" data-act="togglehighres">Standard</button>'+
+    '<button class="hotbtn'+(state.highRes?' on':'')+'" data-act="togglehighres">High resolution</button>'+
+    '<div style="font-size:10.5px;color:var(--mut);line-height:1.35;margin-top:6px">'+
+    (state.highRes?'Draws the AC connection as 5 conductors \u2014 L1, L2, L3, N, PE.':'Draws the AC connection as a single line.')+'</div>';
+  return hotWrap('hires',cxPct,cyPct,body,'zap');
 }
 function emHotspotHTML(cxPct,cyPct){
   var f=fam();
@@ -1375,13 +1526,98 @@ function ctg(cx,cy,tdx,dir){
   else if(dir==='left')ah='<polygon points="'+(cx-8)+','+(cy-4.5)+' '+(cx-8)+','+(cy+4.5)+' '+(cx-16)+','+cy+'" fill="#1f7a45" stroke="#fff" stroke-width="0.8"></polygon>';
   return '<g><circle cx="'+cx+'" cy="'+cy+'" r="5.5" fill="#eef4f0" stroke="#3d4c5c" stroke-width="3"></circle><circle cx="'+cx+'" cy="'+cy+'" r="1.6" fill="#8fa0b0"></circle>'+ah+'<text x="'+(cx+tdx)+'" y="'+(cy+2.5)+'" font-size="6.5" font-weight="800" fill="#3d4c5c">CT</text></g>';
 }
+function breaker4Pole(cx,yPositions){
+  var colors=['#e8c11a','#2ea043','#e0473f','#2b6fce'];
+  var lbls=['L1','L2','L3','N'];
+  var s='';
+  for(var i=0;i<4;i++){
+    var by=yPositions[i];
+    s+='<text x="'+(cx-12)+'" y="'+(by+2.2)+'" text-anchor="end" font-size="5.2" font-weight="800" fill="#3d4c5c">'+lbls[i]+'</text>';
+    s+='<g><rect x="'+(cx-8)+'" y="'+(by-4)+'" width="16" height="8" rx="1.5" fill="#f4f6f9" stroke="#3d4c5c" stroke-width="1.1"></rect>'+
+      '<rect x="'+(cx-5.5)+'" y="'+(by-2.6)+'" width="4.8" height="5.2" rx="0.6" fill="'+colors[i]+'"></rect>'+
+      '<rect x="'+(cx+0.7)+'" y="'+(by-2.6)+'" width="4.8" height="5.2" rx="0.6" fill="#9aa5b1"></rect></g>';
+  }
+  return s;
+}
+var EARTH_BAR_W=76,EARTH_BAR_PTS=9;
+function earthBarPointX(cx,idx){
+  var spacing=EARTH_BAR_W/(EARTH_BAR_PTS+1);
+  return cx-EARTH_BAR_W/2+spacing*(idx+1);
+}
+function groundRod(cx,topY,botY){
+  var s='<line x1="'+cx+'" y1="'+topY+'" x2="'+cx+'" y2="'+botY+'" stroke="#7a8794" stroke-width="2.2" stroke-linecap="round"></line>';
+  s+='<line x1="'+cx+'" y1="'+(botY-3)+'" x2="'+cx+'" y2="'+botY+'" stroke="#5d6b78" stroke-width="2.6" stroke-linecap="round"></line>';
+  var moundY=botY+2;
+  s+='<ellipse cx="'+cx+'" cy="'+moundY+'" rx="9" ry="3" fill="#8a6b4a" stroke="#6b5136" stroke-width="0.8"></ellipse>';
+  s+='<ellipse cx="'+cx+'" cy="'+(moundY-1)+'" rx="9" ry="2" fill="#a3805a"></ellipse>';
+  for(var i=-1;i<=1;i++){
+    s+='<line x1="'+(cx+i*4-2)+'" y1="'+(moundY+1)+'" x2="'+(cx+i*4+2)+'" y2="'+(moundY+3)+'" stroke="#6b5136" stroke-width="0.7"></line>';
+  }
+  return s;
+}
+function mainEarthBar(cx,cy,overrideIdx,overrideX){
+  var barW=EARTH_BAR_W,barH=5;
+  var s='<text x="'+cx+'" y="'+(cy-8)+'" text-anchor="middle" font-size="4.8" font-weight="800" fill="#3d4c5c" letter-spacing=".02em">MAIN EARTHING BAR</text>';
+  s+='<rect x="'+(cx-barW/2)+'" y="'+(cy-barH/2)+'" width="'+barW+'" height="'+barH+'" rx="1" fill="#8a97a6" stroke="#5d6b78" stroke-width="1"></rect>';
+  for(var i=0;i<EARTH_BAR_PTS;i++){
+    var px=(i===overrideIdx&&overrideX!=null)?overrideX:earthBarPointX(cx,i);
+    s+='<circle cx="'+px+'" cy="'+cy+'" r="2.1" fill="#eef1f4" stroke="#3d4c5c" stroke-width="1"></circle>';
+  }
+  var gx=cx+barW/2+10,gy=cy+11;
+  s+='<line x1="'+gx+'" y1="'+(cy+2.5)+'" x2="'+gx+'" y2="'+gy+'" stroke="#3d4c5c" stroke-width="1.2"></line>';
+  s+='<line x1="'+(gx-6)+'" y1="'+gy+'" x2="'+(gx+6)+'" y2="'+gy+'" stroke="#3d4c5c" stroke-width="1.3"></line>';
+  s+='<line x1="'+(gx-3.8)+'" y1="'+(gy+3)+'" x2="'+(gx+3.8)+'" y2="'+(gy+3)+'" stroke="#3d4c5c" stroke-width="1.3"></line>';
+  s+='<line x1="'+(gx-1.7)+'" y1="'+(gy+6)+'" x2="'+(gx+1.7)+'" y2="'+(gy+6)+'" stroke="#3d4c5c" stroke-width="1.3"></line>';
+  return s;
+}
+function groundSymbol(cx,cy){
+  var s='<line x1="'+cx+'" y1="'+(cy-12)+'" x2="'+cx+'" y2="'+cy+'" stroke="#3d4c5c" stroke-width="1.4"></line>';
+  s+='<line x1="'+(cx-7.5)+'" y1="'+cy+'" x2="'+(cx+7.5)+'" y2="'+cy+'" stroke="#3d4c5c" stroke-width="1.6"></line>';
+  s+='<line x1="'+(cx-4.8)+'" y1="'+(cy+3.8)+'" x2="'+(cx+4.8)+'" y2="'+(cy+3.8)+'" stroke="#3d4c5c" stroke-width="1.6"></line>';
+  s+='<line x1="'+(cx-2.1)+'" y1="'+(cy+7.6)+'" x2="'+(cx+2.1)+'" y2="'+(cy+7.6)+'" stroke="#3d4c5c" stroke-width="1.6"></line>';
+  return s;
+}
+function breaker4PoleWide(xPositions,cy){
+  var colors=['#e8c11a','#2ea043','#e0473f','#2b6fce'];
+  var modW=PHASE_SPACING*0.92;
+  var s='';
+  for(var i=0;i<4;i++){
+    var bx=xPositions[i];
+    s+='<rect x="'+(bx-modW/2)+'" y="'+(cy-11)+'" width="'+modW+'" height="23" rx="1.3" fill="#eef1f4" stroke="#8a97a6" stroke-width="0.9"></rect>'+
+       '<rect x="'+(bx-2.6)+'" y="'+(cy-8.3)+'" width="5.2" height="7.4" rx="0.8" fill="#232c35"></rect>'+
+       '<rect x="'+(bx-1)+'" y="'+(cy-6.2)+'" width="2" height="3.2" rx="0.3" fill="#eef1f4"></rect>'+
+       '<rect x="'+(bx-2.6)+'" y="'+(cy+4.5)+'" width="5.2" height="3" rx="0.4" fill="'+colors[i]+'"></rect>';
+  }
+  return s;
+}
+function ctgSimple(cx,cy,dir,lbl){
+  var ah=dir==='up'
+    ? '<polygon points="'+(cx-3.2)+','+(cy-5.5)+' '+(cx+3.2)+','+(cy-5.5)+' '+cx+','+(cy-11)+'" fill="#1f7a45" stroke="#fff" stroke-width="0.7"></polygon>'
+    : dir==='left'
+    ? '<polygon points="'+(cx-5.5)+','+(cy-3.2)+' '+(cx-5.5)+','+(cy+3.2)+' '+(cx-11)+','+cy+'" fill="#1f7a45" stroke="#fff" stroke-width="0.7"></polygon>'
+    : '<polygon points="'+(cx-3.2)+','+(cy+5.5)+' '+(cx+3.2)+','+(cy+5.5)+' '+cx+','+(cy+11)+'" fill="#1f7a45" stroke="#fff" stroke-width="0.7"></polygon>';
+  var s='<circle cx="'+cx+'" cy="'+cy+'" r="4" fill="#eef4f0" stroke="#3d4c5c" stroke-width="2.3"></circle><circle cx="'+cx+'" cy="'+cy+'" r="1.1" fill="#8fa0b0"></circle>'+ah;
+  var lblY=dir==='up'?(cy-14):(cy+18);
+  if(lbl)s+='<text x="'+(dir==='left'?(cx-16):cx)+'" y="'+(dir==='left'?(cy+1.5):lblY)+'" text-anchor="middle" font-size="4.4" font-weight="800" fill="#3d4c5c">'+lbl+'</text>';
+  return s;
+}
   if(showSemBox){
-    var seX=mgrX, seY=mgrTopY, seW=mgrW, seH=mgrH;
+    var showMasterMeter=isMaster&&hasMeterSel;
+    var seX=mgrX, seW=mgrW;
+    var seH=showMasterMeter?(mgrH*0.66):mgrH;
+    var seY=showMasterMeter?(mgrTopY+mgrH-seH):mgrTopY;
+    if(showMasterMeter){
+      var smmW=seW,smmH=mgrH-seH-4,smmX=seX,smmY=mgrTopY;
+      gridChainSVG+='<rect x="'+(smmX+2)+'" y="'+(smmY+2)+'" width="'+smmW+'" height="'+smmH+'" rx="2.5" fill="#39424c" opacity=".4"></rect>';
+      gridChainSVG+='<rect x="'+smmX+'" y="'+smmY+'" width="'+smmW+'" height="'+smmH+'" rx="2.5" fill="#f4f6f9" stroke="#33da7a" stroke-width="1.5"></rect>';
+      gridChainSVG+='<circle cx="'+(smmX+smmW*0.28)+'" cy="'+(smmY+smmH*0.5)+'" r="'+(smmH*0.3)+'" fill="none" stroke="#2c9d5e" stroke-width="1.3"></circle>';
+      gridChainSVG+='<text x="'+(smmX+smmW*0.62)+'" y="'+(smmY+smmH*0.62)+'" text-anchor="middle" font-size="3.8" font-weight="800" fill="#2f3a45">METER</text>';
+    }
     gridChainSVG+='<rect x="'+(seX+2.5)+'" y="'+(seY+2.5)+'" width="'+seW+'" height="'+seH+'" rx="3" fill="#39424c" opacity=".55"></rect>';
     gridChainSVG+='<rect x="'+seX+'" y="'+seY+'" width="'+seW+'" height="'+seH+'" rx="3" fill="#fdfdfe" stroke="#33da7a" stroke-width="1.8"></rect>';
     gridChainSVG+='<circle cx="'+(seX+seW*0.26)+'" cy="'+(seY+seH*0.26)+'" r="2.6" fill="none" stroke="#2c9d5e" stroke-width="1.5"></circle>';
     gridChainSVG+='<rect x="'+(seX+seW*0.37)+'" y="'+(seY+seH*0.26-1.9)+'" width="'+(seW*0.38)+'" height="3.8" rx="1" fill="#3b444e"></rect>';
-    gridChainSVG+='<text x="'+(seX+seW/2)+'" y="'+(seY+seH*0.6)+'" text-anchor="middle" font-size="4.6" font-weight="800" fill="#2f3a45" letter-spacing=".01em">ShineSEM\u2011X</text>';
+    gridChainSVG+='<text x="'+(seX+seW/2)+'" y="'+(seY+seH*0.6)+'" text-anchor="middle" font-size="4.4" font-weight="800" fill="#2f3a45" letter-spacing=".01em">'+(isMaster?'ShineMaster':'ShineSEM\u2011X')+'</text>';
     gridChainSVG+='<rect x="'+(seX+seW*0.22)+'" y="'+(seY+seH*0.72)+'" width="'+(seW*0.56)+'" height="2" rx="1" fill="#c3cbd3"></rect>';
     for(var gI=0;gI<5;gI++){
       gridChainSVG+='<rect x="'+(seX+seW*0.14+gI*(seW*0.18))+'" y="'+(seY+seH-1)+'" width="'+(seW*0.1)+'" height="3.4" rx="1" fill="#3b444e"></rect>';
@@ -1430,57 +1666,60 @@ function ctg(cx,cy,tdx,dir){
   var singleBoxSVG='';
   if(!isMulti&&hasComp){
   if(isRise){
-    singleBoxSVG+=drawIsoBox(rx,baseY,rw,rh,skx,sky,'#dbe7ea','#eef5f6','#aec4c9',invOn);
-    singleBoxSVG+='<line x1="'+rx+'" y1="'+(baseY-rh*0.62)+'" x2="'+(rx+rw)+'" y2="'+(baseY-rh*0.62)+'" stroke="#9db9be" stroke-width="1.5"></line>';
-    singleBoxSVG+=gauge(rx+rw-20,baseY-rh+20,9,invOn);
+    singleBoxSVG+=drawIsoBox(rx,baseY,rw,rh,skx,sky,'#e9edf1','#f6f8fa','#c7cdd4',invOn);
+    singleBoxSVG+=riseDetailSVG(rx,baseY,rw,rh);
     if(state.kw){
-      singleBoxSVG+=invModelSVG(rx+rw*0.42,baseY-rh*0.55,rw*0.8,modelName('RISE-261',state.kw),10.5);
-      singleBoxSVG+='<text x="'+(rx+rw*0.42)+'" y="'+(baseY-rh*0.3)+'" text-anchor="middle" font-size="8.4" font-weight="800" fill="#2f3c4a">'+state.kw+' kW \u00b7 261 kWh</text>';
+      singleBoxSVG+='<text x="'+(rx+rw*0.29)+'" y="'+(baseY-rh*0.37)+'" text-anchor="middle" font-size="11" font-weight="800" fill="#2f3c4a">'+state.kw+' kW</text>';
+      singleBoxSVG+='<text x="'+(rx+rw*0.29)+'" y="'+(baseY-rh*0.28)+'" text-anchor="middle" font-size="9" font-weight="700" fill="#5b6570">261 kWh</text>';
     }
     if(isMulti)singleBoxSVG+=nrTag(rx+rw/2,baseY-rh,state.unit+1,1,true);
     if(state.dongle==='grohome'&&state.groHomeMode==='wireless')singleBoxSVG+=rfHat(rx+rw,baseY-rh+10,false,state.groHomeMode==='wireless');
+    if(state.dongle==='wifi'||state.dongle==='lan'||state.dongle==='4g')singleBoxSVG+=commDongleSVG(rx+rw,baseY-rh+10);
   } else if(isModa){
     if(invOn){
       var mm=(state.inputs[0]&&state.inputs[0].modules)||0;
-      var mBaseH=13,mMh=15,mCapH=22,mTh=mBaseH+mm*mMh+mCapH;
+      var mBaseH=state.highRes?15.6:13,mMh=state.highRes?22:15,mCapH=22,mTh=mBaseH+mm*mMh+mCapH;
       var mBoxFaces=isoBox(ix,baseY,iw,mTh,skx,sky);
       singleBoxSVG+='<g class="eqbox lit"><polygon class="eqtop" points="'+ptsStr(mBoxFaces.top)+'" fill="#fbfcfd"></polygon><polygon class="eqside" points="'+ptsStr(mBoxFaces.side)+'" fill="#ccd4de"></polygon>';
       var mcy=baseY;
       singleBoxSVG+='<rect x="'+ix+'" y="'+(mcy-mBaseH)+'" width="'+iw+'" height="'+(mBaseH-1)+'" fill="#a9b4bf" stroke="#7d8994" stroke-width="0.75"></rect>';
-      if(iw>=40)singleBoxSVG+='<text x="'+(ix+iw/2)+'" y="'+(mcy-mBaseH/2+2.5)+'" text-anchor="middle" font-size="6.5" font-weight="700" fill="#f2f5f7">BASE</text>';
+      singleBoxSVG+='<text x="'+(ix+iw/2)+'" y="'+(mcy-mBaseH/2+2.5)+'" text-anchor="middle" font-size="6.5" font-weight="700" fill="#f2f5f7">BASE</text>';
       mcy-=mBaseH;
       for(var mi=0;mi<mm;mi++){
         singleBoxSVG+='<rect x="'+ix+'" y="'+(mcy-mMh+1)+'" width="'+iw+'" height="'+(mMh-2)+'" fill="#f4f6f8" stroke="#bcc6d0" stroke-width="0.9"></rect>';
-        if(iw>=40)singleBoxSVG+='<text x="'+(ix+iw/2)+'" y="'+(mcy-mMh/2+2.2)+'" text-anchor="middle" font-size="5.6" font-weight="600" fill="#7a8794">5 kWh</text>';
+        singleBoxSVG+='<text x="'+(ix+iw/2)+'" y="'+(mcy-mMh/2+2.2)+'" text-anchor="middle" font-size="5.6" font-weight="600" fill="#7a8794">5 kWh</text>';
         mcy-=mMh;
       }
       singleBoxSVG+='<rect x="'+ix+'" y="'+(mcy-mCapH+1)+'" width="'+iw+'" height="'+(mCapH-2)+'" fill="#eef1f5" stroke="#33da7a" stroke-width="1.1"></rect>';
-      singleBoxSVG+=gauge(ix+iw/2,mcy-mCapH*0.62,6.5,true);
-      if(state.kw)singleBoxSVG+=invModelSVG(ix+iw/2,mcy-mCapH*0.2,iw,modelName('MODA',state.kw),7.4);
+      singleBoxSVG+=gauge(ix+iw-8,mcy-mCapH*0.32,4.0,true);
+      if(state.kw)singleBoxSVG+=invModelSVG(ix+iw*0.28,mcy-mCapH*0.5,iw-34,modelName('MODA',state.kw),5.4);
       if(isMulti)singleBoxSVG+=nrTag(ix+iw/2,mcy-mCapH,state.unit+1,1,true);
       if(state.dongle==='grohome'&&state.groHomeMode==='wireless')singleBoxSVG+=rfHat(ix+iw,mcy-mCapH+10,false,state.groHomeMode==='wireless');
+      if(state.dongle==='wifi'||state.dongle==='lan'||state.dongle==='4g')singleBoxSVG+=commDongleSVG(ix+iw,mcy-mCapH+10);
       singleBoxSVG+='</g>';
     }
   } else {
     if(invOn){
+      var brkFill=state.inverterBroken;
       if(isWitHu){
-        singleBoxSVG+=drawIsoBox(ix,baseY,iw,ih,skx,sky,'#f7f9fb','#ffffff','#d7dde3',true);
+        singleBoxSVG+=drawIsoBox(ix,baseY,iw,ih,skx,sky,brkFill?'#e4e6e9':'#f7f9fb',brkFill?'#eef0f2':'#ffffff',brkFill?'#b8bcc2':'#d7dde3',true);
         singleBoxSVG+=gauge(ix+iw/2,baseY-ih+26,11,true);
         if(state.kw)singleBoxSVG+=invModelSVG(ix+iw/2,baseY-ih*0.4-6,iw,modelName(state.family,state.kw),10.5);
         singleBoxSVG+='<line x1="'+(ix+7)+'" y1="'+(baseY-14)+'" x2="'+(ix+iw-7)+'" y2="'+(baseY-14)+'" stroke="#c3ccd7" stroke-width="1.5"></line>';
         singleBoxSVG+=screw(ix+6,baseY-ih+6)+screw(ix+iw-6,baseY-ih+6)+screw(ix+6,baseY-6)+screw(ix+iw-6,baseY-6);
       } else {
-        singleBoxSVG+=drawIsoBox(ix,baseY,iw,ih,skx,sky,'#eef1f5','#f8fbfd','#c7cfd9',true);
-        singleBoxSVG+='<circle cx="'+(ix+iw/2)+'" cy="'+(baseY-ih+22)+'" r="5" fill="#33da7a"></circle>';
+        singleBoxSVG+=drawIsoBox(ix,baseY,iw,ih,skx,sky,brkFill?'#e0e3e6':'#eef1f5',brkFill?'#eceeef':'#f8fbfd',brkFill?'#aeb3b9':'#c7cfd9',true);
+        singleBoxSVG+='<circle cx="'+(ix+iw/2)+'" cy="'+(baseY-ih+22)+'" r="5" fill="'+(brkFill?'#9aa0a6':'#33da7a')+'"></circle>';
         if(state.kw)singleBoxSVG+=invModelSVG(ix+iw/2,baseY-ih*0.42-6,iw,modelName(state.family,state.kw),10.5);
         singleBoxSVG+='<line x1="'+(ix+8)+'" y1="'+(baseY-20)+'" x2="'+(ix+iw-8)+'" y2="'+(baseY-20)+'" stroke="#c3ccd7" stroke-width="2"></line>';
         singleBoxSVG+='<line x1="'+(ix+8)+'" y1="'+(baseY-12)+'" x2="'+(ix+iw-8)+'" y2="'+(baseY-12)+'" stroke="#c3ccd7" stroke-width="2"></line>';
       }
       if(isMulti)singleBoxSVG+=nrTag(ix+iw/2,baseY-ih,state.unit+1,1,true);
       if(state.dongle==='grohome'&&state.groHomeMode==='wireless')singleBoxSVG+=rfHat(ix+iw,baseY-ih+10,false,state.groHomeMode==='wireless');
+      if(state.dongle==='wifi'||state.dongle==='lan'||state.dongle==='4g')singleBoxSVG+=commDongleSVG(ix+iw,baseY-ih+10);
     }
     towers.forEach(function(t,i){
-      var tw=sTw,mh=t.axe?9:15,baseH=13,bmsH=t.bms?26:0,th=baseH+t.mods*mh+bmsH;
+      var tw=sTw,mh=t.axe?9:((isModa&&state.highRes)?22:15),baseH=(isModa&&state.highRes)?15.6:13,bmsH=t.bms?26:0,th=baseH+t.mods*mh+bmsH;
       var x=tx0+i*(tw+sGap),y=baseY;
       if(i===towers.length-1){
         singleBoxSVG+='<path class="dcbatt pos" d="M'+(x+tw-6)+','+(baseY-30)+' L'+(ix+6)+','+(baseY-30)+'"></path>';
@@ -1492,17 +1731,22 @@ function ctg(cx,cy,tdx,dir){
       singleBoxSVG+='<g class="eqbox lit"><polygon class="eqtop" points="'+ptsStr(boxFaces.top)+'" fill="'+(t.axe?'#f7f9fb':'#fbfcfd')+'"></polygon><polygon class="eqside" points="'+ptsStr(boxFaces.side)+'" fill="'+(t.axe?'#c2ccd3':'#ccd4de')+'"></polygon>';
       var cy=y;
       singleBoxSVG+='<rect x="'+x+'" y="'+(cy-baseH)+'" width="'+tw+'" height="'+(baseH-1)+'" fill="'+(t.axe?'#9aa7b3':'#a9b4bf')+'" stroke="#7d8994" stroke-width="0.75"></rect>';
-      if(tw>=40)singleBoxSVG+='<text x="'+(x+tw/2)+'" y="'+(cy-baseH/2+2.5)+'" text-anchor="middle" font-size="6.5" font-weight="700" fill="#f2f5f7" letter-spacing=".03em">BASE</text>';
+      singleBoxSVG+='<text x="'+(x+tw/2)+'" y="'+(cy-baseH/2+2.5)+'" text-anchor="middle" font-size="6.5" font-weight="700" fill="#f2f5f7" letter-spacing=".03em">BASE</text>';
       cy-=baseH;
       for(var m=0;m<t.mods;m++){
         singleBoxSVG+='<rect x="'+x+'" y="'+(cy-mh+1)+'" width="'+tw+'" height="'+(mh-2)+'" fill="'+(t.axe?'#eceff2':'#f4f6f8')+'" stroke="'+(t.axe?'#b6c0c8':'#bcc6d0')+'" stroke-width="0.9"></rect>';
-        if(!t.axe&&tw>=40&&mh>=14)singleBoxSVG+='<text x="'+(x+tw/2)+'" y="'+(cy-mh/2+2.2)+'" text-anchor="middle" font-size="5.6" font-weight="600" fill="#7a8794">5 kWh</text>';
+        if(!t.axe)singleBoxSVG+='<text x="'+(x+tw/2)+'" y="'+(cy-mh/2+2.2)+'" text-anchor="middle" font-size="5.6" font-weight="600" fill="#7a8794">5 kWh</text>';
         cy-=mh;
       }
       if(t.bms){
         singleBoxSVG+='<rect x="'+x+'" y="'+(cy-bmsH+1)+'" width="'+tw+'" height="'+(bmsH-2)+'" fill="#e3f3ea" stroke="#33da7a" stroke-width="1.1"></rect>';
         var bTop2=cy-bmsH, bcx2=x+tw/2;
-        singleBoxSVG+='<text x="'+bcx2+'" y="'+(bTop2+(a2()?bmsH*0.4:bmsH*0.62))+'" text-anchor="middle" font-size="6.8" font-weight="800" fill="#1f7a45">BMS</text>';
+        if(t.role==='standalone'){
+          singleBoxSVG+='<text x="'+(x+3)+'" y="'+(bTop2+(a2()?bmsH*0.4:bmsH*0.62))+'" text-anchor="start" font-size="5.4" font-weight="800" fill="#1f7a45">BMS</text>';
+          singleBoxSVG+='<text x="'+(x+tw-3)+'" y="'+(bTop2+(a2()?bmsH*0.4:bmsH*0.62))+'" text-anchor="end" font-size="4.6" font-weight="800" fill="#1f7a45">'+(a2()?'APX 2.0':'APX 1.0')+'</text>';
+        } else {
+          singleBoxSVG+='<text x="'+bcx2+'" y="'+(bTop2+(a2()?bmsH*0.4:bmsH*0.62))+'" text-anchor="middle" font-size="6.8" font-weight="800" fill="#1f7a45">BMS</text>';
+        }
         if(a2())singleBoxSVG+='<text x="'+bcx2+'" y="'+(bTop2+bmsH*0.8)+'" text-anchor="middle" font-size="6" font-weight="800" fill="#2f3c4a">5 kWh</text>';
         cy-=bmsH;
       }
@@ -1514,14 +1758,15 @@ function ctg(cx,cy,tdx,dir){
   s+=singleBoxSVG;
   }
 
-  var mainMaxH=isRise?rh:(isModa?(invOn?(13+(((state.inputs[0]&&state.inputs[0].modules)||0))*15+22):40):Math.max(invOn?ih:0, towers.length?Math.max.apply(null,towers.map(function(t){return 13+t.mods*(t.axe?9:15)+(t.bms?23:0);})):40));
+  var mainMaxH=isRise?rh:(isModa?(invOn?((state.highRes?15.6:13)+(((state.inputs[0]&&state.inputs[0].modules)||0))*(state.highRes?22:15)+22):40):Math.max(invOn?ih:0, towers.length?Math.max.apply(null,towers.map(function(t){return 13+t.mods*(t.axe?9:15)+(t.bms?23:0);})):40));
   var allUnits=[];
   if(isMulti){
     for(var uidx=0;uidx<state.units.length;uidx++){
-      if(uidx===state.unit)allUnits.push({family:state.family,kw:state.kw,inputs:state.inputs,apx:state.apx,backupMode:state.backupMode,backupLoadKw:state.backupLoadKw,panelW:state.panelW,panelCount:state.panelCount,num:uidx+1});
-      else{var uu=state.units[uidx];allUnits.push({family:uu.family,kw:uu.kw,inputs:uu.inputs||[],apx:uu.apx,backupMode:uu.backupMode,backupLoadKw:uu.backupLoadKw,panelW:uu.panelW,panelCount:uu.panelCount,num:uidx+1});}
+      if(uidx===state.unit)allUnits.push({family:state.family,kw:state.kw,inputs:state.inputs,apx:state.apx,wantBattery:state.wantBattery,backupMode:state.backupMode,backupLoadKw:state.backupLoadKw,panelW:state.panelW,panelCount:state.panelCount,num:uidx+1});
+      else{var uu=state.units[uidx];allUnits.push({family:uu.family,kw:uu.kw,inputs:uu.inputs||[],apx:uu.apx,wantBattery:uu.wantBattery,backupMode:uu.backupMode,backupLoadKw:uu.backupLoadKw,panelW:uu.panelW,panelCount:uu.panelCount,num:uidx+1});}
     }
   }
+  var allRiseMulti=isMulti&&allUnits.length>0&&allUnits.every(function(u){var fm=FAMILIES[u.family];return fm&&fm.battery==='RISE';});
   function unitMaxH(u){
     var fm=FAMILIES[u.family];
     if(!fm)return 88;
@@ -1538,22 +1783,31 @@ function ctg(cx,cy,tdx,dir){
     }
     return Math.max.apply(null,heights);
   }
-  var stackScale=0.5;
+  var stackScale=allRiseMulti?0.34:0.5;
   var colX=[110,330];
-  var houseX=510,houseTopY=isMulti?415:200,houseSize=76;
+  var houseX=510+((state.highRes&&!isMulti)?10:0),houseTopY=(isMulti?415:200)-((state.highRes&&!isMulti)?95:0),houseSize=76;
   function drawHouse(cx,hb){
     var h='';
-    var k=1.1; // ~10% larger overall
-    h+='<ellipse cx="'+cx+'" cy="'+(hb+3)+'" rx="'+(48*k)+'" ry="'+(7*k)+'" fill="rgba(20,30,45,.16)"></ellipse>';
-    // main white body
-    h+='<rect x="'+(cx-35*k)+'" y="'+(hb-46*k)+'" width="'+(70*k)+'" height="'+(46*k)+'" fill="#eef0f2" stroke="#c7ccd2" stroke-width="1.1"></rect>';
-    h+='<text x="'+cx+'" y="'+(hb-39.5*k)+'" text-anchor="middle" font-size="'+(6*k)+'" font-weight="800" fill="#3d4c5c" letter-spacing=".05em">MAIN LOAD</text>';
-    if(state.loadKw>0)h+='<text x="'+cx+'" y="'+(hb-32.5*k)+'" text-anchor="middle" font-size="'+(5.4*k)+'" font-weight="800" fill="#2c9d5e">'+state.loadKw+' kW</text>';
-    // low-pitch modern roof with slight overhang
-    h+='<polygon points="'+(cx-40*k)+','+(hb-46*k)+' '+(cx+40*k)+','+(hb-46*k)+' '+(cx+34*k)+','+(hb-58*k)+' '+(cx-34*k)+','+(hb-58*k)+'" fill="#5b6570" stroke="#454d56" stroke-width="1.2"></polygon>';
-    h+='<rect x="'+(cx-34*k)+'" y="'+(hb-60.5*k)+'" width="'+(68*k)+'" height="'+(3*k)+'" fill="#454d56"></rect>';
-    // solar panels on the roof
-    var by=hb-47.5*k,ty=hb-57.5*k,bxl=cx-31*k,bxr=cx+31*k,txl=cx-26*k,txr=cx+26*k;
+    var hw=38.5, fw=hw*2; // front\u2011wall half\u2011width \u2014 kept in sync with the SYN backup cable anchor (houseX+38.5) further below
+    var x=cx-hw;
+    var wallH=40, groundH=21, eaveY=hb-wallH, divY=hb-groundH;
+    var roofRise=23;
+    // isometric corners \u2014 reuses the exact skx/sky depth every equipment box in this diagram uses
+    var wBx=x+fw, wBy=eaveY, wCx=x+fw+skx, wCy=eaveY-sky;
+    var rLx=x+skx, rLy=eaveY-sky-roofRise, rRx=x+fw+skx, rRy=eaveY-sky-roofRise;
+    if(!state.highRes)h+='<ellipse cx="'+cx+'" cy="'+(hb+3)+'" rx="58" ry="8" fill="rgba(20,30,45,.16)"></ellipse>';
+    // right side wall (gives the body real depth instead of a flat front\u2011on icon)
+    h+='<polygon points="'+wBx+','+wBy+' '+wCx+','+wCy+' '+wCx+','+(hb-sky)+' '+wBx+','+hb+'" fill="#ccd2d8" stroke="#a8afb7" stroke-width="1"></polygon>';
+    // side gable \u2014 closes the roof volume on the right so it doesn\u2019t read as a floating slab
+    h+='<polygon points="'+wBx+','+wBy+' '+wCx+','+wCy+' '+rRx+','+rRy+'" fill="#454d56" stroke="#33383f" stroke-width="1"></polygon>';
+    // front wall \u2014 two\u2011storey, floor divider marks the storeys
+    h+='<rect x="'+x+'" y="'+eaveY+'" width="'+fw+'" height="'+wallH+'" fill="#eef0f2" stroke="#c7ccd2" stroke-width="1.1"></rect>';
+    h+='<line x1="'+x+'" y1="'+divY+'" x2="'+(x+fw)+'" y2="'+divY+'" stroke="#c7ccd2" stroke-width="1"></line>';
+    // pitched roof \u2014 front slope rises from the eave to the ridge along the same skew as the wall
+    h+='<polygon points="'+x+','+eaveY+' '+wBx+','+wBy+' '+rRx+','+rRy+' '+rLx+','+rLy+'" fill="#5b6570" stroke="#454d56" stroke-width="1.2"></polygon>';
+    h+='<line x1="'+rLx+'" y1="'+rLy+'" x2="'+rRx+'" y2="'+rRy+'" stroke="#2f333a" stroke-width="2"></line>';
+    // solar panels tiling the roof slope
+    var by=eaveY-1.4,ty=rLy+1.6,bxl=x+4.5,bxr=x+fw-4.5,txl=rLx+3.6,txr=rRx-3.6;
     for(var pi2=0;pi2<3;pi2++){for(var pj=0;pj<2;pj++){
       var f0=pi2/3+0.035,f1=(pi2+1)/3-0.035,g0=pj/2+0.08,g1=(pj+1)/2-0.08;
       var y0=by+(ty-by)*g0,y1=by+(ty-by)*g1;
@@ -1562,28 +1816,32 @@ function ctg(cx,cy,tdx,dir){
       var ax=l0+(r0-l0)*f0,bx=l0+(r0-l0)*f1,cx2=l1+(r1-l1)*f1,dx=l1+(r1-l1)*f0;
       h+='<polygon points="'+ax.toFixed(1)+','+y0.toFixed(1)+' '+bx.toFixed(1)+','+y0.toFixed(1)+' '+cx2.toFixed(1)+','+y1.toFixed(1)+' '+dx.toFixed(1)+','+y1.toFixed(1)+'" fill="#2e6fce" stroke="#173a6e" stroke-width="0.8"></polygon>';
     }}
-    // large glass sliding door / window (right side, full height, modern feel)
-    h+='<rect x="'+(cx+2*k)+'" y="'+(hb-29*k)+'" width="'+(26*k)+'" height="'+(29*k)+'" fill="#cfe0ee" stroke="#8fa9bf" stroke-width="1"></rect>';
-    h+='<line x1="'+(cx+15*k)+'" y1="'+(hb-29*k)+'" x2="'+(cx+15*k)+'" y2="'+hb+'" stroke="#8fa9bf" stroke-width="0.8"></line>';
-    h+='<rect x="'+(cx+4*k)+'" y="'+(hb-14*k)+'" width="'+(9*k)+'" height="'+(14*k)+'" fill="#3a3f46"></rect>';
-    // door (left-center)
-    h+='<rect x="'+(cx-9*k)+'" y="'+(hb-24*k)+'" width="'+(12*k)+'" height="'+(24*k)+'" rx="1" fill="#5a4632" stroke="#3f3221" stroke-width="0.8"></rect>';
-    h+='<circle cx="'+(cx-1.5*k)+'" cy="'+(hb-12*k)+'" r="1" fill="#d8c9a8"></circle>';
-    // small square window (left)
-    h+='<rect x="'+(cx-31*k)+'" y="'+(hb-27*k)+'" width="'+(15*k)+'" height="'+(13*k)+'" fill="#cfe0ee" stroke="#8fa9bf" stroke-width="1"></rect>';
-    h+='<line x1="'+(cx-23.5*k)+'" y1="'+(hb-27*k)+'" x2="'+(cx-23.5*k)+'" y2="'+(hb-14*k)+'" stroke="#8fa9bf" stroke-width="0.7"></line>';
-    // ground-floor accent strip
-    h+='<rect x="'+(cx-35*k)+'" y="'+(hb-4*k)+'" width="'+(70*k)+'" height="'+(4*k)+'" fill="#d7dade"></rect>';
+    // upper storey \u2014 MAIN LOAD nameplate flanked by two small windows
+    h+='<rect x="'+(x+7)+'" y="'+(eaveY+3)+'" width="6.5" height="5.5" fill="#cfe0ee" stroke="#8fa9bf" stroke-width="0.8"></rect>';
+    h+='<rect x="'+(x+fw-13.5)+'" y="'+(eaveY+3)+'" width="6.5" height="5.5" fill="#cfe0ee" stroke="#8fa9bf" stroke-width="0.8"></rect>';
+    h+='<text x="'+cx+'" y="'+(eaveY+9)+'" text-anchor="middle" font-size="6.2" font-weight="800" fill="#3d4c5c" letter-spacing=".05em">MAIN LOAD</text>';
+    if(state.loadKw>0)h+='<text x="'+cx+'" y="'+(eaveY+15.5)+'" text-anchor="middle" font-size="5.6" font-weight="800" fill="#2c9d5e">'+state.loadKw+' kW</text>';
+    // ground storey \u2014 sliding glass door (right), door (left\u2011of\u2011centre), small window (far left)
+    h+='<rect x="'+(cx+3)+'" y="'+(divY+3)+'" width="24" height="'+(groundH-3)+'" fill="#cfe0ee" stroke="#8fa9bf" stroke-width="1"></rect>';
+    h+='<line x1="'+(cx+15)+'" y1="'+(divY+3)+'" x2="'+(cx+15)+'" y2="'+hb+'" stroke="#8fa9bf" stroke-width="0.8"></line>';
+    h+='<rect x="'+(cx+5)+'" y="'+(hb-8)+'" width="7" height="8" fill="#3a3f46"></rect>';
+    h+='<rect x="'+(cx-9)+'" y="'+(divY+4)+'" width="10.5" height="'+(groundH-4)+'" rx="1" fill="#5a4632" stroke="#3f3221" stroke-width="0.8"></rect>';
+    h+='<circle cx="'+(cx-1.5)+'" cy="'+(hb-8)+'" r="0.9" fill="#d8c9a8"></circle>';
+    h+='<rect x="'+(x+5)+'" y="'+(divY+5)+'" width="12" height="10" fill="#cfe0ee" stroke="#8fa9bf" stroke-width="1"></rect>';
+    h+='<line x1="'+(x+11)+'" y1="'+(divY+5)+'" x2="'+(x+11)+'" y2="'+(divY+15)+'" stroke="#8fa9bf" stroke-width="0.7"></line>';
+    // ground trim \u2014 front + side, so the base reads as one continuous plinth
+    h+='<rect x="'+x+'" y="'+(hb-2.6)+'" width="'+fw+'" height="2.6" fill="#d7dade"></rect>';
+    h+='<polygon points="'+wBx+','+hb+' '+wCx+','+(hb-sky)+' '+wCx+','+(hb-sky-2.6)+' '+wBx+','+(hb-2.6)+'" fill="#c3c9cf"></polygon>';
     return h;
   }
   var houseBotAnchor=houseTopY+houseSize;
-  var rowPitch=138, perCol=3, maxShow=6;
-  var firstRowBase=(Math.min(state.units.length,maxShow)>2)?218:240;
+  var rowPitch=allRiseMulti?92:138, perCol=allRiseMulti?5:3, maxShow=allRiseMulti?10:6;
+  var firstRowBase=allRiseMulti?150:((Math.min(state.units.length,maxShow)>2)?218:240);
   function unitPos(idx){
     var col=Math.floor(idx/perCol),row=idx%perCol;
     return {x:colX[col],y:firstRowBase+row*rowPitch};
   }
-  var showPartial=state.backupMode==='partial';
+  var showPartial=state.backupMode==='partial'||state.backupMode==='whole';
   function unitWidth(u){
     var fm=FAMILIES[u.family];
     if(!fm)return 62*stackScale;
@@ -1667,21 +1925,22 @@ function ctg(cx,cy,tdx,dir){
     }
     var bpxPartial=null;
     if(u.backupMode==='partial'){
-      var bhx=mirU?(ux-40):(ux+62*stackScale+36);
+      var bhx=mirU?(ux-40*stackScale):(ux+62*stackScale+36*stackScale);
       var ihm=96*stackScale, buyBk=rowBaseY-ihm-6, roofTop=buyBk-23;
-      bpxPartial=mirU?(bhx-24):(bhx+24);
+      bpxPartial=mirU?(bhx-72*stackScale):(bhx+72*stackScale);
       unitCables+='<path class="olcable'+(backOn?' lit':'')+'" d="M'+(mirU?ux:(ux+62*stackScale))+','+(rowBaseY-40)+' L'+bpxPartial+','+(rowBaseY-40)+'"></path>';
       unitCables+='<path class="olcable'+(backOn?' lit':'')+'" d="M'+bhx+','+(rowBaseY-40)+' L'+bhx+','+buyBk+'"></path>';
-      stackLabels+='<div class="housebox" style="left:'+(bhx/W*100).toFixed(1)+'%;top:'+((buyBk/H*100)).toFixed(1)+'%;font-size:23px">\ud83c\udfe0</div>';
-      stackLabels+='<div class="complabel'+(backOn?' lit':'')+'" style="left:'+(bhx/W*100).toFixed(1)+'%;top:'+(((buyBk+8)/H*100)).toFixed(1)+'%;transform:translate(-50%,-50%);font-size:6.5px;padding:2px 6px">BACKUP'+(u.backupLoadKw>0?(' '+u.backupLoadKw+'kW'):'')+'</div>';
+      stackLabels+='<div class="housebox" style="left:'+(bhx/W*100).toFixed(1)+'%;top:'+((buyBk/H*100)).toFixed(1)+'%;font-size:'+(23*Math.max(stackScale,0.55)).toFixed(1)+'px">\ud83c\udfe0</div>';
+      stackLabels+='<div class="netlabel'+(backOn?' litb':'')+'" style="left:'+(bhx/W*100).toFixed(1)+'%;top:'+(((buyBk+11*Math.max(stackScale,0.55))/H*100)).toFixed(1)+'%;font-size:7px">PARTIAL LOAD'+(u.backupLoadKw>0?(' '+u.backupLoadKw+'kW'):'')+'</div>';
     }
     if(u.backupMode&&u.family!=='MODA'&&!(FAMILIES[u.family]&&FAMILIES[u.family].backup==='box-required')){
-      var bpx=bpxPartial!==null?bpxPartial:(mirU?(ux-16):(ux+62*stackScale+11)),bpy=rowBaseY-40;
+      var bpx=bpxPartial!==null?bpxPartial:(mirU?(ux-16*stackScale):(ux+62*stackScale+11*stackScale)),bpy=rowBaseY-40;
+      var bkS=Math.max(stackScale,0.6);
       commOverlay+='<path class="olcable'+(backOn?' lit':'')+'" d="M'+bpx+','+bpy+' L'+bpx+','+uAttachY+'"></path>';
-      commOverlay+='<g><rect x="'+(bpx-5)+'" y="'+(bpy-8)+'" width="10" height="15" rx="1.5" fill="#f4f6f9" stroke="#e0584f" stroke-width="1.1"></rect>'+
-        '<rect x="'+(bpx-2.6)+'" y="'+(bpy-5.2)+'" width="5.2" height="3.2" rx="0.6" fill="#e0584f"></rect>'+
-        '<rect x="'+(bpx-2.6)+'" y="'+(bpy+0.6)+'" width="5.2" height="3.2" rx="0.6" fill="#9aa5b1"></rect></g>';
-      stackLabels+='<div class="complabel'+(backOn?' lit':'')+'" style="left:'+(bpx/W*100).toFixed(1)+'%;top:'+(((rowBaseY-56)/H*100).toFixed(1))+'%;transform:translate(-50%,-50%);font-size:6.5px;padding:2px 6px">BYPASS</div>';
+      commOverlay+='<g><rect x="'+(bpx-5*bkS)+'" y="'+(bpy-8*bkS)+'" width="'+(10*bkS)+'" height="'+(15*bkS)+'" rx="1.5" fill="#f4f6f9" stroke="#e0584f" stroke-width="1.1"></rect>'+
+        '<rect x="'+(bpx-2.6*bkS)+'" y="'+(bpy-5.2*bkS)+'" width="'+(5.2*bkS)+'" height="'+(3.2*bkS)+'" rx="0.6" fill="#e0584f"></rect>'+
+        '<rect x="'+(bpx-2.6*bkS)+'" y="'+(bpy+0.6*bkS)+'" width="'+(5.2*bkS)+'" height="'+(3.2*bkS)+'" rx="0.6" fill="#9aa5b1"></rect></g>';
+      stackLabels+='<div class="netlabel'+(backOn?' litb':'')+'" style="left:'+(bpx/W*100).toFixed(1)+'%;top:'+(((bpy+16*bkS)/H*100).toFixed(1))+'%;font-size:6.5px">BYPASS</div>';
     }
   }
   var moreCount=allUnits.length-shownStack.length;
@@ -1698,8 +1957,11 @@ function ctg(cx,cy,tdx,dir){
       unitBoxes+='<path class="dccable" d="M'+tpmCx+','+(tpmB-tpmH-22)+' L'+tpmCx+','+(tpmB-tpmH)+'"></path>';
       unitBoxes+='<polygon points="'+(tpmCx-3.5)+','+(tpmB-tpmH-7)+' '+(tpmCx+3.5)+','+(tpmB-tpmH-7)+' '+tpmCx+','+(tpmB-tpmH)+'" fill="#232d3a"></polygon>';
       unitBoxes+=pvRealistic(tpmCx,tpmB-tpmH-22,28,14);
+      var tpLbl1=(state.tpLabels&&state.tpLabels[ti2])?escHtml(state.tpLabels[ti2]):'';
+      if(tpLbl1)unitBoxes+=invModelSVG(tpmCx,tpmB-tpmH*0.3,tpmW-12,tpLbl1,4.6);
+      else unitBoxes+='<text x="'+tpmCx+'" y="'+(tpmB-tpmH*0.24)+'" text-anchor="middle" font-size="4.8" font-weight="700" fill="#8a97a6">OTHER</text>';
     });
-    stackLabels+='<div class="complabel" style="left:'+(trunkX/W*100).toFixed(1)+'%;top:'+((122/H*100).toFixed(1))+'%;transform:translate(-50%,-50%);font-size:6.5px;padding:2px 6px">THIRD\u2011PARTY'+(tpN>1?' \u00d7'+tpN:'')+'</div>';
+    
   }
   if(isMulti&&trunkTopY!==null){
     commOverlay+='<path class="olcable'+(invOn?' lit':'')+'" d="M'+trunkX+','+trunkTopY+' L'+trunkX+','+bottomBusY+' L'+houseX+','+bottomBusY+' L'+houseX+','+houseBotAnchor+'"></path>';
@@ -1732,24 +1994,49 @@ function ctg(cx,cy,tdx,dir){
   s+=unitCables+unitBoxes+commOverlay+boxTops;
 
   var showPartialSingle=showPartial&&!isMulti;
-  var wholeLit=state.backupMode==='whole'&&backOn;
-  if(!isMulti&&!state.offGrid){
-    s+='<path class="olcable lit" d="M'+(cabX+cabW/2)+','+cabBaseY+' L'+(cabX+cabW/2)+','+invAttachY+' L'+houseX+','+invAttachY+' L'+houseX+','+houseBotAnchor+'"></path>';
-  }
+  var wholeLit=(state.backupMode==='whole'||state.backupMode==='partial')&&backOn;
+  var mainACx=houseX+32;
   if(!isMulti&&state.offGrid&&hasComp){
-    s+='<path class="olcable lit" d="M'+invAttachX+','+invAttachY+' L'+houseX+','+invAttachY+' L'+houseX+','+houseBotAnchor+'"></path>';
+    s+=acCable('M'+invAttachX+','+invAttachY+' L'+mainACx+','+invAttachY+' L'+mainACx+','+houseBotAnchor,true,null,false,true);
   }
   if(!isMulti&&hasComp){
     var invTopY=isRise?(baseY-rh+18):(baseY-ih+18);
-    if(state.backupMode==='whole')s+='<path class="olcable'+(wholeLit?' lit':'')+'" d="M'+invAttachX+','+invTopY+' L'+houseX+','+invTopY+' L'+houseX+','+invAttachY+'"></path>';
-    if(!state.offGrid)s+='<path class="olcable'+((gridLit||wholeLit)?' lit':'')+'" d="M'+invAttachX+','+invAttachY+' L'+monAttachX+','+invAttachY+' L'+monAttachX+','+monAttachY+'"></path>';
-    s+='<path class="olcable'+(gridLit?' lit':'')+'" d="M'+houseX+','+invAttachY+' L'+houseX+','+houseBotAnchor+'"></path>';
+    var cabTopY=cabBaseY-22-cabH, cabEntryY=cabTopY+cabH*0.4;
+    if(!state.offGrid){
+      if(state.highRes){
+        for(var twi=0;twi<4;twi++){
+          var twOff=(twi-2)*PHASE_SPACING;
+          var twY=invAttachY+twOff, twX=mainACx+twOff;
+          var twOp=acOp(gridLit||wholeLit,false);
+          s+='<path d="M'+invAttachX+','+twY+' L'+twX+','+twY+'" fill="none" stroke="'+PHASE_WIRES[twi].c+'" stroke-width="1.3" stroke-dasharray="4 2.5" stroke-linecap="round" opacity="'+twOp+'"></path>';
+          s+='<path d="M'+twX+','+twY+' L'+twX+','+(cabEntryY+twOff)+' L'+cabX+','+(cabEntryY+twOff)+'" fill="none" stroke="'+PHASE_WIRES[twi].c+'" stroke-width="1.3" stroke-dasharray="4 2.5" stroke-linecap="round" opacity="'+twOp+'"></path>';
+        }
+      } else {
+        s+=acCable('M'+invAttachX+','+invAttachY+' L'+mainACx+','+invAttachY,gridLit||wholeLit,null,false,true);
+        s+=acCable('M'+mainACx+','+invAttachY+' L'+mainACx+','+cabEntryY+' L'+cabX+','+cabEntryY,gridLit||wholeLit,null,false,true);
+      }
+    }
+    if(state.highRes){
+      for(var mlwi=0;mlwi<4;mlwi++){
+        var mlwOff=(mlwi-2)*PHASE_SPACING;
+        var mlwXc=mainACx+mlwOff, mlwY2=houseBotAnchor;
+        var mlwD='M'+mlwXc+','+(invAttachY+mlwOff)+' L'+mlwXc+','+mlwY2;
+        var mlwLit=acOp(gridLit,false);
+        s+='<path d="'+mlwD+'" fill="none" stroke="'+PHASE_WIRES[mlwi].c+'" stroke-width="1.3" stroke-dasharray="4 2.5" stroke-linecap="round" opacity="'+mlwLit+'"></path>';
+      }
+    } else {
+      s+=acCable('M'+mainACx+','+invAttachY+' L'+mainACx+','+houseBotAnchor,gridLit);
+    }
     if(invOn&&(showSemBox||showSmartAtFeed||isGroHome)&&!isWirelessGroHome){
       var rSx=(showSemBox||isGroHome)?mgrX:(cabX+cabW/2-smW/2);
       var rSy=(showSemBox||isGroHome)?(mgrTopY+mgrH*0.5):(cabBoxBase-cabH/2);
       var rVx=560;
       var rEx=isRise?(rx+rw):(ix+iw);
-      s+=commPair('M'+rSx+','+rSy+' L'+rVx+','+rSy+' L'+rVx+',392 L'+(rEx-5)+',392');
+      if(state.highRes){
+        s+=commPair('M'+rSx+','+rSy+' L'+rVx+','+rSy+' L'+(rEx-5)+','+rSy+' L'+(rEx-5)+','+(baseY-ih+8));
+      } else {
+        s+=commPair('M'+rSx+','+rSy+' L'+rVx+','+rSy+' L'+rVx+','+(baseY-ih+8)+' L'+(rEx-5)+','+(baseY-ih+8));
+      }
     }
   }
   var hasLeftTowers=sN>0&&!isRise&&!isModa;
@@ -1763,10 +2050,10 @@ function ctg(cx,cy,tdx,dir){
     }
     if(hasLeftTowers){
       var pvLineY2=pvBy2-pvH2*0.5;
-      s+='<path class="dccable" d="M'+(bx2+pvW2/2)+','+pvLineY2+' L'+(ix+27)+','+pvLineY2+' L'+(ix+27)+','+(baseY-ih)+'"></path>';
+      s+=dcCable('M'+(bx2+pvW2/2)+','+pvLineY2+' L'+(ix+27)+','+pvLineY2+' L'+(ix+27)+','+(baseY-ih));
       s+='<polygon points="'+(ix+23)+','+(baseY-ih-8)+' '+(ix+31)+','+(baseY-ih-8)+' '+(ix+27)+','+(baseY-ih)+'" fill="#232d3a"></polygon>';
     } else {
-      s+='<path class="dccable" d="M'+bx2+','+(pvBy2-pvH2*0.5)+' L'+bx2+','+midY2+' L'+(isRise?rx:ix)+','+midY2+'"></path>';
+      s+=dcCable('M'+bx2+','+(pvBy2-pvH2*0.5)+' L'+bx2+','+midY2+' L'+(isRise?rx:ix)+','+midY2);
       s+='<polygon points="'+((isRise?rx:ix)-8)+','+(midY2-4)+' '+((isRise?rx:ix)-8)+','+(midY2+4)+' '+(isRise?rx:ix)+','+midY2+'" fill="#232d3a"></polygon>';
     }
     s+=pvRealistic(bx2,pvBy2,pvW2,pvH2);
@@ -1776,12 +2063,19 @@ function ctg(cx,cy,tdx,dir){
       s+='<text x="'+bx2+'" y="'+(pvBy2-pvH2/2+3)+'" text-anchor="middle" font-size="7.5" font-weight="800" fill="#7bf5a8">'+kwpTxt2+'</text>';
     }
   }
-  if(hasComp&&state.metering==='meter'&&state.meterType==='TPM-6CT-C'&&showSmartAtFeed)s+=ctg(cabX+cabW/2,cabBaseY+11,14,'down');
-  if(hasComp&&isGroHome)s+=ctg(cabX+cabW/2,cabBaseY+11,14,'down');
+  if(!isMulti&&state.highRes&&hasComp&&((state.metering==='meter'&&state.meterType==='TPM-6CT-C'&&showSmartAtFeed)||isGroHome)){
+    var ctInX=cabX-14;
+    for(var ctii=0;ctii<3;ctii++)s+=ctgSimple(ctInX,cabEntryY+(ctii-2)*PHASE_SPACING,'left',PHASE_WIRES[ctii].n);
+  } else {
+    if(hasComp&&state.metering==='meter'&&state.meterType==='TPM-6CT-C'&&showSmartAtFeed)s+=ctg(cabX+cabW/2,cabBaseY+11,14,'down');
+    if(hasComp&&isGroHome)s+=ctg(cabX+cabW/2,cabBaseY+11,14,'down');
+  }
   if(!isMulti&&hasComp&&state.thirdParty){
     var tpN=Math.min(state.tpCount||1,3),tpW=40,tpH=60;
+    tpCenters=[];
     for(var tpi=0;tpi<tpN;tpi++){
       var tpX=100-tpi*45,tpCx=tpX+tpW/2;
+      tpCenters.push(tpCx);
       s+=drawIsoBox(tpX,baseY,tpW,tpH,skx*0.8,sky*0.8,'#e2e6eb','#eef1f4','#b9c2cc',false);
       s+='<line x1="'+(tpX+7)+'" y1="'+(baseY-16)+'" x2="'+(tpX+tpW-7)+'" y2="'+(baseY-16)+'" stroke="#aab4bf" stroke-width="1.6"></line>';
       s+='<circle cx="'+tpCx+'" cy="'+(baseY-tpH+15)+'" r="4" fill="#9aa5b1"></circle>';
@@ -1789,38 +2083,134 @@ function ctg(cx,cy,tdx,dir){
       s+='<path class="dccable" d="M'+tpCx+','+(tpPvY)+' L'+tpCx+','+(baseY-tpH)+'"></path>';
       s+='<polygon points="'+(tpCx-3.5)+','+(baseY-tpH-7)+' '+(tpCx+3.5)+','+(baseY-tpH-7)+' '+tpCx+','+(baseY-tpH)+'" fill="#232d3a"></polygon>';
       s+=pvRealistic(tpCx,tpPvY,tpPvW,tpPvH);
-      s+='<path class="olcable'+(invOn?' lit':'')+'" d="M'+tpCx+','+baseY+' L'+tpCx+','+(baseY+58-tpi*8)+' L'+houseX+','+(baseY+58-tpi*8)+' L'+houseX+','+invAttachY+'"></path>';
-      if(tpi===0&&((state.metering==='meter'&&state.meterType==='TPM-6CT-C')||isGroHome))s+=ctg(tpCx,baseY+38,10,'up');
+      var tpLbl0=(state.tpLabels&&state.tpLabels[tpi])?escHtml(state.tpLabels[tpi]):'';
+      if(tpLbl0)s+=invModelSVG(tpCx,baseY-tpH*0.46,tpW-16,tpLbl0,5.6);
+      else s+='<text x="'+tpCx+'" y="'+(baseY-tpH*0.4)+'" text-anchor="middle" font-size="5.6" font-weight="700" fill="#8a97a6">OTHER</text>';
+      var tpRowGap=state.highRes?(PHASE_SPACING*4+14):8;
+      var tpRowY=Math.min(baseY+85-tpi*tpRowGap,H-45-tpi*tpRowGap);
+      if(state.highRes){
+        for(var tpwi=0;tpwi<5;tpwi++){
+          var tpwOff=(tpwi-2)*PHASE_SPACING;
+          var tpwXa=tpCx+tpwOff, tpwYa=baseY;
+          var tpwYb=tpRowY+tpwOff;
+          var tpwXc=houseX+tpwOff, tpwY2=invAttachY+tpwOff;
+          var tpwD='M'+tpwXa+','+tpwYa+' L'+tpwXa+','+tpwYb+' L'+tpwXc+','+tpwYb+' L'+tpwXc+','+tpwY2;
+          var tpwOp=acOp(invOn,false);
+          if(tpwi===4){
+            s+='<path d="'+tpwD+'" fill="none" stroke="#e8c11a" stroke-width="1.4" stroke-dasharray="3 3" opacity="'+tpwOp+'"></path>';
+            s+='<path d="'+tpwD+'" fill="none" stroke="#2ea043" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="3" opacity="'+tpwOp+'"></path>';
+          } else {
+            s+='<path d="'+tpwD+'" fill="none" stroke="'+PHASE_WIRES[tpwi].c+'" stroke-width="1.3" stroke-dasharray="4 2.5" stroke-linecap="round" opacity="'+tpwOp+'"></path>';
+          }
+        }
+      } else {
+        s+=acCable('M'+tpCx+','+baseY+' L'+tpCx+','+tpRowY+' L'+houseX+','+tpRowY+' L'+houseX+','+invAttachY,invOn);
+      }
+      if(tpi===0&&((state.metering==='meter'&&state.meterType==='TPM-6CT-C')||isGroHome)){
+        if(state.highRes){
+          var tpCtY=Math.min(baseY+38,tpRowY-8);
+          for(var tctpi=0;tctpi<3;tctpi++)s+=ctgSimple(tpCx+(tctpi-2)*PHASE_SPACING,tpCtY,'up',PHASE_WIRES[tctpi].n);
+        } else {
+          s+=ctg(tpCx,baseY+38,10,'up');
+        }
+      }
     }
   }
   var showBypass=!isMulti&&hasComp&&!!state.backupMode&&state.family!=='MODA'&&!needsSyn();
   var bhx2=(isRise?rx+rw:ix+iw)+54;
-  var synPartial=showPartialSingle&&needsSyn();
+  var synPartial=showPartialSingle&&needsSyn()&&!state.highRes;
   if(synPartial)bhx2=cabX+cabW/2+45;
   var buyS=synPartial?(cabBaseY+118):(baseY-8), bpJoinX=bhx2+48;
   var bpx2,bpy2;
   var synInX=synX2+synW2*0.22, synOutX=synX2+synW2*0.78;
   if(!isMulti&&showSynBox&&invOn){
-    s+='<path class="olcable'+(backOn?' lit':'')+'" d="M'+(isRise?rx+rw:ix+iw)+','+(invAttachY+16)+' L'+synInX+','+(invAttachY+16)+' L'+synInX+','+cabBoxBase+'"></path>';
+    s+=acCable('M'+(isRise?rx+rw:ix+iw)+','+(invAttachY+16)+' L'+synInX+','+(invAttachY+16)+' L'+synInX+','+cabBoxBase,backOn);
   }
   if(!isMulti&&showSynBox&&invOn&&state.backupMode==='whole'){
     var synHy=cabBaseY-6, synHx=houseX+52;
-    s+='<path class="olcable'+(backOn?' lit':'')+'" d="M'+synOutX+','+cabBoxBase+' L'+synOutX+','+synHy+' L'+synHx+','+synHy+' L'+synHx+','+(houseBotAnchor-22)+' L'+(houseX+38.5)+','+(houseBotAnchor-22)+'"></path>';
+    s+=acCable('M'+synOutX+','+cabBoxBase+' L'+synOutX+','+synHy+' L'+synHx+','+synHy+' L'+synHx+','+(houseBotAnchor-22)+' L'+(houseX+38.5)+','+(houseBotAnchor-22),backOn);
   }
   if(synPartial){
-    s+='<path class="olcable'+(backOn?' lit':'')+'" d="M'+synOutX+','+cabBoxBase+' L'+synOutX+','+(buyS-12)+' L'+(bhx2-9)+','+(buyS-12)+'"></path>';
+    s+=acCable('M'+synOutX+','+cabBoxBase+' L'+synOutX+','+(buyS-12)+' L'+(bhx2-9)+','+(buyS-12),backOn);
     bpx2=invAttachX+106;bpy2=invTopY;
   } else if(showPartialSingle){
-    s+='<path class="olcable'+(backOn?' lit':'')+'" d="M'+(isRise?rx+rw:ix+iw)+','+(baseY-20)+' L'+bhx2+','+(baseY-20)+' L'+bhx2+','+(buyS-23)+'"></path>';
-    s+='<path class="olcable'+(backOn?' lit':'')+'" d="M'+(bhx2+12)+','+(buyS-12)+' L'+bpJoinX+','+(buyS-12)+' L'+bpJoinX+','+invAttachY+'"></path>';
+    var plFeedY=state.highRes?Math.min(invAttachY+110,buyS-10):invAttachY;
+    if(state.highRes){
+      var brkX=((isRise?rx+rw:ix+iw)+bpJoinX)/2;
+      for(var pwi=0;pwi<4;pwi++){
+        var pwOff=(pwi-2)*PHASE_SPACING;
+        var pwXs=(isRise?rx+rw:ix+iw), pwYs=plFeedY+pwOff, pwXc=bpJoinX+pwOff, pwY2=invAttachY+pwOff;
+        var pwCol=state.inverterBroken?'#9aa0a6':PHASE_WIRES[pwi].c;
+        var pwOp1=state.inverterBroken?0.9:acOp(backOn,true);
+        s+='<path d="M'+pwXs+','+pwYs+' L'+brkX+','+pwYs+'" fill="none" stroke="'+pwCol+'" stroke-width="1.3" stroke-dasharray="4 2.5" stroke-linecap="round" opacity="'+pwOp1+'"></path>';
+        s+='<path d="M'+brkX+','+pwYs+' L'+pwXc+','+pwYs+' L'+pwXc+','+pwY2+'" fill="none" stroke="'+PHASE_WIRES[pwi].c+'" stroke-width="1.3" stroke-dasharray="4 2.5" stroke-linecap="round" opacity="'+acOp(backOn,false)+'"></path>';
+      }
+      var peOff=2*PHASE_SPACING, peYs=plFeedY+peOff, peXs=(isRise?rx+rw:ix+iw);
+      var peD='M'+peXs+','+peYs+' L'+bhx2+','+peYs;
+      s+='<path d="'+peD+'" fill="none" stroke="#e8c11a" stroke-width="1.4" stroke-dasharray="3 3" opacity="'+acOp(backOn,true)+'"></path>';
+      s+='<path d="'+peD+'" fill="none" stroke="#2ea043" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="3" opacity="'+acOp(backOn,true)+'"></path>';
+      var earthBarX=560,earthBarY=peYs+40;
+      s+=mainEarthBar(earthBarX,earthBarY);
+      var earthPt2X=earthBarPointX(earthBarX,0);
+      var laneT1=earthBarY-14;
+      var peD2='M'+bhx2+','+peYs+' L'+bhx2+','+laneT1+' L'+earthPt2X+','+laneT1+' L'+earthPt2X+','+earthBarY;
+      s+='<path d="'+peD2+'" fill="none" stroke="#e8c11a" stroke-width="1.4" stroke-dasharray="3 3" opacity="'+acOp(backOn,true)+'"></path>';
+      s+='<path d="'+peD2+'" fill="none" stroke="#2ea043" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="3" opacity="'+acOp(backOn,true)+'"></path>';
+      var earthPt3X=earthBarPointX(earthBarX,2);
+      var invGndY=invAttachY+2*PHASE_SPACING;
+      var peD3='M'+peXs+','+invGndY+' L'+earthPt3X+','+invGndY+' L'+earthPt3X+','+earthBarY;
+      s+='<path d="'+peD3+'" fill="none" stroke="#e8c11a" stroke-width="1.4" stroke-dasharray="3 3" opacity="'+acOp(gridLit||wholeLit,true)+'"></path>';
+      s+='<path d="'+peD3+'" fill="none" stroke="#2ea043" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="3" opacity="'+acOp(gridLit||wholeLit,true)+'"></path>';
+      var earthPt4X=earthBarPointX(earthBarX,3);
+      var mlGndX=mainACx+2*PHASE_SPACING;
+      var peD4='M'+mlGndX+','+houseBotAnchor+' L'+mlGndX+','+(earthBarY-12)+' L'+earthPt4X+','+(earthBarY-12)+' L'+earthPt4X+','+earthBarY;
+      s+='<path d="'+peD4+'" fill="none" stroke="#e8c11a" stroke-width="1.4" stroke-dasharray="3 3" opacity="'+acOp(gridLit,true)+'"></path>';
+      s+='<path d="'+peD4+'" fill="none" stroke="#2ea043" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="3" opacity="'+acOp(gridLit,true)+'"></path>';
+      var earthPt5X=earthBarPointX(earthBarX,4);
+      var cabPEY=cabEntryY+2*PHASE_SPACING,cabPEdropX=cabX-22;
+      var laneT5=earthBarY-8;
+      var peD5='M'+cabX+','+cabPEY+' L'+cabPEdropX+','+cabPEY+' L'+cabPEdropX+','+laneT5+' L'+earthPt5X+','+laneT5+' L'+earthPt5X+','+earthBarY;
+      s+='<path d="'+peD5+'" fill="none" stroke="#e8c11a" stroke-width="1.4" stroke-dasharray="3 3" opacity="'+acOp(gridLit||wholeLit,true)+'"></path>';
+      s+='<path d="'+peD5+'" fill="none" stroke="#2ea043" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="3" opacity="'+acOp(gridLit||wholeLit,true)+'"></path>';
+      if(!isMulti&&hasComp&&state.thirdParty){
+        var tpPEY=baseY+2*PHASE_SPACING;
+        for(var tpei=0;tpei<tpCenters.length;tpei++){
+          var tpeCx=tpCenters[tpei];
+          var earthPtTPX=earthBarPointX(earthBarX,6+tpei);
+          var laneTTP=earthBarY-20-tpei*6;
+          var peD6='M'+tpeCx+','+tpPEY+' L'+tpeCx+','+laneTTP+' L'+earthPtTPX+','+laneTTP+' L'+earthPtTPX+','+earthBarY;
+          s+='<path d="'+peD6+'" fill="none" stroke="#e8c11a" stroke-width="1.4" stroke-dasharray="3 3" opacity="'+acOp(invOn,true)+'"></path>';
+          s+='<path d="'+peD6+'" fill="none" stroke="#2ea043" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="3" opacity="'+acOp(invOn,true)+'"></path>';
+        }
+      }
+      var earthPt1X=earthBarPointX(earthBarX,1);
+      s+='<path d="M'+earthPt1X+','+(earthBarY+2.3)+' L'+earthPt1X+','+(earthBarY+22)+'" fill="none" stroke="#e8c11a" stroke-width="1.4" stroke-dasharray="3 3" opacity="0.95"></path>';
+      s+='<path d="M'+earthPt1X+','+(earthBarY+2.3)+' L'+earthPt1X+','+(earthBarY+22)+'" fill="none" stroke="#2ea043" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="3" opacity="0.95"></path>';
+      s+=groundRod(earthPt1X,earthBarY+22,earthBarY+38);
+      s+='<text x="'+earthPt1X+'" y="'+(earthBarY+50)+'" text-anchor="middle" font-size="4.6" font-weight="800" fill="#3d4c5c">GROUND ROD</text>';
+      s+='<text x="'+earthPt1X+'" y="'+(earthBarY+57)+'" text-anchor="middle" font-size="4.2" font-weight="700" fill="#5d6b78">\u2264100\u03a9</text>';
+      s+='<text x="'+earthPt1X+'" y="'+(earthBarY+63)+'" text-anchor="middle" font-size="4.2" font-weight="800" fill="#1f7a45">Good value? -&gt; stable value</text>';
+      var brkYs=[];
+      for(var bi=0;bi<4;bi++)brkYs.push(plFeedY+(bi-2)*PHASE_SPACING);
+      s+=breaker4Pole(brkX,brkYs);
+    } else {
+      s+=acCable('M'+(isRise?rx+rw:ix+iw)+','+plFeedY+' L'+bhx2+','+plFeedY+' L'+bhx2+','+(buyS-23),backOn);
+      s+=acCable('M'+(bhx2+12)+','+(buyS-12)+' L'+bpJoinX+','+(buyS-12)+' L'+bpJoinX+','+invAttachY,backOn);
+    }
     bpx2=bpJoinX;bpy2=Math.round((buyS-12+invAttachY)/2);
   } else {
     bpx2=invAttachX+106;bpy2=invTopY;
   }
   if(showBypass){
-    s+='<g><rect x="'+(bpx2-7)+'" y="'+(bpy2-11)+'" width="14" height="21" rx="2" fill="#f4f6f9" stroke="#e0584f" stroke-width="1.4"></rect>'+
-      '<rect x="'+(bpx2-3.6)+'" y="'+(bpy2-7)+'" width="7.2" height="4.4" rx="0.8" fill="#e0584f"></rect>'+
-      '<rect x="'+(bpx2-3.6)+'" y="'+(bpy2+1)+'" width="7.2" height="4.4" rx="0.8" fill="#9aa5b1"></rect></g>';
+    if(state.highRes){
+      var bpXs=[];
+      for(var bpi=0;bpi<4;bpi++)bpXs.push(bpx2+(bpi-2)*PHASE_SPACING);
+      s+=breaker4PoleWide(bpXs,bpy2);
+    } else {
+      s+='<g><rect x="'+(bpx2-7)+'" y="'+(bpy2-11)+'" width="14" height="21" rx="2" fill="#f4f6f9" stroke="#e0584f" stroke-width="1.4"></rect>'+
+        '<rect x="'+(bpx2-3.6)+'" y="'+(bpy2-7)+'" width="7.2" height="4.4" rx="0.8" fill="#e0584f"></rect>'+
+        '<rect x="'+(bpx2-3.6)+'" y="'+(bpy2+1)+'" width="7.2" height="4.4" rx="0.8" fill="#9aa5b1"></rect></g>';
+    }
   }
   if(hasComp){
     var isOnline=onlOn&&(state.dongle!=='shinemaster'||state.metering==='meter');
@@ -1845,8 +2235,6 @@ function ctg(cx,cy,tdx,dir){
       '<circle class="scr" cx="'+phoneX+'" cy="'+(phoneY+7*csc)+'" r="'+(1.6*csc)+'"></circle></g>';
   }
   s+=drawHouse(houseX,houseBotAnchor);
-  s+=singleBoxSVG;
-  s+=gridChainSVG;
   s+='</svg>';
   s+=battChipHTML;
   s+=stackLabels;
@@ -1854,7 +2242,7 @@ function ctg(cx,cy,tdx,dir){
     var hdX=isRise?(rx+rw-20):(ix+iw/2);
     var hdY;
     if(isRise)hdY=baseY-rh+20;
-    else if(isModa){var mmH=(state.inputs[0]&&state.inputs[0].modules)||0;hdY=baseY-(13+mmH*15+22)+22*0.38;}
+    else if(isModa){var mmH=(state.inputs[0]&&state.inputs[0].modules)||0;hdY=baseY-((state.highRes?15.6:13)+mmH*(state.highRes?22:15)+22)+22*0.38;}
     else hdY=baseY-ih+22;
     s+=invHotspotHTML((hdX/W*100).toFixed(2),(hdY/H*100).toFixed(2),'');
   }
@@ -1863,26 +2251,31 @@ function ctg(cx,cy,tdx,dir){
       var hp=unitPos(hi), hf=FAMILIES[u.family]; if(!hf)return;
       var hx=hp.x+(hf.battery==='RISE'?(150*stackScale-16):(62*stackScale/2));
       var hy=hp.y-(hf.battery==='RISE'?(112*stackScale-16):(96*stackScale-11));
-      s+=invHotspotHTML((hx/W*100).toFixed(2),(hy/H*100).toFixed(2),':'+hi,u);
+      s+=invHotspotHTML((hx/W*100).toFixed(2),(hy/H*100).toFixed(2),':'+hi,u,hi);
     });
   }
-  var emY=houseBotAnchor-25;
-  s+=emHotspotHTML(((houseX-14)/W*100).toFixed(2),(emY/H*100).toFixed(2));
-  s+=offGridHotspotHTML(((houseX+14)/W*100).toFixed(2),(emY/H*100).toFixed(2));
+  var hotBtnX=state.highRes?(houseX-33):(houseX-51);
+  s+=emHotspotHTML((hotBtnX/W*100).toFixed(2),((houseBotAnchor-33)/H*100).toFixed(2));
+  s+=offGridHotspotHTML((hotBtnX/W*100).toFixed(2),((houseBotAnchor-8)/H*100).toFixed(2));
+  if(!isMulti&&hasComp&&state.segment==='res'){
+    var hrBtnX=houseX+42;
+    s+=highResHotspotHTML((hrBtnX/W*100).toFixed(2),((houseBotAnchor-33)/H*100).toFixed(2));
+  }
+  var isHR=state.highRes&&!(state.multi&&state.units.length>1);
   s+='<div class="legend">'+
     '<div class="lrow"><span class="ln dc"></span>DC</div>'+
-    '<div class="lrow"><span class="ln ac"></span>AC</div>'+
-    '<div class="lrow"><span class="ln co"></span>COM</div>'+
+    (isHR?'':'<div class="lrow"><span class="ln ac"></span>AC</div>')+
+    '<div class="lrow"><span class="ln co"></span>RS485/CAN</div>'+
     '<div class="lrow"><span class="ln net"></span>INTERNET / WIRELESS</div>'+
+    (isHR?'<div class="lrow" style="flex-wrap:wrap;row-gap:3px;margin-top:2px;padding-top:4px;border-top:1px solid var(--line)">'+PHASE_WIRES.map(function(w){return '<span class="ln" style="border-color:'+w.c+';margin-right:2px"></span><span style="margin-right:6px">'+w.n+'</span>';}).join('')+'</div>':'')+
     '</div>';
   if(hasComp){
     var onlLit2=(onlOn&&(state.dongle!=='shinemaster'||state.metering==='meter'))?' litb':'';
     var csc2=0.85;
     var clY2=houseTopY-52;
     var monX2=houseX-30,monY2=clY2,phoneX2=houseX+34,phoneY2=clY2;
-    var lblSt=';font-size:6.5px;padding:2px 6px';
-    s+='<div class="complabel'+onlLit2+'" style="left:'+(monX2/W*100).toFixed(1)+'%;top:'+(((monY2-11*csc2)/H)*100).toFixed(1)+'%;transform:translate(-50%,-100%)'+lblSt+'">SHINESERVER &amp; OSS</div>';
-    s+='<div class="complabel'+onlLit2+'" style="left:'+(phoneX2/W*100).toFixed(1)+'%;top:'+(((phoneY2-12*csc2)/H)*100).toFixed(1)+'%;transform:translate(-50%,-100%)'+lblSt+'">SHINEPHONE</div>';
+    s+='<div class="netlabel'+onlLit2+'" style="left:'+(monX2/W*100).toFixed(1)+'%;top:'+(((monY2-11*csc2)/H)*100).toFixed(1)+'%;font-size:7px">SHINESERVER &amp; OSS</div>';
+    s+='<div class="netlabel'+onlLit2+'" style="left:'+(phoneX2/W*100).toFixed(1)+'%;top:'+(((phoneY2-12*csc2)/H)*100).toFixed(1)+'%;font-size:7px">SHINEPHONE</div>';
     if(state.aiMode){
       var chips=[];
       if(state.aiSmart)chips.push('AI SMART');
@@ -1894,11 +2287,13 @@ function ctg(cx,cy,tdx,dir){
   if(!isMulti&&hasComp){
     var invLabelY=(isRise?baseY-rh-20:baseY-ih-20);
   }
-  if(!isMulti&&hasComp&&state.thirdParty)s+='<div class="complabel" style="left:'+(100/W*100).toFixed(1)+'%;top:'+(((baseY+14)/H*100)).toFixed(1)+'%;transform:translate(-50%,-50%);font-size:6.5px;padding:2px 6px">THIRD\u2011PARTY'+((state.tpCount||1)>1?' \u00d7'+(state.tpCount||1):'')+'</div>';
-  if(showBypass)s+='<div class="complabel'+(backOn?' lit':'')+'" style="left:'+(bpx2/W*100).toFixed(1)+'%;top:'+(((bpy2-20)/H*100)).toFixed(1)+'%;transform:translate(-50%,-50%);font-size:6.5px;padding:2px 6px">BYPASS</div>';
+  
+  if(showBypass&&!state.highRes)s+='<div class="complabel'+(backOn?' lit':'')+'" style="left:'+(bpx2/W*100).toFixed(1)+'%;top:'+(((bpy2-20)/H*100)).toFixed(1)+'%;transform:translate(-50%,-50%);font-size:6.5px;padding:2px 6px">BYPASS</div>';
   if(showPartialSingle){
-    s+='<div class="housebox" style="left:'+(bhx2/W*100).toFixed(1)+'%;top:'+((buyS/H*100)).toFixed(1)+'%;font-size:23px">\ud83c\udfe0</div>';
-    s+='<div class="complabel'+(backOn?' lit':'')+'" style="left:'+(bhx2/W*100).toFixed(1)+'%;top:'+(((buyS+11)/H*100)).toFixed(1)+'%;transform:translate(-50%,-50%)">'+(synPartial?'PARTIAL LOAD':'BACKUP')+(state.backupLoadKw>0?(' '+state.backupLoadKw+'kW'):'')+'</div>';
+    var plSpread=4*PHASE_SPACING+20;
+    var houseIconY=state.highRes?((plFeedY!=null?plFeedY:invAttachY)+2*PHASE_SPACING):buyS;
+    s+='<div class="housebox" style="left:'+(bhx2/W*100).toFixed(1)+'%;top:'+((houseIconY/H*100)).toFixed(1)+'%;font-size:'+(state.highRes?plSpread:23)+'px;transform:translate(-50%,-100%)'+(state.highRes?' scaleX(0.85)':'')+'">\ud83c\udfe0</div>';
+    s+='<div class="netlabel'+(backOn?' litb':'')+'" style="left:'+(bhx2/W*100).toFixed(1)+'%;top:'+(((houseIconY+15)/H*100)).toFixed(1)+'%;font-size:7px">'+(state.backupMode==='whole'?'WHOLE-HOME BACKUP':'PARTIAL LOAD')+(state.backupLoadKw>0?(' '+state.backupLoadKw+'kW'):'')+'</div>';
   }
 
 
@@ -1907,15 +2302,11 @@ function ctg(cx,cy,tdx,dir){
 
     if(isModa){
       if(invOn&&b.kwh>0){
-        var modaH=13+(((state.inputs[0]&&state.inputs[0].modules)||0))*15+22;
+        var modaH=(state.highRes?15.6:13)+(((state.inputs[0]&&state.inputs[0].modules)||0))*(state.highRes?22:15)+22;
         s+='<div class="battchip" style="left:'+(invCx/W*100).toFixed(1)+'%;top:'+(((baseY-modaH-10)/H)*100).toFixed(1)+'%;transform:translate(-50%,-100%)"><div class="t">CHARGE / DISCHARGE</div><div class="v">'+battMaxKw(b.kwh)+' kW \u00b7 '+b.kwh+' kWh</div></div>';
       }
     } else if(!isRise){
-      var batCx = sN? (tx0 + sTotW/2) : 340;
-      if(!batOn)s+='<div class="complabel" style="left:'+(batCx/W*100).toFixed(1)+'%;top:'+((baseY+18)/H*100).toFixed(1)+'%">BATTERY</div>';
-      if(batOn&&towers.length){
-
-      }
+      // (floating "BATTERY" placeholder label removed \u2014 the tower/BMS graphics already make this clear)
     }
   }
 
@@ -2020,6 +2411,7 @@ function aiPageHTML(){
     '</div></div>';
 }
 function render(){
+  if(state.segment!=='res')state.highRes=false;
   if(state.page==='ai'){
     document.getElementById('app').innerHTML='<div class="page">'+aiPageHTML()+'</div>';
     window.scrollTo({top:0,behavior:'instant'});
@@ -2063,17 +2455,22 @@ function onPanels(){
   var sw=document.getElementById('scenewrap');if(sw)sw.innerHTML=housePhotoHTML();
 }
 document.addEventListener('click',function(e){
+  if(state.openHot&&!(e.target.closest&&e.target.closest('[data-hot="'+state.openHot+'"]'))){state.openHot=null;render();}
   var el=e.target.closest&&e.target.closest('[data-act]');if(!el)return;var a=el.getAttribute('data-act');
-  if(a==='fam'){var k=el.getAttribute('data-k');if(!famValid(k))return;if(k==='MODA'&&state.multi&&state.units.length>1)return;state.family=k;var f=FAMILIES[k];var v=f.kw.filter(kwValid);state.kw=v.length?v[0]:f.kw[0];state.inputs=(f.battery==='MODA')?state.inputs:state.inputs.slice(0,f.inputs);if(f.battery==='MODA')state.wantBattery=true;clampInputs();render();}
+  var uAttrEl=el.getAttribute('data-u');if(uAttrEl!==null){var uTarget=+uAttrEl;if(uTarget!==state.unit&&state.units[uTarget]){switchUnit(uTarget);}}
+  if(a==='hottoggle'){var hid=el.getAttribute('data-hot');state.openHot=(state.openHot===hid)?null:hid;render();}
+  else if(a==='fam'){var k=el.getAttribute('data-k');if(!famValid(k))return;if(k==='MODA'&&state.multi&&state.units.length>1)return;state.family=k;var f=FAMILIES[k];var v=f.kw.filter(kwValid);state.kw=v.length?v[0]:f.kw[0];state.inputs=(f.battery==='MODA')?state.inputs:state.inputs.slice(0,f.inputs);if(f.battery==='MODA')state.wantBattery=true;clampInputs();render();}
   else if(a==='kw'){var p=+el.getAttribute('data-p');if(!kwValid(p))return;state.kw=p;
     if(state.family==='RISE-261'&&state.units.length>1){syncUnit();state.units.forEach(function(u){if(u.family==='RISE-261')u.kw=p;});}
     render();}
-  else if(a==='seg'){var sg=el.getAttribute('data-s');state.segment=sg;syncUnit();
+  else if(a==='seg'){var sg=el.getAttribute('data-s');state.segment=sg;if(sg!=='res')state.highRes=false;syncUnit();
     state.units.forEach(function(u){if(u.family&&FAMILIES[u.family].seg!==sg){u.family=null;u.kw=null;u.inputs=[];u.wantBattery=null;}});
     loadUnit(state.units[state.unit]);render();goStep('stp-inv');}
   else if(a==='tpcount'){state.tpCount=parseInt(el.getAttribute('data-n'),10)||1;render();}
   else if(a==='synoptin'){state.synOptIn=!state.synOptIn;render();}
-  else if(a==='offgrid'){state.offGrid=!state.offGrid;render();}
+  else if(a==='offgrid'){state.offGrid=!state.offGrid;state.inverterBroken=false;render();}
+  else if(a==='invbroken'){state.inverterBroken=!state.inverterBroken;if(state.inverterBroken)state.offGrid=false;render();}
+  else if(a==='togglehighres'){state.highRes=!state.highRes;render();}
   else if(a==='gopv'){state.openStep='stp-inv';render();setTimeout(function(){var el=document.getElementById('panelCount');if(el){el.focus();el.select&&el.select();}},60);}
   else if(a==='stepopen'){var sid=el.getAttribute('data-s');state.openStep=(state.openStep===sid)?null:sid;render();}
   else if(a==='grohomemode'){state.groHomeMode=el.getAttribute('data-v');render();}
@@ -2085,8 +2482,11 @@ document.addEventListener('click',function(e){
     if(state.thirdParty){state.metering='meter';state.meterType=(state.family==='MODA')?'TPM-6CT-C':state.meterType;}
     else if(state.meterType==='TPM-6CT-C'){state.meterType='TPM-C';}
     render();}
+  else if(a==='highres'){state.highRes=!state.highRes;render();}
   else if(a==='multi'){state.multi=!state.multi;if(state.multi&&state.dongle!=='shinesem'&&state.dongle!=='shinemaster')state.dongle=null;if(!state.multi){syncUnit();state.units=[state.units[state.unit]];state.unit=0;loadUnit(state.units[0]);}render();}
-  else if(a==='unit'){switchUnit(+el.getAttribute('data-i'));var wasInInvStep=!!el.closest('#stp-inv');render();if(wasInInvStep){var pv1=document.getElementById('pvInputsTop');if(pv1)pv1.scrollIntoView({block:'start',behavior:'smooth'});}}
+  else if(a==='unit'){var stepEl=el.closest('.step'),stepId=stepEl?stepEl.id:null;switchUnit(+el.getAttribute('data-i'));render();
+    if(stepId==='stp-inv'){var pv1=document.getElementById('pvInputsTop');if(pv1)pv1.scrollIntoView({block:'start',behavior:'smooth'});}
+    else if(stepId){var freshStep=document.getElementById(stepId);if(freshStep)freshStep.scrollIntoView({block:'start',behavior:'smooth'});}}
   else if(a==='unitadd'){var wasInInvStep2=!!el.closest('#stp-inv');addUnit();render();if(wasInInvStep2){var pv2=document.getElementById('pvInputsTop');if(pv2)pv2.scrollIntoView({block:'start',behavior:'smooth'});}}
   else if(a==='unitdel'){removeUnit(+el.getAttribute('data-i'));render();}
   else if(a==='goai'){state.page='ai';render();}
@@ -2106,7 +2506,7 @@ document.addEventListener('click',function(e){
   else if(a==='axemod'){var j=+el.getAttribute('data-i'),dd=+el.getAttribute('data-d');var inp=state.inputs[j];inp.modules=clamp(inp.modules+dd,1,AXE_MAX_MODULES);render();}
   else if(a==='modamod'){var dd=+el.getAttribute('data-d');if(!state.inputs[0])state.inputs=[{modules:3}];state.inputs[0].modules=clamp(state.inputs[0].modules+dd,1,6);render();}
   else if(a==='cols'){var j=+el.getAttribute('data-i'),cc=+el.getAttribute('data-c');var inp=state.inputs[j];
-    if(cc===2){var need=a2()?1:2;if(inp.mods<need)return;inp.cols=2;
+    if(cc===2){var need=2;if(inp.mods<need)return;inp.cols=2;
       if(a2()){inp.c2=Math.max(1,Math.floor(inp.mods/2));inp.c1=inp.mods-inp.c2;}
       else{inp.c1=Math.ceil(inp.mods/2);inp.c2=Math.floor(inp.mods/2);if(inp.c1<1)inp.c1=1;if(inp.c2<1)inp.c2=1;}}
     else{inp.cols=1;inp.mods=inp.c1+inp.c2;}
@@ -2126,6 +2526,7 @@ document.addEventListener('input',function(e){
   else if(e.target.id==='loadKw'){state.loadKw=clamp(parseFloat(e.target.value||'0')||0,0,999);refreshKeepFocus(onLoadKw);}
   else if(e.target.id==='backupLoadKw'){state.backupLoadKw=clamp(parseFloat(e.target.value||'0')||0,0,99);refreshKeepFocus(onBackupLoadKw);}
   else if(e.target.id==='mainFuseA'){state.mainFuseA=clamp(parseInt(e.target.value||'0',10)||0,0,1000);refreshKeepFocus(function(){var sw=document.getElementById('scenewrap');if(sw)sw.innerHTML=housePhotoHTML();});}
+  else if(e.target.id&&e.target.id.indexOf('tpLabel')===0){var tpIdx=parseInt(e.target.id.slice(7),10);if(!state.tpLabels)state.tpLabels=['','',''];state.tpLabels[tpIdx]=e.target.value.slice(0,24);refreshKeepFocus(function(){var sw=document.getElementById('scenewrap');if(sw)sw.innerHTML=housePhotoHTML();});}
 });
 render();
 </script>
