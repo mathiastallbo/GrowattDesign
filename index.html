@@ -14,12 +14,12 @@
     --slate:#475569;
     --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
     --shadow:0 1px 2px rgba(16,27,45,.04),0 6px 18px rgba(16,27,45,.06);
-    --sbw:820px; --sbgap:16px;
+    --sbw:clamp(460px, calc((100vw - 52px) * 0.68), 1500px); --sbgap:16px;
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
   body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.45}
-  .page{max-width:1280px;margin:0 auto;padding:22px 14px 96px}
+  .page{max-width:none;margin:0;padding:22px 18px 96px}
   .topbar{display:flex;align-items:center;gap:11px;margin-bottom:18px}
   .topbar>div:nth-child(2){flex:1}
   .aibtn{display:inline-flex;align-items:center;gap:7px;background:linear-gradient(135deg,#1a2f22,#0f1b2d);color:#8ffcb8;border:1px solid #2c9d5e;padding:9px 15px;border-radius:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0}
@@ -102,13 +102,88 @@
   .chev{flex-shrink:0;color:var(--mut);display:flex;transition:transform .22s}
   .chev.up{transform:rotate(180deg);color:var(--grnD)}
   @media(min-width:980px){.stepcol{gap:10px}}
+  .stepsum{flex-shrink:0;font-size:12px;font-weight:750;color:var(--grnD);background:var(--grnBg);border:1px solid var(--grnLine);border-radius:20px;padding:4px 11px;max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  /* Wide screens: flow the always-open steps into two packed columns. */
+  .stepcol{display:grid;grid-template-columns:118px minmax(0,1fr);gap:9px;align-items:start;zoom:.8}
+  .steprail{display:flex;flex-direction:column;gap:5px;position:sticky;top:14px}
+  .railbtn{display:flex;flex-direction:column;align-items:stretch;gap:3px;text-align:left;
+    background:var(--card);border:1px solid var(--line);border-radius:10px;padding:7px 8px;
+    cursor:pointer;font-family:inherit;color:var(--text);box-shadow:var(--shadow);
+    transition:border-color .15s,background .15s}
+  .railbtn:hover{border-color:var(--grnLine);background:rgba(51,218,122,.06)}
+  .railbtn.on{border-color:var(--grn);background:var(--grnBg);box-shadow:inset 0 0 0 1px var(--grn)}
+  .railbtn .rtop{display:flex;align-items:center;gap:6px;min-width:0}
+  .railbtn .rn{flex-shrink:0;width:18px;height:18px;border-radius:50%;background:var(--grnBg);
+    border:1px solid var(--grnLine);color:var(--grnD);font-weight:750;font-size:10px;
+    display:flex;align-items:center;justify-content:center}
+  .railbtn.on .rn{background:var(--grn);border-color:var(--grn);color:#fff}
+  .railbtn .rt{font-size:11px;font-weight:700;line-height:1.2;min-width:0}
+  .railbtn .rs{font-size:9.5px;font-weight:700;color:var(--grnD);line-height:1.2;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-left:24px}
+  .stepnav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:11px;
+    padding:10px 12px;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
+  .stepnav .btn{font-size:13px;padding:9px 14px}
+  .stepnav .btn.primary{font-weight:750}
+  .stepnav .nx{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:190px}
+  .steppane .step{margin:0}
+  .steppane .chev{display:none}
+  .steppane .step-h[data-act]{cursor:default}
+  .steppane .step-h[data-act]:hover{background:none}
+  @media(max-width:900px){.stepcol{grid-template-columns:1fr}.steprail{position:static;flex-direction:row;flex-wrap:wrap}.railbtn{flex:1 1 30%}}
+
+  /* Compact scale for the options pane \u2014 keeps all six steps visible without scrolling. */
+  .stepcol{font-size:13px}
+  .stepcol .step{border-radius:12px}
+  .stepcol .step-h{padding:9px 11px;gap:8px}
+  .stepcol .num{width:21px;height:21px;font-size:11px}
+  .stepcol .step-h .ttl{font-size:13px}
+  .stepcol .step-h .desc{font-size:10.5px;line-height:1.35}
+  .stepcol .stepsum{font-size:10.5px;padding:2px 8px;max-width:150px}
+  .stepcol .optbadge{font-size:9px;padding:1px 6px;margin-left:5px}
+  .stepcol .step-b{padding:10px}
+  .stepcol .grid{gap:6px}
+  .stepcol .opt{padding:7px 8px;border-radius:9px}
+  .stepcol .opt .name{font-size:12px}
+  .stepcol .opt .meta{font-size:10px;margin-top:2px;line-height:1.3}
+  .stepcol .opt .x{font-size:9px;margin-top:3px}
+  .stepcol .badge{font-size:9px;padding:1px 6px;margin-top:4px}
+  .stepcol .chip{padding:5px 9px;font-size:11.5px;border-radius:7px}
+  .stepcol .note,.stepcol .notice{font-size:10.5px;padding:7px 9px;margin-top:7px;gap:6px;line-height:1.4;border-radius:8px}
+  .stepcol .sublabel{font-size:10.5px;margin:9px 0 5px}
+  .stepcol .switchrow{padding:8px 10px;border-radius:9px;gap:8px}
+  .stepcol .switchrow .lab{font-size:12px}
+  .stepcol .switchrow .s2{font-size:10px;line-height:1.35}
+  .stepcol .sw{width:38px;height:21px}
+  .stepcol .knob{width:15px;height:15px}
+  .stepcol .sw.on .knob{left:20px}
+  .stepcol .field{gap:4px}
+  .stepcol .field label{font-size:10.5px}
+  .stepcol .field input,.stepcol .field select{padding:7px 9px;font-size:13px;border-radius:8px}
+  .stepcol .field .unit{font-size:9.5px}
+  .stepcol .locked,.stepcol .reqcard{padding:9px 10px;gap:8px;border-radius:9px}
+  .stepcol .locked .t,.stepcol .reqcard .t{font-size:12px}
+  .stepcol .locked .s,.stepcol .reqcard .s{font-size:10.5px;line-height:1.35}
+  .stepcol .pverr{padding:7px 9px;font-size:10.5px;border-radius:8px}
+  .stepcol .tower{padding:9px;border-radius:10px}
+  .stepcol .tower+.tower{margin-top:7px}
+  .stepcol .tower-h{margin-bottom:7px}
+  .stepcol .tower-h .nm,.stepcol .tower-h .kw{font-size:11.5px}
+  .stepcol .modrow+.modrow{margin-top:6px}
+  .stepcol .modrow .lab{font-size:11px}
+  .stepcol .totrow{font-size:10px;margin-top:6px}
+  .stepcol .unittabs{padding:6px 8px;gap:5px;margin-bottom:8px}
+  .stepcol .uchip{padding:4px 8px;font-size:10.5px}
+  .stepcol .pvtop{padding:9px 10px;margin-top:9px;border-radius:9px}
+  .stepcol .batlabel{font-size:9.5px;padding:1px 6px}
+  /* three-up option grids get cramped in a narrow column */
+  @media(max-width:1750px){.stepcol .g3{grid-template-columns:1fr 1fr}}
   .grid{display:grid;gap:10px}
   .g2{grid-template-columns:1fr 1fr}
   .g3{grid-template-columns:repeat(3,1fr)}
   @media(max-width:560px){.g3{grid-template-columns:1fr 1fr}}
-  .opt{text-align:left;border:1px solid var(--line2);background:var(--card2);border-radius:12px;padding:12px 13px;cursor:pointer;font-family:inherit;color:var(--text)}
+  .opt{min-width:0;overflow:hidden;text-align:left;border:1px solid var(--line2);background:var(--card2);border-radius:12px;padding:12px 13px;cursor:pointer;font-family:inherit;color:var(--text)}
   .opt.on{border-color:var(--grn);background:var(--grnBg);box-shadow:inset 0 0 0 1px var(--grn)}
-  .opt .name{font-weight:700;font-size:14px}
+  .opt .name{font-weight:700;font-size:14px;overflow-wrap:anywhere;word-break:break-word}
   .opt.on .name{color:var(--grnD)}
   .opt .meta{font-size:11.5px;color:var(--mut);margin-top:3px}
   .opt.crossed{opacity:.55;cursor:not-allowed;background:#f1f4f8}
@@ -207,6 +282,7 @@
   .field{display:flex;flex-direction:column;gap:6px}
   .field label{font-size:12px;font-weight:600;color:var(--mut)}
   .field input,.field select{border:1px solid var(--line2);border-radius:10px;padding:11px 12px;font-size:16px;font-family:var(--mono);font-weight:700;color:var(--text);background:#fff;width:100%}
+  .field input.bad{border-color:var(--red);box-shadow:0 0 0 3px var(--redBg)}
   .field input:focus,.field select:focus{outline:none;border-color:var(--grn);box-shadow:0 0 0 3px var(--grnBg)}
   .field .unit{font-size:11px;color:var(--faint);font-weight:500}
   .pverr{display:flex;align-items:center;gap:8px;background:var(--redBg);border:1px solid var(--redLine);color:var(--red);border-radius:10px;padding:11px 13px;font-size:12.5px;font-weight:600}
@@ -216,14 +292,22 @@
   @media(min-width:980px){
     .cartcol{
       position:fixed; top:16px;
-      right:max(14px, calc(50vw - 626px));
+      right:18px;
       width:var(--sbw); height:calc(100vh - 32px);
       display:flex; flex-direction:column;
       z-index:40; margin-top:0;
     }
   }
-  .housephoto{position:relative;flex-shrink:0;background:#0d1930;border-radius:16px 16px 0 0;box-shadow:var(--shadow);overflow:hidden}
+  .housephoto{position:relative;flex-shrink:0;background:#d6dee4;border-radius:16px 16px 0 0;box-shadow:var(--shadow);overflow:hidden}
   .photostage{position:relative;width:100%;font-size:0;line-height:0}
+  /* Desktop: cap the diagram so the BOM list always keeps a readable slice of the column. */
+  @media(min-width:980px){
+    .housephoto{display:flex;justify-content:center}
+    .photostage{width:min(100%,calc((100vh - 165px) * 748 / 575))}
+  }
+  @media(min-width:980px) and (min-height:950px){
+    .photostage{width:min(100%,calc((100vh - 190px) * 748 / 575))}
+  }
   .envbg{position:absolute;inset:0;width:100%;height:100%;z-index:0}
   .photostage img.hbase{display:block;width:100%;height:auto;position:relative;z-index:1}
   .complabel{position:absolute;transform:translate(-50%,-50%);font-size:12.5px;font-weight:800;letter-spacing:.03em;color:#c3cfdd;background:rgba(13,22,38,.88);border:1.5px solid rgba(255,255,255,.22);border-radius:20px;padding:4px 10px;pointer-events:none;opacity:.9;transition:.3s;white-space:nowrap;z-index:3;backdrop-filter:blur(2px)}
@@ -314,34 +398,36 @@
   .photocap{position:absolute;left:0;right:0;bottom:0;display:flex;gap:6px;padding:8px 9px;background:linear-gradient(0deg,rgba(4,9,20,.72),transparent)}
   .pmini{flex:1;display:flex;align-items:center;justify-content:center;gap:4px;padding:5px 2px;border-radius:7px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#8b97ac;opacity:.55;filter:grayscale(1);transition:.25s;font-size:9px;font-weight:750;letter-spacing:.02em;text-transform:uppercase}
   .pmini.lit{opacity:1;filter:none;color:#8ffcb8;background:rgba(70,230,140,.2);border-color:rgba(70,230,140,.5)}
-  .cart{background:var(--card);border:1px solid var(--line);border-top:none;border-radius:0 0 16px 16px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
+  .cart{background:var(--card);border:1px solid var(--line);border-top:none;border-radius:0 0 16px 16px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column;zoom:.6}
   @media(min-width:980px){.cart{flex:1 1 auto;min-height:0}}
-  .cart-h{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line);background:var(--card2);flex-shrink:0}
-  .ch-t{font-weight:750;font-size:15px;display:flex;align-items:center;gap:8px}
-  .count-badge{font-size:12px;font-weight:700;background:var(--grn);color:#fff;padding:3px 10px;border-radius:20px;animation:pop .22s ease}
+  .cart-h{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-bottom:1px solid var(--line);background:var(--card2);flex-shrink:0}
+  .ch-t{font-weight:750;font-size:17px;display:flex;align-items:center;gap:8px}
+  .count-badge{font-size:13.5px;font-weight:700;background:var(--grn);color:#fff;padding:3px 10px;border-radius:20px;animation:pop .22s ease}
   @keyframes pop{0%{transform:scale(.7);opacity:.5}60%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
   @keyframes slidein{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
-  .cart-items{flex:1 1 auto;overflow-y:auto;min-height:0;padding:12px}
-  @media(min-width:980px){.cart-items{max-height:96px;flex:0 1 auto}}
+  .cart-items{flex:1 1 auto;overflow-y:auto;min-height:0;padding:7px 12px}
+  @media(min-width:980px){.cart-items{max-height:none;flex:1 1 auto}}
   .empty{padding:30px 18px;text-align:center;color:var(--mut)}
   .empty .big{width:48px;height:48px;border-radius:50%;background:var(--card2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;color:var(--faint)}
-  .empty .t{font-weight:700;font-size:14px;color:var(--text)}
-  .empty .s{font-size:12.5px;margin-top:4px}
-  .gh{font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--faint);font-weight:700;margin:11px 4px 4px}
+  .empty .t{font-weight:700;font-size:15.5px;color:var(--text)}
+  .empty .s{font-size:14px;margin-top:4px}
+  .gh{font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--faint);font-weight:700;margin:7px 4px 3px}
   .gh:first-child{margin-top:0}
-  .citem{display:flex;align-items:center;gap:10px;padding:8px;border-radius:9px;animation:slidein .2s ease}
+  .citem{display:flex;align-items:center;gap:10px;padding:5px 8px;border-radius:9px;animation:slidein .2s ease}
   .citem:hover{background:var(--card2)}
   .cico{width:30px;height:30px;flex-shrink:0;border-radius:8px;background:var(--grnBg);color:var(--grnD);display:flex;align-items:center;justify-content:center}
   .citem-red .cico{background:var(--redBg);color:var(--red)}
-  .cname{flex:1;font-size:12.5px;font-weight:600;line-height:1.3;display:flex;flex-direction:column;min-width:0}
-  .cname small{font-weight:400;color:var(--faint);font-size:11px}
-  .cqty{font-family:var(--mono);font-weight:700;font-size:13px;color:var(--text);flex-shrink:0}
+  .cname{flex:1;font-size:14px;font-weight:600;line-height:1.3;display:flex;flex-direction:column;min-width:0}
+  .cname small{font-weight:400;color:var(--faint);font-size:12.5px}
+  .cqty{font-family:var(--mono);font-weight:700;font-size:15px;color:var(--text);flex-shrink:0}
   .capstrip{display:flex;gap:8px;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
   .capstrip>div{flex:1;text-align:center;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:9px 4px}
-  .capstrip .cl{font-size:10px;color:var(--mut);font-weight:600}
-  .capstrip .cv{font-family:var(--mono);font-weight:750;font-size:15px;margin-top:2px}
-  .cart-foot{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);flex-shrink:0}
-  .cart-disc{display:none;gap:7px;padding:0 14px 13px;font-size:10.5px;color:var(--mut);line-height:1.45;flex-shrink:0}
+  .capstrip .cl{font-size:11.5px;color:var(--mut);font-weight:600}
+  .capstrip .cv{font-family:var(--mono);font-weight:750;font-size:17px;margin-top:2px}
+  .cart-foot{display:flex;gap:8px;padding:8px 10px;border-top:1px solid var(--line);flex-shrink:0}
+  .cart-foot .btn{font-size:14px;padding:8px 14px;gap:7px}
+  .cico{width:34px;height:34px}
+  .cart-disc{display:none;gap:7px;padding:0 14px 13px;font-size:12px;color:var(--mut);line-height:1.45;flex-shrink:0}
   .cart-disc .i{color:var(--amb);flex-shrink:0;margin-top:1px}
   .cartbar{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;border-top:1px solid var(--line2);padding:10px 14px;box-shadow:0 -4px 16px rgba(16,27,45,.08);z-index:50}
   .bar-main{flex:1;display:flex;align-items:center;gap:9px;background:none;border:none;font-family:inherit;font-size:13.5px;color:var(--text);cursor:pointer;text-align:left}
@@ -380,30 +466,38 @@ var FAMILIES={
     note:'3\u2011phase hybrid with <b>integrated backup</b> \u2014 no SYN box. 3 MPPT. <b>1 battery input</b> per the datasheet \u2014 APX 5\u201330 kWh (max charge 15 kW).'},
   'MODA':{name:'MODA All\u2011in\u2011One',phase:'3\u2011phase',backup:'integrated',inputs:1,battery:'MODA',kw:[4,5,6,8,10,12,15],seg:'res',
     note:'All\u2011in\u2011one ESS \u2014 inverter + battery stacked in one cabinet. Integrated backup: <b>63 A</b> whole\u2011home, <b>&lt;10 ms</b> switching, 150% peak (10 s). Up to 3 MPPT, 200% PV oversizing. Only compatible with <b>APX HV Battery 2.0</b> \u2014 no separate BMS module needed.'},
-  'MID-XH':{name:'MID\u2011XH',phase:'3\u2011phase',backup:'box',inputs:2,battery:'APX',kw:[11,12,13,15,17,20,25,30],seg:'res',
+  'MID-XH':{name:'MID\u2011XH',phase:'3\u2011phase',backup:'none',inputs:2,battery:'APX',kw:[11,12,13,15,17,20,25,30],seg:'res',
     note:'Larger residential / light\u2011commercial hybrid, 11\u201330 kW, with <b>2 battery interfaces</b> and support for <b>5\u201360 kWh</b> APX (per the datasheet). Note: with only <b>one</b> battery port connected, max battery power is <b>15 kW</b> \u2014 use both inputs on the larger models for full power. Backup needs a separate <b>SYN 100\u2011XH\u201130</b> box.'},
   'WIT-HU':{name:'WIT (H\u2011U)',phase:'3\u2011phase',backup:'box-required',inputs:3,battery:'APX',kw:[50,63,75,100],seg:'com',
     note:'Commercial 3\u2011phase hybrid with up to <b>3 battery inputs</b>, using <b>APX HV</b> storage. Backup is <b>not integrated</b> \u2014 a separate SYN box must be added. Verify exact battery\u2011input count with your distributor.'},
-  'MID-HU':{name:'MID 29.9\u201150K\u2011HU',phase:'3\u2011phase',backup:'integrated',inputs:3,battery:'APX',kw:[29.9,30,33,36,40,50],seg:'both',
-    note:'3\u2011phase hybrid with <b>integrated backup</b> \u2014 no SYN box. With <b>APX HV Battery 2.0</b>: <b>5\u201390 kWh</b>, <b>1\u20136 pcs per cluster \u00d7 3 clusters</b>. Battery N\u2011wire connection required. Datalogger: ShineWilan\u2011X2 / ShineMaster\u2011X. Supports <b>AI\u2011Smart Mode</b>, <b>Peakshaving</b> and <b>unbalanced 3\u2011phase output</b>. Inverter firmware upgrade required.'},
+  'MID-HU':{name:'MID 29.9\u201150K\u2011HU',phase:'3\u2011phase',backup:'box',inputs:3,battery:'APX',kw:[29.9,30,33,36,40,50],seg:'both',
+    note:'3\u2011phase hybrid. Backup needs a separate <b>SYN 100\u2011XH\u201130</b> box \u2014 not integrated. With <b>APX HV Battery 2.0</b>: <b>5\u201390 kWh</b>, <b>1\u20136 pcs per cluster \u00d7 3 clusters</b>. Battery N\u2011wire connection required. Datalogger: ShineWilan\u2011X2 / ShineMaster\u2011X. Supports <b>AI\u2011Smart Mode</b>, <b>Peakshaving</b> and <b>unbalanced 3\u2011phase output</b>. Inverter firmware upgrade required.'},
   'WIT-XHU':{name:'WIT XHU',phase:'3\u2011phase',backup:'box-required',inputs:3,battery:'AXE',kw:[29.9,30,36,40,50],seg:'com',
     note:'Compact commercial hybrid, <b>29.9\u201350 kW</b>. Backup is <b>not integrated</b> \u2014 a separate <b>SYN box</b> is required. Uses <b>AXE HV</b> cabinet storage only (not APX). 3 battery inputs.'},
   'RISE-261':{name:'RISE 261H\u2011XH',phase:'3\u2011phase',backup:'integrated',inputs:1,battery:'RISE',kw:[50,63,85,125],seg:'com',
     note:'All\u2011in\u2011one C&I hybrid ESS: PCS + 10 MPPT + <b>261 kWh LFP battery</b> + UPS/STS + EMS in one IP55 cabinet. Integrated backup (&lt;10 ms), diesel\u2011generator support. Parallel up to <b>10 units \u2248 1.25 MW / 2.61 MWh</b> \u2014 add more units via Advanced settings. Verify availability with your distributor.'}
 };
 var DONGLES={
-  wifi:{name:'Growatt ShineWiFi\u2011X',desc:'WiFi USB dongle'},
-  lan:{name:'Growatt ShineLAN\u2011X',desc:'LAN / Ethernet dongle'},
-  '4g':{name:'Growatt Shine4G\u2011X',desc:'4G cellular dongle'},
-  shinesem:{name:'Growatt ShineSEM\u2011X',desc:'Smart Energy Manager \u2014 metering included'},
-  shinemaster:{name:'Growatt ShineMaster',desc:'Multi\u2011inverter datalogger (C&I)'},
-  grohome:{name:'GroHomeManager\u2011X',desc:'HEMS \u2014 CT + RF included'}
+  wifi:{name:'Growatt ShineWiFi\u2011X',desc:'WiFi USB dongle',
+    how:'Plugs straight into the inverter\u2019s COM port and joins the property\u2019s WiFi. It uploads production, battery and fault data to ShineServer every few minutes, and is what the ShinePhone app reads. One stick per inverter. Needs decent WiFi coverage at the inverter \u2014 metal doors and long distances are the usual cause of dropouts.'},
+  lan:{name:'Growatt ShineLAN\u2011X',desc:'LAN / Ethernet dongle',
+    how:'Same job as the WiFi stick, but over a wired Ethernet cable to the router. Pick this where WiFi is unreliable or the inverter sits in a basement or garage \u2014 a wired link is the most stable way to keep the system online. One per inverter.'},
+  '4g':{name:'Growatt Shine4G\u2011X',desc:'4G cellular dongle',
+    how:'Carries its own SIM and connects over the mobile network, so the site needs no internet of its own. Typical for holiday homes, farms and sites without broadband. Check mobile coverage at the inverter before choosing it, and remember the subscription is an ongoing cost.'},
+  shinesem:{name:'Growatt ShineSEM\u2011X',desc:'Smart Energy Manager \u2014 metering included',
+    how:'A DIN\u2011rail energy manager rather than a stick. It talks to the inverters over RS485, and its <b>built\u2011in CT metering</b> measures the grid connection point \u2014 so no separate smart meter is needed. It handles several inverters at once and is what enables export limiting and self\u2011consumption control across the whole system.'},
+  shinemaster:{name:'Growatt ShineMaster',desc:'Multi\u2011inverter datalogger (C&I)',
+    how:'A datalogger for larger C&amp;I plants. It collects data from many inverters over RS485 and sends it on to ShineServer or a local SCADA system, and gives the same placement and battery\u2011side functions as ShineSEM\u2011X. <b>Metering is not built in</b> \u2014 add a smart meter in the next step, otherwise the system has no reading of the grid connection point.'},
+  grohome:{name:'GroHome\u200bManager\u2011X',desc:'HEMS \u2014 CT + RF included',
+    how:'The home energy management system. It sits by the consumer unit, measures the grid connection with its <b>own CT clamps</b>, and steers charging, discharging and export for the whole home \u2014 so the smart\u2011meter step is skipped entirely. It reaches each inverter either over RS485 or wirelessly through a ShineRFStick\u2011X2 (one per inverter, up to 12).'}
 };
 var GROUP_ORDER=['Inverter','Electrical','Connectivity','Metering','Backup','Battery'];
 var GICON={Inverter:'cpu',Electrical:'zap',Connectivity:'wifi',Metering:'activity',Backup:'shield',Battery:'battery'};
 var ICONS={
  gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>',
  chev:'<polyline points="6 9 12 15 18 9"/>',
+ arrowr:'<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>',
+ arrowl:'<line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>',
  zap:'<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
  cpu:'<rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/>',
  battery:'<rect x="1" y="6" width="18" height="12" rx="2"/><line x1="23" y1="11" x2="23" y2="13"/>',
@@ -445,7 +539,7 @@ function acBreaker(){
 }
 
 // APX inputs: {mods,cols,c1,c2}. AXE inputs: {modules}. Shape depends on fam().battery.
-var state={page:'main',openStep:'stp-seg',openHot:null,offGrid:false,inverterBroken:false,segment:null,multi:false,thirdParty:false,tpCount:1,tpLabels:['','',''],synOptIn:false,groHomeMode:'rs485',aiMode:false,aiSmart:false,aiPeak:false,aiUnbal:false,unit:0,units:[],panelW:450,panelCount:0,family:null,kw:null,dongle:null,metering:null,meterType:'TPM-6CT-C',backupOn:true,apx:'1.0',inputs:[],wantBattery:null,loadKw:0,backupMode:null,backupLoadKw:0,mainFuseA:null,highRes:false};
+var state={page:'main',openStep:'stp-seg',openHot:null,offGrid:false,inverterBroken:false,bypassOn:false,segment:null,multi:false,thirdParty:false,tpCount:1,tpLabels:['','',''],synOptIn:false,groHomeMode:'rs485',aiMode:false,aiSmart:false,aiPeak:false,aiUnbal:false,unit:0,units:[],panelW:450,panelCount:0,family:null,kw:null,dongle:null,metering:null,meterType:'TPM-6CT-C',backupOn:false,apx:'1.0',inputs:[],wantBattery:null,loadKw:0,backupMode:null,backupLoadKw:0,mainFuseA:null,highRes:false};
 function snapshotUnit(){return {family:state.family,kw:state.kw,backupOn:state.backupOn,backupMode:state.backupMode,backupLoadKw:state.backupLoadKw,panelW:state.panelW,panelCount:state.panelCount,wantBattery:state.wantBattery,apx:state.apx,inputs:state.inputs};}
 function loadUnit(u){state.family=u.family;state.kw=u.kw;state.backupOn=u.backupOn;state.backupMode=(u.backupMode!==undefined?u.backupMode:null);state.backupLoadKw=(u.backupLoadKw!==undefined?u.backupLoadKw:0);state.panelW=(u.panelW!==undefined?u.panelW:450);state.panelCount=(u.panelCount!==undefined?u.panelCount:0);state.wantBattery=u.wantBattery;state.apx=u.apx;state.inputs=u.inputs;}
 function syncUnit(){state.units[state.unit]=snapshotUnit();}
@@ -494,8 +588,11 @@ function modelName(famKey,kw){
 function isAxeFam(){return !!(fam()&&fam().battery==='AXE');}
 function backupType(){return state.family?fam().backup:null;}
 function isHU(){return backupType()==='integrated';}
-function needsSyn(){var b=backupType();return b==='box-required'||(b==='box'&&state.backupOn)||(!!state.synOptIn&&state.units.length<=1&&state.family!=='MODA');}
+function needsSyn(){var b=backupType();if(b==='none')return false;return b==='box-required'||(b==='box'&&state.backupOn);}
 function a2(){return state.apx==='2.0';}
+function modaModH(){return state.highRes?26.4:18;}
+function modaBaseH(){return state.highRes?15.6:13;}
+function modaStackH(mods){return modaBaseH()+(mods||0)*modaModH()+22;}
 function maxInputs(){if(!fam())return 0;var b=fam().battery;if(b!=='APX')return fam().inputs;return Math.min(fam().inputs,a2()?3:2);}
 function minMods(){return a2()?0:1;}
 function maxMods(){return a2()?5:6;}
@@ -661,7 +758,7 @@ function buildText(){syncUnit();var saved=snapshotUnit();var s='GROWATT - SYSTEM
   s+='Metering: '+(state.metering==='meter'?('Smart Meter '+state.meterType+(state.dongle==='shinesem'?' (extra \u2014 metering included in ShineSEM)':'')):(state.dongle==='shinesem'?'Included in ShineSEM-X':'(none)'))+'\n';
   s+='\nBILL OF MATERIALS\n';var bom=buildBOM();if(!bom.length)s+='(nothing selected yet)\n';
   bom.forEach(function(r){s+=(''+r.qty).padStart(3)+' x  '+r.item.split('|')[0]+'\n';});return s;}
-function stepOpen(id){return state.openStep===id;}
+function stepOpen(id){return activeStepId()===id;}
 function stepSum(id){
   if(id==='stp-seg')return state.segment==='res'?'Residential':(state.segment==='com'?'Commercial':'');
   if(id==='stp-inv'){var a=[];if(totalKWp()>0)a.push(totalKWp()+' kWp');if(state.family&&state.kw)a.push(modelName(state.family,state.kw));if(state.units.length>1)a.push(state.units.length+'\u00d7');return a.join(' \u00b7 ');}
@@ -676,8 +773,9 @@ function stepHead(n,icn,t,d,badge,id){
   var open=id?stepOpen(id):true;
   return '<div class="step-h"'+(id?(' data-act="stepopen" data-s="'+id+'"'):'')+'><div class="num">'+n+'</div>'+
     '<div style="flex:1;min-width:0"><div class="ttl">'+t+(badge?'<span class="optbadge">'+badge+'</span>':'')+'</div>'+
-    '<div class="desc">'+((!open&&sum)?('<b style="color:var(--grnD)">'+sum+'</b>'):d)+'</div></div>'+
-    (id?'<span class="chev'+(open?' up':'')+'">'+ic('chev',15)+'</span>':'')+'</div>';
+    (open?('<div class="desc">'+d+'</div>'):'')+'</div>'+
+    (sum?'<span class="stepsum">'+sum+'</span>':'')+
+    (id?'<span class="chev'+(open?' up':'')+'">'+ic('chev',14)+'</span>':'')+'</div>';
 }
 function gaugeHTML(){
   if(!state.kw) return '';
@@ -699,6 +797,44 @@ function pvTopHTML(){
   }
   var over=pvOver();
   return '<div class="pvtop'+(over?' over':'')+'"><div class="pvrow"><div class="pvbig">'+kwp+'<small> kWp</small></div><div class="pvhint">vs this Growatt '+fam().name+' '+state.kw+' kW</div></div>'+gaugeHTML()+'</div>';
+}
+function stepDefs(){return [
+  {id:'stp-seg',n:1,t:'System type',f:segStep},
+  {id:'stp-inv',n:2,t:'Panels &amp; inverter',f:invStep},
+  {id:'stp-online',n:3,t:'Online',f:dongleStep},
+  {id:'stp-meter',n:4,t:'Energy meter',f:meterStep},
+  {id:'stp-battery',n:5,t:'Battery',f:batteryStep},
+  {id:'stp-backup',n:6,t:'Backup',f:backupStep}
+];}
+function activeStepId(){
+  var ds=stepDefs();
+  for(var i=0;i<ds.length;i++)if(ds[i].id===state.openStep)return state.openStep;
+  return ds[0].id;
+}
+function railHTML(){
+  var act=activeStepId();
+  return stepDefs().map(function(d){
+    var sum=stepSum(d.id);
+    return '<button class="railbtn'+(d.id===act?' on':'')+'" data-act="stepopen" data-s="'+d.id+'">'+
+      '<span class="rtop"><span class="rn">'+d.n+'</span><span class="rt">'+d.t+'</span></span>'+
+      (sum?'<span class="rs">'+sum+'</span>':'')+'</button>';
+  }).join('');
+}
+function stepNavHTML(){
+  var ds=stepDefs(),act=activeStepId(),i=0;
+  for(var k=0;k<ds.length;k++)if(ds[k].id===act)i=k;
+  var prev=i>0?ds[i-1]:null, next=i<ds.length-1?ds[i+1]:null;
+  var h='<div class="stepnav">';
+  h+=prev?('<button class="btn" data-act="stepopen" data-s="'+prev.id+'">'+ic('arrowl',15)+'Back</button>'):'<span></span>';
+  h+=next?('<button class="btn primary" data-act="stepopen" data-s="'+next.id+'"><span class="nx">Next \u00b7 '+next.t+'</span>'+ic('arrowr',15)+'</button>')
+         :('<button class="btn primary" data-act="print">'+ic('printer',15)+'<span class="nx">Print BOM</span></button>');
+  return h+'</div>';
+}
+function activeStepHTML(){
+  var act=activeStepId(),ds=stepDefs(),out=null;
+  for(var i=0;i<ds.length;i++)if(ds[i].id===act)out=ds[i].f();
+  if(out===null)out=ds[0].f();
+  return out+stepNavHTML();
 }
 function segStep(){
   var segs=[['res','Residential','Villa / bostad \u2014 MOD, MID &amp; MODA \u00b7 APX battery'],['com','Commercial','C&amp;I \u2014 MID, WIT &amp; RISE \u00b7 APX, AXE &amp; RISE storage']];
@@ -728,7 +864,7 @@ function invFamSectionHTML(){
     var v=FAMILIES[k],valid=famValid(k),on=state.family===k;
     var modaLock=(k==='MODA'&&state.multi&&state.units.length>1);
     var cls='opt';if(valid&&on)cls+=' on';if(!valid||modaLock)cls+=' crossed';if(on&&!valid)cls+=' invalidsel';
-    var badge=v.backup==='integrated'?'<span class="badge g">'+ic('shield',11)+'Integrated backup</span>':'<span class="badge a">'+ic('plug',11)+'Needs SYN box</span>';
+    var badge=v.backup==='integrated'?'<span class="badge g">'+ic('shield',11)+'Integrated backup</span>':(v.backup==='none'?'<span class="badge a">'+ic('alert',11)+'No backup</span>':'<span class="badge a">'+ic('plug',11)+'Needs SYN box</span>');
     var x=!valid?'<div class="x">'+ic('alert',11)+'Max '+famMaxKWp(k)+' kWp \u00b7 too small</div>':(modaLock?'<div class="x">'+ic('alert',11)+'Single inverter only \u2014 no series</div>':'');
     return '<button class="'+cls+'" data-act="fam" data-k="'+k+'"'+(modaLock?' disabled title="MODA supports one inverter only \u2014 add a third\u2011party inverter instead"':'')+'><div class="name">'+v.name+'</div><div class="meta">'+v.phase+' \u00b7 '+v.inputs+' input'+(v.inputs>1?'s':'')+' \u00b7 '+v.battery+' battery</div>'+badge+x+'</button>';
   }).join('');
@@ -780,6 +916,7 @@ function dongleStep(){
   else if(state.dongle==='grohome')hint='<div class="notice g">'+ic('check',14)+'<span><b>GroHomeManager\u2011X</b> added \u2014 <b>CT metering is built in</b>, so the smart\u2011meter step is skipped entirely. A <b>ShineRFStick\u2011X2</b> is added to every inverter (up to 12).</span></div>'+
     '<div class="sublabel" style="margin-top:10px">Connection to each inverter</div><div class="chips"><button class="chip sm '+(state.groHomeMode==='rs485'?'on':'')+'" data-act="grohomemode" data-v="rs485">RS485 \u00b7 wired</button><button class="chip sm '+(state.groHomeMode==='wireless'?'on':'')+'" data-act="grohomemode" data-v="wireless">Wireless \u00b7 RF</button></div>';
   else if(state.dongle)hint='<div class="notice g">'+ic('check',14)+'<span><b>'+DONGLES[state.dongle].name+'</b> added. Tap it again to remove.</span></div>';
+  if(state.dongle&&DONGLES[state.dongle].how)hint+='<div class="note" style="margin-top:9px">'+ic('info',14)+'<span><b>How it works \u2014 '+DONGLES[state.dongle].name+'</b><br>'+DONGLES[state.dongle].how+'</span></div>';
   else if(multiLock)hint='<div class="pverr">'+ic('alert',15)+'Multi\u2011inverter systems require <b>ShineSEM\u2011X</b> or <b>ShineMaster</b> \u2014 pick one above.</div>';
   else hint='<div class="note">'+ic('info',14)+'<span>Add a Growatt dongle to get the system online \u2014 <b>ShineWiFi\u2011X</b> is the standard WiFi stick, and that\u2019s all a single inverter needs. A <b>smart meter is recommended</b> in step 4.</span></div>';
   var lockNote='';
@@ -880,12 +1017,14 @@ function backupBodyHTML(){
   var body;
   if(!state.family) body='<div class="placeholder"><span class="i">'+ic('info',15)+'</span>Choose an inverter first \u2014 backup depends on the model.</div>';
   else{var bt=backupType();
+    if(bt==='none'){state.backupMode=null;
+      return '<div class="reqcard"><span class="ico">'+ic('alert',22)+'</span><div><div class="t">Backup not available</div><div class="s">'+fam().name+' has no backup capability \u2014 no integrated backup and no SYN box option. Grid\u2011tied only.</div></div></div>';}
     if(bt==='integrated') body='<div class="locked"><span class="ico">'+ic('shield',22)+'</span><div><div class="t">Backup already integrated</div><div class="s">'+fam().name+' has built\u2011in off\u2011grid backup \u2014 no SYN box required.</div></div></div>'+
       (state.family==='MODA'
         ?'<div class="note" style="margin-top:10px">'+ic('info',14)+'<span>A separate SYN box <b>isn\u2019t needed with MODA</b> \u2014 the same switching &amp; backup functions are already built in.</span></div>'
         :state.units.length>1
           ?'<div class="note" style="margin-top:10px">'+ic('info',14)+'<span>A SYN box can only be added with a <b>single inverter</b> \u2014 not available with multiple '+fam().name+' units.</span></div>'
-          :'<div class="switchrow" style="margin-top:10px"><div><div class="lab">Add a SYN box (optional)</div><div class="s2">Not required \u2014 '+fam().name+'\u2019s backup is already integrated. Add one anyway for extra switching capacity if you want it.</div></div><span class="sw '+(state.synOptIn?'on':'')+'" data-act="synoptin"><span class="knob"></span></span></div>');
+          :'');
     else if(bt==='box-required') body='<div class="reqcard"><span class="ico">'+ic('alert',22)+'</span><div><div class="t">Backup not integrated \u2014 needs to be added</div><div class="s">'+fam().name+' requires a separate SYN box. Added automatically.</div></div></div><div class="notice g">'+ic('check',14)+'<span><b>'+synItem().split('|')[0]+'</b> added to your system.</span></div>';
     else body='<div class="switchrow"><div><div class="lab">Include SYN backup box</div><div class="s2">'+fam().name+' backup is <b>not integrated</b> \u2014 add a SYN box for off\u2011grid.</div></div><span class="sw '+(state.backupOn?'on':'')+'" data-act="backup"><span class="knob"></span></span></div>'+(state.backupOn?'<div class="notice g">'+ic('check',14)+'<span><b>Growatt SYN 100\u2011XH\u201130</b> (3\u2011phase) added. Switch time &lt; 0.5 s.</span></div>':'<div class="note">'+ic('info',14)+'<span>No backup box \u2014 grid\u2011tied only (no power during outages).</span></div>');
   }
@@ -913,13 +1052,18 @@ function backupBodyHTML(){
       return body+loadSection;
     }
     var mo=maxOffgridKw();
-    var backupLoadField='<div class="field" style="margin-top:14px"><label>Backup load \u2014 max power draw (kW)</label><input id="backupLoadKw" type="number" inputmode="decimal" min="0" max="99" step="0.1" value="'+(state.backupLoadKw||'')+'" placeholder="e.g. 5"></div>';
-    loadSection=backupLoadField+
+    var isWholeBk=state.backupMode==='whole';
+    var bkOver=state.backupLoadKw>0&&mo>0&&state.backupLoadKw>mo;
+    var backupLoadField='<div class="field" style="margin-top:14px"><label>Backup load \u2014 max power draw (kW)</label><input id="backupLoadKw" class="'+(bkOver?'bad':'')+'" type="number" inputmode="decimal" min="0" max="99" step="0.1" value="'+(state.backupLoadKw||'')+'" placeholder="e.g. 5"></div>';
+    var bkOverErr=bkOver?('<div class="pverr" style="margin-top:10px">'+ic('alert',15)+'<span><b>'+state.backupLoadKw+' kW is more than this system can supply off\u2011grid ('+mo+' kW).</b> Lower the backup load, choose a larger inverter, or add battery capacity.</span></div>'):'';
+    // Whole-home backup: the backup load IS the whole property, so there is no separate estimate.
+    var propField=isWholeBk?'':
+      ('<div class="field" style="margin-top:13px"><label>Property peak load (kW) \u2014 manual estimate</label><input id="loadKw" type="number" inputmode="decimal" min="0" max="999" step="0.5" value="'+(state.loadKw||'')+'" placeholder="e.g. 6"></div>'+
+       '<div id="loadCalc">'+loadCalcHTML()+'</div>');
+    loadSection=backupLoadField+bkOverErr+
       '<div class="note" style="margin-top:10px">'+ic('info',14)+'<span><b>Max off\u2011grid power: '+mo+' kW</b> \u2014 min(inverter rating, battery kWh \u00f7 2), per the Growatt off\u2011grid power table.</span></div>'+
       '<div class="grid g2" style="margin-top:9px">'+mcards+'</div>'+
-      backupGuidanceHTML()+
-      '<div class="field" style="margin-top:13px"><label>Property peak load (kW) \u2014 manual estimate</label><input id="loadKw" type="number" inputmode="decimal" min="0" max="999" step="0.5" value="'+(state.loadKw||'')+'" placeholder="e.g. 6"></div>'+
-      '<div id="loadCalc">'+loadCalcHTML()+'</div>';
+      backupGuidanceHTML()+propField;
   }
   return body+loadSection;
 }
@@ -1118,7 +1262,8 @@ function phaseOffsetPath(d,idx,spacing){
   return 'M'+out.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);}).join(' L');
 }
 var PHASE_WIRES=[{n:'L1',c:'#e8c11a'},{n:'L2',c:'#2ea043'},{n:'L3',c:'#e0473f'},{n:'N',c:'#2b6fce'},{n:'PE',c:'#9db32e'}];
-var PHASE_SPACING=7.5;
+var PHASE_SPACING=9.5;
+var SYN_FEED_GAP=72;   // drop of the inverter\u2192SYN bundle below the grid bundle
 function acGridLit(){
   return state.metering==='meter'||state.dongle==='shinesem'||state.dongle==='shinemaster'||state.dongle==='grohome';
 }
@@ -1210,7 +1355,7 @@ function drawExtraUnitRow(u,rowIx,rowBaseY,scale,skx,sky,active,mir){
   if(isModaU){
     s+=drawIsoBox(rowIx,rowBaseY,iw,ih,skx*scale,sky*scale,'#f7f9fb','#ffffff','#d7dde3',true);
     var mm=(u.inputs[0]&&u.inputs[0].modules)||0;
-    var mBaseH=13*scale,mMh=15*scale,mCapH=18*scale,mTh=mBaseH+mm*mMh+mCapH;
+    var mBaseH=13*scale,mMh=18*scale,mCapH=18*scale,mTh=mBaseH+mm*mMh+mCapH;
     var mBoxFaces=isoBox(rowIx,rowBaseY,iw,mTh,skx*scale,sky*scale);
     s+='<polygon points="'+ptsStr(mBoxFaces.top)+'" fill="#fbfcfd"></polygon><polygon points="'+ptsStr(mBoxFaces.side)+'" fill="#ccd4de"></polygon>';
     var mcy=rowBaseY;
@@ -1238,7 +1383,7 @@ function drawExtraUnitRow(u,rowIx,rowBaseY,scale,skx,sky,active,mir){
   }
   towersU=towersU.slice(0,6);
   var nT=towersU.length,tGap=7*scale;
-  var tAvail=mir?(458-(rowIx+iw+26)):(rowIx-26-14);
+  var tAvail=mir?(438-(rowIx+iw+26)):(rowIx-26-14);
   var twU=nT?Math.min(46*scale,(tAvail-(nT-1)*tGap)/nT):0;
   var totTW=nT?nT*twU+(nT-1)*tGap:0;
   var tx0u=mir?(rowIx+iw+26):(rowIx-26-totTW);
@@ -1303,11 +1448,11 @@ function commercialSceneHTML(){
   var isMulti=state.multi&&state.units.length>1;
   var baseY=(isMulti?418:452)+((state.highRes&&!isMulti)?30:0)-((state.highRes&&!isMulti&&!isModa)?35:0);
   var grayTop=H*0.5;
-  var floorFL=[130,560],floorFR=[586,560],floorBR=[700,grayTop+13],floorBL=[244,grayTop+13];
+  var floorFL=[110,560],floorFR=[566,560],floorBR=[680,grayTop+13],floorBL=[224,grayTop+13];
 
   var hrShift=(state.highRes&&!isMulti)?50:0;
   var hrBig=(state.highRes&&!isMulti);
-  var ix=330-hrShift,iw=hrBig?(isModa?102:88):62,ih=hrBig?(isModa?380:164):98, rx=290-hrShift,rw=150,rh=112;
+  var ix=310-hrShift,iw=hrBig?(isModa?102:88):62,ih=hrBig?(isModa?380:164):98, rx=270-hrShift,rw=150,rh=112;
   var sBattGap=hrBig?45:80;
   var sN=towers.length,sGap=7,sAvail=ix-sBattGap-14;
   var sTw=sN?Math.min(46,(sAvail-(sN-1)*sGap)/sN):46;
@@ -1315,14 +1460,15 @@ function commercialSceneHTML(){
   var sTowerH=sN?Math.max.apply(null,towers.map(function(t){return 13+t.mods*(t.axe?9:15)+(t.bms?23:0);})):0;
   var tx0=ix-sBattGap-sTotW;
   var invAttachX=isRise?(rx+rw):(ix+iw), invAttachY=isRise?(baseY-rh*0.55):(baseY-ih*((isModa&&hrBig)?0.275:0.55));
-  var twX=655,twTop=78,twBase=170;
-  var towerShift=58, gridDX=52;
+  var invEdgeR=invAttachX+skx;
+  var twX=635,twTop=78,twBase=170;
+  var towerShift=58, gridDX=32;
   twBase-=towerShift;
-  var kwhW=48,kwhH=31,kwhX=655-kwhW/2,kwhTopY=190-towerShift+((state.highRes&&!isMulti)?20:0);
-  var feedX=655,feedY=180;
-  var cabX=622,cabBaseY=352-((state.highRes&&!isMulti)?20:0),cabW=66,cabH=84;
+  var kwhW=48,kwhH=31,kwhX=635-kwhW/2,kwhTopY=190-towerShift+((state.highRes&&!isMulti)?20:0);
+  var feedX=635,feedY=180;
+  var cabX=602,cabBaseY=352-((state.highRes&&!isMulti)?20:0),cabW=79,cabH=101;
   var cabBoxBase=cabBaseY-22;
-  var mtrX=576,mtrBaseY=340,mtrW=28,mtrH=42;
+  var mtrX=556,mtrBaseY=340,mtrW=28,mtrH=42;
   var isSem=state.dongle==='shinesem';
   var isMaster=state.dongle==='shinemaster';
   var isGroHome=state.dongle==='grohome';
@@ -1332,7 +1478,7 @@ function commercialSceneHTML(){
   var showSmartAtFeed=!showSemBox&&!isGroHome&&hasMeterSel;
   var smW=24,smH=34,semBoxW=34,semBoxH=48;
   var mgrW=showSemBox?26:24, mgrH=showSemBox?38:34;
-  var cabLeftCx=cabX+cabW*0.28, cabRightCx=cabX+cabW*0.72, cabInTop=cabBoxBase-cabH+13;
+  var cabLeftCx=cabX+cabW*0.30, cabRightCx=cabX+cabW*0.72, cabInTop=cabBoxBase-cabH+15;
   var mgrX=cabLeftCx-mgrW/2, mgrTopY=cabInTop, mgrBaseY=mgrTopY+mgrH;
   var groBoxH=40;
   var groX=feedX-semBoxW/2,groBaseY=cabBoxBase-cabH-14;
@@ -1346,6 +1492,8 @@ function commercialSceneHTML(){
     '</svg>';
   s+='<svg class="olsvg" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none">';
 
+  var showSynBox=bom.some(function(r){return r.g==='Backup'&&r.item.indexOf('SYN')>=0;})&&!isGroHome;
+  var showFeedDot=!(showSmartAtFeed||isGroHome||showSemBox||showSynBox);
   var gridChainSVG='';
   gridChainSVG+='<g class="gpole'+(metOn?' lit':'')+'">'+
      '<g transform="translate('+gridDX+',-'+towerShift+')">'+
@@ -1363,10 +1511,10 @@ function commercialSceneHTML(){
      '<circle cx="655" cy="90.5" r="2.2" fill="#e4eaf0" stroke="#9aa5b1" stroke-width="0.7"></circle>'+
      '<circle cx="679" cy="90.5" r="2.2" fill="#e4eaf0" stroke="#9aa5b1" stroke-width="0.7"></circle>'+
      '</g>'+
-     (state.offGrid?'':acCable('M'+(655+gridDX)+','+twBase+' L'+(655+gridDX)+','+(kwhTopY-16)+' L655,'+(kwhTopY-16)+' L655,'+kwhTopY,true,'cable'))+
-     (state.offGrid?'':acCable('M655,'+(kwhTopY+kwhH)+' L'+feedX+','+(feedY-5),true,'cable'))+
-     ((showSmartAtFeed||isGroHome||showSemBox||showSynBox)?'':'<circle cx="'+feedX+'" cy="'+feedY+'" r="4.5" fill="#eef4f0" stroke="#33da7a" stroke-width="1.8"></circle>')+
-     (state.offGrid?'':acCable('M'+feedX+','+(feedY+5)+' L'+feedX+','+(cabBoxBase-cabH-28)+' L'+(cabX+cabW/2)+','+(cabBoxBase-cabH-28)+' L'+(cabX+cabW/2)+','+(cabBoxBase-cabH+2),true,'cable'))+
+     (state.offGrid?'':acCable('M'+(655+gridDX)+','+twBase+' L'+(655+gridDX)+','+(kwhTopY-16)+' L635,'+(kwhTopY-16)+' L635,'+kwhTopY,true,'cable'))+
+     (state.offGrid?'':acCable('M635,'+(kwhTopY+kwhH)+' L'+feedX+','+(showFeedDot?(feedY-5):(feedY+5)),true,'cable'))+
+     (showFeedDot?'<circle cx="'+feedX+'" cy="'+feedY+'" r="4.5" fill="#eef4f0" stroke="#33da7a" stroke-width="1.8"></circle>':'')+
+     (state.offGrid?'':acCable('M'+feedX+','+(feedY+5)+' L'+feedX+','+(cabBoxBase-cabH),true,'cable'))+
      '</g>';
   gridChainSVG+='<rect x="'+kwhX+'" y="'+kwhTopY+'" width="'+kwhW+'" height="'+kwhH+'" rx="3" fill="#eef1f5" stroke="'+(metOn?'#33da7a':'#9aa5b1')+'" stroke-width="1.6"></rect>';
   gridChainSVG+='<rect x="'+(kwhX+4)+'" y="'+(kwhTopY+4)+'" width="'+(kwhW-8)+'" height="7.5" rx="1.5" fill="#2b3440"></rect>';
@@ -1378,12 +1526,13 @@ function commercialSceneHTML(){
   }
   gridChainSVG+=drawIsoBox(cabX,cabBoxBase,cabW,cabH,skx*0.8,sky*0.8,'#dfe5ec','#eef2f6','#c4ccd6',true);
   var mgrInside=showSemBox||isGroHome;
-  if(!mgrInside){
+  if(!mgrInside&&!showSynBox&&!showSmartAtFeed){
     gridChainSVG+='<line x1="'+(cabX+cabW/2)+'" y1="'+(cabBoxBase-cabH+6)+'" x2="'+(cabX+cabW/2)+'" y2="'+(cabBoxBase-6)+'" stroke="#b6c0cb" stroke-width="1"></line>';
     gridChainSVG+='<rect x="'+(cabX+cabW*0.18)+'" y="'+(cabBoxBase-cabH*0.8)+'" width="'+(cabW*0.64)+'" height="'+(cabH*0.15)+'" rx="1.5" fill="#aeb9c5"></rect>';
+  } else if(!mgrInside&&!showSmartAtFeed){
+    gridChainSVG+='<rect x="'+(cabX+cabW*0.18)+'" y="'+(cabInTop+3)+'" width="'+(cabW*0.64)+'" height="'+(cabH*0.13)+'" rx="1.5" fill="#aeb9c5"></rect>';
   }
   gridChainSVG+=screw(cabX+cabW-6,cabBoxBase-cabH*0.45)+screw(cabX+6,cabBoxBase-cabH*0.45);
-  var showSynBox=bom.some(function(r){return r.g==='Backup'&&r.item.indexOf('SYN')>=0;})&&!isGroHome;
 function pvRealistic(cxCenter,bottomY,w,h){
   var x0=cxCenter-w/2, y0=bottomY-h;
   var s='<rect x="'+x0+'" y="'+y0+'" width="'+w+'" height="'+h+'" rx="1.6" fill="#dfe4e9" stroke="#9aa3ac" stroke-width="1"></rect>';
@@ -1493,6 +1642,14 @@ function offGridHotspotHTML(cxPct,cyPct){
     (state.inverterBroken?'Inverter fault \u2014 shown greyed out and inactive.':(state.offGrid?'Utility feed is disconnected \u2014 the load is supplied from the inverters only.':'Normal operation \u2014 utility, inverters and load are all connected.'))+'</div>';
   return hotWrap('grid',cxPct,cyPct,body,'zap');
 }
+function bypassHotspotHTML(cxPct,cyPct){
+  var body='<div class="hh">Bypass breaker</div>'+
+    '<button class="hotbtn'+(!state.bypassOn?' on':'')+'" data-act="bypasson">Bypass OFF</button>'+
+    '<button class="hotbtn'+(state.bypassOn?' on':'')+'" data-act="bypasson">Bypass ON</button>'+
+    '<div style="font-size:10.5px;color:var(--mut);line-height:1.35;margin-top:6px">'+
+    (state.bypassOn?'Load is fed past the inverter \u2014 the inverter is isolated and shown shaded.':'Load is fed through the inverter.')+'</div>';
+  return hotWrap('bypass',cxPct,cyPct,body,'plug');
+}
 function highResHotspotHTML(cxPct,cyPct){
   var body='<div class="hh">Diagram detail</div>'+
     '<button class="hotbtn'+(!state.highRes?' on':'')+'" data-act="togglehighres">Standard</button>'+
@@ -1526,6 +1683,11 @@ function ctg(cx,cy,tdx,dir){
   else if(dir==='left')ah='<polygon points="'+(cx-8)+','+(cy-4.5)+' '+(cx-8)+','+(cy+4.5)+' '+(cx-16)+','+cy+'" fill="#1f7a45" stroke="#fff" stroke-width="0.8"></polygon>';
   return '<g><circle cx="'+cx+'" cy="'+cy+'" r="5.5" fill="#eef4f0" stroke="#3d4c5c" stroke-width="3"></circle><circle cx="'+cx+'" cy="'+cy+'" r="1.6" fill="#8fa0b0"></circle>'+ah+'<text x="'+(cx+tdx)+'" y="'+(cy+2.5)+'" font-size="6.5" font-weight="800" fill="#3d4c5c">CT</text></g>';
 }
+function portTag(x,y,txt,anchor){
+  var w=txt.length*2.35+7, h=6.8, x0=(anchor==='end')?(x-w):x;
+  return '<g><rect x="'+x0+'" y="'+(y-h/2)+'" width="'+w+'" height="'+h+'" rx="1.7" fill="#ffffff" fill-opacity=".9" stroke="#9aa5b1" stroke-width="0.5"></rect>'+
+    '<text x="'+(x0+w/2)+'" y="'+(y+1.6)+'" text-anchor="middle" font-size="4" font-weight="800" fill="#3d4c5c" letter-spacing=".02em">'+txt+'</text></g>';
+}
 function breaker4Pole(cx,yPositions){
   var colors=['#e8c11a','#2ea043','#e0473f','#2b6fce'];
   var lbls=['L1','L2','L3','N'];
@@ -1555,9 +1717,14 @@ function groundRod(cx,topY,botY){
   }
   return s;
 }
+function earthBarCaption(cx,cy){
+  var w=54,h=8;
+  return '<g><rect x="'+(cx-w/2)+'" y="'+(cy-8-h/2-1.2)+'" width="'+w+'" height="'+h+'" rx="2" fill="#ffffff" fill-opacity=".92" stroke="#c4ccd6" stroke-width="0.5"></rect>'+
+    '<text x="'+cx+'" y="'+(cy-8)+'" text-anchor="middle" font-size="4.8" font-weight="800" fill="#3d4c5c" letter-spacing=".02em">MAIN EARTHING BAR</text></g>';
+}
 function mainEarthBar(cx,cy,overrideIdx,overrideX){
   var barW=EARTH_BAR_W,barH=5;
-  var s='<text x="'+cx+'" y="'+(cy-8)+'" text-anchor="middle" font-size="4.8" font-weight="800" fill="#3d4c5c" letter-spacing=".02em">MAIN EARTHING BAR</text>';
+  var s='';
   s+='<rect x="'+(cx-barW/2)+'" y="'+(cy-barH/2)+'" width="'+barW+'" height="'+barH+'" rx="1" fill="#8a97a6" stroke="#5d6b78" stroke-width="1"></rect>';
   for(var i=0;i<EARTH_BAR_PTS;i++){
     var px=(i===overrideIdx&&overrideX!=null)?overrideX:earthBarPointX(cx,i);
@@ -1569,6 +1736,11 @@ function mainEarthBar(cx,cy,overrideIdx,overrideX){
   s+='<line x1="'+(gx-3.8)+'" y1="'+(gy+3)+'" x2="'+(gx+3.8)+'" y2="'+(gy+3)+'" stroke="#3d4c5c" stroke-width="1.3"></line>';
   s+='<line x1="'+(gx-1.7)+'" y1="'+(gy+6)+'" x2="'+(gx+1.7)+'" y2="'+(gy+6)+'" stroke="#3d4c5c" stroke-width="1.3"></line>';
   return s;
+}
+function groundSymbolUp(cx,cy){
+  return '<line x1="'+(cx-7.5)+'" y1="'+cy+'" x2="'+(cx+7.5)+'" y2="'+cy+'" stroke="#3d4c5c" stroke-width="1.6"></line>'+
+    '<line x1="'+(cx-4.8)+'" y1="'+(cy-3.8)+'" x2="'+(cx+4.8)+'" y2="'+(cy-3.8)+'" stroke="#3d4c5c" stroke-width="1.6"></line>'+
+    '<line x1="'+(cx-2.1)+'" y1="'+(cy-7.6)+'" x2="'+(cx+2.1)+'" y2="'+(cy-7.6)+'" stroke="#3d4c5c" stroke-width="1.6"></line>';
 }
 function groundSymbol(cx,cy){
   var s='<line x1="'+cx+'" y1="'+(cy-12)+'" x2="'+cx+'" y2="'+cy+'" stroke="#3d4c5c" stroke-width="1.4"></line>';
@@ -1643,21 +1815,40 @@ function ctgSimple(cx,cy,dir,lbl){
     gridChainSVG+='<text x="'+(smX+smW/2)+'" y="'+(smTopY+23)+'" text-anchor="middle" font-size="4" font-weight="800" fill="#2f3a45">TPM\u20116CT\u2011C</text>';
     gridChainSVG+='<rect x="'+(smX+4)+'" y="'+(smTopY+27)+'" width="'+(smW-8)+'" height="2.4" rx="1" fill="#cfd7e0"></rect>';
   }
-  var synW2=20,synH2=30;
-  var synX2=cabRightCx-synW2/2;
-  var synTopY2=cabInTop+2;
+  var synW2=60,synH2=34;
+  var synX2=cabX+(cabW-synW2)/2;
+  var synHiRes=state.highRes&&!(state.multi&&state.units.length>1);
+  var synTopY2=synHiRes?(cabBoxBase-synH2-5):(cabInTop+smH+5);
+  var synTermY=synTopY2+27.8;
+  function synPoleX(g,pp){var sgW2=(synW2-6)/4,sgx2=synX2+3+g*sgW2;return sgx2+1.1+(sgW2-2.2)*(pp+0.5)/4;}
   if(showSynBox){
-    gridChainSVG+='<rect x="'+synX2+'" y="'+synTopY2+'" width="'+synW2+'" height="'+synH2+'" rx="3" fill="#f4f6f9" stroke="#33da7a" stroke-width="1.6"></rect>';
-    gridChainSVG+='<rect x="'+(synX2+3)+'" y="'+(synTopY2+3)+'" width="'+(synW2-6)+'" height="5" rx="1" fill="#2b3440"></rect>';
-    gridChainSVG+='<text x="'+(synX2+synW2/2)+'" y="'+(synTopY2+16)+'" text-anchor="middle" font-size="4.6" font-weight="800" fill="#1f7a45">SYN</text>';
-    gridChainSVG+='<text x="'+(synX2+synW2/2)+'" y="'+(synTopY2+22)+'" text-anchor="middle" font-size="3.6" font-weight="700" fill="#5d6b78">BOX</text>';
-    gridChainSVG+='<rect x="'+(synX2+3)+'" y="'+(synTopY2+synH2-6)+'" width="'+(synW2-6)+'" height="2.4" rx="1" fill="#cfd7e0"></rect>';
+    // Front panel of the SYN box, after the real unit: breaker row over four
+    // terminal groups \u2014 GRID / BYPASS / INVERTER / LOAD, each L1 L2 L3 N.
+    gridChainSVG+='<rect x="'+synX2+'" y="'+synTopY2+'" width="'+synW2+'" height="'+synH2+'" rx="2.5" fill="#f4f6f9" stroke="#33da7a" stroke-width="1.6"></rect>';
+    gridChainSVG+='<rect x="'+(synX2+2)+'" y="'+(synTopY2+2)+'" width="'+(synW2-4)+'" height="5.2" rx="1" fill="#2b3440"></rect>';
+    gridChainSVG+='<text x="'+(synX2+synW2/2)+'" y="'+(synTopY2+6.1)+'" text-anchor="middle" font-size="3.4" font-weight="800" fill="#8ffcb8" letter-spacing=".04em">SYN 100\u2011XH\u201130</text>';
+    var synGroups=['GRID','BYPASS','INVERTER','LOAD'];
+    var sgW=(synW2-6)/4, sgX0=synX2+3, sgTop=synTopY2+9.2;
+    for(var sgi=0;sgi<4;sgi++){
+      var sgx=sgX0+sgi*sgW;
+      // 4-pole breaker on top, then the group caption, then the terminal row at the
+      // bottom edge \u2014 so incoming cables land on the screws without crossing any text.
+      gridChainSVG+='<rect x="'+(sgx+1.1)+'" y="'+sgTop+'" width="'+(sgW-2.2)+'" height="6.4" rx="0.8" fill="#e7ecf2" stroke="#9aa5b1" stroke-width="0.5"></rect>';
+      gridChainSVG+='<text x="'+(sgx+sgW/2)+'" y="'+(sgTop+10.4)+'" text-anchor="middle" font-size="2.5" font-weight="800" fill="#1f7a45" letter-spacing=".02em">'+synGroups[sgi]+'</text>';
+      for(var sgp=0;sgp<4;sgp++){
+        var pxq=sgx+1.1+(sgW-2.2)*(sgp+0.5)/4;
+        gridChainSVG+='<rect x="'+(pxq-0.75)+'" y="'+(sgTop+1)+'" width="1.5" height="2.6" rx="0.3" fill="#5b6875"></rect>';
+        gridChainSVG+='<text x="'+pxq+'" y="'+(sgTop+14.4)+'" text-anchor="middle" font-size="1.95" font-weight="700" fill="'+PHASE_WIRES[sgp].c+'">'+PHASE_WIRES[sgp].n+'</text>';
+        gridChainSVG+='<circle cx="'+pxq+'" cy="'+(sgTop+18.6)+'" r="1.15" fill="#fff" stroke="#3d4c5c" stroke-width="0.55"></circle>';
+      }
+      if(sgi<3)gridChainSVG+='<line x1="'+(sgx+sgW)+'" y1="'+(sgTop+6.9)+'" x2="'+(sgx+sgW)+'" y2="'+(sgTop+20.4)+'" stroke="#c4ccd6" stroke-width="0.5"></line>';
+    }
   }
   if(state.mainFuseA>0){
-    gridChainSVG+='<text x="'+(cabX+cabW/2)+'" y="'+(cabBoxBase-14)+'" text-anchor="middle" font-size="5" font-weight="800" fill="#1f7a45">Main Fuse '+state.mainFuseA+'A</text>';
-    gridChainSVG+='<text x="'+(cabX+cabW/2)+'" y="'+(cabBoxBase-8.5)+'" text-anchor="middle" font-size="3.8" font-weight="700" fill="#5d6b78">'+(Math.round(state.mainFuseA*230*3/100)/10)+' kW</text>';
+    // Sits directly above the ELECTRICAL CABINET caption, on one line so it always fits.
+    gridChainSVG+='<text x="'+(cabX+cabW/2)+'" y="'+(cabInTop-9.8)+'" text-anchor="middle" font-size="4.3" font-weight="800" fill="#1f7a45">Main Fuse '+state.mainFuseA+'A <tspan fill="#5d6b78">\u00b7 '+(Math.round(state.mainFuseA*230*3/100)/10)+' kW</tspan></text>';
   }
-  gridChainSVG+='<text x="'+(cabX+cabW/2)+'" y="'+(cabBoxBase-2.5)+'" text-anchor="middle" font-size="4.4" font-weight="800" fill="#5d6b78" letter-spacing=".04em">ELECTRICAL CABINET</text>';
+  gridChainSVG+='<text x="'+(cabX+cabW/2)+'" y="'+(cabInTop-3.5)+'" text-anchor="middle" font-size="4.4" font-weight="800" fill="#5d6b78" letter-spacing=".04em">ELECTRICAL CABINET</text>';
   s+=gridChainSVG;
 
   
@@ -1678,7 +1869,7 @@ function ctgSimple(cx,cy,dir,lbl){
   } else if(isModa){
     if(invOn){
       var mm=(state.inputs[0]&&state.inputs[0].modules)||0;
-      var mBaseH=state.highRes?15.6:13,mMh=state.highRes?22:15,mCapH=22,mTh=mBaseH+mm*mMh+mCapH;
+      var mBaseH=modaBaseH(),mMh=modaModH(),mCapH=22,mTh=mBaseH+mm*mMh+mCapH;
       var mBoxFaces=isoBox(ix,baseY,iw,mTh,skx,sky);
       singleBoxSVG+='<g class="eqbox lit"><polygon class="eqtop" points="'+ptsStr(mBoxFaces.top)+'" fill="#fbfcfd"></polygon><polygon class="eqside" points="'+ptsStr(mBoxFaces.side)+'" fill="#ccd4de"></polygon>';
       var mcy=baseY;
@@ -1700,15 +1891,16 @@ function ctgSimple(cx,cy,dir,lbl){
     }
   } else {
     if(invOn){
-      var brkFill=state.inverterBroken;
+      var invFadeAt=singleBoxSVG.length;
+      var brkFill=state.inverterBroken||state.bypassOn;
       if(isWitHu){
-        singleBoxSVG+=drawIsoBox(ix,baseY,iw,ih,skx,sky,brkFill?'#e4e6e9':'#f7f9fb',brkFill?'#eef0f2':'#ffffff',brkFill?'#b8bcc2':'#d7dde3',true);
+        singleBoxSVG+=drawIsoBox(ix,baseY,iw,ih,skx,sky,brkFill?'#e4e6e9':'#f7f9fb',brkFill?'#eef0f2':'#ffffff',brkFill?'#b8bcc2':'#d7dde3',!brkFill);
         singleBoxSVG+=gauge(ix+iw/2,baseY-ih+26,11,true);
         if(state.kw)singleBoxSVG+=invModelSVG(ix+iw/2,baseY-ih*0.4-6,iw,modelName(state.family,state.kw),10.5);
         singleBoxSVG+='<line x1="'+(ix+7)+'" y1="'+(baseY-14)+'" x2="'+(ix+iw-7)+'" y2="'+(baseY-14)+'" stroke="#c3ccd7" stroke-width="1.5"></line>';
         singleBoxSVG+=screw(ix+6,baseY-ih+6)+screw(ix+iw-6,baseY-ih+6)+screw(ix+6,baseY-6)+screw(ix+iw-6,baseY-6);
       } else {
-        singleBoxSVG+=drawIsoBox(ix,baseY,iw,ih,skx,sky,brkFill?'#e0e3e6':'#eef1f5',brkFill?'#eceeef':'#f8fbfd',brkFill?'#aeb3b9':'#c7cfd9',true);
+        singleBoxSVG+=drawIsoBox(ix,baseY,iw,ih,skx,sky,brkFill?'#e0e3e6':'#eef1f5',brkFill?'#eceeef':'#f8fbfd',brkFill?'#aeb3b9':'#c7cfd9',!brkFill);
         singleBoxSVG+='<circle cx="'+(ix+iw/2)+'" cy="'+(baseY-ih+22)+'" r="5" fill="'+(brkFill?'#9aa0a6':'#33da7a')+'"></circle>';
         if(state.kw)singleBoxSVG+=invModelSVG(ix+iw/2,baseY-ih*0.42-6,iw,modelName(state.family,state.kw),10.5);
         singleBoxSVG+='<line x1="'+(ix+8)+'" y1="'+(baseY-20)+'" x2="'+(ix+iw-8)+'" y2="'+(baseY-20)+'" stroke="#c3ccd7" stroke-width="2"></line>';
@@ -1717,15 +1909,29 @@ function ctgSimple(cx,cy,dir,lbl){
       if(isMulti)singleBoxSVG+=nrTag(ix+iw/2,baseY-ih,state.unit+1,1,true);
       if(state.dongle==='grohome'&&state.groHomeMode==='wireless')singleBoxSVG+=rfHat(ix+iw,baseY-ih+10,false,state.groHomeMode==='wireless');
       if(state.dongle==='wifi'||state.dongle==='lan'||state.dongle==='4g')singleBoxSVG+=commDongleSVG(ix+iw,baseY-ih+10);
+      // Bypass engaged \u2014 the inverter is out of circuit, so it fades right back.
+      if(state.bypassOn)singleBoxSVG=singleBoxSVG.slice(0,invFadeAt)+'<g opacity="0.4">'+singleBoxSVG.slice(invFadeAt)+'</g>';
     }
     towers.forEach(function(t,i){
-      var tw=sTw,mh=t.axe?9:((isModa&&state.highRes)?22:15),baseH=(isModa&&state.highRes)?15.6:13,bmsH=t.bms?26:0,th=baseH+t.mods*mh+bmsH;
+      var tw=sTw,mh=t.axe?9:(isModa?modaModH():15),baseH=isModa?modaBaseH():13,bmsH=t.bms?26:0,th=baseH+t.mods*mh+bmsH;
       var x=tx0+i*(tw+sGap),y=baseY;
       if(i===towers.length-1){
-        singleBoxSVG+='<path class="dcbatt pos" d="M'+(x+tw-6)+','+(baseY-30)+' L'+(ix+6)+','+(baseY-30)+'"></path>';
-        singleBoxSVG+='<path class="combatt" d="M'+(x+tw-6)+','+(baseY-25)+' L'+(ix+6)+','+(baseY-25)+'"></path>';
-        singleBoxSVG+='<path class="dcbatt" d="M'+(x+tw-6)+','+(baseY-20)+' L'+(ix+6)+','+(baseY-20)+'"></path>';
-        singleBoxSVG+=commPair('M'+(x+tw-6)+','+(baseY-10)+' L'+(ix+6)+','+(baseY-10));
+        singleBoxSVG+='<path class="dcbatt pos" d="M'+(x+tw+skx)+','+(baseY-30)+' L'+ix+','+(baseY-30)+'"></path>';
+        singleBoxSVG+='<path class="combatt" d="M'+(x+tw+skx)+','+(baseY-25)+' L'+ix+','+(baseY-25)+'"></path>';
+        singleBoxSVG+='<path class="dcbatt" d="M'+(x+tw+skx)+','+(baseY-20)+' L'+ix+','+(baseY-20)+'"></path>';
+        singleBoxSVG+=commPair('M'+(x+tw+skx)+','+(baseY-10)+' L'+ix+','+(baseY-10));
+        if(hrBig){
+          // Battery earth: runs above the DC pair, then climbs to the inverter PE / main earthing bar.
+          var peBy=baseY-38, peBrx=ix-14;
+          // ~3 cm of rise, extended when a tall battery stack pushes its capacity chip up into the label
+          var peBtop=Math.min(peBy-78,(baseY-sTowerH-10)-34);
+          var peBd='M'+(x+tw+skx)+','+peBy+' L'+ix+','+peBy+' M'+peBrx+','+peBy+' L'+peBrx+','+peBtop;
+          singleBoxSVG+='<path d="'+peBd+'" fill="none" stroke="#e8c11a" stroke-width="1.4" stroke-dasharray="3 3"></path>';
+          singleBoxSVG+='<path d="'+peBd+'" fill="none" stroke="#2ea043" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="3"></path>';
+          singleBoxSVG+=groundSymbolUp(peBrx,peBtop);
+          singleBoxSVG+='<text x="'+(peBrx-11)+'" y="'+(peBtop-12.5)+'" text-anchor="end" font-size="4.2" font-weight="800" fill="#3d4c5c">Inverter PE or</text>';
+          singleBoxSVG+='<text x="'+(peBrx-11)+'" y="'+(peBtop-6.5)+'" text-anchor="end" font-size="4.2" font-weight="800" fill="#3d4c5c">Main Earthing Bar</text>';
+        }
       }
       var boxFaces=isoBox(x,y,tw,th,skx,sky);
       singleBoxSVG+='<g class="eqbox lit"><polygon class="eqtop" points="'+ptsStr(boxFaces.top)+'" fill="'+(t.axe?'#f7f9fb':'#fbfcfd')+'"></polygon><polygon class="eqside" points="'+ptsStr(boxFaces.side)+'" fill="'+(t.axe?'#c2ccd3':'#ccd4de')+'"></polygon>';
@@ -1758,7 +1964,7 @@ function ctgSimple(cx,cy,dir,lbl){
   s+=singleBoxSVG;
   }
 
-  var mainMaxH=isRise?rh:(isModa?(invOn?((state.highRes?15.6:13)+(((state.inputs[0]&&state.inputs[0].modules)||0))*(state.highRes?22:15)+22):40):Math.max(invOn?ih:0, towers.length?Math.max.apply(null,towers.map(function(t){return 13+t.mods*(t.axe?9:15)+(t.bms?23:0);})):40));
+  var mainMaxH=isRise?rh:(isModa?(invOn?modaStackH((state.inputs[0]&&state.inputs[0].modules)||0):40):Math.max(invOn?ih:0, towers.length?Math.max.apply(null,towers.map(function(t){return 13+t.mods*(t.axe?9:15)+(t.bms?23:0);})):40));
   var allUnits=[];
   if(isMulti){
     for(var uidx=0;uidx<state.units.length;uidx++){
@@ -1784,8 +1990,8 @@ function ctgSimple(cx,cy,dir,lbl){
     return Math.max.apply(null,heights);
   }
   var stackScale=allRiseMulti?0.34:0.5;
-  var colX=[110,330];
-  var houseX=510+((state.highRes&&!isMulti)?10:0),houseTopY=(isMulti?415:200)-((state.highRes&&!isMulti)?95:0),houseSize=76;
+  var colX=[90,310];
+  var houseX=520+((state.highRes&&!isMulti)?10:0),houseTopY=(isMulti?415:(state.highRes?105:170)),houseSize=76;
   function drawHouse(cx,hb){
     var h='';
     var hw=38.5, fw=hw*2; // front\u2011wall half\u2011width \u2014 kept in sync with the SYN backup cable anchor (houseX+38.5) further below
@@ -1835,6 +2041,16 @@ function ctgSimple(cx,cy,dir,lbl){
     return h;
   }
   var houseBotAnchor=houseTopY+houseSize;
+  // Standard resolution with a single inverter: the Main load sits further left and a touch lower.
+  // Only the house (and what belongs to it) moves \u2014 the AC feed column, the cabinet run and the
+  // bypass riser keep their positions, and the feed jogs across at the end.
+  var mlDX=(!state.highRes&&!isMulti)?-140:0, mlDY=(!state.highRes&&!isMulti)?26:0;
+  var hX=houseX+mlDX, hTopY=houseTopY+mlDY, hBot=houseBotAnchor+mlDY;
+  var mlJogY=hBot+20;
+  function mainFeedD(fromX,fromY){
+    if(!mlDX)return 'M'+fromX+','+fromY+' L'+fromX+','+hBot;
+    return 'M'+fromX+','+fromY+' L'+fromX+','+mlJogY+' L'+hX+','+mlJogY+' L'+hX+','+hBot;
+  }
   var rowPitch=allRiseMulti?92:138, perCol=allRiseMulti?5:3, maxShow=allRiseMulti?10:6;
   var firstRowBase=allRiseMulti?150:((Math.min(state.units.length,maxShow)>2)?218:240);
   function unitPos(idx){
@@ -1856,7 +2072,7 @@ function ctgSimple(cx,cy,dir,lbl){
     else if(fm.battery==='AXE')(u.inputs||[]).forEach(function(){t++;});
     if(t>6)t=6;
     if(!t)return 0;
-    var g=7*stackScale,av=arguments.length>2&&arguments[2]?(458-(ux+62*stackScale+26)):(ux-26-14);
+    var g=7*stackScale,av=arguments.length>2&&arguments[2]?(438-(ux+62*stackScale+26)):(ux-26-14);
     var tw=Math.min(46*stackScale,(av-(t-1)*g)/t);
     return t*tw+(t-1)*g;
   }
@@ -1903,12 +2119,9 @@ function ctgSimple(cx,cy,dir,lbl){
       var pvLineY=pvBy-pvH*0.5;
       var pvEx=mirU?(ux+iwm-20):(ux+20), pvSx=mirU?(bux-pvW/2):(bux+pvW/2);
       unitBoxes+='<path class="dccable" d="M'+pvSx+','+pvLineY+' L'+pvEx+','+pvLineY+' L'+pvEx+','+(rowBaseY-96*stackScale)+'"></path>';
-      unitBoxes+='<polygon points="'+(pvEx-3.5)+','+(rowBaseY-55)+' '+(pvEx+3.5)+','+(rowBaseY-55)+' '+pvEx+','+(rowBaseY-48)+'" fill="#232d3a"></polygon>';
     } else {
       var pvEnterX=mirU?(ux+iwm):ux;
       unitBoxes+='<path class="dccable" d="M'+bux+','+(pvBy-pvH*0.5)+' L'+bux+','+midY+' L'+pvEnterX+','+midY+'"></path>';
-      if(mirU)unitBoxes+='<polygon points="'+(pvEnterX+7)+','+(midY-3.5)+' '+(pvEnterX+7)+','+(midY+3.5)+' '+pvEnterX+','+midY+'" fill="#232d3a"></polygon>';
-      else unitBoxes+='<polygon points="'+(pvEnterX-7)+','+(midY-3.5)+' '+(pvEnterX-7)+','+(midY+3.5)+' '+pvEnterX+','+midY+'" fill="#232d3a"></polygon>';
     }
     unitBoxes+=pvRealistic(bux,pvBy,pvW,pvH);
     if(unitKwp(u)>0){
@@ -1917,7 +2130,7 @@ function ctgSimple(cx,cy,dir,lbl){
       unitBoxes+='<text x="'+bux+'" y="'+(pvBy-pvH/2+2.4)+'" text-anchor="middle" font-size="6.3" font-weight="800" fill="#7bf5a8">'+kwpTxt1+'</text>';
     }
     if(totTW>0){
-      var bc0=mirU?(ux+iwm-5):(ux-30), bc1=mirU?(ux+iwm+30):(ux+5);
+      var bc0=mirU?(ux+iwm+skx*stackScale):(ux-26+skx*stackScale), bc1=mirU?(ux+iwm+26):ux;
       commOverlay+='<path class="dcbatt pos" d="M'+bc0+','+(rowBaseY-24)+' L'+bc1+','+(rowBaseY-24)+'"></path>';
       commOverlay+='<path class="combatt" d="M'+bc0+','+(rowBaseY-20)+' L'+bc1+','+(rowBaseY-20)+'"></path>';
       commOverlay+='<path class="dcbatt" d="M'+bc0+','+(rowBaseY-16)+' L'+bc1+','+(rowBaseY-16)+'"></path>';
@@ -1955,7 +2168,6 @@ function ctgSimple(cx,cy,dir,lbl){
       unitBoxes+=drawIsoBox(tpmCx-tpmW/2,tpmB,tpmW,tpmH,skx*0.6,sky*0.6,'#e2e6eb','#eef1f4','#b9c2cc',false);
       unitBoxes+='<circle cx="'+tpmCx+'" cy="'+(tpmB-tpmH+10)+'" r="3" fill="#9aa5b1"></circle>';
       unitBoxes+='<path class="dccable" d="M'+tpmCx+','+(tpmB-tpmH-22)+' L'+tpmCx+','+(tpmB-tpmH)+'"></path>';
-      unitBoxes+='<polygon points="'+(tpmCx-3.5)+','+(tpmB-tpmH-7)+' '+(tpmCx+3.5)+','+(tpmB-tpmH-7)+' '+tpmCx+','+(tpmB-tpmH)+'" fill="#232d3a"></polygon>';
       unitBoxes+=pvRealistic(tpmCx,tpmB-tpmH-22,28,14);
       var tpLbl1=(state.tpLabels&&state.tpLabels[ti2])?escHtml(state.tpLabels[ti2]):'';
       if(tpLbl1)unitBoxes+=invModelSVG(tpmCx,tpmB-tpmH*0.3,tpmW-12,tpLbl1,4.6);
@@ -1975,16 +2187,16 @@ function ctgSimple(cx,cy,dir,lbl){
     var semY1=mgrTopY+mgrH*0.5-4, semY2=mgrTopY+mgrH*0.5+4;
     var midOf=function(di){return unitPos(di).y-26;};
     var ir1=colX[0]+62*stackScale, ir2=colX[1]+62*stackScale;
-    var inD=5;
+    var inD=0;
     var n1=Math.min(nC,perCol), vx1=ir1+5;
-    comm+=commPair('M'+mgrX+','+semY1+' L486,'+semY1+' L486,147 L'+vx1+',147 L'+vx1+','+(midOf(0)-5)+' L'+(ir1-inD)+','+(midOf(0)-5));
+    comm+=commPair('M'+mgrX+','+semY1+' L466,'+semY1+' L466,147 L'+vx1+',147 L'+vx1+','+(midOf(0)-5)+' L'+(ir1-inD)+','+(midOf(0)-5));
     for(var h1=0;h1<n1-1;h1++){
       comm+=commPair('M'+(ir1-inD)+','+(midOf(h1)+5)+' L'+vx1+','+(midOf(h1)+5)+' L'+vx1+','+(midOf(h1+1)-5)+' L'+(ir1-inD)+','+(midOf(h1+1)-5));
     }
     if(nC>perCol){
       var n2=nC-perCol, il2=colX[1], vx2=il2-4;
       var botOf=function(di){return unitPos(di).y-10;};
-      comm+=commPair('M'+mgrX+','+semY2+' L480,'+semY2+' L480,147 L'+vx2+',147 L'+vx2+','+(botOf(perCol)-5)+' L'+(il2+inD)+','+(botOf(perCol)-5));
+      comm+=commPair('M'+mgrX+','+semY2+' L460,'+semY2+' L460,147 L'+vx2+',147 L'+vx2+','+(botOf(perCol)-5)+' L'+(il2+inD)+','+(botOf(perCol)-5));
       for(var h2=0;h2<n2-1;h2++){
         comm+=commPair('M'+(il2+inD)+','+(botOf(perCol+h2)+5)+' L'+vx2+','+(botOf(perCol+h2)+5)+' L'+vx2+','+(botOf(perCol+h2+1)-5)+' L'+(il2+inD)+','+(botOf(perCol+h2+1)-5));
       }
@@ -1994,48 +2206,71 @@ function ctgSimple(cx,cy,dir,lbl){
   s+=unitCables+unitBoxes+commOverlay+boxTops;
 
   var showPartialSingle=showPartial&&!isMulti;
+  // High\u2011res systems whose backup runs through a SYN box: the load hangs off the electrical
+  // cabinet instead of off the inverter, so the whole backup circuit is drawn from the cabinet.
+  var synHR=state.highRes&&!isMulti&&showSynBox&&invOn&&showPartialSingle;
+  var synWhole=synHR&&state.backupMode==='whole';
+  var synPart=synHR&&state.backupMode==='partial';
+  // Standard-resolution whole-home backup: no separate backup house \u2014 the cabinet feeds the main load.
+  // Only a SYN\u2011box system routes whole\u2011home backup out of the cabinet. With an integrated
+  // backup (MODA / MOD\u2011HU) the backup circuit still hangs off the inverter's LOAD port \u2014 the
+  // load box just changes its name from PARTIAL LOAD to WHOLE\u2011HOME BACKUP.
+  var lowWhole=!state.highRes&&!isMulti&&showPartialSingle&&state.backupMode==='whole'&&invOn&&needsSyn();
+  var lowWholeBp=null;
+  var synLoadX=cabX+cabW/2+26, synLoadY=cabBoxBase+130;
+  var synFeedY=cabBoxBase-18, synLaneX=480;
   var wholeLit=(state.backupMode==='whole'||state.backupMode==='partial')&&backOn;
-  var mainACx=houseX+32;
+  var mainACx=houseX;   // feed column centred under Main load, so L1/L2/L3/N run parallel into it
   if(!isMulti&&state.offGrid&&hasComp){
-    s+=acCable('M'+invAttachX+','+invAttachY+' L'+mainACx+','+invAttachY+' L'+mainACx+','+houseBotAnchor,true,null,false,true);
+    s+=acCable('M'+invEdgeR+','+invAttachY+' L'+mainACx+','+invAttachY,true,null,false,true)+acCable(mainFeedD(mainACx,invAttachY),true,null,false,true);
   }
+  var cabTopY=cabBaseY-22-cabH, cabEntryY=cabTopY+cabH*0.4;
   if(!isMulti&&hasComp){
     var invTopY=isRise?(baseY-rh+18):(baseY-ih+18);
-    var cabTopY=cabBaseY-22-cabH, cabEntryY=cabTopY+cabH*0.4;
     if(!state.offGrid){
       if(state.highRes){
         for(var twi=0;twi<4;twi++){
           var twOff=(twi-2)*PHASE_SPACING;
           var twY=invAttachY+twOff, twX=mainACx+twOff;
           var twOp=acOp(gridLit||wholeLit,false);
-          s+='<path d="M'+invAttachX+','+twY+' L'+twX+','+twY+'" fill="none" stroke="'+PHASE_WIRES[twi].c+'" stroke-width="1.3" stroke-dasharray="4 2.5" stroke-linecap="round" opacity="'+twOp+'"></path>';
+          s+='<path d="M'+invEdgeR+','+twY+' L'+twX+','+twY+'" fill="none" stroke="'+PHASE_WIRES[twi].c+'" stroke-width="1.3" stroke-dasharray="4 2.5" stroke-linecap="round" opacity="'+twOp+'"></path>';
           s+='<path d="M'+twX+','+twY+' L'+twX+','+(cabEntryY+twOff)+' L'+cabX+','+(cabEntryY+twOff)+'" fill="none" stroke="'+PHASE_WIRES[twi].c+'" stroke-width="1.3" stroke-dasharray="4 2.5" stroke-linecap="round" opacity="'+twOp+'"></path>';
         }
       } else {
-        s+=acCable('M'+invAttachX+','+invAttachY+' L'+mainACx+','+invAttachY,gridLit||wholeLit,null,false,true);
+        // Bypass closed: the stretch between the inverter and the bypass breaker carries nothing.
+        var bpSplitX=(!isMulti&&hasComp&&!!state.backupMode&&state.family!=='MODA'&&!needsSyn()&&state.bypassOn)?((isRise?(rx+rw):(ix+iw))+102):null;
+        if(bpSplitX!=null&&bpSplitX>invEdgeR&&bpSplitX<mainACx){
+          s+=acCable('M'+invEdgeR+','+invAttachY+' L'+bpSplitX+','+invAttachY,false,null,false,true);
+          s+=acCable('M'+bpSplitX+','+invAttachY+' L'+mainACx+','+invAttachY,gridLit||wholeLit,null,false,true);
+        } else {
+          s+=acCable('M'+invEdgeR+','+invAttachY+' L'+mainACx+','+invAttachY,gridLit||wholeLit,null,false,true);
+        }
         s+=acCable('M'+mainACx+','+invAttachY+' L'+mainACx+','+cabEntryY+' L'+cabX+','+cabEntryY,gridLit||wholeLit,null,false,true);
       }
     }
     if(state.highRes){
       for(var mlwi=0;mlwi<4;mlwi++){
+        if(synWhole)break;
         var mlwOff=(mlwi-2)*PHASE_SPACING;
         var mlwXc=mainACx+mlwOff, mlwY2=houseBotAnchor;
         var mlwD='M'+mlwXc+','+(invAttachY+mlwOff)+' L'+mlwXc+','+mlwY2;
         var mlwLit=acOp(gridLit,false);
         s+='<path d="'+mlwD+'" fill="none" stroke="'+PHASE_WIRES[mlwi].c+'" stroke-width="1.3" stroke-dasharray="4 2.5" stroke-linecap="round" opacity="'+mlwLit+'"></path>';
       }
-    } else {
-      s+=acCable('M'+mainACx+','+invAttachY+' L'+mainACx+','+houseBotAnchor,gridLit);
+    } else if(!lowWhole){
+      s+=acCable(mainFeedD(mainACx,invAttachY),gridLit);
     }
     if(invOn&&(showSemBox||showSmartAtFeed||isGroHome)&&!isWirelessGroHome){
-      var rSx=(showSemBox||isGroHome)?mgrX:(cabX+cabW/2-smW/2);
-      var rSy=(showSemBox||isGroHome)?(mgrTopY+mgrH*0.5):(cabBoxBase-cabH/2);
-      var rVx=560;
-      var rEx=isRise?(rx+rw):(ix+iw);
+      var rSx=cabX;
+      var rSy=cabBoxBase-cabH/2;
+      var rVx=540;
+      var rEx=invEdgeR;
+      // MODA is drawn as a module stack, so its top is baseY-stack, not baseY-ih.
+      var rEy=isModa?(baseY-modaStackH((state.inputs[0]&&state.inputs[0].modules)||0)+10):(isRise?(baseY-rh+8):(baseY-ih+8));
       if(state.highRes){
-        s+=commPair('M'+rSx+','+rSy+' L'+rVx+','+rSy+' L'+(rEx-5)+','+rSy+' L'+(rEx-5)+','+(baseY-ih+8));
+        s+=commPair('M'+rSx+','+rSy+' L'+rVx+','+rSy+' L'+rEx+','+rSy+' L'+rEx+','+rEy);
       } else {
-        s+=commPair('M'+rSx+','+rSy+' L'+rVx+','+rSy+' L'+rVx+','+(baseY-ih+8)+' L'+(rEx-5)+','+(baseY-ih+8));
+        s+=commPair('M'+rSx+','+rSy+' L'+rVx+','+rSy+' L'+rVx+','+rEy+' L'+rEx+','+rEy);
       }
     }
   }
@@ -2050,11 +2285,9 @@ function ctgSimple(cx,cy,dir,lbl){
     }
     if(hasLeftTowers){
       var pvLineY2=pvBy2-pvH2*0.5;
-      s+=dcCable('M'+(bx2+pvW2/2)+','+pvLineY2+' L'+(ix+27)+','+pvLineY2+' L'+(ix+27)+','+(baseY-ih));
-      s+='<polygon points="'+(ix+23)+','+(baseY-ih-8)+' '+(ix+31)+','+(baseY-ih-8)+' '+(ix+27)+','+(baseY-ih)+'" fill="#232d3a"></polygon>';
+      s+=dcCable('M'+(bx2+pvW2/2)+','+pvLineY2+' L'+(ix+27)+','+pvLineY2+' L'+(ix+27)+','+(baseY-ih-sky));
     } else {
       s+=dcCable('M'+bx2+','+(pvBy2-pvH2*0.5)+' L'+bx2+','+midY2+' L'+(isRise?rx:ix)+','+midY2);
-      s+='<polygon points="'+((isRise?rx:ix)-8)+','+(midY2-4)+' '+((isRise?rx:ix)-8)+','+(midY2+4)+' '+(isRise?rx:ix)+','+midY2+'" fill="#232d3a"></polygon>';
     }
     s+=pvRealistic(bx2,pvBy2,pvW2,pvH2);
     if(totalKWp()>0){
@@ -2067,8 +2300,9 @@ function ctgSimple(cx,cy,dir,lbl){
     var ctInX=cabX-14;
     for(var ctii=0;ctii<3;ctii++)s+=ctgSimple(ctInX,cabEntryY+(ctii-2)*PHASE_SPACING,'left',PHASE_WIRES[ctii].n);
   } else {
-    if(hasComp&&state.metering==='meter'&&state.meterType==='TPM-6CT-C'&&showSmartAtFeed)s+=ctg(cabX+cabW/2,cabBaseY+11,14,'down');
-    if(hasComp&&isGroHome)s+=ctg(cabX+cabW/2,cabBaseY+11,14,'down');
+    var ctY=cabBaseY-22-cabH*0.6;
+    if(hasComp&&state.metering==='meter'&&state.meterType==='TPM-6CT-C'&&showSmartAtFeed)s+=ctg(cabX-14,ctY,-22,'left');
+    if(hasComp&&isGroHome)s+=ctg(cabX-14,ctY,-22,'left');
   }
   if(!isMulti&&hasComp&&state.thirdParty){
     var tpN=Math.min(state.tpCount||1,3),tpW=40,tpH=60;
@@ -2081,7 +2315,6 @@ function ctgSimple(cx,cy,dir,lbl){
       s+='<circle cx="'+tpCx+'" cy="'+(baseY-tpH+15)+'" r="4" fill="#9aa5b1"></circle>';
       var tpPvY=baseY-tpH-26,tpPvW=24,tpPvH=13;
       s+='<path class="dccable" d="M'+tpCx+','+(tpPvY)+' L'+tpCx+','+(baseY-tpH)+'"></path>';
-      s+='<polygon points="'+(tpCx-3.5)+','+(baseY-tpH-7)+' '+(tpCx+3.5)+','+(baseY-tpH-7)+' '+tpCx+','+(baseY-tpH)+'" fill="#232d3a"></polygon>';
       s+=pvRealistic(tpCx,tpPvY,tpPvW,tpPvH);
       var tpLbl0=(state.tpLabels&&state.tpLabels[tpi])?escHtml(state.tpLabels[tpi]):'';
       if(tpLbl0)s+=invModelSVG(tpCx,baseY-tpH*0.46,tpW-16,tpLbl0,5.6);
@@ -2118,88 +2351,139 @@ function ctgSimple(cx,cy,dir,lbl){
   }
   var showBypass=!isMulti&&hasComp&&!!state.backupMode&&state.family!=='MODA'&&!needsSyn();
   var bhx2=(isRise?rx+rw:ix+iw)+54;
-  var synPartial=showPartialSingle&&needsSyn()&&!state.highRes;
+  var synPartial=showPartialSingle&&needsSyn()&&!state.highRes&&state.backupMode==='partial';
   if(synPartial)bhx2=cabX+cabW/2+45;
   var buyS=synPartial?(cabBaseY+118):(baseY-8), bpJoinX=bhx2+48;
   var bpx2,bpy2;
   var synInX=synX2+synW2*0.22, synOutX=synX2+synW2*0.78;
-  if(!isMulti&&showSynBox&&invOn){
-    s+=acCable('M'+(isRise?rx+rw:ix+iw)+','+(invAttachY+16)+' L'+synInX+','+(invAttachY+16)+' L'+synInX+','+cabBoxBase,backOn);
-  }
-  if(!isMulti&&showSynBox&&invOn&&state.backupMode==='whole'){
-    var synHy=cabBaseY-6, synHx=houseX+52;
-    s+=acCable('M'+synOutX+','+cabBoxBase+' L'+synOutX+','+synHy+' L'+synHx+','+synHy+' L'+synHx+','+(houseBotAnchor-22)+' L'+(houseX+38.5)+','+(houseBotAnchor-22),backOn);
+  if(!isMulti&&showSynBox&&invOn&&!state.highRes){
+    s+=acCable('M'+invEdgeR+','+(invAttachY+16)+' L'+synInX+','+(invAttachY+16)+' L'+synInX+','+cabBoxBase,backOn);
   }
   if(synPartial){
     s+=acCable('M'+synOutX+','+cabBoxBase+' L'+synOutX+','+(buyS-12)+' L'+(bhx2-9)+','+(buyS-12),backOn);
     bpx2=invAttachX+106;bpy2=invTopY;
   } else if(showPartialSingle){
+    // MODA is a low module stack, so the default feed height puts the PE below its base.
     var plFeedY=state.highRes?Math.min(invAttachY+110,buyS-10):invAttachY;
+    // MODA is a short stack, so the default height crowds the two bundles leaving the
+    // inverter. Pin it to the same gap the tall units get.
+    if(state.highRes&&isModa)plFeedY=invAttachY+72;
     if(state.highRes){
-      var brkX=((isRise?rx+rw:ix+iw)+bpJoinX)/2;
-      for(var pwi=0;pwi<4;pwi++){
-        var pwOff=(pwi-2)*PHASE_SPACING;
-        var pwXs=(isRise?rx+rw:ix+iw), pwYs=plFeedY+pwOff, pwXc=bpJoinX+pwOff, pwY2=invAttachY+pwOff;
-        var pwCol=state.inverterBroken?'#9aa0a6':PHASE_WIRES[pwi].c;
-        var pwOp1=state.inverterBroken?0.9:acOp(backOn,true);
-        s+='<path d="M'+pwXs+','+pwYs+' L'+brkX+','+pwYs+'" fill="none" stroke="'+pwCol+'" stroke-width="1.3" stroke-dasharray="4 2.5" stroke-linecap="round" opacity="'+pwOp1+'"></path>';
-        s+='<path d="M'+brkX+','+pwYs+' L'+pwXc+','+pwYs+' L'+pwXc+','+pwY2+'" fill="none" stroke="'+PHASE_WIRES[pwi].c+'" stroke-width="1.3" stroke-dasharray="4 2.5" stroke-linecap="round" opacity="'+acOp(backOn,false)+'"></path>';
-      }
-      var peOff=2*PHASE_SPACING, peYs=plFeedY+peOff, peXs=(isRise?rx+rw:ix+iw);
-      var peD='M'+peXs+','+peYs+' L'+bhx2+','+peYs;
-      s+='<path d="'+peD+'" fill="none" stroke="#e8c11a" stroke-width="1.4" stroke-dasharray="3 3" opacity="'+acOp(backOn,true)+'"></path>';
-      s+='<path d="'+peD+'" fill="none" stroke="#2ea043" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="3" opacity="'+acOp(backOn,true)+'"></path>';
-      var earthBarX=560,earthBarY=peYs+40;
-      s+=mainEarthBar(earthBarX,earthBarY);
-      var earthPt2X=earthBarPointX(earthBarX,0);
-      var laneT1=earthBarY-14;
-      var peD2='M'+bhx2+','+peYs+' L'+bhx2+','+laneT1+' L'+earthPt2X+','+laneT1+' L'+earthPt2X+','+earthBarY;
-      s+='<path d="'+peD2+'" fill="none" stroke="#e8c11a" stroke-width="1.4" stroke-dasharray="3 3" opacity="'+acOp(backOn,true)+'"></path>';
-      s+='<path d="'+peD2+'" fill="none" stroke="#2ea043" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="3" opacity="'+acOp(backOn,true)+'"></path>';
-      var earthPt3X=earthBarPointX(earthBarX,2);
-      var invGndY=invAttachY+2*PHASE_SPACING;
-      var peD3='M'+peXs+','+invGndY+' L'+earthPt3X+','+invGndY+' L'+earthPt3X+','+earthBarY;
-      s+='<path d="'+peD3+'" fill="none" stroke="#e8c11a" stroke-width="1.4" stroke-dasharray="3 3" opacity="'+acOp(gridLit||wholeLit,true)+'"></path>';
-      s+='<path d="'+peD3+'" fill="none" stroke="#2ea043" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="3" opacity="'+acOp(gridLit||wholeLit,true)+'"></path>';
-      var earthPt4X=earthBarPointX(earthBarX,3);
-      var mlGndX=mainACx+2*PHASE_SPACING;
-      var peD4='M'+mlGndX+','+houseBotAnchor+' L'+mlGndX+','+(earthBarY-12)+' L'+earthPt4X+','+(earthBarY-12)+' L'+earthPt4X+','+earthBarY;
-      s+='<path d="'+peD4+'" fill="none" stroke="#e8c11a" stroke-width="1.4" stroke-dasharray="3 3" opacity="'+acOp(gridLit,true)+'"></path>';
-      s+='<path d="'+peD4+'" fill="none" stroke="#2ea043" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="3" opacity="'+acOp(gridLit,true)+'"></path>';
-      var earthPt5X=earthBarPointX(earthBarX,4);
-      var cabPEY=cabEntryY+2*PHASE_SPACING,cabPEdropX=cabX-22;
-      var laneT5=earthBarY-8;
-      var peD5='M'+cabX+','+cabPEY+' L'+cabPEdropX+','+cabPEY+' L'+cabPEdropX+','+laneT5+' L'+earthPt5X+','+laneT5+' L'+earthPt5X+','+earthBarY;
-      s+='<path d="'+peD5+'" fill="none" stroke="#e8c11a" stroke-width="1.4" stroke-dasharray="3 3" opacity="'+acOp(gridLit||wholeLit,true)+'"></path>';
-      s+='<path d="'+peD5+'" fill="none" stroke="#2ea043" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="3" opacity="'+acOp(gridLit||wholeLit,true)+'"></path>';
-      if(!isMulti&&hasComp&&state.thirdParty){
-        var tpPEY=baseY+2*PHASE_SPACING;
-        for(var tpei=0;tpei<tpCenters.length;tpei++){
-          var tpeCx=tpCenters[tpei];
-          var earthPtTPX=earthBarPointX(earthBarX,6+tpei);
-          var laneTTP=earthBarY-20-tpei*6;
-          var peD6='M'+tpeCx+','+tpPEY+' L'+tpeCx+','+laneTTP+' L'+earthPtTPX+','+laneTTP+' L'+earthPtTPX+','+earthBarY;
-          s+='<path d="'+peD6+'" fill="none" stroke="#e8c11a" stroke-width="1.4" stroke-dasharray="3 3" opacity="'+acOp(invOn,true)+'"></path>';
-          s+='<path d="'+peD6+'" fill="none" stroke="#2ea043" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="3" opacity="'+acOp(invOn,true)+'"></path>';
+      var brkX=(invEdgeR+bpJoinX)/2;
+      var peOff=2*PHASE_SPACING, peYs=plFeedY+peOff, peXs=invEdgeR;
+      var synPlTop=synLoadY-(4*PHASE_SPACING+20);
+      if(synHR){
+        // Inverter -> SYN box INVERTER terminals: 4 conductors, no PE. They run under the
+        // cabinet and rise into the terminal row so the cable visibly lands on the SYN box.
+        for(var sii=0;sii<4;sii++){
+          var siY0=invAttachY+SYN_FEED_GAP+(sii-1.5)*PHASE_SPACING;
+          var siRise=invEdgeR+34+sii*PHASE_SPACING;
+          var siLane=cabBoxBase+9+sii*8;
+          var siPx=synPoleX(2,sii);
+          var siD='M'+invEdgeR+','+siY0+' L'+siRise+','+siY0+' L'+siRise+','+siLane+' L'+siPx+','+siLane+' L'+siPx+','+synTermY;
+          s+='<path d="'+siD+'" fill="none" stroke="'+PHASE_WIRES[sii].c+'" stroke-width="1.3" stroke-dasharray="4 2.5" stroke-linecap="round" opacity="'+acOp(backOn,true)+'"></path>';
         }
       }
-      var earthPt1X=earthBarPointX(earthBarX,1);
-      s+='<path d="M'+earthPt1X+','+(earthBarY+2.3)+' L'+earthPt1X+','+(earthBarY+22)+'" fill="none" stroke="#e8c11a" stroke-width="1.4" stroke-dasharray="3 3" opacity="0.95"></path>';
-      s+='<path d="M'+earthPt1X+','+(earthBarY+2.3)+' L'+earthPt1X+','+(earthBarY+22)+'" fill="none" stroke="#2ea043" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="3" opacity="0.95"></path>';
-      s+=groundRod(earthPt1X,earthBarY+22,earthBarY+38);
-      s+='<text x="'+earthPt1X+'" y="'+(earthBarY+50)+'" text-anchor="middle" font-size="4.6" font-weight="800" fill="#3d4c5c">GROUND ROD</text>';
-      s+='<text x="'+earthPt1X+'" y="'+(earthBarY+57)+'" text-anchor="middle" font-size="4.2" font-weight="700" fill="#5d6b78">\u2264100\u03a9</text>';
-      s+='<text x="'+earthPt1X+'" y="'+(earthBarY+63)+'" text-anchor="middle" font-size="4.2" font-weight="800" fill="#1f7a45">Good value? -&gt; stable value</text>';
-      var brkYs=[];
-      for(var bi=0;bi<4;bi++)brkYs.push(plFeedY+(bi-2)*PHASE_SPACING);
-      s+=breaker4Pole(brkX,brkYs);
+      if(synPart){
+        // SYN box LOAD terminals -> the backup load sitting under the cabinet
+        for(var sfi=0;sfi<4;sfi++){
+          var sfPx=synPoleX(3,sfi);
+          var sfTx=synLoadX+(sfi-1.5)*PHASE_SPACING;
+          var sfLane=synPlTop-14;
+          s+='<path d="M'+sfPx+','+synTermY+' L'+sfPx+','+sfLane+' L'+sfTx+','+sfLane+' L'+sfTx+','+synPlTop+'" fill="none" stroke="'+PHASE_WIRES[sfi].c+'" stroke-width="1.3" stroke-dasharray="4 2.5" stroke-linecap="round" opacity="'+acOp(backOn,true)+'"></path>';
+        }
+      } else if(synWhole){
+        // SYN box LOAD terminals -> Main load, routed underneath the cabinet
+        for(var sfj=0;sfj<4;sfj++){
+          var swPx=synPoleX(3,sfj);
+          var swLane=cabBoxBase+44+sfj*8;
+          var swUp=synLaneX+(sfj-1.5)*PHASE_SPACING;
+          var sfD='M'+swPx+','+synTermY+' L'+swPx+','+swLane+' L'+swUp+','+swLane+' L'+swUp+','+houseBotAnchor;
+          s+='<path d="'+sfD+'" fill="none" stroke="'+PHASE_WIRES[sfj].c+'" stroke-width="1.3" stroke-dasharray="4 2.5" stroke-linecap="round" opacity="'+acOp(backOn,true)+'"></path>';
+        }
+      }
+      if(!synHR){
+        for(var pwi=0;pwi<4;pwi++){
+          var pwOff=(pwi-2)*PHASE_SPACING;
+          var pwXs=invEdgeR, pwYs=plFeedY+pwOff, pwXc=bpJoinX+pwOff, pwY2=invAttachY+pwOff;
+          var pwCol=(state.inverterBroken||state.bypassOn)?'#9aa0a6':PHASE_WIRES[pwi].c;
+          var pwOp1=(state.inverterBroken||state.bypassOn)?0.9:acOp(backOn,true);
+          s+='<path d="M'+pwXs+','+pwYs+' L'+brkX+','+pwYs+'" fill="none" stroke="'+pwCol+'" stroke-width="1.3" stroke-dasharray="4 2.5" stroke-linecap="round" opacity="'+pwOp1+'"></path>';
+          s+='<path d="M'+brkX+','+pwYs+' L'+pwXc+','+pwYs+' L'+pwXc+','+pwY2+'" fill="none" stroke="'+PHASE_WIRES[pwi].c+'" stroke-width="1.3" stroke-dasharray="4 2.5" stroke-linecap="round" opacity="'+acOp(backOn,false)+'"></path>';
+        }
+        var peD='M'+peXs+','+peYs+' L'+bhx2+','+peYs;
+        s+='<path d="'+peD+'" fill="none" stroke="#e8c11a" stroke-width="1.4" stroke-dasharray="3 3" opacity="'+acOp(backOn,true)+'"></path>';
+        s+='<path d="'+peD+'" fill="none" stroke="#2ea043" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="3" opacity="'+acOp(backOn,true)+'"></path>';
+      }
+
+    } else if(lowWhole){
+      var lwY=cabBoxBase-cabH*0.25, lwX=hX+38.5;
+      s+=acCable('M'+cabX+','+lwY+' L'+lwX+','+lwY+' L'+lwX+','+(hBot-10),backOn);
+      lowWholeBp=[(cabX+lwX)/2,lwY];
     } else {
-      s+=acCable('M'+(isRise?rx+rw:ix+iw)+','+plFeedY+' L'+bhx2+','+plFeedY+' L'+bhx2+','+(buyS-23),backOn);
-      s+=acCable('M'+(bhx2+12)+','+(buyS-12)+' L'+bpJoinX+','+(buyS-12)+' L'+bpJoinX+','+invAttachY,backOn);
+      var plY=buyS-12;
+      // With the bypass closed the inverter feeds nothing \u2014 that leg goes dead.
+      s+=acCable('M'+invEdgeR+','+plY+' L'+(bhx2-12)+','+plY,backOn&&!state.bypassOn);
+      s+=acCable('M'+(bhx2+12)+','+plY+' L'+bpJoinX+','+plY+' L'+bpJoinX+','+invAttachY,backOn);
     }
-    bpx2=bpJoinX;bpy2=Math.round((buyS-12+invAttachY)/2);
+    if(lowWholeBp){bpx2=lowWholeBp[0];bpy2=lowWholeBp[1];}else{bpx2=bpJoinX;bpy2=Math.round((buyS-12+invAttachY)/2);}
   } else {
     bpx2=invAttachX+106;bpy2=invTopY;
+  }
+  // Earthing is always drawn in high resolution: the main earthing bar, the ground rod,
+  // the grid/cabinet earth and the main-load earth exist whether or not backup is chosen.
+  if(state.highRes&&!isMulti){
+      var peAnchorY=showPartialSingle?peYs:(baseY+10);
+    var earthBarX=540,earthBarY=Math.min(peAnchorY+40,H-66);   // keep the ground-rod caption inside the canvas
+    s+=mainEarthBar(earthBarX,earthBarY);
+    var earthPt2X=earthBarPointX(earthBarX,0);
+    var laneT1=earthBarY-14;
+    var peD2=!showPartialSingle?null:synPart
+      ?('M'+(synLoadX+2*PHASE_SPACING)+','+synLoadY+' L'+(synLoadX+2*PHASE_SPACING)+','+laneT1+' L'+earthPt2X+','+laneT1+' L'+earthPt2X+','+earthBarY)
+      :(synWhole?null:('M'+bhx2+','+peYs+' L'+bhx2+','+laneT1+' L'+earthPt2X+','+laneT1+' L'+earthPt2X+','+earthBarY));
+    if(peD2){
+      s+='<path d="'+peD2+'" fill="none" stroke="#e8c11a" stroke-width="1.4" stroke-dasharray="3 3" opacity="'+acOp(backOn,true)+'"></path>';
+      s+='<path d="'+peD2+'" fill="none" stroke="#2ea043" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="3" opacity="'+acOp(backOn,true)+'"></path>';
+    }
+    if(invOn){
+      var earthPt3X=earthBarPointX(earthBarX,2);
+      var invGndY=invAttachY+2*PHASE_SPACING;
+      var peD3='M'+invEdgeR+','+invGndY+' L'+earthPt3X+','+invGndY+' L'+earthPt3X+','+earthBarY;
+      s+='<path d="'+peD3+'" fill="none" stroke="#e8c11a" stroke-width="1.4" stroke-dasharray="3 3" opacity="'+acOp(gridLit||wholeLit,true)+'"></path>';
+      s+='<path d="'+peD3+'" fill="none" stroke="#2ea043" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="3" opacity="'+acOp(gridLit||wholeLit,true)+'"></path>';
+    }
+    var earthPt4X=earthBarPointX(earthBarX,3);
+    var mlGndX=(synWhole?synLaneX:mainACx)+2*PHASE_SPACING;
+    var peD4='M'+mlGndX+','+houseBotAnchor+' L'+mlGndX+','+(earthBarY-12)+' L'+earthPt4X+','+(earthBarY-12)+' L'+earthPt4X+','+earthBarY;
+    s+='<path d="'+peD4+'" fill="none" stroke="#e8c11a" stroke-width="1.4" stroke-dasharray="3 3" opacity="'+acOp(gridLit,true)+'"></path>';
+    s+='<path d="'+peD4+'" fill="none" stroke="#2ea043" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="3" opacity="'+acOp(gridLit,true)+'"></path>';
+    var earthPt5X=earthBarPointX(earthBarX,4);
+    var cabPEY=cabEntryY+2*PHASE_SPACING,cabPEdropX=cabX-22;
+    var laneT5=earthBarY-8;
+    var peD5='M'+cabX+','+cabPEY+' L'+cabPEdropX+','+cabPEY+' L'+cabPEdropX+','+laneT5+' L'+earthPt5X+','+laneT5+' L'+earthPt5X+','+earthBarY;
+    s+='<path d="'+peD5+'" fill="none" stroke="#e8c11a" stroke-width="1.4" stroke-dasharray="3 3" opacity="'+acOp(gridLit||wholeLit,true)+'"></path>';
+    s+='<path d="'+peD5+'" fill="none" stroke="#2ea043" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="3" opacity="'+acOp(gridLit||wholeLit,true)+'"></path>';
+    if(!isMulti&&hasComp&&state.thirdParty){
+      var tpPEY=baseY+2*PHASE_SPACING;
+      for(var tpei=0;tpei<tpCenters.length;tpei++){
+        var tpeCx=tpCenters[tpei];
+        var earthPtTPX=earthBarPointX(earthBarX,6+tpei);
+        var laneTTP=earthBarY-20-tpei*6;
+        var tpPeX=tpeCx+2*PHASE_SPACING;   // PE sits right of N in the bundle
+        var peD6='M'+tpPeX+','+tpPEY+' L'+tpPeX+','+laneTTP+' L'+earthPtTPX+','+laneTTP+' L'+earthPtTPX+','+earthBarY;
+        s+='<path d="'+peD6+'" fill="none" stroke="#e8c11a" stroke-width="1.4" stroke-dasharray="3 3" opacity="'+acOp(invOn,true)+'"></path>';
+        s+='<path d="'+peD6+'" fill="none" stroke="#2ea043" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="3" opacity="'+acOp(invOn,true)+'"></path>';
+      }
+    }
+    var earthPt1X=earthBarPointX(earthBarX,1);
+    s+='<path d="M'+earthPt1X+','+(earthBarY+2.3)+' L'+earthPt1X+','+(earthBarY+22)+'" fill="none" stroke="#e8c11a" stroke-width="1.4" stroke-dasharray="3 3" opacity="0.95"></path>';
+    s+='<path d="M'+earthPt1X+','+(earthBarY+2.3)+' L'+earthPt1X+','+(earthBarY+22)+'" fill="none" stroke="#2ea043" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="3" opacity="0.95"></path>';
+    s+=groundRod(earthPt1X,earthBarY+22,earthBarY+38);
+    s+='<text x="'+earthPt1X+'" y="'+(earthBarY+50)+'" text-anchor="middle" font-size="4.6" font-weight="800" fill="#3d4c5c">GROUND ROD</text>';
+    s+='<text x="'+earthPt1X+'" y="'+(earthBarY+57)+'" text-anchor="middle" font-size="4.2" font-weight="700" fill="#5d6b78">\u2264100\u03a9</text>';
+    s+='<text x="'+earthPt1X+'" y="'+(earthBarY+63)+'" text-anchor="middle" font-size="4.2" font-weight="800" fill="#1f7a45">Good value? -&gt; stable value</text>';
+    // drawn last so no earth run can cross the caption
+    s+=earthBarCaption(earthBarX,earthBarY);
   }
   if(showBypass){
     if(state.highRes){
@@ -2216,9 +2500,9 @@ function ctgSimple(cx,cy,dir,lbl){
     var isOnline=onlOn&&(state.dongle!=='shinemaster'||state.metering==='meter');
     var onlLit=isOnline?' lit':'';
     var csc=isMulti?0.85:0.85;
-    var clY=houseTopY-52;
-    var monX=houseX-30,monY=clY,phoneX=houseX+34,phoneY=clY;
-    s+='<path class="cloudline'+onlLit+'" d="M'+houseX+','+clY+' L'+houseX+','+(houseTopY+6)+'"></path>';
+    var clY=hTopY-52;
+    var monX=hX-30,monY=clY,phoneX=hX+34,phoneY=clY;
+    s+='<path class="cloudline'+onlLit+'" d="M'+hX+','+clY+' L'+hX+','+(hTopY+6)+'"></path>';
     s+='<path class="cloudline'+onlLit+'" d="M'+(monX+13*csc)+','+monY+' L'+(phoneX-8*csc)+','+phoneY+'"></path>';
     s+='<g class="cloudicon'+onlLit+'"><rect x="'+(monX-13*csc)+'" y="'+(monY-10*csc)+'" width="'+(26*csc)+'" height="'+(18*csc)+'" rx="2"></rect>'+
       '<rect class="scr" x="'+(monX-10*csc)+'" y="'+(monY-7*csc)+'" width="'+(20*csc)+'" height="'+(12*csc)+'"></rect>'+
@@ -2234,7 +2518,18 @@ function ctgSimple(cx,cy,dir,lbl){
     s+='<g class="cloudicon'+onlLit+'"><rect x="'+(phoneX-7*csc)+'" y="'+(phoneY-14*csc)+'" width="'+(14*csc)+'" height="'+(26*csc)+'" rx="3"></rect>'+
       '<circle class="scr" cx="'+phoneX+'" cy="'+(phoneY+7*csc)+'" r="'+(1.6*csc)+'"></circle></g>';
   }
-  s+=drawHouse(houseX,houseBotAnchor);
+  // Port callouts on the inverter face (high resolution, single unit).
+  if(!isMulti&&hasComp&&state.highRes){
+    var ptX=invEdgeR+4;
+    s+=portTag(ptX,invAttachY-2*PHASE_SPACING-7,'GRID PORT','start');
+    if(synHR)s+=portTag(ptX,invAttachY+SYN_FEED_GAP-1.5*PHASE_SPACING-7,'LOAD PORT','start');
+    else if(showPartialSingle&&plFeedY!=null)s+=portTag(ptX,plFeedY-2*PHASE_SPACING-7,'LOAD PORT','start');
+    var comPY=isModa?(baseY-modaStackH((state.inputs[0]&&state.inputs[0].modules)||0)+10):(isRise?(baseY-rh+8):(baseY-ih+8));
+    s+=portTag(ptX,comPY,'COM PORT','start');
+    if(hasLeftTowers)s+=portTag(ix+33,baseY-ih-sky-7,'PV PORT','start');
+    else s+=portTag((isRise?rx:ix)-4,midY2-7,'PV PORT','end');
+  }
+  s+=drawHouse(hX,hBot);
   s+='</svg>';
   s+=battChipHTML;
   s+=stackLabels;
@@ -2242,7 +2537,7 @@ function ctgSimple(cx,cy,dir,lbl){
     var hdX=isRise?(rx+rw-20):(ix+iw/2);
     var hdY;
     if(isRise)hdY=baseY-rh+20;
-    else if(isModa){var mmH=(state.inputs[0]&&state.inputs[0].modules)||0;hdY=baseY-((state.highRes?15.6:13)+mmH*(state.highRes?22:15)+22)+22*0.38;}
+    else if(isModa){var mmH=(state.inputs[0]&&state.inputs[0].modules)||0;hdY=baseY-modaStackH(mmH)+22*0.38;}
     else hdY=baseY-ih+22;
     s+=invHotspotHTML((hdX/W*100).toFixed(2),(hdY/H*100).toFixed(2),'');
   }
@@ -2254,12 +2549,13 @@ function ctgSimple(cx,cy,dir,lbl){
       s+=invHotspotHTML((hx/W*100).toFixed(2),(hy/H*100).toFixed(2),':'+hi,u,hi);
     });
   }
-  var hotBtnX=state.highRes?(houseX-33):(houseX-51);
-  s+=emHotspotHTML((hotBtnX/W*100).toFixed(2),((houseBotAnchor-33)/H*100).toFixed(2));
-  s+=offGridHotspotHTML((hotBtnX/W*100).toFixed(2),((houseBotAnchor-8)/H*100).toFixed(2));
+  if(showBypass&&bpx2!=null&&bpy2!=null)s+=bypassHotspotHTML(((bpx2+16)/W*100).toFixed(2),((bpy2-6)/H*100).toFixed(2));
+  var hotBtnX=state.highRes?(hX-33):(hX-51);
+  s+=emHotspotHTML((hotBtnX/W*100).toFixed(2),((hBot-33)/H*100).toFixed(2));
+  s+=offGridHotspotHTML((hotBtnX/W*100).toFixed(2),((hBot-8)/H*100).toFixed(2));
   if(!isMulti&&hasComp&&state.segment==='res'){
-    var hrBtnX=houseX+42;
-    s+=highResHotspotHTML((hrBtnX/W*100).toFixed(2),((houseBotAnchor-33)/H*100).toFixed(2));
+    var hrBtnX=hX+42;
+    s+=highResHotspotHTML((hrBtnX/W*100).toFixed(2),((hBot-33)/H*100).toFixed(2));
   }
   var isHR=state.highRes&&!(state.multi&&state.units.length>1);
   s+='<div class="legend">'+
@@ -2272,8 +2568,8 @@ function ctgSimple(cx,cy,dir,lbl){
   if(hasComp){
     var onlLit2=(onlOn&&(state.dongle!=='shinemaster'||state.metering==='meter'))?' litb':'';
     var csc2=0.85;
-    var clY2=houseTopY-52;
-    var monX2=houseX-30,monY2=clY2,phoneX2=houseX+34,phoneY2=clY2;
+    var clY2=hTopY-52;
+    var monX2=hX-30,monY2=clY2,phoneX2=hX+34,phoneY2=clY2;
     s+='<div class="netlabel'+onlLit2+'" style="left:'+(monX2/W*100).toFixed(1)+'%;top:'+(((monY2-11*csc2)/H)*100).toFixed(1)+'%;font-size:7px">SHINESERVER &amp; OSS</div>';
     s+='<div class="netlabel'+onlLit2+'" style="left:'+(phoneX2/W*100).toFixed(1)+'%;top:'+(((phoneY2-12*csc2)/H)*100).toFixed(1)+'%;font-size:7px">SHINEPHONE</div>';
     if(state.aiMode){
@@ -2281,7 +2577,7 @@ function ctgSimple(cx,cy,dir,lbl){
       if(state.aiSmart)chips.push('AI SMART');
       if(state.aiPeak)chips.push('PEAK SHAVING');
       if(state.aiUnbal&&fam()&&fam().phase==='3\u2011phase')chips.push('UNBALANCED 3\u2011PH');
-      if(chips.length)s+='<div class="aichips" style="left:'+(houseX/W*100).toFixed(1)+'%;top:'+(((clY2-48)/H)*100).toFixed(1)+'%;transform:translate(-50%,-100%)">'+chips.map(function(c){return '<span class="aichip">'+c+'</span>';}).join('')+'</div>';
+      if(chips.length)s+='<div class="aichips" style="left:'+(hX/W*100).toFixed(1)+'%;top:'+(((clY2-48)/H)*100).toFixed(1)+'%;transform:translate(-50%,-100%)">'+chips.map(function(c){return '<span class="aichip">'+c+'</span>';}).join('')+'</div>';
     }
   }
   if(!isMulti&&hasComp){
@@ -2292,8 +2588,16 @@ function ctgSimple(cx,cy,dir,lbl){
   if(showPartialSingle){
     var plSpread=4*PHASE_SPACING+20;
     var houseIconY=state.highRes?((plFeedY!=null?plFeedY:invAttachY)+2*PHASE_SPACING):buyS;
-    s+='<div class="housebox" style="left:'+(bhx2/W*100).toFixed(1)+'%;top:'+((houseIconY/H*100)).toFixed(1)+'%;font-size:'+(state.highRes?plSpread:23)+'px;transform:translate(-50%,-100%)'+(state.highRes?' scaleX(0.85)':'')+'">\ud83c\udfe0</div>';
-    s+='<div class="netlabel'+(backOn?' litb':'')+'" style="left:'+(bhx2/W*100).toFixed(1)+'%;top:'+(((houseIconY+15)/H*100)).toFixed(1)+'%;font-size:7px">'+(state.backupMode==='whole'?'WHOLE-HOME BACKUP':'PARTIAL LOAD')+(state.backupLoadKw>0?(' '+state.backupLoadKw+'kW'):'')+'</div>';
+    var houseIconX=bhx2;
+    if(synPart){houseIconX=synLoadX;houseIconY=synLoadY;}
+    var backupLbl=(state.backupMode==='whole'?'WHOLE-HOME BACKUP':'PARTIAL LOAD')+(state.backupLoadKw>0?(' '+state.backupLoadKw+'kW'):'');
+    if(synWhole||lowWhole){
+      // the main load itself is the backup circuit \u2014 label it there instead of drawing a second house
+      s+='<div class="netlabel'+(backOn?' litb':'')+'" style="left:'+(hX/W*100).toFixed(1)+'%;top:'+(((hBot+8)/H*100)).toFixed(1)+'%;font-size:7px">'+backupLbl+'</div>';
+    } else {
+      s+='<div class="housebox" style="left:'+(houseIconX/W*100).toFixed(1)+'%;top:'+((houseIconY/H*100)).toFixed(1)+'%;font-size:'+(state.highRes?plSpread:23)+'px;transform:translate(-50%,-100%)'+(state.highRes?' scaleX(0.85)':'')+'">\ud83c\udfe0</div>';
+      s+='<div class="netlabel'+(backOn?' litb':'')+'" style="left:'+(houseIconX/W*100).toFixed(1)+'%;top:'+(((houseIconY+15)/H*100)).toFixed(1)+'%;font-size:7px">'+backupLbl+'</div>';
+    }
   }
 
 
@@ -2302,7 +2606,7 @@ function ctgSimple(cx,cy,dir,lbl){
 
     if(isModa){
       if(invOn&&b.kwh>0){
-        var modaH=(state.highRes?15.6:13)+(((state.inputs[0]&&state.inputs[0].modules)||0))*(state.highRes?22:15)+22;
+        var modaH=modaStackH((state.inputs[0]&&state.inputs[0].modules)||0);
         s+='<div class="battchip" style="left:'+(invCx/W*100).toFixed(1)+'%;top:'+(((baseY-modaH-10)/H)*100).toFixed(1)+'%;transform:translate(-50%,-100%)"><div class="t">CHARGE / DISCHARGE</div><div class="v">'+battMaxKw(b.kwh)+' kW \u00b7 '+b.kwh+' kWh</div></div>';
       }
     } else if(!isRise){
@@ -2421,7 +2725,7 @@ function render(){
     '<div class="topbar"><div class="logo">'+ic('zap',19,'#fff')+'</div><div><h1>GrowattDesign</h1><div class="sub">Growatt \u00b7 MOD / MID / WIT + APX &amp; AXE</div><div class="accentbar"><span></span><span></span><span></span></div></div></div>'+
     '<div class="printhead"><div class="pt">Growatt Energy System \u2014 Bill of Materials</div><div class="pd">'+new Date().toLocaleDateString()+'</div></div>'+
     printRecapHTML()+
-    '<div class="layout"><div class="stepcol">'+segStep()+invStep()+dongleStep()+meterStep()+backupStep()+batteryStep()+'</div>'+
+    '<div class="layout"><div class="stepcol"><nav class="steprail">'+railHTML()+'</nav><div class="steppane">'+activeStepHTML()+'</div></div>'+
     '<aside class="cartcol"><div id="scenewrap">'+housePhotoHTML()+'</div><div class="cart" id="cart">'+cartHTML()+'</div></aside></div>'+
     '<div class="cartbar" id="cartbar">'+cartbarHTML()+'</div></div>';
   document.getElementById('app').innerHTML=html;
@@ -2459,20 +2763,47 @@ document.addEventListener('click',function(e){
   var el=e.target.closest&&e.target.closest('[data-act]');if(!el)return;var a=el.getAttribute('data-act');
   var uAttrEl=el.getAttribute('data-u');if(uAttrEl!==null){var uTarget=+uAttrEl;if(uTarget!==state.unit&&state.units[uTarget]){switchUnit(uTarget);}}
   if(a==='hottoggle'){var hid=el.getAttribute('data-hot');state.openHot=(state.openHot===hid)?null:hid;render();}
-  else if(a==='fam'){var k=el.getAttribute('data-k');if(!famValid(k))return;if(k==='MODA'&&state.multi&&state.units.length>1)return;state.family=k;var f=FAMILIES[k];var v=f.kw.filter(kwValid);state.kw=v.length?v[0]:f.kw[0];state.inputs=(f.battery==='MODA')?state.inputs:state.inputs.slice(0,f.inputs);if(f.battery==='MODA')state.wantBattery=true;clampInputs();render();}
+  else if(a==='fam'){var k=el.getAttribute('data-k');if(!famValid(k))return;if(k==='MODA'&&state.multi&&state.units.length>1)return;
+    if(state.family&&state.family!==k){
+      // A different inverter changes what the rest of the system can be \u2014 start the flow over.
+      state.dongle=null;state.metering=null;state.meterType='TPM-6CT-C';
+      state.backupOn=false;state.backupMode=null;state.backupLoadKw=0;state.synOptIn=false;
+      state.wantBattery=null;state.inputs=[];state.apx='1.0';
+      state.thirdParty=false;state.tpCount=1;state.tpLabels=['','',''];
+      state.offGrid=false;state.inverterBroken=false;state.bypassOn=false;
+      state.aiMode=false;state.aiSmart=false;state.aiPeak=false;state.aiUnbal=false;
+      state.loadKw=0;state.mainFuseA=null;state.groHomeMode='rs485';state.openHot=null;
+    }
+    state.family=k;var f=FAMILIES[k];var v=f.kw.filter(kwValid);state.kw=v.length?v[0]:f.kw[0];
+    state.inputs=(f.battery==='MODA')?state.inputs:state.inputs.slice(0,f.inputs);
+    if(f.battery==='MODA')state.wantBattery=true;clampInputs();render();}
   else if(a==='kw'){var p=+el.getAttribute('data-p');if(!kwValid(p))return;state.kw=p;
     if(state.family==='RISE-261'&&state.units.length>1){syncUnit();state.units.forEach(function(u){if(u.family==='RISE-261')u.kw=p;});}
     render();}
-  else if(a==='seg'){var sg=el.getAttribute('data-s');state.segment=sg;if(sg!=='res')state.highRes=false;syncUnit();
-    state.units.forEach(function(u){if(u.family&&FAMILIES[u.family].seg!==sg){u.family=null;u.kw=null;u.inputs=[];u.wantBattery=null;}});
-    loadUnit(state.units[state.unit]);render();goStep('stp-inv');}
+  else if(a==='seg'){var sg=el.getAttribute('data-s');
+    if(state.segment!==sg){
+      // Switching segment starts the whole configuration over \u2014 inverter, battery, metering, backup, everything.
+      state.segment=sg;
+      state.highRes=false;state.multi=false;state.offGrid=false;state.inverterBroken=false;state.bypassOn=false;
+      state.thirdParty=false;state.tpCount=1;state.tpLabels=['','',''];
+      state.synOptIn=false;state.groHomeMode='rs485';
+      state.aiMode=false;state.aiSmart=false;state.aiPeak=false;state.aiUnbal=false;
+      state.panelW=450;state.panelCount=0;
+      state.family=null;state.kw=null;state.dongle=null;state.metering=null;state.meterType='TPM-6CT-C';
+      state.backupOn=false;state.apx='1.0';state.inputs=[];state.wantBattery=null;
+      state.loadKw=0;state.backupMode=null;state.backupLoadKw=0;state.mainFuseA=null;
+      state.openHot=null;
+      state.unit=0;state.units=[];syncUnit();
+    }
+    render();}
   else if(a==='tpcount'){state.tpCount=parseInt(el.getAttribute('data-n'),10)||1;render();}
   else if(a==='synoptin'){state.synOptIn=!state.synOptIn;render();}
   else if(a==='offgrid'){state.offGrid=!state.offGrid;state.inverterBroken=false;render();}
   else if(a==='invbroken'){state.inverterBroken=!state.inverterBroken;if(state.inverterBroken)state.offGrid=false;render();}
+  else if(a==='bypasson'){state.bypassOn=!state.bypassOn;render();}
   else if(a==='togglehighres'){state.highRes=!state.highRes;render();}
   else if(a==='gopv'){state.openStep='stp-inv';render();setTimeout(function(){var el=document.getElementById('panelCount');if(el){el.focus();el.select&&el.select();}},60);}
-  else if(a==='stepopen'){var sid=el.getAttribute('data-s');state.openStep=(state.openStep===sid)?null:sid;render();}
+  else if(a==='stepopen'){var sid=el.getAttribute('data-s');state.openStep=sid;render();}
   else if(a==='grohomemode'){state.groHomeMode=el.getAttribute('data-v');render();}
   else if(a==='aimode'){state.aiMode=!state.aiMode;if(!state.aiMode){state.aiSmart=false;state.aiPeak=false;state.aiUnbal=false;}else{state.aiSmart=true;}render();}
   else if(a==='aismart'){state.aiSmart=!state.aiSmart;render();}
@@ -2491,10 +2822,10 @@ document.addEventListener('click',function(e){
   else if(a==='unitdel'){removeUnit(+el.getAttribute('data-i'));render();}
   else if(a==='goai'){state.page='ai';render();}
   else if(a==='goback'){state.page='main';render();}
-  else if(a==='dongle'){var k=el.getAttribute('data-k');if(state.multi&&state.units.length>1&&k!=='shinesem'&&k!=='shinemaster'&&k!=='grohome')return;var wasNull=!state.dongle;state.dongle=(state.dongle===k)?null:k;render();if(state.dongle)goStep('stp-meter');}
-  else if(a==='metering'){var m=el.getAttribute('data-m');state.metering=(state.metering===m)?null:m;if(state.metering==='meter')state.meterType='TPM-6CT-C';render();if(state.metering)goStep('stp-backup');}
+  else if(a==='dongle'){var k=el.getAttribute('data-k');if(state.multi&&state.units.length>1&&k!=='shinesem'&&k!=='shinemaster'&&k!=='grohome')return;var wasNull=!state.dongle;state.dongle=(state.dongle===k)?null:k;render();}
+  else if(a==='metering'){var m=el.getAttribute('data-m');state.metering=(state.metering===m)?null:m;if(state.metering==='meter')state.meterType='TPM-6CT-C';render();}
   else if(a==='mt'){state.meterType=el.getAttribute('data-t');render();}
-  else if(a==='backup'){state.backupOn=!state.backupOn;render();goStep('stp-battery');}
+  else if(a==='backup'){state.backupOn=!state.backupOn;render();}
   else if(a==='backupmode'){var v=el.getAttribute('data-v');state.backupMode=(state.backupMode===v)?null:v;render();}
   else if(a==='apx'){state.apx=el.getAttribute('data-v');clampInputs();render();}
   else if(a==='inputs'){var n=+el.getAttribute('data-n');if(n>fam().inputs)return;if(!isAxeFam()&&n>maxInputs())return;var axe=isAxeFam();while(state.inputs.length<n)state.inputs.push(axe?{modules:6}:{mods:4,cols:1,c1:4,c2:0});state.inputs=state.inputs.slice(0,n);clampInputs();render();}
