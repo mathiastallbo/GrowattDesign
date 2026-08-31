@@ -595,7 +595,8 @@ function needsSyn(){var b=backupType();if(b==='none')return false;return b==='bo
 function a2(){return state.apx==='2.0';}
 function modaModH(){return state.highRes?26.4:18;}
 function modaBaseH(){return state.highRes?15.6:13;}
-function modaStackH(mods){return modaBaseH()+(mods||0)*modaModH()+22;}
+function modaCapH(){return state.highRes?46:22;}
+function modaStackH(mods){return modaBaseH()+(mods||0)*modaModH()+modaCapH();}
 function maxInputs(){if(!fam())return 0;var b=fam().battery;if(b!=='APX')return fam().inputs;return Math.min(fam().inputs,a2()?3:2);}
 function minMods(){return a2()?0:1;}
 function maxMods(){return a2()?5:6;}
@@ -772,6 +773,8 @@ function stepSum(id){
   return '';
 }
 function stepHead(n,icn,t,d,badge,id){
+  // the number always follows the rail, so the two can never drift apart
+  if(id){var ds=stepDefs();for(var si=0;si<ds.length;si++)if(ds[si].id===id)n=si+1;}
   var sum=id?stepSum(id):'';
   var open=id?stepOpen(id):true;
   return '<div class="step-h"'+(id?(' data-act="stepopen" data-s="'+id+'"'):'')+'><div class="num">'+n+'</div>'+
@@ -1230,6 +1233,53 @@ function drawIsoBox(x,y,fw,h,skx,sky,cFront,cTop,cSide,lit){
   s+='</g>';
   return s;
 }
+function leafPath(cx,cy,r,fill){
+  return '<path d="M'+(cx-r*0.78)+','+(cy+r*0.72)+' C'+(cx-r*0.95)+','+(cy-r*0.45)+' '+(cx+r*0.05)+','+(cy-r*1.05)+' '+(cx+r*0.95)+','+(cy-r*0.88)+
+    ' C'+(cx+r*1.0)+','+(cy+r*0.3)+' '+(cx+r*0.1)+','+(cy+r*0.98)+' '+(cx-r*0.78)+','+(cy+r*0.72)+' Z" fill="'+fill+'"></path>'+
+    '<path d="M'+(cx-r*0.55)+','+(cy+r*0.6)+' C'+(cx-r*0.05)+','+(cy+r*0.1)+' '+(cx+r*0.4)+','+(cy-r*0.35)+' '+(cx+r*0.8)+','+(cy-r*0.72)+'" fill="none" stroke="rgba(0,0,0,.22)" stroke-width="'+(r*0.13)+'" stroke-linecap="round"></path>';
+}
+// Front face of a wall\u2011mounted Growatt inverter: white shell, wordmark, dark control panel.
+function growattFace(x,top,w,h,lit){
+  var r=Math.min(w,h)*0.085, s='';
+  s+='<rect x="'+(x+0.7)+'" y="'+(top+0.7)+'" width="'+(w-1.4)+'" height="'+(h-1.4)+'" rx="'+r.toFixed(1)+'" fill="'+(lit?'#fcfdfd':'#e9ebec')+'" stroke="'+(lit?'#dde4ea':'#c9cdd1')+'" stroke-width="0.9"></rect>';
+  s+='<rect x="'+(x+2.2)+'" y="'+(top+2.1)+'" width="'+(w-4.4)+'" height="'+(h*0.34).toFixed(1)+'" rx="'+(r*0.8).toFixed(1)+'" fill="#ffffff" opacity="'+(lit?'0.85':'0.5')+'"></rect>';
+  var lf=Math.min(h*0.095,w*0.115);
+  if(lf>=7)s+='<text x="'+(x+w/2)+'" y="'+(top+h*0.30).toFixed(1)+'" text-anchor="middle" font-size="'+lf.toFixed(1)+'" font-weight="800" letter-spacing=".01em" fill="'+(lit?'#3d4a56':'#9aa1a8')+'"><tspan fill="'+(lit?'#59b134':'#a7aeb4')+'">G</tspan>ROWATT</text>';
+  // On the small multi-inverter faces there is no room for the control panel without
+  // the model name landing on top of it - leave it off and keep the text clear.
+  if(h<52)return s;
+  var dw=Math.min(w*0.34,h*0.26), dh=dw*1.15, dx=x+(w-dw)/2, dy=top+h-dh-h*0.10;
+  s+='<rect x="'+dx.toFixed(1)+'" y="'+dy.toFixed(1)+'" width="'+dw.toFixed(1)+'" height="'+dh.toFixed(1)+'" rx="'+(dw*0.27).toFixed(1)+'" fill="'+(lit?'#1e242a':'#4d5358')+'"></rect>';
+  s+='<rect x="'+(dx+dw*0.09).toFixed(1)+'" y="'+(dy+dh*0.07).toFixed(1)+'" width="'+(dw*0.82).toFixed(1)+'" height="'+(dh*0.86).toFixed(1)+'" rx="'+(dw*0.2).toFixed(1)+'" fill="none" stroke="#3b434b" stroke-width="0.55"></rect>';
+  s+=leafPath(dx+dw/2,dy+dh*0.30,dw*0.21,lit?'#4fd07a':'#828a90');
+  s+='<rect x="'+(dx+dw*0.30).toFixed(1)+'" y="'+(dy+dh*0.52).toFixed(1)+'" width="'+(dw*0.40).toFixed(1)+'" height="'+(dh*0.19).toFixed(1)+'" rx="'+(dw*0.05).toFixed(1)+'" fill="'+(lit?'#59646f':'#6e757a')+'"></rect>';
+  s+='<circle cx="'+(dx+dw/2).toFixed(1)+'" cy="'+(dy+dh*0.84).toFixed(1)+'" r="'+(dw*0.085).toFixed(1)+'" fill="none" stroke="'+(lit?'#8b97a3':'#7f868c')+'" stroke-width="0.65"></circle>';
+  return s;
+}
+// Top cap of the MODA all\u2011in\u2011one: display top\u2011left, ring button top\u2011right.
+function modaCap(x,top,w,h,lit){
+  // The chrome - display, ring button, gloss - keeps a fixed height; any extra cap height
+  // below it is nameplate room, so the model name can be set as large as on the wall units.
+  var cb=Math.min(h,22);
+  var s='',r=Math.min(w*0.10,cb*0.30);
+  s+='<rect x="'+x+'" y="'+(top+0.5)+'" width="'+w+'" height="'+(h-1)+'" rx="'+r.toFixed(1)+'" fill="'+(lit?'#fcfdfd':'#e9ebec')+'" stroke="'+(lit?'#cfd8e0':'#c9cdd1')+'" stroke-width="0.9"></rect>';
+  s+='<rect x="'+(x+1.6)+'" y="'+(top+1.4)+'" width="'+(w-3.2)+'" height="'+(cb*0.34).toFixed(1)+'" rx="'+(r*0.7).toFixed(1)+'" fill="#ffffff" opacity="'+(lit?'0.85':'0.5')+'"></rect>';
+  var dw=w*0.24, dh=cb*0.34, dx=x+w*0.085, dy=top+cb*0.17;
+  s+='<rect x="'+dx.toFixed(1)+'" y="'+dy.toFixed(1)+'" width="'+dw.toFixed(1)+'" height="'+dh.toFixed(1)+'" rx="'+(dh*0.24).toFixed(1)+'" fill="'+(lit?'#1e242a':'#565c62')+'"></rect>';
+  s+='<rect x="'+(dx+dw*0.14).toFixed(1)+'" y="'+(dy+dh*0.24).toFixed(1)+'" width="'+(dw*0.72).toFixed(1)+'" height="'+(dh*0.46).toFixed(1)+'" rx="'+(dh*0.1).toFixed(1)+'" fill="'+(lit?'#3a434b':'#6b7176')+'"></rect>';
+  var br=Math.min(w*0.072,cb*0.22), bcx=x+w-w*0.10-br, bcy=top+cb*0.36;
+  s+='<circle cx="'+bcx.toFixed(1)+'" cy="'+bcy.toFixed(1)+'" r="'+br.toFixed(1)+'" fill="'+(lit?'#1c2228':'#565c62')+'" stroke="'+(lit?'#4fd07a':'#8a9196')+'" stroke-width="'+(br*0.3).toFixed(1)+'"></circle>';
+  s+=leafPath(bcx,bcy,br*0.5,lit?'#4fd07a':'#8a9196');
+  return s;
+}
+// Louvred air intake down the left of each MODA module.
+function modaVents(x,top,w,h){
+  var s='',n=3;
+  for(var i=0;i<n;i++){
+    s+='<rect x="'+(x+2.2+i*2.1).toFixed(1)+'" y="'+(top+h*0.22).toFixed(1)+'" width="0.9" height="'+(h*0.56).toFixed(1)+'" rx="0.45" fill="#dbe2e8"></rect>';
+  }
+  return s;
+}
 function gauge(cx,cy,r,lit){
   var rr=r-2,circ=2*Math.PI*rr,fillLen=circ*0.62;
   return '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="#182420" stroke="#3d4b46" stroke-width="1"></circle>'+
@@ -1275,7 +1325,7 @@ var SYN_FEED_GAP=72;   // drop of the inverter\u2192SYN bundle below the grid bu
 function acGridLit(){
   return state.metering==='meter'||state.dongle==='shinesem'||state.dongle==='shinemaster'||state.dongle==='grohome';
 }
-// Off\u2011grid: the utility side is still drawn, just greyed out instead of nearly invisible.
+// Off-grid: the utility side is still drawn, just greyed out instead of nearly invisible.
 function acCol(c,exempt){return (state.offGrid&&!exempt)?'#9aa6b2':c;}
 function acOp(lit,exempt){
   if(state.offGrid)return exempt?0.95:0.6;
@@ -1358,6 +1408,7 @@ function drawExtraUnitRow(u,rowIx,rowBaseY,scale,skx,sky,active,mir){
     if(u.kw)s+=invModelSVG(rowIx+iw/2,rowBaseY-ih*0.28-2,iw,modelName(u.family,u.kw),6.4);
   } else if(!isModaU){
     s+=drawIsoBox(rowIx,rowBaseY,iw,ih,skx*scale,sky*scale,'#eef1f5','#f8fbfd','#c7cfd9',true);
+    s+=growattFace(rowIx,rowBaseY-ih,iw,ih,true);
     s+='<circle cx="'+(rowIx+iw/2)+'" cy="'+(rowBaseY-ih+18*scale)+'" r="'+(4*scale)+'" fill="#33da7a"></circle>';
     if(u.kw)s+=invModelSVG(rowIx+iw/2,rowBaseY-ih*0.32-2,iw,modelName(u.family,u.kw),6.4);
   }
@@ -1373,11 +1424,11 @@ function drawExtraUnitRow(u,rowIx,rowBaseY,scale,skx,sky,active,mir){
     s+='<text x="'+(rowIx+iw/2)+'" y="'+(mcy-mBaseH/2+2.2*tScale)+'" text-anchor="middle" font-size="'+(6*tScale).toFixed(1)+'" font-weight="700" fill="#f2f5f7">BASE</text>';
     mcy-=mBaseH;
     for(var mi=0;mi<mm;mi++){
-      s+='<rect x="'+rowIx+'" y="'+(mcy-mMh+1)+'" width="'+iw+'" height="'+(mMh-2)+'" fill="#f4f6f8" stroke="#bcc6d0" stroke-width="0.7"></rect>';
+      s+='<rect x="'+rowIx+'" y="'+(mcy-mMh+1)+'" width="'+iw+'" height="'+(mMh-2)+'" rx="1.2" fill="#fafbfc" stroke="#cdd5dd" stroke-width="0.7"></rect>';
+      s+=modaVents(rowIx,mcy-mMh,iw,mMh);
       mcy-=mMh;
     }
-    s+='<rect x="'+rowIx+'" y="'+(mcy-mCapH+1)+'" width="'+iw+'" height="'+(mCapH-2)+'" fill="#eef1f5" stroke="#33da7a" stroke-width="1"></rect>';
-    s+=gauge(rowIx+iw/2,mcy-mCapH/2,7*tScale,true);
+    s+=modaCap(rowIx,mcy-mCapH+1,iw,mCapH-2,true);
     if(u.num)s+=nrTag(rowIx+iw/2,mcy-mCapH,u.num,scale,active);
     if(state.dongle==='grohome'&&state.groHomeMode==='wireless')s+=rfHat(mir?rowIx:(rowIx+iw),mcy-mCapH+10,mir,state.groHomeMode==='wireless');
     return s;
@@ -1463,16 +1514,20 @@ function commercialSceneHTML(){
   var hrShift=(state.highRes&&!isMulti)?50:0;
   var hrBig=(state.highRes&&!isMulti);
   var ix=310-hrShift,iw=hrBig?(isModa?102:88):62,ih=hrBig?(isModa?380:164):98, rx=270-hrShift,rw=150,rh=112;
+  // Residential high resolution: the inverter is dropped a little so it clears the house
+  // above it. Only the unit and the terminals on it move - every cable run keeps its lane.
+  var invDropY=(hrBig&&state.segment==='res'&&!isRise)?(isModa?50:25):0;
+  var invBaseY=baseY+invDropY;
   var sBattGap=hrBig?45:80;
   var sN=towers.length,sGap=7,sAvail=ix-sBattGap-14;
   var sTw=sN?Math.min(46,(sAvail-(sN-1)*sGap)/sN):46;
   var sTotW=sN?sN*sTw+(sN-1)*sGap:0;
   var sTowerH=sN?Math.max.apply(null,towers.map(function(t){return 13+t.mods*(t.axe?9:15)+(t.bms?23:0);})):0;
   var tx0=ix-sBattGap-sTotW;
-  var invAttachX=isRise?(rx+rw):(ix+iw), invAttachY=isRise?(baseY-rh*0.55):(baseY-ih*((isModa&&hrBig)?0.275:0.55));
+  var invAttachX=isRise?(rx+rw):(ix+iw), invAttachY=isRise?(baseY-rh*0.55):(invBaseY-ih*((isModa&&hrBig)?0.275:(hrBig?0.62:0.55)));
   var invEdgeR=invAttachX+skx;
   var twX=635,twTop=78,twBase=170;
-  var towerShift=58, gridDX=-30;
+  var towerShift=58, gridDX=-20;
   twBase-=towerShift;
   var kwhW=48,kwhH=31,kwhX=635-kwhW/2,kwhTopY=190-towerShift+((state.highRes&&!isMulti)?20:0);
   var feedX=635,feedY=180;
@@ -1506,10 +1561,10 @@ function commercialSceneHTML(){
   var showSynBox=bom.some(function(r){return r.g==='Backup'&&r.item.indexOf('SYN')>=0;})&&!isGroHome;
   var showFeedDot=!(showSmartAtFeed||isGroHome||showSemBox||showSynBox);
   var gridChainSVG='';
+  if(!isMulti&&hasComp)gridChainSVG+=gridChainStrip(692,52);
   gridChainSVG+='<g class="gpole'+(metOn?' lit':'')+'">'+
      '<g transform="translate('+gridDX+',-'+towerShift+')">'+
-     // the line carries on past the frame \u2014 three smaller pylons give it depth
-     farPylon(700,142,0.62)+farPylon(731,126,0.4)+farPylon(753,116,0.26)+
+     // the line carries on past the frame - three smaller pylons give it depth
      '<path d="M683,88 Q722,95 840,92" fill="none" stroke="#7c8a9c" stroke-width="1.6"></path>'+
      '<path d="M683,93 Q722,101 840,96" fill="none" stroke="#7c8a9c" stroke-width="1.6"></path>'+
      '<path d="M683,98 Q722,107 840,100" fill="none" stroke="#7c8a9c" stroke-width="1.6"></path>'+
@@ -1524,7 +1579,7 @@ function commercialSceneHTML(){
      '<circle cx="655" cy="90.5" r="2.2" fill="#e4eaf0" stroke="#9aa5b1" stroke-width="0.7"></circle>'+
      '<circle cx="679" cy="90.5" r="2.2" fill="#e4eaf0" stroke="#9aa5b1" stroke-width="0.7"></circle>'+
      '</g>'+
-     ((state.offGrid&&!hrScene)?'':acCable('M'+(655+gridDX)+','+twBase+' L'+(655+gridDX)+','+(kwhTopY-16)+' L635,'+(kwhTopY-16)+' L635,'+kwhTopY,true,'cable'))+
+     ((state.offGrid&&!hrScene)?'':acCable('M635,'+twBase+' L635,'+kwhTopY,true,'cable'))+
      ((state.offGrid&&!hrScene)?'':acCable('M635,'+(kwhTopY+kwhH)+' L'+feedX+','+(showFeedDot?(feedY-5):(feedY+5)),true,'cable'))+
      (showFeedDot?'<circle cx="'+feedX+'" cy="'+feedY+'" r="4.5" fill="#eef4f0" stroke="#33da7a" stroke-width="1.8"></circle>':'')+
      ((state.offGrid&&!hrScene)?'':acCable('M'+feedX+','+(feedY+5)+' L'+feedX+','+(cabBoxBase-cabH),true,'cable'))+
@@ -1548,32 +1603,48 @@ function commercialSceneHTML(){
   gridChainSVG+=screw(cabX+cabW-6,cabBoxBase-cabH*0.45)+screw(cabX+6,cabBoxBase-cabH*0.45);
 function pvRealistic(cxCenter,bottomY,w,h){
   var x0=cxCenter-w/2, y0=bottomY-h;
-  var s='<rect x="'+x0+'" y="'+y0+'" width="'+w+'" height="'+h+'" rx="1.6" fill="#dfe4e9" stroke="#9aa3ac" stroke-width="1"></rect>';
-  var pad=Math.max(Math.min(w,h)*0.055,1);
+  var uid='pv'+Math.round(x0*7+y0*13+w*3+h);
+  var s='<defs><linearGradient id="'+uid+'" x1="0" y1="0" x2="1" y2="1">'+
+    '<stop offset="0" stop-color="#ffffff" stop-opacity=".26"></stop>'+
+    '<stop offset="0.42" stop-color="#ffffff" stop-opacity=".05"></stop>'+
+    '<stop offset="0.55" stop-color="#ffffff" stop-opacity=".16"></stop>'+
+    '<stop offset="1" stop-color="#ffffff" stop-opacity="0"></stop></linearGradient></defs>';
+  // anodised aluminium frame
+  s+='<rect x="'+x0+'" y="'+y0+'" width="'+w+'" height="'+h+'" rx="1.4" fill="#c9ced4" stroke="#8d949c" stroke-width="0.9"></rect>';
+  s+='<rect x="'+(x0+0.5)+'" y="'+(y0+0.5)+'" width="'+(w-1)+'" height="'+(h-1)+'" rx="1.1" fill="none" stroke="#eef1f4" stroke-width="0.5" opacity=".7"></rect>';
+  var pad=Math.max(Math.min(w,h)*0.055,1.1);
   var ix=x0+pad, iy=y0+pad, iw=w-2*pad, ih=h-2*pad;
-  s+='<rect x="'+ix.toFixed(2)+'" y="'+iy.toFixed(2)+'" width="'+iw.toFixed(2)+'" height="'+ih.toFixed(2)+'" fill="#0a0c11"></rect>';
+  // dark laminate behind the cells
+  s+='<rect x="'+ix.toFixed(2)+'" y="'+iy.toFixed(2)+'" width="'+iw.toFixed(2)+'" height="'+ih.toFixed(2)+'" fill="#0b1righ"></rect>'.replace('0b1righ','0b1018');
   var rows=2;
   var cols=Math.max(5,Math.min(12,Math.round(iw/(ih/rows)*1.7)));
-  var band=ih*0.06;
+  var band=ih*0.055;                       // busbar gap between the two cell rows
   var cw=iw/cols, ch=(ih-band)/rows;
-  var gx=cw*0.09, gy=ch*0.07;
-  var ch2=Math.min(cw,ch)*0.2;
+  var gx=cw*0.075, gy=ch*0.06;
   for(var r=0;r<rows;r++){
     for(var c=0;c<cols;c++){
       var cx=ix+c*cw+gx, cy=iy+r*(ch+band)+gy;
       var ww=cw-2*gx, hh=ch-2*gy;
-      var k=Math.min(ch2,ww*0.32,hh*0.32);
+      var k=Math.min(Math.min(cw,ch)*0.22,ww*0.3,hh*0.3);   // chamfered monocrystalline corners
       var pts=[[cx+k,cy],[cx+ww-k,cy],[cx+ww,cy+k],[cx+ww,cy+hh-k],[cx+ww-k,cy+hh],[cx+k,cy+hh],[cx,cy+hh-k],[cx,cy+k]]
         .map(function(pt){return pt[0].toFixed(2)+','+pt[1].toFixed(2);}).join(' ');
-      s+='<polygon points="'+pts+'" fill="#161a24"></polygon>';
-      if(ww>3.4){
-        s+='<line x1="'+(cx+ww*0.34).toFixed(2)+'" y1="'+cy.toFixed(2)+'" x2="'+(cx+ww*0.34).toFixed(2)+'" y2="'+(cy+hh).toFixed(2)+'" stroke="#b9c2cc" stroke-width="0.28" opacity=".8"></line>';
-        s+='<line x1="'+(cx+ww*0.66).toFixed(2)+'" y1="'+cy.toFixed(2)+'" x2="'+(cx+ww*0.66).toFixed(2)+'" y2="'+(cy+hh).toFixed(2)+'" stroke="#b9c2cc" stroke-width="0.28" opacity=".8"></line>';
+      s+='<polygon points="'+pts+'" fill="#1a2233"></polygon>';
+      s+='<polygon points="'+pts+'" fill="none" stroke="#2b3550" stroke-width="0.22"></polygon>';
+      if(ww>3){   // fine silver fingers + two busbars per cell
+        for(var f=1;f<=4;f++){
+          var fxr=cx+ww*(f/5);
+          s+='<line x1="'+fxr.toFixed(2)+'" y1="'+cy.toFixed(2)+'" x2="'+fxr.toFixed(2)+'" y2="'+(cy+hh).toFixed(2)+'" stroke="#93a2b6" stroke-width="0.14" opacity=".55"></line>';
+        }
+        s+='<line x1="'+(cx+ww*0.33).toFixed(2)+'" y1="'+cy.toFixed(2)+'" x2="'+(cx+ww*0.33).toFixed(2)+'" y2="'+(cy+hh).toFixed(2)+'" stroke="#cfd8e4" stroke-width="0.3" opacity=".9"></line>';
+        s+='<line x1="'+(cx+ww*0.67).toFixed(2)+'" y1="'+cy.toFixed(2)+'" x2="'+(cx+ww*0.67).toFixed(2)+'" y2="'+(cy+hh).toFixed(2)+'" stroke="#cfd8e4" stroke-width="0.3" opacity=".9"></line>';
       }
     }
   }
-  s+='<rect x="'+ix.toFixed(2)+'" y="'+(iy+ch).toFixed(2)+'" width="'+iw.toFixed(2)+'" height="'+band.toFixed(2)+'" fill="#0a0c11"></rect>';
-  s+='<rect x="'+x0+'" y="'+y0+'" width="'+w+'" height="'+(h*0.3)+'" rx="1.6" fill="#ffffff" opacity=".05"></rect>';
+  // interconnect ribbon strip between the rows
+  s+='<rect x="'+ix.toFixed(2)+'" y="'+(iy+ch).toFixed(2)+'" width="'+iw.toFixed(2)+'" height="'+band.toFixed(2)+'" fill="#0b1018"></rect>';
+  s+='<line x1="'+ix.toFixed(2)+'" y1="'+(iy+ch+band/2).toFixed(2)+'" x2="'+(ix+iw).toFixed(2)+'" y2="'+(iy+ch+band/2).toFixed(2)+'" stroke="#5c6a80" stroke-width="0.25" opacity=".8"></line>';
+  // glass sheen across the whole laminate
+  s+='<rect x="'+ix.toFixed(2)+'" y="'+iy.toFixed(2)+'" width="'+iw.toFixed(2)+'" height="'+ih.toFixed(2)+'" fill="url(#'+uid+')"></rect>';
   return s;
 }
 function invHotspotHTML(cxPct,cyPct,hotKey,uRef,uIdx){
@@ -1709,7 +1780,14 @@ function acPortBlock(x,ys){
   }
   return g+'</g>';
 }
-// A smaller, more distant copy of the grid pylon \u2014 same shape, scaled about its base.
+function pePortBlock(x,y){
+  var w=11.5, x0=x-4.5, h=10.4;
+  return '<g><rect x="'+x0+'" y="'+(y-h/2)+'" width="'+w+'" height="'+h+'" rx="2.2" fill="#e9edf2" stroke="#8f9aa6" stroke-width="0.85"></rect>'+
+    '<rect x="'+(x0+1.5)+'" y="'+(y-2.5)+'" width="'+(w-3)+'" height="5" rx="1.1" fill="#39434e"></rect>'+
+    '<rect x="'+(x0+2.6)+'" y="'+(y-1.5)+'" width="'+(w-5.2)+'" height="3" rx="0.7" fill="#e8c11a"></rect>'+
+    '<rect x="'+(x0+2.6)+'" y="'+(y-1.5)+'" width="'+((w-5.2)/2)+'" height="3" rx="0.7" fill="#2ea043"></rect></g>';
+}
+// A smaller, more distant copy of the grid pylon - same shape, scaled about its base.
 function farPylon(cx,by,sc){
   var t='translate('+(cx-655*sc)+','+(by-170*sc)+') scale('+sc+')';
   return '<g transform="'+t+'" opacity="'+(0.5+0.38*sc)+'">'+
@@ -1721,13 +1799,6 @@ function farPylon(cx,by,sc){
     '<path d="M625,88 L685,88" fill="none" stroke="#6e7c8e" stroke-width="2.4"></path>'+
     '</g>';
 }
-function pePortBlock(x,y){
-  var w=11.5, x0=x-4.5, h=10.4;
-  return '<g><rect x="'+x0+'" y="'+(y-h/2)+'" width="'+w+'" height="'+h+'" rx="2.2" fill="#e9edf2" stroke="#8f9aa6" stroke-width="0.85"></rect>'+
-    '<rect x="'+(x0+1.5)+'" y="'+(y-2.5)+'" width="'+(w-3)+'" height="5" rx="1.1" fill="#39434e"></rect>'+
-    '<rect x="'+(x0+2.6)+'" y="'+(y-1.5)+'" width="'+(w-5.2)+'" height="3" rx="0.7" fill="#e8c11a"></rect>'+
-    '<rect x="'+(x0+2.6)+'" y="'+(y-1.5)+'" width="'+((w-5.2)/2)+'" height="3" rx="0.7" fill="#2ea043"></rect></g>';
-}
 function portTag(x,y,txt,anchor){
   var w=txt.length*2.35+7, h=6.8, x0=(anchor==='end')?(x-w):x;
   return '<g><rect x="'+x0+'" y="'+(y-h/2)+'" width="'+w+'" height="'+h+'" rx="1.7" fill="#ffffff" fill-opacity=".9" stroke="#9aa5b1" stroke-width="0.5"></rect>'+
@@ -1735,16 +1806,20 @@ function portTag(x,y,txt,anchor){
 }
 function breaker4Pole(cx,yPositions){
   var colors=['#e8c11a','#2ea043','#e0473f','#2b6fce'];
-  var lbls=['L1','L2','L3','N'];
-  var s='';
-  for(var i=0;i<4;i++){
+  var top=Math.min.apply(null,yPositions)-6.6, bot=Math.max.apply(null,yPositions)+6.6;
+  var w=17, x0=cx-w/2;
+  var s='<g>';
+  s+='<rect x="'+(x0+1)+'" y="'+(top+1.4).toFixed(1)+'" width="'+w+'" height="'+(bot-top).toFixed(1)+'" rx="2.2" fill="#39424c" opacity=".18"></rect>';
+  s+='<rect x="'+x0+'" y="'+top.toFixed(1)+'" width="'+w+'" height="'+(bot-top).toFixed(1)+'" rx="2.2" fill="#eef1f4" stroke="#7d8894" stroke-width="0.9"></rect>';
+  for(var i=0;i<yPositions.length;i++){
     var by=yPositions[i];
-    s+='<text x="'+(cx-12)+'" y="'+(by+2.2)+'" text-anchor="end" font-size="5.2" font-weight="800" fill="#3d4c5c">'+lbls[i]+'</text>';
-    s+='<g><rect x="'+(cx-8)+'" y="'+(by-4)+'" width="16" height="8" rx="1.5" fill="#f4f6f9" stroke="#3d4c5c" stroke-width="1.1"></rect>'+
-      '<rect x="'+(cx-5.5)+'" y="'+(by-2.6)+'" width="4.8" height="5.2" rx="0.6" fill="'+colors[i]+'"></rect>'+
-      '<rect x="'+(cx+0.7)+'" y="'+(by-2.6)+'" width="4.8" height="5.2" rx="0.6" fill="#9aa5b1"></rect></g>';
+    if(i)s+='<line x1="'+(x0+0.6)+'" y1="'+(by-PHASE_SPACING/2)+'" x2="'+(x0+w-0.6)+'" y2="'+(by-PHASE_SPACING/2)+'" stroke="#c4ccd6" stroke-width="0.5"></line>';
+    s+='<rect x="'+(x0-1.3)+'" y="'+(by-1.75)+'" width="4.4" height="3.5" rx="0.6" fill="'+colors[i]+'" stroke="#5d6b78" stroke-width="0.35"></rect>';
+    s+='<rect x="'+(x0+w-3.1)+'" y="'+(by-1.75)+'" width="4.4" height="3.5" rx="0.6" fill="'+colors[i]+'" stroke="#5d6b78" stroke-width="0.35"></rect>';
+    s+='<rect x="'+(cx-2.7)+'" y="'+(by-2.7)+'" width="5.4" height="5.4" rx="0.9" fill="#2b333c"></rect>';
+    s+='<rect x="'+(cx-1.1)+'" y="'+(by-2.2)+'" width="2.2" height="2.7" rx="0.5" fill="#eef1f4"></rect>';
   }
-  return s;
+  return s+'</g>';
 }
 var EARTH_BAR_W=76,EARTH_BAR_PTS=9;
 function earthBarPointX(cx,idx){
@@ -1782,11 +1857,6 @@ function mainEarthBar(cx,cy,overrideIdx,overrideX){
   s+='<line x1="'+(gx-1.7)+'" y1="'+(gy+6)+'" x2="'+(gx+1.7)+'" y2="'+(gy+6)+'" stroke="#3d4c5c" stroke-width="1.3"></line>';
   return s;
 }
-function groundSymbolUp(cx,cy){
-  return '<line x1="'+(cx-7.5)+'" y1="'+cy+'" x2="'+(cx+7.5)+'" y2="'+cy+'" stroke="#3d4c5c" stroke-width="1.6"></line>'+
-    '<line x1="'+(cx-4.8)+'" y1="'+(cy-3.8)+'" x2="'+(cx+4.8)+'" y2="'+(cy-3.8)+'" stroke="#3d4c5c" stroke-width="1.6"></line>'+
-    '<line x1="'+(cx-2.1)+'" y1="'+(cy-7.6)+'" x2="'+(cx+2.1)+'" y2="'+(cy-7.6)+'" stroke="#3d4c5c" stroke-width="1.6"></line>';
-}
 function groundSymbol(cx,cy){
   var s='<line x1="'+cx+'" y1="'+(cy-12)+'" x2="'+cx+'" y2="'+cy+'" stroke="#3d4c5c" stroke-width="1.4"></line>';
   s+='<line x1="'+(cx-7.5)+'" y1="'+cy+'" x2="'+(cx+7.5)+'" y2="'+cy+'" stroke="#3d4c5c" stroke-width="1.6"></line>';
@@ -1794,18 +1864,63 @@ function groundSymbol(cx,cy){
   s+='<line x1="'+(cx-2.1)+'" y1="'+(cy+7.6)+'" x2="'+(cx+2.1)+'" y2="'+(cy+7.6)+'" stroke="#3d4c5c" stroke-width="1.6"></line>';
   return s;
 }
-function breaker4PoleWide(xPositions,cy){
+function breaker4PoleWide(xPositions,cy,sc){
   var colors=['#e8c11a','#2ea043','#e0473f','#2b6fce'];
-  var modW=PHASE_SPACING*0.92;
+  var k=sc||1;
+  var modW=PHASE_SPACING*0.92*k;
   var s='';
   for(var i=0;i<4;i++){
     var bx=xPositions[i];
-    s+='<rect x="'+(bx-modW/2)+'" y="'+(cy-11)+'" width="'+modW+'" height="23" rx="1.3" fill="#eef1f4" stroke="#8a97a6" stroke-width="0.9"></rect>'+
-       '<rect x="'+(bx-2.6)+'" y="'+(cy-8.3)+'" width="5.2" height="7.4" rx="0.8" fill="#232c35"></rect>'+
-       '<rect x="'+(bx-1)+'" y="'+(cy-6.2)+'" width="2" height="3.2" rx="0.3" fill="#eef1f4"></rect>'+
-       '<rect x="'+(bx-2.6)+'" y="'+(cy+4.5)+'" width="5.2" height="3" rx="0.4" fill="'+colors[i]+'"></rect>';
+    s+='<rect x="'+(bx-modW/2).toFixed(2)+'" y="'+(cy-11*k).toFixed(2)+'" width="'+modW.toFixed(2)+'" height="'+(23*k).toFixed(2)+'" rx="1.3" fill="#eef1f4" stroke="#8a97a6" stroke-width="'+(0.9*k).toFixed(2)+'"></rect>'+
+       '<rect x="'+(bx-2.6*k).toFixed(2)+'" y="'+(cy-8.3*k).toFixed(2)+'" width="'+(5.2*k).toFixed(2)+'" height="'+(7.4*k).toFixed(2)+'" rx="0.8" fill="#232c35"></rect>'+
+       '<rect x="'+(bx-1*k).toFixed(2)+'" y="'+(cy-6.2*k).toFixed(2)+'" width="'+(2*k).toFixed(2)+'" height="'+(3.2*k).toFixed(2)+'" rx="0.3" fill="#eef1f4"></rect>'+
+       '<rect x="'+(bx-2.6*k).toFixed(2)+'" y="'+(cy+4.5*k).toFixed(2)+'" width="'+(5.2*k).toFixed(2)+'" height="'+(3*k).toFixed(2)+'" rx="0.4" fill="'+colors[i]+'"></rect>';
   }
   return s;
+}
+// Where the power comes from, sketched into the empty band above the system: generation,
+// step-up, transmission, substation and the local transformer, with the voltage at each step.
+function gridChainStrip(cx,top){
+  var g='#8b98a8', gd='#6e7c8e', lt='#aab4c0', lx=cx+34;
+  var s='<g opacity="0.85">';
+  function down(y1,y2){
+    return '<line x1="'+cx+'" y1="'+y1+'" x2="'+cx+'" y2="'+(y2-3)+'" stroke="'+g+'" stroke-width="0.9" stroke-dasharray="2.5 2"></line>'+
+      '<polygon points="'+(cx-1.6)+','+(y2-3.2)+' '+(cx+1.6)+','+(y2-3.2)+' '+cx+','+y2+'" fill="'+g+'"></polygon>';
+  }
+  function volts(y,t){
+    var w=t.length*2.2+6;
+    return '<rect x="'+(lx-w/2)+'" y="'+(y-4.5)+'" width="'+w+'" height="6.4" rx="1.8" fill="#ffffff" fill-opacity=".8"></rect>'+
+      '<text x="'+lx+'" y="'+y+'" text-anchor="middle" font-size="4.1" font-weight="800" fill="'+gd+'" letter-spacing=".02em">'+t+'</text>';
+  }
+  var by=top+16;
+  s+='<circle cx="'+(cx-9)+'" cy="'+(by-21)+'" r="2.2" fill="'+g+'" opacity=".28"></circle>';
+  s+='<circle cx="'+(cx-5.5)+'" cy="'+(by-24.5)+'" r="2.9" fill="'+g+'" opacity=".2"></circle>';
+  s+='<rect x="'+(cx-11)+'" y="'+(by-18)+'" width="4" height="18" fill="'+lt+'" stroke="'+g+'" stroke-width="0.8"></rect>';
+  s+='<rect x="'+(cx-6.2)+'" y="'+(by-15)+'" width="3.2" height="15" fill="'+lt+'" stroke="'+g+'" stroke-width="0.8"></rect>';
+  s+='<rect x="'+(cx-1.4)+'" y="'+(by-11)+'" width="15" height="11" fill="'+lt+'" stroke="'+g+'" stroke-width="0.8"></rect>';
+  for(var w2=0;w2<3;w2++)s+='<rect x="'+(cx+0.6+w2*4.6)+'" y="'+(by-8.8)+'" width="3" height="3" fill="#ffffff" opacity=".55"></rect>';
+  s+=down(by+2,by+14)+volts(by+9,'130-400 kV');
+  var ty=by+32;
+  s+='<path d="M'+(cx-8)+','+(ty-15)+' L'+(cx+8)+','+(ty-15)+'" stroke="'+g+'" stroke-width="0.9"></path>';
+  s+='<path d="M'+(cx-1.4)+','+(ty-17)+' L'+(cx-4.8)+','+ty+' M'+(cx+1.4)+','+(ty-17)+' L'+(cx+4.8)+','+ty+'" stroke="'+g+'" stroke-width="0.9"></path>';
+  s+='<path d="M'+(cx-1.4)+','+(ty-17)+' L'+cx+','+(ty-20)+' L'+(cx+1.4)+','+(ty-17)+'" fill="none" stroke="'+g+'" stroke-width="0.8"></path>';
+  s+='<path d="M'+(cx-3.1)+','+(ty-8)+' L'+(cx+3.1)+','+(ty-8)+'" stroke="'+g+'" stroke-width="0.7"></path>';
+  s+='<path d="M'+(cx-1.4)+','+(ty-17)+' L'+(cx+3.1)+','+(ty-8)+' M'+(cx+1.4)+','+(ty-17)+' L'+(cx-3.1)+','+(ty-8)+' M'+(cx-3.1)+','+(ty-8)+' L'+(cx+4.8)+','+ty+' M'+(cx+3.1)+','+(ty-8)+' L'+(cx-4.8)+','+ty+'" stroke="'+g+'" stroke-width="0.55"></path>';
+  s+=down(ty+2,ty+14)+volts(ty+9,'10-60 kV');
+  var sy=ty+28;
+  s+='<rect x="'+(cx-14)+'" y="'+(sy-13)+'" width="28" height="13" fill="none" stroke="'+g+'" stroke-width="0.7" opacity=".65"></rect>';
+  s+='<rect x="'+(cx-11.5)+'" y="'+(sy-9.5)+'" width="7" height="9.5" rx="1" fill="'+lt+'" stroke="'+g+'" stroke-width="0.7"></rect>';
+  s+='<rect x="'+(cx-2.5)+'" y="'+(sy-11.5)+'" width="5.5" height="11.5" rx="1" fill="'+lt+'" stroke="'+g+'" stroke-width="0.7"></rect>';
+  s+='<path d="M'+(cx+6)+','+sy+' L'+(cx+6)+','+(sy-16)+' M'+(cx+11)+','+sy+' L'+(cx+11)+','+(sy-16)+' M'+(cx+3.5)+','+(sy-16)+' L'+(cx+13.5)+','+(sy-16)+'" stroke="'+g+'" stroke-width="0.75"></path>';
+  s+=down(sy+2,sy+14)+volts(sy+9,'400/230 V');
+  var dy=sy+32;
+  s+='<line x1="'+cx+'" y1="'+dy+'" x2="'+cx+'" y2="'+(dy-18)+'" stroke="#a08769" stroke-width="1.5"></line>';
+  s+='<line x1="'+(cx-6)+'" y1="'+(dy-16)+'" x2="'+(cx+6)+'" y2="'+(dy-16)+'" stroke="#a08769" stroke-width="1.1"></line>';
+  for(var i2=0;i2<3;i2++)s+='<circle cx="'+(cx-4.3+i2*4.3)+'" cy="'+(dy-17.5)+'" r="0.9" fill="#e6ebf0" stroke="'+g+'" stroke-width="0.5"></circle>';
+  s+='<rect x="'+(cx+2)+'" y="'+(dy-11)+'" width="5.6" height="8" rx="2.3" fill="'+lt+'" stroke="'+g+'" stroke-width="0.8"></rect>';
+  s+='<line x1="'+(cx-3)+'" y1="'+(dy-6)+'" x2="'+(cx-24)+'" y2="'+(dy-6)+'" stroke="'+g+'" stroke-width="0.9" stroke-dasharray="2.5 2"></line>';
+  s+='<polygon points="'+(cx-23.8)+','+(dy-7.6)+' '+(cx-23.8)+','+(dy-4.4)+' '+(cx-27)+','+(dy-6)+'" fill="'+g+'"></polygon>';
+  return s+'</g>';
 }
 function ctgSimple(cx,cy,dir,lbl){
   var ah=dir==='up'
@@ -1914,21 +2029,24 @@ function ctgSimple(cx,cy,dir,lbl){
   } else if(isModa){
     if(invOn){
       var mm=(state.inputs[0]&&state.inputs[0].modules)||0;
-      var mBaseH=modaBaseH(),mMh=modaModH(),mCapH=22,mTh=mBaseH+mm*mMh+mCapH;
-      var mBoxFaces=isoBox(ix,baseY,iw,mTh,skx,sky);
+      var mBaseH=modaBaseH(),mMh=modaModH(),mCapH=modaCapH(),mTh=mBaseH+mm*mMh+mCapH;
+      var mBoxFaces=isoBox(ix,invBaseY,iw,mTh,skx,sky);
       singleBoxSVG+='<g class="eqbox lit"><polygon class="eqtop" points="'+ptsStr(mBoxFaces.top)+'" fill="#fbfcfd"></polygon><polygon class="eqside" points="'+ptsStr(mBoxFaces.side)+'" fill="#ccd4de"></polygon>';
-      var mcy=baseY;
+      var mcy=invBaseY;
       singleBoxSVG+='<rect x="'+ix+'" y="'+(mcy-mBaseH)+'" width="'+iw+'" height="'+(mBaseH-1)+'" fill="#a9b4bf" stroke="#7d8994" stroke-width="0.75"></rect>';
       singleBoxSVG+='<text x="'+(ix+iw/2)+'" y="'+(mcy-mBaseH/2+2.5)+'" text-anchor="middle" font-size="6.5" font-weight="700" fill="#f2f5f7">BASE</text>';
       mcy-=mBaseH;
       for(var mi=0;mi<mm;mi++){
-        singleBoxSVG+='<rect x="'+ix+'" y="'+(mcy-mMh+1)+'" width="'+iw+'" height="'+(mMh-2)+'" fill="#f4f6f8" stroke="#bcc6d0" stroke-width="0.9"></rect>';
+        singleBoxSVG+='<rect x="'+ix+'" y="'+(mcy-mMh+1)+'" width="'+iw+'" height="'+(mMh-2)+'" rx="1.6" fill="#fafbfc" stroke="#cdd5dd" stroke-width="0.9"></rect>';
+        singleBoxSVG+=modaVents(ix,mcy-mMh,iw,mMh);
         singleBoxSVG+='<text x="'+(ix+iw/2)+'" y="'+(mcy-mMh/2+2.2)+'" text-anchor="middle" font-size="5.6" font-weight="600" fill="#7a8794">5 kWh</text>';
         mcy-=mMh;
       }
-      singleBoxSVG+='<rect x="'+ix+'" y="'+(mcy-mCapH+1)+'" width="'+iw+'" height="'+(mCapH-2)+'" fill="#eef1f5" stroke="#33da7a" stroke-width="1.1"></rect>';
-      singleBoxSVG+=gauge(ix+iw-8,mcy-mCapH*0.32,4.0,true);
-      if(state.kw)singleBoxSVG+=invModelSVG(ix+iw*0.28,mcy-mCapH*0.5,iw-34,modelName('MODA',state.kw),5.4);
+      singleBoxSVG+=modaCap(ix,mcy-mCapH+1,iw,mCapH-2,true);
+      if(state.kw){var mdn=modelName('MODA',state.kw);
+        if(mCapH>30)singleBoxSVG+=invModelSVG(ix+iw/2,mcy-13,iw,mdn,9.5);
+        else{var mfs=Math.min(5.6,(iw-8)/(mdn.length*0.62));
+          singleBoxSVG+='<text x="'+(ix+iw/2)+'" y="'+(mcy-mCapH*0.24)+'" text-anchor="middle" font-size="'+mfs.toFixed(1)+'" font-weight="800" fill="#1f7a45">'+mdn+'</text>';}}
       if(isMulti)singleBoxSVG+=nrTag(ix+iw/2,mcy-mCapH,state.unit+1,1,true);
       if(state.dongle==='grohome'&&state.groHomeMode==='wireless')singleBoxSVG+=rfHat(ix+iw,mcy-mCapH+10,false,state.groHomeMode==='wireless');
       if(state.dongle==='wifi'||state.dongle==='lan'||state.dongle==='4g')singleBoxSVG+=commDongleSVG(ix+iw,mcy-mCapH+10);
@@ -1939,21 +2057,19 @@ function ctgSimple(cx,cy,dir,lbl){
       var invFadeAt=singleBoxSVG.length;
       var brkFill=state.inverterBroken||state.bypassOn;
       if(isWitHu){
-        singleBoxSVG+=drawIsoBox(ix,baseY,iw,ih,skx,sky,brkFill?'#e4e6e9':'#f7f9fb',brkFill?'#eef0f2':'#ffffff',brkFill?'#b8bcc2':'#d7dde3',!brkFill);
-        singleBoxSVG+=gauge(ix+iw/2,baseY-ih+26,11,true);
-        if(state.kw)singleBoxSVG+=invModelSVG(ix+iw/2,baseY-ih*0.4-6,iw,modelName(state.family,state.kw),10.5);
-        singleBoxSVG+='<line x1="'+(ix+7)+'" y1="'+(baseY-14)+'" x2="'+(ix+iw-7)+'" y2="'+(baseY-14)+'" stroke="#c3ccd7" stroke-width="1.5"></line>';
-        singleBoxSVG+=screw(ix+6,baseY-ih+6)+screw(ix+iw-6,baseY-ih+6)+screw(ix+6,baseY-6)+screw(ix+iw-6,baseY-6);
+        singleBoxSVG+=drawIsoBox(ix,invBaseY,iw,ih,skx,sky,brkFill?'#e4e6e9':'#f7f9fb',brkFill?'#eef0f2':'#ffffff',brkFill?'#b8bcc2':'#d7dde3',!brkFill);
+        singleBoxSVG+=gauge(ix+iw/2,invBaseY-ih+26,11,true);
+        if(state.kw)singleBoxSVG+=invModelSVG(ix+iw/2,invBaseY-ih*0.4-6,iw,modelName(state.family,state.kw),10.5);
+        singleBoxSVG+='<line x1="'+(ix+7)+'" y1="'+(invBaseY-14)+'" x2="'+(ix+iw-7)+'" y2="'+(invBaseY-14)+'" stroke="#c3ccd7" stroke-width="1.5"></line>';
+        singleBoxSVG+=screw(ix+6,invBaseY-ih+6)+screw(ix+iw-6,invBaseY-ih+6)+screw(ix+6,invBaseY-6)+screw(ix+iw-6,invBaseY-6);
       } else {
-        singleBoxSVG+=drawIsoBox(ix,baseY,iw,ih,skx,sky,brkFill?'#e0e3e6':'#eef1f5',brkFill?'#eceeef':'#f8fbfd',brkFill?'#aeb3b9':'#c7cfd9',!brkFill);
-        singleBoxSVG+='<circle cx="'+(ix+iw/2)+'" cy="'+(baseY-ih+22)+'" r="5" fill="'+(brkFill?'#9aa0a6':'#33da7a')+'"></circle>';
-        if(state.kw)singleBoxSVG+=invModelSVG(ix+iw/2,baseY-ih*0.42-6,iw,modelName(state.family,state.kw),10.5);
-        singleBoxSVG+='<line x1="'+(ix+8)+'" y1="'+(baseY-20)+'" x2="'+(ix+iw-8)+'" y2="'+(baseY-20)+'" stroke="#c3ccd7" stroke-width="2"></line>';
-        singleBoxSVG+='<line x1="'+(ix+8)+'" y1="'+(baseY-12)+'" x2="'+(ix+iw-8)+'" y2="'+(baseY-12)+'" stroke="#c3ccd7" stroke-width="2"></line>';
+        singleBoxSVG+=drawIsoBox(ix,invBaseY,iw,ih,skx,sky,brkFill?'#e0e3e6':'#eef1f5',brkFill?'#eceeef':'#f8fbfd',brkFill?'#aeb3b9':'#c7cfd9',!brkFill);
+        singleBoxSVG+=growattFace(ix,invBaseY-ih,iw,ih,!brkFill);
+        if(state.kw)singleBoxSVG+=invModelSVG(ix+iw/2,invBaseY-ih*0.53,iw,modelName(state.family,state.kw),10.5);
       }
-      if(isMulti)singleBoxSVG+=nrTag(ix+iw/2,baseY-ih,state.unit+1,1,true);
-      if(state.dongle==='grohome'&&state.groHomeMode==='wireless')singleBoxSVG+=rfHat(ix+iw,baseY-ih+10,false,state.groHomeMode==='wireless');
-      if(state.dongle==='wifi'||state.dongle==='lan'||state.dongle==='4g')singleBoxSVG+=commDongleSVG(ix+iw,baseY-ih+10);
+      if(isMulti)singleBoxSVG+=nrTag(ix+iw/2,invBaseY-ih,state.unit+1,1,true);
+      if(state.dongle==='grohome'&&state.groHomeMode==='wireless')singleBoxSVG+=rfHat(ix+iw,invBaseY-ih+10,false,state.groHomeMode==='wireless');
+      if(state.dongle==='wifi'||state.dongle==='lan'||state.dongle==='4g')singleBoxSVG+=commDongleSVG(ix+iw,invBaseY-ih+10);
       // Bypass engaged \u2014 the inverter is out of circuit, so it fades right back.
       if(state.bypassOn)singleBoxSVG=singleBoxSVG.slice(0,invFadeAt)+'<g opacity="0.4">'+singleBoxSVG.slice(invFadeAt)+'</g>';
     }
@@ -1966,16 +2082,13 @@ function ctgSimple(cx,cy,dir,lbl){
         singleBoxSVG+='<path class="dcbatt" d="M'+(x+tw+skx)+','+(baseY-20)+' L'+ix+','+(baseY-20)+'"></path>';
         singleBoxSVG+=commPair('M'+(x+tw+skx)+','+(baseY-10)+' L'+ix+','+(baseY-10));
         if(hrBig){
-          // Battery earth: runs above the DC pair, then climbs to the inverter PE / main earthing bar.
-          var peBy=baseY-38, peBrx=ix-14;
-          // ~3 cm of rise, extended when a tall battery stack pushes its capacity chip up into the label
-          var peBtop=Math.min(peBy-78,(baseY-sTowerH-10)-34);
-          var peBd='M'+(x+tw+skx)+','+peBy+' L'+ix+','+peBy+' M'+peBrx+','+peBy+' L'+peBrx+','+peBtop;
+          // Battery earth: runs above the DC pair straight into the inverter's PE terminal.
+          var peBy=baseY-38;
+          var peBd='M'+(x+tw+skx)+','+peBy+' L'+ix+','+peBy;
           singleBoxSVG+='<path d="'+peBd+'" fill="none" stroke="#e8c11a" stroke-width="1.4" stroke-dasharray="3 3"></path>';
           singleBoxSVG+='<path d="'+peBd+'" fill="none" stroke="#2ea043" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="3"></path>';
-          singleBoxSVG+=groundSymbolUp(peBrx,peBtop);
-          singleBoxSVG+='<text x="'+(peBrx-11)+'" y="'+(peBtop-12.5)+'" text-anchor="end" font-size="4.2" font-weight="800" fill="#3d4c5c">Inverter PE or</text>';
-          singleBoxSVG+='<text x="'+(peBrx-11)+'" y="'+(peBtop-6.5)+'" text-anchor="end" font-size="4.2" font-weight="800" fill="#3d4c5c">Main Earthing Bar</text>';
+          singleBoxSVG+=pePortBlock(ix,peBy);
+          singleBoxSVG+=portTag(ix-8,peBy-9,'PE','end');
         }
       }
       var boxFaces=isoBox(x,y,tw,th,skx,sky);
@@ -2008,7 +2121,6 @@ function ctgSimple(cx,cy,dir,lbl){
   }
   s+=singleBoxSVG;
   }
-
   var mainMaxH=isRise?rh:(isModa?(invOn?modaStackH((state.inputs[0]&&state.inputs[0].modules)||0):40):Math.max(invOn?ih:0, towers.length?Math.max.apply(null,towers.map(function(t){return 13+t.mods*(t.axe?9:15)+(t.bms?23:0);})):40));
   var allUnits=[];
   if(isMulti){
@@ -2037,60 +2149,76 @@ function ctgSimple(cx,cy,dir,lbl){
   var stackScale=allRiseMulti?0.34:0.5;
   var colX=[90,310];
   var houseX=520+((state.highRes&&!isMulti)?10:0),houseTopY=(isMulti?415:(state.highRes?105:170)),houseSize=76;
+  // one pane of glazing: frame, glass, a soft reflection and a mullion
+  function hWin(gx,gy,gw,gh,split){
+    var o='<rect x="'+gx+'" y="'+gy+'" width="'+gw+'" height="'+gh+'" rx="1" fill="#eef2f6" stroke="#9fb0c1" stroke-width="0.9"></rect>';
+    o+='<rect x="'+(gx+0.9)+'" y="'+(gy+0.9)+'" width="'+(gw-1.8)+'" height="'+(gh-1.8)+'" fill="#bcd8ef"></rect>';
+    o+='<polygon points="'+(gx+0.9)+','+(gy+gh-0.9)+' '+(gx+gw*0.55)+','+(gy+0.9)+' '+(gx+gw*0.85)+','+(gy+0.9)+' '+(gx+0.9)+','+(gy+gh*0.62)+'" fill="#ffffff" opacity=".45"></polygon>';
+    if(split!==2)o+='<line x1="'+(gx+gw/2)+'" y1="'+(gy+0.9)+'" x2="'+(gx+gw/2)+'" y2="'+(gy+gh-0.9)+'" stroke="#9fb0c1" stroke-width="0.7"></line>';
+    if(split===3)o+='<line x1="'+(gx+0.9)+'" y1="'+(gy+gh*0.42)+'" x2="'+(gx+gw-0.9)+'" y2="'+(gy+gh*0.42)+'" stroke="#9fb0c1" stroke-width="0.6"></line>';
+    return o;
+  }
   function drawHouse(cx,hb){
     var h='';
-    var hw=38.5, fw=hw*2; // front\u2011wall half\u2011width \u2014 kept in sync with the SYN backup cable anchor (houseX+38.5) further below
+    var hw=38.5, fw=hw*2; // front-wall half-width - kept in sync with the SYN backup cable anchor (houseX+38.5) further below
     var x=cx-hw;
     var wallH=40, groundH=21, eaveY=hb-wallH, divY=hb-groundH;
     var roofRise=23;
-    // isometric corners \u2014 reuses the exact skx/sky depth every equipment box in this diagram uses
+    // isometric corners - reuses the exact skx/sky depth every equipment box in this diagram uses
     var wBx=x+fw, wBy=eaveY, wCx=x+fw+skx, wCy=eaveY-sky;
     var rLx=x+skx, rLy=eaveY-sky-roofRise, rRx=x+fw+skx, rRy=eaveY-sky-roofRise;
-    if(!state.highRes)h+='<ellipse cx="'+cx+'" cy="'+(hb+3)+'" rx="58" ry="8" fill="rgba(20,30,45,.16)"></ellipse>';
-    // right side wall (gives the body real depth instead of a flat front\u2011on icon)
-    h+='<polygon points="'+wBx+','+wBy+' '+wCx+','+wCy+' '+wCx+','+(hb-sky)+' '+wBx+','+hb+'" fill="#ccd2d8" stroke="#a8afb7" stroke-width="1"></polygon>';
-    // side gable \u2014 closes the roof volume on the right so it doesn\u2019t read as a floating slab
-    h+='<polygon points="'+wBx+','+wBy+' '+wCx+','+wCy+' '+rRx+','+rRy+'" fill="#454d56" stroke="#33383f" stroke-width="1"></polygon>';
-    // front wall \u2014 two\u2011storey, floor divider marks the storeys
-    h+='<rect x="'+x+'" y="'+eaveY+'" width="'+fw+'" height="'+wallH+'" fill="#eef0f2" stroke="#c7ccd2" stroke-width="1.1"></rect>';
-    h+='<line x1="'+x+'" y1="'+divY+'" x2="'+(x+fw)+'" y2="'+divY+'" stroke="#c7ccd2" stroke-width="1"></line>';
-    // pitched roof \u2014 front slope rises from the eave to the ridge along the same skew as the wall
-    h+='<polygon points="'+x+','+eaveY+' '+wBx+','+wBy+' '+rRx+','+rRy+' '+rLx+','+rLy+'" fill="#5b6570" stroke="#454d56" stroke-width="1.2"></polygon>';
-    h+='<line x1="'+rLx+'" y1="'+rLy+'" x2="'+rRx+'" y2="'+rRy+'" stroke="#2f333a" stroke-width="2"></line>';
-    // solar panels tiling the roof slope
+    // right side wall - gives the body real depth instead of a flat front-on icon
+    h+='<polygon points="'+wBx+','+wBy+' '+wCx+','+wCy+' '+wCx+','+(hb-sky)+' '+wBx+','+hb+'" fill="#d6dbe0" stroke="#aeb5bd" stroke-width="1"></polygon>';
+    h+='<polygon points="'+wBx+','+wBy+' '+wCx+','+wCy+' '+wCx+','+(hb-sky)+' '+wBx+','+hb+'" fill="rgba(30,42,58,.10)"></polygon>';
+    // side gable - closes the roof volume on the right
+    h+='<polygon points="'+wBx+','+wBy+' '+wCx+','+wCy+' '+rRx+','+rRy+'" fill="#3f4954" stroke="#2f3740" stroke-width="1"></polygon>';
+    // chimney, tucked behind the ridge on the left
+    var chx=x+fw*0.17, chw=7.5, chTop=rLy-9;
+    h+='<rect x="'+chx+'" y="'+chTop+'" width="'+chw+'" height="'+(rLy-chTop+7)+'" fill="#b87c62" stroke="#8e5c47" stroke-width="0.9"></rect>';
+    h+='<rect x="'+(chx-1.1)+'" y="'+chTop+'" width="'+(chw+2.2)+'" height="2.6" rx="0.8" fill="#9c6650" stroke="#7d5040" stroke-width="0.7"></rect>';
+    // front wall
+    h+='<rect x="'+x+'" y="'+eaveY+'" width="'+fw+'" height="'+wallH+'" rx="1.5" fill="#f5f7f8" stroke="#c9cfd6" stroke-width="1.1"></rect>';
+    h+='<rect x="'+(x+fw*0.72)+'" y="'+eaveY+'" width="'+(fw*0.28)+'" height="'+wallH+'" fill="rgba(30,42,58,.05)"></rect>';
+    h+='<line x1="'+x+'" y1="'+divY+'" x2="'+(x+fw)+'" y2="'+divY+'" stroke="#ccd2d9" stroke-width="1"></line>';
+    // pitched roof
+    h+='<polygon points="'+x+','+eaveY+' '+wBx+','+wBy+' '+rRx+','+rRy+' '+rLx+','+rLy+'" fill="#525c67" stroke="#3d454f" stroke-width="1.2"></polygon>';
+    // solar array framed on the roof slope
     var by=eaveY-1.4,ty=rLy+1.6,bxl=x+4.5,bxr=x+fw-4.5,txl=rLx+3.6,txr=rRx-3.6;
+    h+='<polygon points="'+(bxl-1.4)+','+(by+1.4)+' '+(bxr+1.4)+','+(by+1.4)+' '+(txr+1.4)+','+(ty-1.4)+' '+(txl-1.4)+','+(ty-1.4)+'" fill="#31383f" stroke="#232a30" stroke-width="0.8"></polygon>';
     for(var pi2=0;pi2<3;pi2++){for(var pj=0;pj<2;pj++){
       var f0=pi2/3+0.035,f1=(pi2+1)/3-0.035,g0=pj/2+0.08,g1=(pj+1)/2-0.08;
       var y0=by+(ty-by)*g0,y1=by+(ty-by)*g1;
       var l0=bxl+(txl-bxl)*g0,r0=bxr+(txr-bxr)*g0;
       var l1=bxl+(txl-bxl)*g1,r1=bxr+(txr-bxr)*g1;
       var ax=l0+(r0-l0)*f0,bx=l0+(r0-l0)*f1,cx2=l1+(r1-l1)*f1,dx=l1+(r1-l1)*f0;
-      h+='<polygon points="'+ax.toFixed(1)+','+y0.toFixed(1)+' '+bx.toFixed(1)+','+y0.toFixed(1)+' '+cx2.toFixed(1)+','+y1.toFixed(1)+' '+dx.toFixed(1)+','+y1.toFixed(1)+'" fill="#2e6fce" stroke="#173a6e" stroke-width="0.8"></polygon>';
+      h+='<polygon points="'+ax.toFixed(1)+','+y0.toFixed(1)+' '+bx.toFixed(1)+','+y0.toFixed(1)+' '+cx2.toFixed(1)+','+y1.toFixed(1)+' '+dx.toFixed(1)+','+y1.toFixed(1)+'" fill="#2f6fcf" stroke="#1b3f76" stroke-width="0.8"></polygon>';
+      h+='<polygon points="'+ax.toFixed(1)+','+y0.toFixed(1)+' '+bx.toFixed(1)+','+y0.toFixed(1)+' '+(bx-(bx-cx2)*0.34).toFixed(1)+','+(y0+(y1-y0)*0.34).toFixed(1)+' '+(ax-(ax-dx)*0.34).toFixed(1)+','+(y0+(y1-y0)*0.34).toFixed(1)+'" fill="#ffffff" opacity=".13"></polygon>';
     }}
-    // upper storey \u2014 MAIN LOAD nameplate flanked by two small windows
-    h+='<rect x="'+(x+7)+'" y="'+(eaveY+3)+'" width="6.5" height="5.5" fill="#cfe0ee" stroke="#8fa9bf" stroke-width="0.8"></rect>';
-    h+='<rect x="'+(x+fw-13.5)+'" y="'+(eaveY+3)+'" width="6.5" height="5.5" fill="#cfe0ee" stroke="#8fa9bf" stroke-width="0.8"></rect>';
+    // ridge cap, drawn over the array so the roof line stays crisp
+    h+='<line x1="'+rLx+'" y1="'+rLy+'" x2="'+rRx+'" y2="'+rRy+'" stroke="#2b3138" stroke-width="2.4" stroke-linecap="round"></line>';
+    h+='<line x1="'+x+'" y1="'+eaveY+'" x2="'+wBx+'" y2="'+wBy+'" stroke="#3d454f" stroke-width="1.6"></line>';
+    // upper storey - MAIN LOAD nameplate flanked by two small windows
+    h+=hWin(x+6.5,eaveY+2.6,7.5,6.5);
+    h+=hWin(x+fw-14,eaveY+2.6,7.5,6.5);
     h+='<text x="'+cx+'" y="'+(eaveY+9)+'" text-anchor="middle" font-size="6.2" font-weight="800" fill="#3d4c5c" letter-spacing=".05em">MAIN LOAD</text>';
     if(state.loadKw>0)h+='<text x="'+cx+'" y="'+(eaveY+15.5)+'" text-anchor="middle" font-size="5.6" font-weight="800" fill="#2c9d5e">'+state.loadKw+' kW</text>';
-    // ground storey \u2014 sliding glass door (right), door (left\u2011of\u2011centre), small window (far left)
-    h+='<rect x="'+(cx+3)+'" y="'+(divY+3)+'" width="24" height="'+(groundH-3)+'" fill="#cfe0ee" stroke="#8fa9bf" stroke-width="1"></rect>';
-    h+='<line x1="'+(cx+15)+'" y1="'+(divY+3)+'" x2="'+(cx+15)+'" y2="'+hb+'" stroke="#8fa9bf" stroke-width="0.8"></line>';
-    h+='<rect x="'+(cx+5)+'" y="'+(hb-8)+'" width="7" height="8" fill="#3a3f46"></rect>';
-    h+='<rect x="'+(cx-9)+'" y="'+(divY+4)+'" width="10.5" height="'+(groundH-4)+'" rx="1" fill="#5a4632" stroke="#3f3221" stroke-width="0.8"></rect>';
-    h+='<circle cx="'+(cx-1.5)+'" cy="'+(hb-8)+'" r="0.9" fill="#d8c9a8"></circle>';
-    h+='<rect x="'+(x+5)+'" y="'+(divY+5)+'" width="12" height="10" fill="#cfe0ee" stroke="#8fa9bf" stroke-width="1"></rect>';
-    h+='<line x1="'+(x+11)+'" y1="'+(divY+5)+'" x2="'+(x+11)+'" y2="'+(divY+15)+'" stroke="#8fa9bf" stroke-width="0.7"></line>';
-    // ground trim \u2014 front + side, so the base reads as one continuous plinth
-    h+='<rect x="'+x+'" y="'+(hb-2.6)+'" width="'+fw+'" height="2.6" fill="#d7dade"></rect>';
-    h+='<polygon points="'+wBx+','+hb+' '+wCx+','+(hb-sky)+' '+wCx+','+(hb-sky-2.6)+' '+wBx+','+(hb-2.6)+'" fill="#c3c9cf"></polygon>';
+    // ground storey - patio doors (right), front door (centre-left), window (far left)
+    h+=hWin(cx+3,divY+3,24,groundH-4.5,3);
+    h+='<rect x="'+(cx-9.5)+'" y="'+(divY+4)+'" width="11" height="'+(groundH-4)+'" rx="1.2" fill="#7c5a3c" stroke="#4f3823" stroke-width="0.9"></rect>';
+    h+='<rect x="'+(cx-8.1)+'" y="'+(divY+5.6)+'" width="8.2" height="'+(groundH-7.6)+'" rx="0.8" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="0.7"></rect>';
+    h+='<circle cx="'+(cx-1.9)+'" cy="'+(hb-8)+'" r="1" fill="#e8d9b4"></circle>';
+    h+='<rect x="'+(cx-11.5)+'" y="'+(hb-2.2)+'" width="15" height="2.2" rx="0.6" fill="#c2c8ce"></rect>';
+    h+=hWin(x+5,divY+5,12,10,2);
+    // ground trim - front + side, so the base reads as one continuous plinth
+    h+='<rect x="'+x+'" y="'+(hb-2.6)+'" width="'+fw+'" height="2.6" fill="#d3d8dd"></rect>';
+    h+='<polygon points="'+wBx+','+hb+' '+wCx+','+(hb-sky)+' '+wCx+','+(hb-sky-2.6)+' '+wBx+','+(hb-2.6)+'" fill="#bcc2c8"></polygon>';
     return h;
   }
   var houseBotAnchor=houseTopY+houseSize;
-  // Single inverter: the Main load sits further left and a touch lower, in both resolutions.
+  // Standard resolution with a single inverter: the Main load sits further left and a touch lower.
   // Only the house (and what belongs to it) moves \u2014 the AC feed column, the cabinet run and the
   // bypass riser keep their positions, and the feed jogs across at the end.
-  // The high\u2011res drop is smaller so the conductor corridor clears the COM PORT callout.
-  var mlDX=isMulti?0:(state.highRes?-150:-140), mlDY=isMulti?0:(state.highRes?50:26);
+  var mlDX=isMulti?0:(state.highRes?-150:-140), mlDY=isMulti?0:(state.highRes?16:26);
   var hX=houseX+mlDX, hTopY=houseTopY+mlDY, hBot=houseBotAnchor+mlDY;
   var mlJogY=hBot+(state.highRes?40:20);
   var mlEntryX=Math.max(hX,invEdgeR+28);
@@ -2227,6 +2355,13 @@ function ctgSimple(cx,cy,dir,lbl){
     if(!state.offGrid)commOverlay+='<path class="olcable'+(gridLit?' lit':'')+'" d="M'+monAttachX+','+monAttachY+' L'+monAttachX+','+(houseBotAnchor+31)+' L'+houseX+','+(houseBotAnchor+31)+'"></path>';
   }
   var isWirelessGroHome=state.dongle==='grohome'&&state.groHomeMode==='wireless';
+  // In high resolution the RS485 / COM cable always lands on top of the inverter,
+  // just to the right of the PV port.
+  var comRS485=(showSemBox||showSmartAtFeed||isGroHome)&&!isWirelessGroHome;
+  var invTopFaceY=isRise?(baseY-rh-sky)
+    :(isModa?(invBaseY-modaStackH((state.inputs[0]&&state.inputs[0].modules)||0)-sky):(invBaseY-ih-sky));
+  var comTopX=isModa?(ix+Math.round(iw*0.78)):(ix+70);
+  var comTopEntry=!!(state.highRes&&!isMulti&&hasComp&&invOn&&comRS485);
   if(isMulti&&(showSemBox||isGroHome)&&shownStack.length&&!isWirelessGroHome){
     var nC=shownStack.length;
     var cIR=function(di){var p=unitPos(di);return {x:p.x+62*stackScale,y:p.y-26};};
@@ -2267,31 +2402,61 @@ function ctgSimple(cx,cy,dir,lbl){
   var synLoadX=cabX+cabW/2+26, synLoadY=cabBoxBase+130;
   var synFeedY=cabBoxBase-18, synLaneX=480;
   var wholeLit=(state.backupMode==='whole'||state.backupMode==='partial')&&backOn;
-  // Whole\u2011home backup with an integrated backup: the property runs off the backup circuit, so
-  // the grid\u2011fed Main load and its feed are shown faded.
+  // Whole-home backup with an integrated backup: the property runs off the backup circuit,
+  // so the grid-fed Main load and its feed are shown faded.
   var mlDim=!isMulti&&hasComp&&showPartialSingle&&state.backupMode==='whole'&&backOn&&!synWhole&&!lowWhole;
   var mainACx=houseX;   // feed column centred under Main load, so L1/L2/L3/N run parallel into it
-  if(!isMulti&&state.offGrid&&hasComp){
+  if(!isMulti&&state.offGrid&&hasComp&&!state.highRes){
     s+=acCable('M'+invEdgeR+','+invAttachY+' L'+mainACx+','+invAttachY,true,null,false,true)+acCable(mainFeedD(mainACx,invAttachY),true,null,false,true);
   }
+  // High resolution lane plan for everything to the right of the partial-load box:
+  // backup risers, third-party risers, the Main-load earth, the grid risers and the
+  // cabinet earth each get their own column, in that order, with room between them.
+  var RISER_GAP=13;
+  var plBoxX=invAttachX+54+26;                       // partial-load box centre
+  var laneL=plBoxX+19, laneR=cabX-8;                 // room available for the columns
+  var laneGap=Math.max(6,(laneR-laneL-3*RISER_GAP-6*PHASE_SPACING)/5);
+  var laneAt=laneL+laneGap;
+  var bpRiserX=laneAt+1.5*RISER_GAP;                 // backup risers - widest lanes
+  laneAt+=3*RISER_GAP+laneGap;
+  var gCenter=laneAt+1.5*PHASE_SPACING;              // grid risers
+  laneAt+=3*PHASE_SPACING+laneGap;
+  var tpRiserX=laneAt+1.5*PHASE_SPACING;             // third-party risers, well clear of backup
+  var tpPeX=(gCenter+1.5*PHASE_SPACING+tpRiserX-1.5*PHASE_SPACING)/2;   // third-party earth
+  laneAt+=3*PHASE_SPACING+laneGap;
+  var mlPeX=laneAt;                                  // Main-load earth drop
+  var cabPeX=laneAt+laneGap;                         // cabinet earth drop
+  function gRiseX(i){return gCenter+(i-1.5)*PHASE_SPACING;}
+  var tpCenters=[],tpRowYs=[];
   var cabTopY=cabBaseY-22-cabH, cabEntryY=cabTopY+cabH*0.4;
+  var mlBandTop=Math.min(cabEntryY+24,invAttachY-74);
   if(!isMulti&&hasComp){
-    var invTopY=isRise?(baseY-rh+18):(baseY-ih+18);
-    if(state.offGrid&&state.highRes){
-      for(var ogi=0;ogi<4;ogi++){
-        var ogOff=(ogi-2)*PHASE_SPACING;
-        s+='<path d="M'+(mainACx+ogOff)+','+(invAttachY+ogOff)+' L'+(mainACx+ogOff)+','+(cabEntryY+ogOff)+' L'+cabX+','+(cabEntryY+ogOff)+'" fill="none" stroke="'+acCol(PHASE_WIRES[ogi].c,false)+'" stroke-width="1.3" stroke-dasharray="4 2.5" stroke-linecap="round" opacity="'+acOp(false,false)+'"></path>';
+    var invTopY=isRise?(baseY-rh+18):(invBaseY-ih+18);
+    if(state.highRes){
+      // Each phase leaves the GRID PORT, turns once into its own lane and then runs a single
+      // straight line to the cabinet. Main load taps the very same riser, so nothing doubles back.
+      for(var twi=0;twi<4;twi++){
+        var twOff=(twi-2)*PHASE_SPACING;
+        var twY=invAttachY+twOff, twX=gRiseX(twi), twEntry=cabEntryY+twOff;
+        var twCol=acCol(PHASE_WIRES[twi].c,false);
+        var twOp=state.offGrid?acOp(false,false):acOp(gridLit||wholeLit,false);
+        s+='<path d="M'+invEdgeR+','+twY+' L'+twX+','+twY+' L'+twX+','+twEntry+' L'+cabX+','+twEntry+'" fill="none" stroke="'+twCol+'" stroke-width="1.3" stroke-dasharray="4 2.5" stroke-linecap="round" opacity="'+twOp+'"></path>';
+        if(state.thirdParty){
+          // the bus carries on out to the third-party column, which taps it from below
+          s+='<path d="M'+twX+','+twY+' L'+(tpRiserX+(twi-1.5)*PHASE_SPACING)+','+twY+'" fill="none" stroke="'+twCol+'" stroke-width="1.3" stroke-dasharray="4 2.5" stroke-linecap="round" opacity="'+twOp+'"></path>';
+        }
+        if(!synWhole&&!lowWhole){
+          // Main load drops out of the house into the open band, then runs one straight line
+          // across to meet its own phase on the way up to the cabinet.
+          var mlOp=mlDim?0.18:(state.offGrid?acOp(false,false):acOp(gridLit,false));
+          var mlRx=mlEntryX+(twi-1.5)*PHASE_SPACING;
+          var mlLy=mlBandTop+(3-twi)*11;
+          s+='<path d="M'+mlRx+','+hBot+' L'+mlRx+','+mlLy+' L'+twX+','+mlLy+'" fill="none" stroke="'+twCol+'" stroke-width="1.3" stroke-dasharray="4 2.5" stroke-linecap="round" opacity="'+mlOp+'"></path>';
+        }
       }
     }
     if(!state.offGrid){
       if(state.highRes){
-        for(var twi=0;twi<4;twi++){
-          var twOff=(twi-2)*PHASE_SPACING;
-          var twY=invAttachY+twOff, twX=mainACx+twOff;
-          var twOp=acOp(gridLit||wholeLit,false);
-          s+='<path d="M'+invEdgeR+','+twY+' L'+twX+','+twY+'" fill="none" stroke="'+acCol(PHASE_WIRES[twi].c,false)+'" stroke-width="1.3" stroke-dasharray="4 2.5" stroke-linecap="round" opacity="'+twOp+'"></path>';
-          s+='<path d="M'+twX+','+twY+' L'+twX+','+(cabEntryY+twOff)+' L'+cabX+','+(cabEntryY+twOff)+'" fill="none" stroke="'+acCol(PHASE_WIRES[twi].c,false)+'" stroke-width="1.3" stroke-dasharray="4 2.5" stroke-linecap="round" opacity="'+twOp+'"></path>';
-        }
       } else {
         // Bypass closed: the stretch between the inverter and the bypass breaker carries nothing.
         var bpSplitX=(!isMulti&&hasComp&&!!state.backupMode&&state.family!=='MODA'&&!needsSyn()&&state.bypassOn)?((isRise?(rx+rw):(ix+iw))+102):null;
@@ -2305,16 +2470,6 @@ function ctgSimple(cx,cy,dir,lbl){
       }
     }
     if(state.highRes){
-      for(var mlwi=0;mlwi<4;mlwi++){
-        if(synWhole)break;
-        var mlwOff=(mlwi-2)*PHASE_SPACING;
-        var mlwXc=mainACx+mlwOff, mlwY2=hBot;
-        var mlwD=mlDX
-          ?('M'+mlwXc+','+(invAttachY+mlwOff)+' L'+mlwXc+','+(mlJogY+mlwOff)+' L'+(mlEntryX+mlwOff)+','+(mlJogY+mlwOff)+' L'+(mlEntryX+mlwOff)+','+mlwY2)
-          :('M'+mlwXc+','+(invAttachY+mlwOff)+' L'+mlwXc+','+mlwY2);
-        var mlwLit=mlDim?0.18:acOp(gridLit,false);
-        s+='<path d="'+mlwD+'" fill="none" stroke="'+acCol(PHASE_WIRES[mlwi].c,false)+'" stroke-width="1.3" stroke-dasharray="4 2.5" stroke-linecap="round" opacity="'+mlwLit+'"></path>';
-      }
     } else if(!lowWhole){
       s+=acCable(mainFeedD(mainACx,invAttachY),gridLit&&!mlDim,mlDim?'olcable dim':null);
     }
@@ -2326,7 +2481,9 @@ function ctgSimple(cx,cy,dir,lbl){
       // MODA is drawn as a module stack, so its top is baseY-stack, not baseY-ih.
       var rEy=isModa?(baseY-modaStackH((state.inputs[0]&&state.inputs[0].modules)||0)+10):(isRise?(baseY-rh+8):(baseY-ih+8));
       if(state.highRes){
-        s+=commPair('M'+rSx+','+rSy+' L'+rVx+','+rSy+' L'+rEx+','+rSy+' L'+rEx+','+rEy);
+        // up the side of the unit, then in over the top face next to the PV port
+        var comLaneY=invTopFaceY-16;
+        s+=commPair('M'+rSx+','+rSy+' L'+rEx+','+rSy+' L'+rEx+','+comLaneY+' L'+comTopX+','+comLaneY+' L'+comTopX+','+invTopFaceY);
       } else {
         s+=commPair('M'+rSx+','+rSy+' L'+rVx+','+rSy+' L'+rVx+','+rEy+' L'+rEx+','+rEy);
       }
@@ -2334,7 +2491,8 @@ function ctgSimple(cx,cy,dir,lbl){
   }
   var hasLeftTowers=sN>0&&!isRise&&!isModa;
   var battAnchorX=hasLeftTowers?(ix-sBattGap-sTw/2):((isRise?rx:ix)-95);
-  var bx2=battAnchorX, by2=baseY-mainMaxH*0.55, midY2=baseY-mainMaxH*0.5;
+  var pvAnchorY=hasLeftTowers?baseY:invBaseY;
+  var bx2=battAnchorX, by2=pvAnchorY-mainMaxH*0.55, midY2=pvAnchorY-mainMaxH*0.5;
   if(!isMulti&&hasComp){
     var pvW2=50,pvH2=25;
     var pvBy2=hasLeftTowers?(baseY-Math.max(sTowerH,ih)-50):(by2-30);
@@ -2343,7 +2501,7 @@ function ctgSimple(cx,cy,dir,lbl){
     }
     if(hasLeftTowers){
       var pvLineY2=pvBy2-pvH2*0.5;
-      s+=dcCable('M'+(bx2+pvW2/2)+','+pvLineY2+' L'+(ix+27)+','+pvLineY2+' L'+(ix+27)+','+(baseY-ih-sky));
+      s+=dcCable('M'+(bx2+pvW2/2)+','+pvLineY2+' L'+(ix+27)+','+pvLineY2+' L'+(ix+27)+','+(invBaseY-ih-sky));
     } else {
       s+=dcCable('M'+bx2+','+(pvBy2-pvH2*0.5)+' L'+bx2+','+midY2+' L'+(isRise?rx:ix)+','+midY2);
     }
@@ -2363,13 +2521,13 @@ function ctgSimple(cx,cy,dir,lbl){
     if(hasComp&&isGroHome)s+=ctg(cabX-14,ctY,-22,'left');
   }
   if(!isMulti&&hasComp&&state.thirdParty){
-    // Third\u2011party AC joins the inverter's AC bus on its own column \u2014 clear of the Main load
+    // Third-party AC joins the inverter's AC bus on its own column - clear of the Main load
     // feed column on the right and of the backup risers on the left.
     var tpBpJoinX=invAttachX+102;
     var tpLeftObs=showPartialSingle?(synHR?(invEdgeR+34+3*PHASE_SPACING):(tpBpJoinX+2*PHASE_SPACING)):(invEdgeR+30);
     var tpJoinX=Math.max(invEdgeR+52,(tpLeftObs+mainACx-2*PHASE_SPACING)/2);
     var tpN=Math.min(state.tpCount||1,3),tpW=40,tpH=60;
-    tpCenters=[];
+    tpCenters=[];tpRowYs=[];
     for(var tpi=0;tpi<tpN;tpi++){
       var tpX=100-tpi*45,tpCx=tpX+tpW/2;
       tpCenters.push(tpCx);
@@ -2384,13 +2542,16 @@ function ctgSimple(cx,cy,dir,lbl){
       else s+='<text x="'+tpCx+'" y="'+(baseY-tpH*0.4)+'" text-anchor="middle" font-size="5.6" font-weight="700" fill="#8a97a6">OTHER</text>';
       var tpRowGap=state.highRes?(PHASE_SPACING*4+14):8;
       var tpRowY=Math.min(baseY+85-tpi*tpRowGap,H-45-tpi*tpRowGap);
+      tpRowYs.push(tpRowY);
       if(state.highRes){
-        // Only four conductors here \u2014 the third\u2011party earth runs straight to the main earthing bar.
+        // Only four conductors here - the third-party earth runs straight to the main earthing bar.
         for(var tpwi=0;tpwi<4;tpwi++){
           var tpwOff=(tpwi-2)*PHASE_SPACING;
           var tpwXa=tpCx+tpwOff, tpwYa=baseY;
           var tpwYb=tpRowY+tpwOff;
-          var tpwXc=tpJoinX+tpwOff, tpwY2=invAttachY+tpwOff;
+          // In high resolution the third party rises into the AC bus from below in its own
+          // column, exactly the way the partial-load circuit does.
+          var tpwXc=state.highRes?(tpRiserX+(tpwi-1.5)*PHASE_SPACING):(tpJoinX+tpwOff), tpwY2=invAttachY+tpwOff;
           var tpwD='M'+tpwXa+','+tpwYa+' L'+tpwXa+','+tpwYb+' L'+tpwXc+','+tpwYb+' L'+tpwXc+','+tpwY2;
           var tpwOp=acOp(invOn,false);
           s+='<path d="'+tpwD+'" fill="none" stroke="'+acCol(PHASE_WIRES[tpwi].c,false)+'" stroke-width="1.3" stroke-dasharray="4 2.5" stroke-linecap="round" opacity="'+tpwOp+'"></path>';
@@ -2412,7 +2573,7 @@ function ctgSimple(cx,cy,dir,lbl){
   var bhx2=(isRise?rx+rw:ix+iw)+54;
   var synPartial=showPartialSingle&&needsSyn()&&!state.highRes&&state.backupMode==='partial';
   if(synPartial)bhx2=cabX+cabW/2+45;
-  var buyS=synPartial?(cabBaseY+118):(baseY-8), bpJoinX=bhx2+48;
+  var buyS=synPartial?(cabBaseY+118):(baseY-8), bpJoinX=state.highRes?bpRiserX:(bhx2+48);
   var bpx2,bpy2;
   var synInX=synX2+synW2*0.22, synOutX=synX2+synW2*0.78;
   if(!isMulti&&showSynBox&&invOn&&!state.highRes){
@@ -2423,12 +2584,12 @@ function ctgSimple(cx,cy,dir,lbl){
     bpx2=invAttachX+106;bpy2=invTopY;
   } else if(showPartialSingle){
     // MODA is a low module stack, so the default feed height puts the PE below its base.
-    var plFeedY=state.highRes?Math.min(invAttachY+110,buyS-10):invAttachY;
+    var plFeedY=state.highRes?Math.min(invAttachY+110,invBaseY-27):invAttachY;
     // MODA is a short stack, so the default height crowds the two bundles leaving the
     // inverter. Pin it to the same gap the tall units get.
     if(state.highRes&&isModa)plFeedY=invAttachY+72;
     if(state.highRes){
-      var brkX=(invEdgeR+bpJoinX)/2;
+      var brkX=invEdgeR+22;
       var peOff=2*PHASE_SPACING, peYs=plFeedY+peOff, peXs=invEdgeR;
       var synPlTop=synLoadY-(4*PHASE_SPACING+20);
       if(synHR){
@@ -2466,13 +2627,13 @@ function ctgSimple(cx,cy,dir,lbl){
       if(!synHR){
         for(var pwi=0;pwi<4;pwi++){
           var pwOff=(pwi-2)*PHASE_SPACING;
-          var pwXs=invEdgeR, pwYs=plFeedY+pwOff, pwXc=bpJoinX+pwOff, pwY2=invAttachY+pwOff;
+          var pwXs=invEdgeR, pwYs=plFeedY+pwOff, pwXc=bpJoinX+(pwi-1.5)*RISER_GAP, pwY2=invAttachY+pwOff;
           var pwCol=(state.inverterBroken||state.bypassOn)?'#9aa0a6':PHASE_WIRES[pwi].c;
           var pwOp1=(state.inverterBroken||state.bypassOn)?0.9:acOp(backOn,true);
           s+='<path d="M'+pwXs+','+pwYs+' L'+brkX+','+pwYs+'" fill="none" stroke="'+pwCol+'" stroke-width="1.3" stroke-dasharray="4 2.5" stroke-linecap="round" opacity="'+pwOp1+'"></path>';
           s+='<path d="M'+brkX+','+pwYs+' L'+pwXc+','+pwYs+' L'+pwXc+','+pwY2+'" fill="none" stroke="'+acCol(PHASE_WIRES[pwi].c,false)+'" stroke-width="1.3" stroke-dasharray="4 2.5" stroke-linecap="round" opacity="'+acOp(backOn,false)+'"></path>';
         }
-        var peD='M'+peXs+','+peYs+' L'+bhx2+','+peYs;
+        var peD='M'+peXs+','+peYs+' L'+(bhx2+28)+','+peYs;
         s+='<path d="'+peD+'" fill="none" stroke="#e8c11a" stroke-width="1.4" stroke-dasharray="3 3" opacity="'+acOp(backOn,true)+'"></path>';
         s+='<path d="'+peD+'" fill="none" stroke="#2ea043" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="3" opacity="'+acOp(backOn,true)+'"></path>';
       }
@@ -2487,7 +2648,7 @@ function ctgSimple(cx,cy,dir,lbl){
       s+=acCable('M'+invEdgeR+','+plY+' L'+(bhx2-12)+','+plY,backOn&&!state.bypassOn);
       s+=acCable('M'+(bhx2+12)+','+plY+' L'+bpJoinX+','+plY+' L'+bpJoinX+','+invAttachY,backOn);
     }
-    if(lowWholeBp){bpx2=lowWholeBp[0];bpy2=lowWholeBp[1];}else{bpx2=bpJoinX;bpy2=Math.round((buyS-12+invAttachY)/2);}
+    if(lowWholeBp){bpx2=lowWholeBp[0];bpy2=lowWholeBp[1];}else{bpx2=bpJoinX;bpy2=state.highRes?Math.round(invAttachY+2*PHASE_SPACING+18):Math.round((buyS-12+invAttachY)/2);}
   } else {
     bpx2=invAttachX+106;bpy2=invTopY;
   }
@@ -2501,7 +2662,7 @@ function ctgSimple(cx,cy,dir,lbl){
     var laneT1=earthBarY-14;
     var peD2=!showPartialSingle?null:synPart
       ?('M'+(synLoadX+2*PHASE_SPACING)+','+synLoadY+' L'+(synLoadX+2*PHASE_SPACING)+','+laneT1+' L'+earthPt2X+','+laneT1+' L'+earthPt2X+','+earthBarY)
-      :(synWhole?null:('M'+bhx2+','+peYs+' L'+bhx2+','+laneT1+' L'+earthPt2X+','+laneT1+' L'+earthPt2X+','+earthBarY));
+      :(synWhole?null:('M'+(bhx2+28)+','+peYs+' L'+(bhx2+28)+','+laneT1+' L'+earthPt2X+','+laneT1+' L'+earthPt2X+','+earthBarY));
     if(peD2){
       s+='<path d="'+peD2+'" fill="none" stroke="#e8c11a" stroke-width="1.4" stroke-dasharray="3 3" opacity="'+acOp(backOn,true)+'"></path>';
       s+='<path d="'+peD2+'" fill="none" stroke="#2ea043" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="3" opacity="'+acOp(backOn,true)+'"></path>';
@@ -2515,26 +2676,30 @@ function ctgSimple(cx,cy,dir,lbl){
     }
     var earthPt4X=earthBarPointX(earthBarX,3);
     var mlGndX=(synWhole&&!mlDX?synLaneX:mainACx)+2*PHASE_SPACING;
+    // Same shape as the four phases: straight down out of the house, one turn in the open
+    // band, then across and down to the bar.
+    var mlPeUpX=mlEntryX+2*PHASE_SPACING, mlPeLy=mlBandTop+44;
     var peD4=mlDX
-      ?('M'+(mlEntryX+2*PHASE_SPACING)+','+hBot+' L'+(mlEntryX+2*PHASE_SPACING)+','+(mlJogY+2*PHASE_SPACING)+' L'+mlGndX+','+(mlJogY+2*PHASE_SPACING)+' L'+mlGndX+','+(earthBarY-12)+' L'+earthPt4X+','+(earthBarY-12)+' L'+earthPt4X+','+earthBarY)
+      ?('M'+mlPeUpX+','+hBot+' L'+mlPeUpX+','+mlPeLy+' L'+mlPeX+','+mlPeLy+' L'+mlPeX+','+(earthBarY-12)+' L'+earthPt4X+','+(earthBarY-12)+' L'+earthPt4X+','+earthBarY)
       :('M'+mlGndX+','+hBot+' L'+mlGndX+','+(earthBarY-12)+' L'+earthPt4X+','+(earthBarY-12)+' L'+earthPt4X+','+earthBarY);
     var peD4Op=mlDim?0.18:acOp(gridLit,true);
     s+='<path d="'+peD4+'" fill="none" stroke="#e8c11a" stroke-width="1.4" stroke-dasharray="3 3" opacity="'+peD4Op+'"></path>';
     s+='<path d="'+peD4+'" fill="none" stroke="#2ea043" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="3" opacity="'+peD4Op+'"></path>';
     var earthPt5X=earthBarPointX(earthBarX,4);
-    var cabPEY=cabEntryY+2*PHASE_SPACING,cabPEdropX=cabX-22;
+    var cabPEY=cabEntryY+2*PHASE_SPACING,cabPEdropX=Math.min(cabPeX,cabX-10);
     var laneT5=earthBarY-8;
     var peD5='M'+cabX+','+cabPEY+' L'+cabPEdropX+','+cabPEY+' L'+cabPEdropX+','+laneT5+' L'+earthPt5X+','+laneT5+' L'+earthPt5X+','+earthBarY;
     s+='<path d="'+peD5+'" fill="none" stroke="#e8c11a" stroke-width="1.4" stroke-dasharray="3 3" opacity="'+acOp(gridLit||wholeLit,true)+'"></path>';
     s+='<path d="'+peD5+'" fill="none" stroke="#2ea043" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="3" opacity="'+acOp(gridLit||wholeLit,true)+'"></path>';
-    if(!isMulti&&hasComp&&state.thirdParty){
-      var tpPEY=baseY+2*PHASE_SPACING;
+    if(!isMulti&&hasComp&&state.thirdParty&&tpRowYs.length){
+      // One earth per third-party inverter, and it runs up into the inverter's PE terminal -
+      // from there the inverter's own earth run carries it to the main earthing bar.
+      var invGndY2=invAttachY+2*PHASE_SPACING;
       for(var tpei=0;tpei<tpCenters.length;tpei++){
         var tpeCx=tpCenters[tpei];
-        var earthPtTPX=earthBarPointX(earthBarX,6+tpei);
-        var laneTTP=earthBarY-20-tpei*6;
-        var tpPeX=tpeCx+2*PHASE_SPACING;   // PE sits right of N in the bundle
-        var peD6='M'+tpPeX+','+tpPEY+' L'+tpPeX+','+laneTTP+' L'+earthPtTPX+','+laneTTP+' L'+earthPtTPX+','+earthBarY;
+        var tpPeUp=tpPeX+tpei*5;
+        var tpPeLane=tpRowYs[tpei]+2*PHASE_SPACING;
+        var peD6='M'+(tpeCx+2*PHASE_SPACING)+','+baseY+' L'+(tpeCx+2*PHASE_SPACING)+','+tpPeLane+' L'+tpPeUp+','+tpPeLane+' L'+tpPeUp+','+invGndY2+' L'+invEdgeR+','+invGndY2;
         s+='<path d="'+peD6+'" fill="none" stroke="#e8c11a" stroke-width="1.4" stroke-dasharray="3 3" opacity="'+acOp(invOn,true)+'"></path>';
         s+='<path d="'+peD6+'" fill="none" stroke="#2ea043" stroke-width="1.4" stroke-dasharray="3 3" stroke-dashoffset="3" opacity="'+acOp(invOn,true)+'"></path>';
       }
@@ -2552,8 +2717,8 @@ function ctgSimple(cx,cy,dir,lbl){
   if(showBypass){
     if(state.highRes){
       var bpXs=[];
-      for(var bpi=0;bpi<4;bpi++)bpXs.push(bpx2+(bpi-2)*PHASE_SPACING);
-      s+=breaker4PoleWide(bpXs,bpy2);
+      for(var bpi=0;bpi<4;bpi++)bpXs.push(bpx2+(bpi-1.5)*RISER_GAP);
+      s+=breaker4PoleWide(bpXs,bpy2,0.85);
     } else {
       s+='<g><rect x="'+(bpx2-7)+'" y="'+(bpy2-11)+'" width="14" height="21" rx="2" fill="#f4f6f9" stroke="#e0584f" stroke-width="1.4"></rect>'+
         '<rect x="'+(bpx2-3.6)+'" y="'+(bpy2-7)+'" width="7.2" height="4.4" rx="0.8" fill="#e0584f"></rect>'+
@@ -2597,11 +2762,14 @@ function ctgSimple(cx,cy,dir,lbl){
       var lpYs2=[];for(var lpj=0;lpj<4;lpj++)lpYs2.push(plFeedY+(lpj-2)*PHASE_SPACING);
       s+=acPortBlock(invEdgeR,lpYs2);
       s+=pePortBlock(invEdgeR,plFeedY+2*PHASE_SPACING);
-      s+=portTag(ptX,plFeedY-2*PHASE_SPACING-7,'LOAD PORT','start');
+      s+=portTag(ptX,plFeedY-2*PHASE_SPACING-12,'LOAD PORT','start');
     }
     var comPY=isModa?(baseY-modaStackH((state.inputs[0]&&state.inputs[0].modules)||0)+10):(isRise?(baseY-rh+8):(baseY-ih+8));
-    s+=portTag(ptX,comPY,'COM PORT','start');
-    if(hasLeftTowers)s+=portTag(ix+33,baseY-ih-sky-7,'PV PORT','start');
+    // never let it drift down onto the GRID PORT callout
+    comPY=Math.min(comPY,invAttachY-2*PHASE_SPACING-23);
+    if(comTopEntry)s+=portTag(comTopX+7,invTopFaceY-7,'COM PORT','start');
+    else s+=portTag(ptX,comPY,'COM PORT','start');
+    if(hasLeftTowers)s+=portTag(ix+33,invBaseY-ih-sky-7,'PV PORT','start');
     else s+=portTag((isRise?rx:ix)-4,midY2-7,'PV PORT','end');
   }
   s+=mlDim?('<g opacity="0.22">'+drawHouse(hX,hBot)+'</g>'):drawHouse(hX,hBot);
@@ -2612,8 +2780,8 @@ function ctgSimple(cx,cy,dir,lbl){
     var hdX=isRise?(rx+rw-20):(ix+iw/2);
     var hdY;
     if(isRise)hdY=baseY-rh+20;
-    else if(isModa){var mmH=(state.inputs[0]&&state.inputs[0].modules)||0;hdY=baseY-modaStackH(mmH)+22*0.38;}
-    else hdY=baseY-ih+22;
+    else if(isModa){var mmH=(state.inputs[0]&&state.inputs[0].modules)||0;hdY=invBaseY-modaStackH(mmH)+22*0.38;}
+    else hdY=invBaseY-ih+22;
     s+=invHotspotHTML((hdX/W*100).toFixed(2),(hdY/H*100).toFixed(2),'');
   }
   if(isMulti){
@@ -2624,7 +2792,7 @@ function ctgSimple(cx,cy,dir,lbl){
       s+=invHotspotHTML((hx/W*100).toFixed(2),(hy/H*100).toFixed(2),':'+hi,u,hi);
     });
   }
-  if(showBypass&&bpx2!=null&&bpy2!=null)s+=bypassHotspotHTML(((bpx2+16)/W*100).toFixed(2),((bpy2-6)/H*100).toFixed(2));
+  if(showBypass&&bpx2!=null&&bpy2!=null)s+=bypassHotspotHTML((((bpx2+(state.highRes?0:16)))/W*100).toFixed(2),(((bpy2+(state.highRes?22:-6))/H)*100).toFixed(2));
   var hotBtnX=state.highRes?(hX-33):(hX-51);
   s+=emHotspotHTML((hotBtnX/W*100).toFixed(2),((hBot-33)/H*100).toFixed(2));
   s+=offGridHotspotHTML((hotBtnX/W*100).toFixed(2),((hBot-8)/H*100).toFixed(2));
@@ -2656,14 +2824,14 @@ function ctgSimple(cx,cy,dir,lbl){
     }
   }
   if(!isMulti&&hasComp){
-    var invLabelY=(isRise?baseY-rh-20:baseY-ih-20);
+    var invLabelY=(isRise?baseY-rh-20:invBaseY-ih-20);
   }
   
   if(showBypass&&!state.highRes)s+='<div class="complabel'+(backOn?' lit':'')+'" style="left:'+(bpx2/W*100).toFixed(1)+'%;top:'+(((bpy2-20)/H*100)).toFixed(1)+'%;transform:translate(-50%,-50%);font-size:6.5px;padding:2px 6px">BYPASS</div>';
   if(showPartialSingle){
     var plSpread=4*PHASE_SPACING+20;
     var houseIconY=state.highRes?((plFeedY!=null?plFeedY:invAttachY)+2*PHASE_SPACING):buyS;
-    var houseIconX=bhx2;
+    var houseIconX=bhx2+(state.highRes?26:0);
     if(synPart){houseIconX=synLoadX;houseIconY=synLoadY;}
     var backupLbl=(state.backupMode==='whole'?'WHOLE-HOME BACKUP':'PARTIAL LOAD')+(state.backupLoadKw>0?(' '+state.backupLoadKw+'kW'):'');
     if(synWhole||lowWhole){
@@ -2682,7 +2850,7 @@ function ctgSimple(cx,cy,dir,lbl){
     if(isModa){
       if(invOn&&b.kwh>0){
         var modaH=modaStackH((state.inputs[0]&&state.inputs[0].modules)||0);
-        s+='<div class="battchip" style="left:'+(invCx/W*100).toFixed(1)+'%;top:'+(((baseY-modaH-10)/H)*100).toFixed(1)+'%;transform:translate(-50%,-100%)"><div class="t">CHARGE / DISCHARGE</div><div class="v">'+battMaxKw(b.kwh)+' kW \u00b7 '+b.kwh+' kWh</div></div>';
+        s+='<div class="battchip" style="left:'+(invCx/W*100).toFixed(1)+'%;top:'+(((invBaseY-modaH-10)/H)*100).toFixed(1)+'%;transform:translate(-50%,-100%)"><div class="t">CHARGE / DISCHARGE</div><div class="v">'+battMaxKw(b.kwh)+' kW \u00b7 '+b.kwh+' kWh</div></div>';
       }
     } else if(!isRise){
       // (floating "BATTERY" placeholder label removed \u2014 the tower/BMS graphics already make this clear)
@@ -2824,7 +2992,7 @@ function refreshKeepFocus(fn){
     }
   }
 }
-// Typed values take effect straight away \u2014 warnings, guidance, the rail summary,
+// Typed values take effect straight away - warnings, guidance, the rail summary,
 // the bill of materials and the diagram all follow the field as it is edited.
 function refreshBackupStep(){
   var e1=document.getElementById('bkOverErr');if(e1)e1.innerHTML=bkOverErrHTML();
