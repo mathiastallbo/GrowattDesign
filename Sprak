@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Språkstigen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#ffffff; --surface:#ffffff; --surface-2:#f4f7f9;
+  --ink:#3b4346; --muted:#7d878c; --line:#e3e8eb; --line-d:#cfd6da;
+  --green:#4cc34f; --green-d:#3a9e3d; --green-bg:#dcf7cf; --green-ink:#3b8a2e;
+  --red:#f25c5c; --red-d:#cc3f3f; --red-bg:#ffe0e0; --red-ink:#d03a3a;
+  --blue:#2fa7f0; --blue-d:#1b86c7; --blue-bg:#dff2ff;
+  --purple:#9b5de5; --purple-d:#7b3fc4;
+  --orange:#ff9f1c; --orange-d:#d98200;
+  --pink:#ef5b9c; --pink-d:#c93d7c;
+  --teal:#1cb5ac; --teal-d:#12908a;
+  --gold:#ffc425; --gold-d:#e0a400;
+  --locked:#e3e8eb; --locked-d:#c9d1d5; --locked-ink:#a9b3b8;
+  --art-m:#2f7fd8; --art-f:#d8456b; --art-n:#2e9d52;
+  --brezel:#c77a2c; --brezel-d:#9c5a1a;
+  --fruit:#ff9a1f; --fruit-d:#dd7400;
+  --crust:#e9a13b; --crust-d:#b56a14;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#131f24; --surface:#131f24; --surface-2:#1d2c33;
+    --ink:#eef4f7; --muted:#93a6ae; --line:#35454d; --line-d:#27363d;
+    --green-bg:#1c3322; --green-ink:#86e27d;
+    --red-bg:#3a1e22; --red-ink:#ff8d8d;
+    --blue-bg:#16364a;
+    --locked:#35454d; --locked-d:#27363d; --locked-ink:#5e727b;
+    --art-m:#6fb2ff; --art-f:#ff7fa0; --art-n:#6fd68f;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#131f24; --surface:#131f24; --surface-2:#1d2c33;
+  --ink:#eef4f7; --muted:#93a6ae; --line:#35454d; --line-d:#27363d;
+  --green-bg:#1c3322; --green-ink:#86e27d;
+  --red-bg:#3a1e22; --red-ink:#ff8d8d;
+  --blue-bg:#16364a;
+  --locked:#35454d; --locked-d:#27363d; --locked-ink:#5e727b;
+  --art-m:#6fb2ff; --art-f:#ff7fa0; --art-n:#6fd68f;
+}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Nunito","Varela Round",system-ui,-apple-system,"Segoe UI",sans-serif;font-weight:700;font-size:16px;
+  -webkit-tap-highlight-color:transparent}
+button{font-family:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+h1,h2,h3{text-wrap:balance;margin:0}
+p{margin:0}
+.icon{width:24px;height:24px;flex:none}
+
+/* ---------- App shell ---------- */
+.shell{max-width:620px;margin:0 auto;padding-inline:16px;padding-bottom:110px}
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:2px solid var(--line)}
+.topbar-in{max-width:620px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.flag{width:34px;height:26px;border-radius:7px;overflow:hidden;display:grid;grid-template-rows:1fr 1fr 1fr;box-shadow:0 0 0 2px var(--line);flex:none}
+.flag.de i:nth-child(1){background:#222}.flag.de i:nth-child(2){background:#dd2a2a}.flag.de i:nth-child(3){background:#ffce00}
+.flag.es{grid-template-rows:1fr 2fr 1fr}
+.flag.es i:nth-child(1),.flag.es i:nth-child(3){background:#c8102e}.flag.es i:nth-child(2){background:#ffc400}
+.flag.fr{grid-template-rows:1fr;grid-template-columns:1fr 1fr 1fr}
+.flag.fr i:nth-child(1){background:#0055a4}.flag.fr i:nth-child(2){background:#fff}.flag.fr i:nth-child(3){background:#ef4135}
+.flag.big{width:64px;height:48px;border-radius:11px}
+.flagbtn{background:none;border:2px solid transparent;border-radius:12px;padding:4px;display:flex;align-items:center;gap:6px}
+.flagbtn:hover{border-color:var(--line)}
+.stat{display:flex;align-items:center;gap:6px;font-weight:800;font-size:17px;font-variant-numeric:tabular-nums}
+.stat.streak{color:var(--orange)} .stat.xp{color:var(--blue)} .stat.hearts{color:var(--red)}
+.stat.off{color:var(--locked-ink)}
+
+.bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--bg);border-top:2px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.bottomnav-in{max-width:620px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);padding:6px 16px}
+.navbtn{background:none;border:2px solid transparent;border-radius:14px;padding:8px 4px;display:flex;flex-direction:column;
+  align-items:center;gap:2px;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.navbtn.on{color:var(--blue);border-color:var(--blue);background:var(--blue-bg)}
+.navbtn .icon{width:28px;height:28px}
+
+/* ---------- Buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:16px;
+  padding:14px 22px;font-size:15px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;
+  background:var(--green);color:#fff;box-shadow:0 4px 0 var(--green-d);transition:transform .06s,box-shadow .06s,filter .15s;min-height:50px}
+.btn:hover{filter:brightness(1.05)}
+.btn:active:not(:disabled){transform:translateY(4px);box-shadow:0 0 0 var(--green-d)}
+.btn:disabled{background:var(--locked);color:var(--locked-ink);box-shadow:0 4px 0 var(--locked-d);cursor:default}
+.btn.red{background:var(--red);box-shadow:0 4px 0 var(--red-d)}
+.btn.blue{background:var(--blue);box-shadow:0 4px 0 var(--blue-d)}
+.btn.ghost{background:var(--surface);color:var(--blue);border:2px solid var(--line);box-shadow:0 4px 0 var(--line)}
+.btn.wide{width:100%}
+
+/* ---------- Greeting ---------- */
+.greet{display:flex;gap:12px;align-items:center;margin-top:18px;border:2px solid var(--line);border-radius:20px;padding:12px 16px 14px 10px}
+.greet svg.mascot{width:84px;flex:none}
+.greet-txt{flex:1;min-width:0}
+.greet-txt h2{font-size:20px;font-weight:900}
+.greet-txt p{color:var(--muted);font-size:15px;margin-top:2px}
+.goalrow{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:14px;font-weight:900;color:var(--gold-d);font-variant-numeric:tabular-nums}
+.goalbar{flex:1;height:14px;border-radius:99px;background:var(--line);overflow:hidden}
+.goalbar i{display:block;height:100%;border-radius:99px;background:var(--gold);transition:width .5s}
+
+/* ---------- Path ---------- */
+.practice-row{display:flex;gap:12px;margin:14px 0 0}
+.practice-row .btn{flex:1}
+.unit{margin-top:22px}
+.unit-head{background:var(--u);color:#fff;border-radius:18px;padding:16px 18px;box-shadow:0 5px 0 var(--ud);display:flex;justify-content:space-between;align-items:center;gap:12px}
+.unit-kicker{font-size:13px;letter-spacing:.12em;text-transform:uppercase;opacity:.85;font-weight:800}
+.unit-head h2{font-size:22px;font-weight:900;margin-top:2px}
+.unit-head p.d{font-size:15px;opacity:.92;margin-top:2px;font-weight:700}
+.unit-count{font-size:14px;font-weight:900;background:rgba(0,0,0,.14);border-radius:12px;padding:6px 10px;white-space:nowrap}
+.nodes{position:relative;display:flex;flex-direction:column;align-items:center;gap:26px;padding:58px 0 14px}
+.node-wrap{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px}
+.node{width:74px;height:70px;border-radius:50%;border:0;display:grid;place-items:center;background:var(--u);box-shadow:0 7px 0 var(--ud);color:#fff;transition:transform .06s,box-shadow .06s}
+.node .icon{width:34px;height:34px}
+.node:active{transform:translateY(6px);box-shadow:0 1px 0 var(--ud)}
+.node.done{background:var(--gold);box-shadow:0 7px 0 var(--gold-d)}
+.node.done:active{box-shadow:0 1px 0 var(--gold-d)}
+.node.locked{background:var(--locked);box-shadow:0 7px 0 var(--locked-d);color:var(--locked-ink)}
+.node.current{outline:6px solid color-mix(in srgb,var(--u) 25%,transparent);outline-offset:5px}
+.node.test{border-radius:22px;width:84px}
+.node-label{font-size:14px;color:var(--muted);font-weight:800}
+.node-wrap.current .node-label{color:var(--ink)}
+.crowns{position:absolute;top:-6px;right:-10px;background:var(--surface);border:2px solid var(--line);border-radius:10px;font-size:12px;font-weight:900;padding:1px 6px;color:var(--gold-d)}
+.start-bubble{position:absolute;top:-44px;left:50%;transform:translateX(-50%);background:var(--surface);color:var(--u);border:2px solid var(--line);border-radius:12px;padding:5px 12px;font-weight:900;letter-spacing:.08em;font-size:14px;white-space:nowrap;animation:bob 1.3s ease-in-out infinite}
+.start-bubble::after{content:"";position:absolute;left:50%;bottom:-8px;width:12px;height:12px;background:var(--surface);border-right:2px solid var(--line);border-bottom:2px solid var(--line);transform:translateX(-50%) rotate(45deg)}
+@keyframes bob{50%{transform:translateX(-50%) translateY(-5px)}}
+.path-mascot{position:absolute;top:40%;width:92px;pointer-events:none}
+.path-end{text-align:center;color:var(--muted);padding:28px 0 8px;font-weight:800}
+
+/* ---------- Words / profile ---------- */
+.page-title{font-size:26px;font-weight:900;margin:22px 0 4px}
+.page-sub{color:var(--muted);font-weight:700;margin-bottom:12px}
+.wgroup{margin-top:18px;border:2px solid var(--line);border-radius:18px;overflow:hidden}
+.wgroup h3{font-size:16px;font-weight:900;padding:12px 16px;background:var(--surface-2);border-bottom:2px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.wgroup h3 small{color:var(--muted);font-weight:800;font-size:13px}
+.wrow{display:grid;grid-template-columns:34px 1fr 1fr 40px;align-items:center;gap:10px;padding:10px 12px 10px 16px;border-top:2px solid var(--line)}
+.wrow:first-of-type{border-top:0}
+.wrow .e{font-size:24px}
+.wrow .sv{color:var(--muted);font-weight:700}
+.art{font-weight:900}
+.art.m{color:var(--art-m)}.art.f{color:var(--art-f)}.art.n{color:var(--art-n)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+.wlocked{padding:14px 16px;color:var(--locked-ink);font-weight:800}
+.phead{display:flex;align-items:center;gap:16px;margin-top:22px}
+.avatar{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:900;font-size:21px;flex:none;background:var(--av,var(--blue))}
+.avatar.big{width:76px;height:76px;font-size:34px;box-shadow:0 5px 0 rgba(0,0,0,.15)}
+.phead h1{font-size:26px;font-weight:900}
+.phead p{color:var(--muted)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.sbox{border:2px solid var(--line);border-radius:16px;padding:14px 16px;display:flex;gap:12px;align-items:center}
+.sbox b{display:block;font-size:24px;font-weight:900;font-variant-numeric:tabular-nums;line-height:1.1}
+.sbox span{color:var(--muted);font-size:14px}
+.sbox .icon{width:30px;height:30px}
+.sect{margin-top:24px}
+.sect h2{font-size:19px;font-weight:900;margin-bottom:10px}
+.gchips{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.gchip{background:var(--surface);border:2px solid var(--line);box-shadow:0 3px 0 var(--line);border-radius:14px;padding:10px 4px;font-weight:900;font-size:16px}
+.gchip small{display:block;font-size:12px;color:var(--muted);font-weight:800}
+.gchip.on{border-color:var(--blue);background:var(--blue-bg);color:var(--blue-d);box-shadow:0 3px 0 var(--blue)}
+.pbtns{margin-top:26px;display:flex;flex-direction:column;gap:12px}
+
+.spk{border:0;background:var(--blue);color:#fff;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;box-shadow:0 3px 0 var(--blue-d);flex:none}
+.spk .icon{width:22px;height:22px}
+.spk:active{transform:translateY(3px);box-shadow:none}
+.spk.big{width:110px;height:92px;border-radius:22px;box-shadow:0 6px 0 var(--blue-d)}
+.spk.big .icon{width:48px;height:48px}
+.spk.slow{width:64px;height:64px;border-radius:18px;background:var(--surface);color:var(--blue);border:2px solid var(--line);box-shadow:0 4px 0 var(--line)}
+.spk.slow .icon{width:30px;height:30px}
+
+/* ---------- Auth / onboarding ---------- */
+.auth{position:fixed;inset:0;z-index:45;background:var(--bg);overflow:auto;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.auth-in{max-width:540px;min-height:100%;margin:0 auto;padding:22px 16px;display:flex;flex-direction:column;gap:18px}
+.login-hero{display:flex;justify-content:center;align-items:flex-end;gap:0;margin-top:8px}
+.login-hero svg.mascot{width:120px}
+.login-hero svg.mascot:last-child{margin-left:-14px;transform:translateY(-6px)}
+.brand{font-size:clamp(38px,11vw,50px);font-weight:900;color:var(--green);text-align:center;letter-spacing:-.01em;line-height:1}
+.tagline{text-align:center;color:var(--muted);font-size:17px;max-width:30ch;margin:0 auto}
+.lcard{display:flex;flex-direction:column;gap:12px}
+.lcard label{font-weight:900;font-size:17px}
+.field{width:100%;font:inherit;font-size:19px;font-weight:800;padding:15px 16px;border:2px solid var(--line);border-radius:16px;background:var(--surface-2);color:var(--ink)}
+.field:focus{outline:none;border-color:var(--blue)}
+.err{color:var(--red-ink);font-size:15px}
+.hint{color:var(--muted);font-size:14px;text-align:center}
+.divider{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:13px;font-weight:900;letter-spacing:.1em;text-transform:uppercase}
+.divider::before,.divider::after{content:"";flex:1;height:2px;background:var(--line)}
+.profs{display:flex;flex-direction:column;gap:10px}
+.prof{display:flex;align-items:center;gap:14px;text-align:left;padding:12px 14px}
+.prof b{display:block;font-size:18px;font-weight:900}
+.prof span{color:var(--muted);font-size:14px}
+.onb-head{display:flex;align-items:center;gap:14px}
+.backbtn{background:none;border:0;color:var(--locked-ink);padding:4px;display:grid;place-items:center}
+.backbtn .icon{width:28px;height:28px}
+.onb-bar{flex:1;height:16px;border-radius:99px;background:var(--line);overflow:hidden}
+.onb-bar i{display:block;height:100%;background:var(--green);border-radius:99px;transition:width .4s}
+.onb-body{flex:1;display:flex;flex-direction:column;gap:18px;animation:slidein .28s ease-out}
+.onb-foot{position:sticky;bottom:0;background:var(--bg);padding:12px 0 6px;border-top:2px solid var(--line)}
+.lead{font-size:28px;line-height:1;width:40px;text-align:center;flex:none}
+.row.plain{padding:14px 16px;display:flex;align-items:center;gap:14px}
+.row.plain small{display:block;color:var(--muted);font-weight:700;font-size:14px}
+.opt.sel small{color:var(--blue-d)}
+.summary{border:2px solid var(--line);border-radius:18px;overflow:hidden}
+.summary div{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-top:2px solid var(--line)}
+.summary div:first-child{border-top:0}
+.summary span{color:var(--muted)}
+
+/* ---------- Lesson ---------- */
+.lesson{position:fixed;inset:0;z-index:40;background:var(--bg);display:grid;grid-template-rows:auto 1fr auto;padding-top:env(safe-area-inset-top,0px)}
+.lhead{max-width:620px;width:100%;margin:0 auto;padding:16px 16px 6px;display:flex;align-items:center;gap:14px}
+.xbtn{background:none;border:0;color:var(--locked-ink);padding:4px;display:grid;place-items:center}
+.xbtn .icon{width:28px;height:28px}
+.pbar{flex:1;height:18px;border-radius:99px;background:var(--line);position:relative}
+.pbar i{position:absolute;inset:0 auto 0 0;width:0;border-radius:99px;background:var(--green);transition:width .45s cubic-bezier(.3,1.4,.5,1)}
+.pbar i::after{content:"";position:absolute;left:10px;right:10px;top:4px;height:5px;border-radius:9px;background:rgba(255,255,255,.35)}
+.combo{position:absolute;left:0;top:-22px;font-size:13px;font-weight:900;color:var(--orange);letter-spacing:.06em;text-transform:uppercase;opacity:0;transition:opacity .3s;white-space:nowrap}
+.combo.on{opacity:1}
+.lhearts{display:flex;align-items:center;gap:5px;color:var(--red);font-weight:900;font-size:18px;font-variant-numeric:tabular-nums}
+.lhearts.inf{color:var(--blue)}
+.lhearts.hit{animation:hit .5s}
+@keyframes hit{20%{transform:scale(1.35)}40%{transform:rotate(-12deg)}60%{transform:rotate(10deg)}}
+.lbody{overflow:auto}
+.lbody-in{max-width:620px;margin:0 auto;padding:18px 16px 28px;animation:slidein .28s ease-out}
+@keyframes slidein{from{opacity:0;transform:translateX(24px)}}
+.q-title{font-size:clamp(22px,5.5vw,28px);font-weight:900;margin-bottom:22px}
+.q-tag{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--purple);margin-bottom:8px}
+.q-tag .icon{width:18px;height:18px}
+
+.opt{background:var(--surface);border:2px solid var(--line);box-shadow:0 4px 0 var(--line);border-radius:16px;transition:transform .06s,box-shadow .06s,background .15s,border-color .15s;position:relative}
+.opt:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 var(--line)}
+.opt.sel{border-color:var(--blue);background:var(--blue-bg);box-shadow:0 4px 0 var(--blue);color:var(--blue-d)}
+.opt.right{border-color:var(--green);background:var(--green-bg);box-shadow:0 4px 0 var(--green);color:var(--green-ink)}
+.opt.wrong{border-color:var(--red);background:var(--red-bg);box-shadow:0 4px 0 var(--red);color:var(--red-ink);animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.opt:disabled{cursor:default}
+.key{position:absolute;top:8px;left:10px;font-size:12px;font-weight:900;color:var(--locked-ink);border:2px solid var(--line);border-radius:8px;width:22px;height:22px;display:grid;place-items:center}
+.pick-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.pick{padding:22px 10px 16px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.pick-emoji{font-size:36px;line-height:1;animation:pop .25s}
+.pick-emoji:empty{display:none}
+.pick{min-height:118px;justify-content:center}
+.pick-word{font-size:18px;font-weight:800}
+.rows{display:flex;flex-direction:column;gap:12px}
+.row{padding:16px 16px 16px 48px;text-align:left;font-size:18px;font-weight:800}
+.row .key{top:50%;transform:translateY(-50%);left:14px}
+
+.prompt{display:flex;align-items:flex-end;gap:12px;margin-bottom:26px}
+.prompt svg.mascot{width:96px;flex:none}
+.bubble{position:relative;border:2px solid var(--line);border-radius:18px;padding:14px 16px;display:flex;align-items:center;gap:12px;font-size:20px;font-weight:800;margin-bottom:24px;background:var(--surface)}
+.bubble::before{content:"";position:absolute;left:-9px;bottom:22px;width:14px;height:14px;background:var(--surface);border-left:2px solid var(--line);border-bottom:2px solid var(--line);transform:rotate(45deg)}
+.bubble .tl{text-decoration:underline dotted var(--locked-ink);text-underline-offset:6px}
+.bubble.plain{font-size:17px;font-weight:700;margin-bottom:0}
+
+.typecard{display:flex;align-items:center;gap:16px;border:2px solid var(--line);border-radius:18px;padding:16px;margin-bottom:18px}
+.typecard .e{font-size:54px;line-height:1}
+.typecard .w{font-size:24px;font-weight:900}
+.typecard small{display:block;color:var(--muted);font-size:14px;font-weight:700}
+.tinput{width:100%;font:inherit;font-size:20px;font-weight:800;color:var(--ink);background:var(--surface-2);border:2px solid var(--line);border-radius:16px;padding:16px;min-height:120px;resize:none}
+.tinput:focus{outline:none;border-color:var(--blue)}
+.specials{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.specials button{background:var(--surface);border:2px solid var(--line);box-shadow:0 3px 0 var(--line);border-radius:12px;width:46px;height:44px;font-size:19px;font-weight:800}
+.specials button:active{transform:translateY(3px);box-shadow:none}
+
+.bank-answer{min-height:122px;display:flex;flex-wrap:wrap;align-content:flex-start;gap:8px;padding:8px 0;background-image:repeating-linear-gradient(to bottom,transparent 0 58px,var(--line) 58px 60px);margin-bottom:26px}
+.bank-pool{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.tile{background:var(--surface);border:2px solid var(--line);box-shadow:0 3px 0 var(--line);border-radius:13px;padding:9px 14px;font-size:18px;font-weight:800;min-height:48px}
+.tile:active:not(:disabled){transform:translateY(3px);box-shadow:none}
+.tile.used{background:var(--line);color:transparent;box-shadow:none;border-color:var(--line);pointer-events:none}
+.tile.pop{animation:pop .18s}
+@keyframes pop{from{transform:scale(.85)}}
+.listen-row{display:flex;justify-content:center;align-items:flex-end;gap:16px;margin:4px 0 26px}
+
+.match{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.match .col{display:flex;flex-direction:column;gap:12px}
+.mbtn{padding:15px 10px;font-size:18px;font-weight:800;min-height:58px}
+.mbtn.gone{opacity:.35;border-color:var(--line);background:var(--surface);box-shadow:0 4px 0 var(--line);color:var(--muted)}
+.mbtn.flash{border-color:var(--green);background:var(--green-bg);color:var(--green-ink);box-shadow:0 4px 0 var(--green)}
+
+.lfoot{border-top:2px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);transition:background .2s}
+.lfoot.ok{background:var(--green-bg);border-color:transparent}
+.lfoot.bad{background:var(--red-bg);border-color:transparent}
+.lfoot-in{max-width:620px;margin:0 auto;padding:16px;display:flex;flex-direction:column;gap:14px}
+.fbox{display:flex;gap:14px;align-items:flex-start;animation:up .25s ease-out}
+@keyframes up{from{opacity:0;transform:translateY(12px)}}
+.fbadge{width:52px;height:52px;border-radius:50%;background:var(--surface);display:grid;place-items:center;flex:none}
+.fbadge .icon{width:30px;height:30px}
+.lfoot.ok .fbadge{color:var(--green)} .lfoot.bad .fbadge{color:var(--red)}
+.ftitle{font-size:22px;font-weight:900}
+.lfoot.ok .ftitle,.lfoot.ok .ftext{color:var(--green-ink)}
+.lfoot.bad .ftitle,.lfoot.bad .ftext{color:var(--red-ink)}
+.ftext{font-size:17px;font-weight:700;margin-top:4px}
+.ftext b{font-weight:900}
+.lfoot.bad .btn{background:var(--red);box-shadow:0 4px 0 var(--red-d)}
+.lfoot.bad .btn:active{box-shadow:none}
+
+.finish{text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px;padding-top:12px}
+.finish svg.mascot{width:150px;animation:jump 1s ease-in-out infinite}
+@keyframes jump{50%{transform:translateY(-10px) rotate(-3deg)}}
+.finish h1{font-size:30px;font-weight:900;color:var(--gold-d)}
+.finish p{color:var(--muted);font-size:17px}
+.fstats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;margin-top:10px}
+.fstat{border:2px solid var(--c);border-radius:16px;overflow:hidden;background:var(--c)}
+.fstat span{display:block;color:#fff;font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;padding:6px 4px}
+.fstat b{display:block;background:var(--surface);color:var(--c);font-size:22px;font-weight:900;padding:12px 4px;border-radius:13px;font-variant-numeric:tabular-nums}
+.fgoal{width:100%;border:2px solid var(--line);border-radius:16px;padding:12px 16px;text-align:left}
+.fgoal p{color:var(--ink);font-size:16px;font-weight:900;margin-bottom:8px}
+
+.modal{position:fixed;inset:0;z-index:60;background:rgba(10,20,25,.45);display:flex;align-items:flex-end;justify-content:center;padding:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+.sheet{background:var(--surface);border:2px solid var(--line);border-radius:22px;width:100%;max-width:520px;padding:22px;display:flex;flex-direction:column;gap:14px;animation:up .25s ease-out;max-height:calc(100% - 20px);overflow:auto}
+.sheet h2{font-size:23px;font-weight:900}
+.sheet p{color:var(--muted);font-size:16px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:2px solid var(--line);border-radius:10px;padding:4px 10px;font-size:15px}
+.sheet .btns{display:flex;flex-direction:column;gap:12px;margin-top:4px}
+.sheet .big-heart{display:flex;justify-content:center;color:var(--red)}
+.sheet .big-heart .icon{width:70px;height:70px}
+.course-row{display:flex;align-items:center;gap:14px;border:2px solid var(--line);border-radius:16px;padding:12px 14px}
+.course-row .ct{flex:1}
+.course-row b{display:block;font-size:18px;font-weight:900}
+.course-row span{color:var(--muted);font-size:14px}
+.course-row .btn{min-height:42px;padding:10px 14px;font-size:13px}
+.course-row.active{border-color:var(--blue);background:var(--blue-bg)}
+
+.toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);z-index:70;background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:14px;font-weight:800;max-width:calc(100% - 32px);text-align:center;animation:up .2s ease-out}
+
+@media (max-width:420px){
+  .pick-grid{gap:10px}
+  .wrow{grid-template-columns:28px 1fr 1fr 38px;gap:8px;padding-left:12px}
+  .greet svg.mascot{width:66px}
+  .gchips{grid-template-columns:repeat(2,1fr)}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar" id="topbar" hidden>
+  <div class="topbar-in">
+    <button class="flagbtn" id="tFlag" aria-label="Byt språk"></button>
+    <div class="stat streak" id="tStreak" title="Dagar i rad"></div>
+    <div class="stat hearts" id="tHearts" title="Hjärtan"></div>
+  </div>
+</header>
+
+<main class="shell" id="main"></main>
+
+<nav class="bottomnav" id="bottomnav" hidden>
+  <div class="bottomnav-in">
+    <button class="navbtn on" data-tab="learn" id="nav-learn"></button>
+    <button class="navbtn" data-tab="words" id="nav-words"></button>
+    <button class="navbtn" data-tab="profile" id="nav-profile"></button>
+  </div>
+</nav>
+
+<section class="auth" id="auth" hidden><div class="auth-in" id="authIn"></div></section>
+
+<section class="lesson" id="lesson" hidden>
+  <div class="lhead">
+    <button class="xbtn" id="quitBtn" aria-label="Avsluta lektionen"></button>
+    <div class="pbar"><i id="pfill"></i><span class="combo" id="combo"></span></div>
+    <div class="lhearts" id="lHearts"></div>
+  </div>
+  <div class="lbody" id="lbody"></div>
+  <footer class="lfoot" id="lfoot">
+    <div class="lfoot-in">
+      <div class="fbox" id="fbox" hidden></div>
+      <button class="btn wide" id="mainBtn" disabled>Kontrollera</button>
+    </div>
+  </footer>
+</section>
+
+<div class="modal" id="modal" hidden></div>
+
+<script>
+/* ================= Ikoner ================= */
+const IC={
+  flame:'<svg class="icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2c1 3.5 5.5 6 5.5 11.2A5.6 5.6 0 0 1 12 19a5.6 5.6 0 0 1-5.5-5.8c0-2.5 1.2-4 2.4-5.2.2 1.6 1 2.7 2.1 3.2C10.6 8.6 11 5 12 2z"/><path fill="#fff" opacity=".55" d="M12 11c.6 1.6 2.6 2.6 2.6 4.6A2.6 2.6 0 0 1 12 18a2.6 2.6 0 0 1-2.6-2.4c0-1.3.8-2 1.5-2.6.2.7.6 1.1 1 1.2-.2-1.2-.2-2.3.1-3.2z"/></svg>',
+  bolt:'<svg class="icon" viewBox="0 0 24 24"><path fill="currentColor" d="M13.5 2 4.5 13.5h6L9.5 22l9-11.5h-6z"/></svg>',
+  heart:'<svg class="icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 21s-7.5-4.6-9.4-9.3C1.2 8.3 3.3 4.5 7 4.5c2.1 0 3.6 1.2 5 3 1.4-1.8 2.9-3 5-3 3.7 0 5.8 3.8 4.4 7.2C19.5 16.4 12 21 12 21z"/><path fill="#fff" opacity=".4" d="M6.2 7.2c.9-.7 2.2-.6 2.7.1-.9 0-2 .6-2.5 1.6-.6-.3-.7-1.2-.2-1.7z"/></svg>',
+  infinity:'<svg class="icon" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" d="M12 12c-2-2.6-3.6-4-5.5-4a4 4 0 0 0 0 8c1.9 0 3.5-1.4 5.5-4zm0 0c2 2.6 3.6 4 5.5 4a4 4 0 0 0 0-8c-1.9 0-3.5 1.4-5.5 4z"/></svg>',
+  star:'<svg class="icon" viewBox="0 0 24 24"><path fill="currentColor" d="m12 2.8 2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z"/></svg>',
+  check:'<svg class="icon" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" d="m5 12.5 4.5 4.5L19 7.5"/></svg>',
+  lock:'<svg class="icon" viewBox="0 0 24 24"><path fill="currentColor" d="M7 10V8a5 5 0 0 1 10 0v2h.5A1.5 1.5 0 0 1 19 11.5v8a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 19.5v-8A1.5 1.5 0 0 1 6.5 10zm2.5 0h5V8a2.5 2.5 0 0 0-5 0z"/></svg>',
+  trophy:'<svg class="icon" viewBox="0 0 24 24"><path fill="currentColor" d="M7 3h10v2h3v2.5A4.5 4.5 0 0 1 16.2 12 5 5 0 0 1 13 14.8V17h3v4H8v-4h3v-2.2A5 5 0 0 1 7.8 12 4.5 4.5 0 0 1 4 7.5V5h3zm0 4H6v.5a2.5 2.5 0 0 0 1.3 2.2A5 5 0 0 1 7 8zm10 0v1a5 5 0 0 1-.3 1.7A2.5 2.5 0 0 0 18 7.5V7z"/></svg>',
+  x:'<svg class="icon" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" d="M6 6l12 12M18 6 6 18"/></svg>',
+  back:'<svg class="icon" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M15 5l-7 7 7 7"/></svg>',
+  speaker:'<svg class="icon" viewBox="0 0 24 24"><path fill="currentColor" d="M4 9.5h3.5L12.5 5v14l-5-4.5H4z"/><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" d="M15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11"/></svg>',
+  snail:'<svg class="icon" viewBox="0 0 24 24"><path fill="currentColor" d="M13 6a6 6 0 0 1 6 6c0 1.8-.8 3.4-2 4.5h3.5a1 1 0 0 1 0 2H4.5A2.5 2.5 0 0 1 2 16v-4.5a1.3 1.3 0 1 1 1.6 0V14c0 .4.2.7.5.9A6 6 0 0 1 13 6zm0 2.5a3.5 3.5 0 0 0-3.5 3.5 2 2 0 0 0 2 2 1.2 1.2 0 0 0 1.2-1.2.9.9 0 0 0-.9-.9.8.8 0 0 1 0-1.4 2.2 2.2 0 0 1 2.9 2 3.2 3.2 0 0 1-3.2 3.3A3.8 3.8 0 0 1 7.8 12 5.2 5.2 0 0 1 13 6.8z"/></svg>',
+  path:'<svg class="icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.5 3 9.5v11a1 1 0 0 0 1 1h5.5v-6.5h5v6.5H20a1 1 0 0 0 1-1v-11z"/></svg>',
+  book:'<svg class="icon" viewBox="0 0 24 24"><path fill="currentColor" d="M4 4.5A1.5 1.5 0 0 1 5.5 3H11v17H5.5A1.5 1.5 0 0 1 4 18.5zM13 3h5.5A1.5 1.5 0 0 1 20 4.5v14a1.5 1.5 0 0 1-1.5 1.5H13z"/></svg>',
+  user:'<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4.2" fill="currentColor"/><path fill="currentColor" d="M3.5 21a8.5 8.5 0 0 1 17 0z"/></svg>',
+  dumbbell:'<svg class="icon" viewBox="0 0 24 24"><path fill="currentColor" d="M2 10h2V8a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h8V8a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2h2v4h-2v2a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3H8v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2H2z"/></svg>',
+};
+
+/* ================= Maskotar ================= */
+function face(mood,y){
+  y=y||42;
+  const mouth=mood==="sad"
+    ?`<path d="M43 ${y+13}q7-5 14 0" fill="none" stroke="#3b2413" stroke-width="3" stroke-linecap="round"/>`
+    :`<path d="M42 ${y+10}q8 8 16 0" fill="#3b2413"/><path d="M45 ${y+13}q5 3 10 0" fill="#ff7a8a"/>`;
+  return `<circle cx="40" cy="${y}" r="7" fill="#fff"/><circle cx="60" cy="${y}" r="7" fill="#fff"/>
+    <circle cx="41.5" cy="${y+1}" r="3.6" fill="#1f1a17"/><circle cx="61.5" cy="${y+1}" r="3.6" fill="#1f1a17"/>
+    <circle cx="42.6" cy="${y-.4}" r="1.2" fill="#fff"/><circle cx="62.6" cy="${y-.4}" r="1.2" fill="#fff"/>${mouth}`;
+}
+function brezel(mood){ /* Brezi, kringlan (tyska) */
+  return `<svg class="mascot" viewBox="0 0 100 92" aria-hidden="true">
+    <ellipse cx="50" cy="88" rx="30" ry="4" fill="#000" opacity=".08"/>
+    <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M50 80C22 80 6 58 15 36 23 16 46 18 50 42 54 18 77 16 85 36 94 58 78 80 50 80Z" stroke="var(--brezel-d)" stroke-width="15"/>
+      <path d="M50 80C22 80 6 58 15 36 23 16 46 18 50 42 54 18 77 16 85 36 94 58 78 80 50 80Z" stroke="var(--brezel)" stroke-width="11"/>
+      <path d="M30 71 58 44M70 71 42 44" stroke="var(--brezel-d)" stroke-width="12"/>
+      <path d="M30 71 58 44M70 71 42 44" stroke="var(--brezel)" stroke-width="8"/>
+    </g>
+    <g fill="#fff"><rect x="20" y="30" width="4" height="3" rx="1"/><rect x="78" y="44" width="4" height="3" rx="1"/><rect x="66" y="24" width="3" height="3" rx="1"/><rect x="26" y="62" width="4" height="3" rx="1"/><rect x="72" y="66" width="3" height="3" rx="1"/></g>
+    ${face(mood,42)}</svg>`;
+}
+function naranja(mood){ /* Nara, apelsinen (spanska) */
+  return `<svg class="mascot" viewBox="0 0 100 92" aria-hidden="true">
+    <ellipse cx="50" cy="88" rx="28" ry="4" fill="#000" opacity=".08"/>
+    <path d="M50 20c2-8 8-12 14-12-1 7-6 12-14 12z" fill="#43b04a"/><path d="M50 21c-1-5-3-8-5-10" stroke="#6b4a2a" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <circle cx="50" cy="53" r="33" fill="var(--fruit)" stroke="var(--fruit-d)" stroke-width="4"/>
+    <ellipse cx="36" cy="36" rx="8" ry="5" fill="#fff" opacity=".35" transform="rotate(-30 36 36)"/>
+    <g fill="var(--fruit-d)" opacity=".45"><circle cx="70" cy="66" r="1.6"/><circle cx="64" cy="74" r="1.4"/><circle cx="28" cy="68" r="1.5"/><circle cx="74" cy="44" r="1.3"/></g>
+    <circle cx="31" cy="60" r="5" fill="#ff6b6b" opacity=".35"/><circle cx="69" cy="60" r="5" fill="#ff6b6b" opacity=".35"/>
+    ${face(mood,50)}</svg>`;
+}
+
+function croissant(mood){ /* Cro, croissanten (franska) */
+  return `<svg class="mascot" viewBox="0 0 100 92" aria-hidden="true">
+    <ellipse cx="50" cy="86" rx="36" ry="4" fill="#000" opacity=".08"/>
+    <path d="M6 76C4 4 96 4 94 76C83 61 67 60 50 60S17 61 6 76Z" fill="var(--crust)" stroke="var(--crust-d)" stroke-width="4" stroke-linejoin="round"/>
+    <g fill="none" stroke="var(--crust-d)" stroke-width="3" stroke-linecap="round" opacity=".7"><path d="M21 30q7 14 3 32"/><path d="M79 30q-7 14-3 32"/></g>
+    <ellipse cx="36" cy="24" rx="9" ry="3.5" fill="#fff" opacity=".35" transform="rotate(-15 36 24)"/>
+    <circle cx="32" cy="50" r="4.5" fill="#ff6b6b" opacity=".3"/><circle cx="68" cy="50" r="4.5" fill="#ff6b6b" opacity=".3"/>
+    ${face(mood,40)}</svg>`;
+}
+
+/* ================= Språk ================= */
+const LANGS={
+  de:{code:"de",name:"Tyska",lower:"tyska",tts:"de-DE",flag:'<span class="flag de"><i></i><i></i><i></i></span>',
+      mascot:brezel,mascotName:"Brezi",hello:"Hallo",
+      artRe:/^(der|die|das)\s+(.+)$/i,artCls:{der:"m",die:"f",das:"n"},
+      legend:[["der","m","maskulinum"],["die","f","femininum"],["das","n","neutrum"]],
+      special:["ä","ö","ü","ß"],cheer:["Super!","Toll!","Wunderbar!","Sehr gut!"]},
+  es:{code:"es",name:"Spanska",lower:"spanska",tts:"es-ES",flag:'<span class="flag es"><i></i><i></i><i></i></span>',
+      mascot:naranja,mascotName:"Nara",hello:"¡Hola",
+      artRe:/^(el|la|los|las)\s+(.+)$/i,artCls:{el:"m",la:"f",los:"m",las:"f"},
+      legend:[["el","m","maskulinum"],["la","f","femininum"]],
+      special:["á","é","í","ó","ú","ñ","ü"],cheer:["¡Muy bien!","¡Genial!","¡Perfecto!","¡Excelente!"]},
+  fr:{code:"fr",name:"Franska",lower:"franska",tts:"fr-FR",flag:'<span class="flag fr"><i></i><i></i><i></i></span>',
+      mascot:croissant,mascotName:"Cro",hello:"Bonjour",
+      artRe:/^(le|la|les|l')(?:\s+|(?<=l'))(.+)$/i,artCls:{le:"m",la:"f",les:"n","l'":"n"},
+      legend:[["le","m","maskulinum"],["la","f","femininum"],["l'","n","framför vokal"],["les","n","plural"]],
+      special:["é","è","ê","à","â","ç","ô","î","û","ù","œ"],cheer:["Très bien !","Bravo !","Parfait !","Super !"]},
+};
+
+/* ================= Kursinnehåll =================
+   Ord: [emoji, svenska, tyska, spanska]   Meningar: [svenska, tyska, spanska] */
+const DATA=[
+ {title:"Första orden",desc:"Hälsa, beställa och räkna",c:"--green",cd:"--green-d",lessons:[
+  {id:"halsa",name:"Hälsningar",w:[["👋","hej","Hallo","hola"],["🚶","hejdå","Tschüss","adiós"],["🙏","tack","Danke","gracias"],["💁","varsågod","Bitte","de nada"],["👍","ja","Ja","sí"],["👎","nej","Nein","no"],["🌅","god morgon","Guten Morgen","buenos días"]],
+   s:[["God morgon, Anna!","Guten Morgen, Anna!","¡Buenos días, Anna!"],["Hej, jag är Max.","Hallo, ich bin Max.","Hola, soy Max."],["Ja, tack.","Ja, danke.","Sí, gracias."],["Hejdå och tack!","Tschüss und danke!","¡Adiós y gracias!"]]},
+  {id:"mat",name:"Mat och dryck",w:[["🍞","bröd","das Brot","el pan"],["💧","vatten","das Wasser","el agua"],["🍎","äpple","der Apfel","la manzana"],["☕","kaffe","der Kaffee","el café"],["🥛","mjölk","die Milch","la leche"],["🧀","ost","der Käse","el queso"]],
+   s:[["Jag äter bröd.","Ich esse Brot.","Como pan."],["Jag dricker kaffe.","Ich trinke Kaffee.","Bebo café."],["Vattnet är kallt.","Das Wasser ist kalt.","El agua está fría."],["Osten är god.","Der Käse ist gut.","El queso está rico."]]},
+  {id:"siffror",name:"Siffror",w:[["1️⃣","ett","eins","uno"],["2️⃣","två","zwei","dos"],["3️⃣","tre","drei","tres"],["4️⃣","fyra","vier","cuatro"],["5️⃣","fem","fünf","cinco"],["🔟","tio","zehn","diez"]],
+   s:[["Jag har två äpplen.","Ich habe zwei Äpfel.","Tengo dos manzanas."],["Tre kaffe, tack.","Drei Kaffee, bitte.","Tres cafés, por favor."],["Ett, två, tre!","Eins, zwei, drei!","¡Uno, dos, tres!"],["Fyra bröd, tack.","Vier Brote, bitte.","Cuatro panes, por favor."]]},
+ ]},
+ {title:"Vardag",desc:"Djur, familj och hemmet",c:"--purple",cd:"--purple-d",lessons:[
+  {id:"djur",name:"Djur",w:[["🐕","hund","der Hund","el perro"],["🐈","katt","die Katze","el gato"],["🐦","fågel","der Vogel","el pájaro"],["🐎","häst","das Pferd","el caballo"],["🐄","ko","die Kuh","la vaca"],["🐟","fisk","der Fisch","el pez"]],
+   s:[["Hunden är stor.","Der Hund ist groß.","El perro es grande."],["Katten sover.","Die Katze schläft.","El gato duerme."],["Jag har en hund.","Ich habe einen Hund.","Tengo un perro."],["Hästen är snabb.","Das Pferd ist schnell.","El caballo es rápido."]]},
+  {id:"familj",name:"Familjen",w:[["👩","mamma","die Mutter","la madre"],["👨","pappa","der Vater","el padre"],["👦","bror","der Bruder","el hermano"],["👧","syster","die Schwester","la hermana"],["🧒","barn","das Kind","el niño"],["👪","familj","die Familie","la familia"]],
+   s:[["Det här är min mamma.","Das ist meine Mutter.","Esta es mi madre."],["Min bror heter Max.","Mein Bruder heißt Max.","Mi hermano se llama Max."],["Vi är en familj.","Wir sind eine Familie.","Somos una familia."],["Min syster är snäll.","Meine Schwester ist nett.","Mi hermana es simpática."]]},
+  {id:"hemma",name:"Hemma",w:[["🏠","hus","das Haus","la casa"],["🚪","dörr","die Tür","la puerta"],["🛏️","säng","das Bett","la cama"],["🪑","stol","der Stuhl","la silla"],["💡","lampa","die Lampe","la lámpara"],["🪟","fönster","das Fenster","la ventana"]],
+   s:[["Huset är litet.","Das Haus ist klein.","La casa es pequeña."],["Dörren är öppen.","Die Tür ist offen.","La puerta está abierta."],["Jag sover i sängen.","Ich schlafe im Bett.","Duermo en la cama."],["Lampan är ny.","Die Lampe ist neu.","La lámpara es nueva."]]},
+ ]},
+ {title:"På resa",desc:"Staden, vädret och verb",c:"--orange",cd:"--orange-d",lessons:[
+  {id:"staden",name:"I staden",w:[["🚉","tågstation","der Bahnhof","la estación"],["✈️","flygplats","der Flughafen","el aeropuerto"],["🏨","hotell","das Hotel","el hotel"],["🛣️","gata","die Straße","la calle"],["🍽️","restaurang","das Restaurant","el restaurante"],["🏙️","stad","die Stadt","la ciudad"]],
+   s:[["Var är tågstationen?","Wo ist der Bahnhof?","¿Dónde está la estación?"],["Hotellet är där.","Das Hotel ist dort.","El hotel está allí."],["Jag letar efter en restaurang.","Ich suche ein Restaurant.","Busco un restaurante."],["Staden är vacker.","Die Stadt ist schön.","La ciudad es bonita."]]},
+  {id:"vader",name:"Vädret",w:[["☀️","sol","die Sonne","el sol"],["🌧️","regn","der Regen","la lluvia"],["❄️","snö","der Schnee","la nieve"],["💨","vind","der Wind","el viento"],["🌡️","varm","warm","caliente"],["🥶","kall","kalt","frío"]],
+   s:[["Idag skiner solen.","Heute scheint die Sonne.","Hoy hace sol."],["Det är väldigt kallt.","Es ist sehr kalt.","Hace mucho frío."],["Imorgon regnar det.","Morgen regnet es.","Mañana va a llover."],["Vinden är stark.","Der Wind ist stark.","El viento es fuerte."]]},
+  {id:"verb",name:"Vanliga verb",w:[["🚶","gå","gehen","caminar"],["🍝","äta","essen","comer"],["🥤","dricka","trinken","beber"],["😴","sova","schlafen","dormir"],["📖","läsa","lesen","leer"],["🗣️","prata","sprechen","hablar"]],
+   s:[["Jag pratar svenska.","Ich spreche Schwedisch.","Hablo sueco."],["Du läser en bok.","Du liest ein Buch.","Lees un libro."],["Vi går hem.","Wir gehen nach Hause.","Vamos a casa."],["Han dricker vatten.","Er trinkt Wasser.","Él bebe agua."]]},
+ ]},
+ {title:"Beskriva världen",desc:"Färger, kläder och kroppen",c:"--blue",cd:"--blue-d",lessons:[
+  {id:"farger",name:"Färger",w:[["🔴","röd","rot","rojo"],["🔵","blå","blau","azul"],["🟢","grön","grün","verde"],["🟡","gul","gelb","amarillo"],["⚫","svart","schwarz","negro"],["⚪","vit","weiß","blanco"]],
+   s:[["Bilen är röd.","Das Auto ist rot.","El coche es rojo."],["Himlen är blå.","Der Himmel ist blau.","El cielo es azul."],["Jag gillar grönt.","Ich mag Grün.","Me gusta el verde."],["Katten är svart.","Die Katze ist schwarz.","El gato es negro."]]},
+  {id:"klader",name:"Kläder",w:[["👕","t-shirt","das T-Shirt","la camiseta"],["👖","byxor","die Hose","los pantalones"],["👗","klänning","das Kleid","el vestido"],["👟","skor","die Schuhe","los zapatos"],["🧥","jacka","die Jacke","la chaqueta"],["🧢","keps","die Mütze","la gorra"]],
+   s:[["Jag köper en jacka.","Ich kaufe eine Jacke.","Compro una chaqueta."],["Skorna är nya.","Die Schuhe sind neu.","Los zapatos son nuevos."],["Klänningen är vacker.","Das Kleid ist schön.","El vestido es bonito."],["Var är mina byxor?","Wo ist meine Hose?","¿Dónde están mis pantalones?"]]},
+  {id:"kroppen",name:"Kroppen",w:[["👁️","öga","das Auge","el ojo"],["👃","näsa","die Nase","la nariz"],["👂","öra","das Ohr","la oreja"],["✋","hand","die Hand","la mano"],["🦶","fot","der Fuß","el pie"],["🦷","tand","der Zahn","el diente"]],
+   s:[["Jag tvättar händerna.","Ich wasche die Hände.","Me lavo las manos."],["Min fot gör ont.","Mein Fuß tut weh.","Me duele el pie."],["Hon har blå ögon.","Sie hat blaue Augen.","Ella tiene ojos azules."],["Hunden har en stor näsa.","Der Hund hat eine große Nase.","El perro tiene una nariz grande."]]},
+ ]},
+ {title:"Tid och fritid",desc:"Dagar, hobbyer och jobbet",c:"--pink",cd:"--pink-d",lessons:[
+  {id:"tid",name:"Dagar och tid",w:[["📅","måndag","der Montag","el lunes"],["🗓️","fredag","der Freitag","el viernes"],["🎉","lördag","der Samstag","el sábado"],["🌤️","dag","der Tag","el día"],["🌙","natt","die Nacht","la noche"],["⏰","timme","die Stunde","la hora"]],
+   s:[["Idag är det måndag.","Heute ist Montag.","Hoy es lunes."],["Vi ses på lördag.","Wir sehen uns am Samstag.","Nos vemos el sábado."],["God natt!","Gute Nacht!","¡Buenas noches!"],["Det tar en timme.","Es dauert eine Stunde.","Tarda una hora."]]},
+  {id:"fritid",name:"Fritid",w:[["⚽","fotboll","der Fußball","el fútbol"],["🎵","musik","die Musik","la música"],["🎬","film","der Film","la película"],["🏊","simma","schwimmen","nadar"],["🎮","spela","spielen","jugar"],["🍳","laga mat","kochen","cocinar"]],
+   s:[["Jag spelar fotboll.","Ich spiele Fußball.","Juego al fútbol."],["Vi lyssnar på musik.","Wir hören Musik.","Escuchamos música."],["Filmen är bra.","Der Film ist gut.","La película es buena."],["Hon simmar varje dag.","Sie schwimmt jeden Tag.","Ella nada cada día."]]},
+  {id:"jobb",name:"På jobbet",w:[["💼","jobb","die Arbeit","el trabajo"],["🏢","kontor","das Büro","la oficina"],["💻","dator","der Computer","el ordenador"],["📧","mejl","die E-Mail","el correo"],["📞","telefon","das Telefon","el teléfono"],["🤝","möte","die Besprechung","la reunión"]],
+   s:[["Jag arbetar på ett kontor.","Ich arbeite in einem Büro.","Trabajo en una oficina."],["Mötet börjar nu.","Die Besprechung beginnt jetzt.","La reunión empieza ahora."],["Jag skriver ett mejl.","Ich schreibe eine E-Mail.","Escribo un correo."],["Datorn är ny.","Der Computer ist neu.","El ordenador es nuevo."]]},
+ ]},
+ /* ---------- Enhet 6–10: A2 ---------- */
+ {title:"Mat och restaurang",desc:"Frukost, restaurang och matbutiken",lessons:[
+  {id:"frukost",name:"Frukost",w:[["🥚","ägg","das Ei","el huevo"],["🧈","smör","die Butter","la mantequilla"],["🍯","honung","der Honig","la miel"],["🍵","te","der Tee","el té"],["🥣","flingor","das Müsli","los cereales"],["🧃","juice","der Saft","el zumo"]],
+   s:[["Jag äter ett ägg till frukost.","Ich esse ein Ei zum Frühstück.","Como un huevo en el desayuno."],["Vill du ha te eller kaffe?","Möchtest du Tee oder Kaffee?","¿Quieres té o café?"],["Juicen är färsk.","Der Saft ist frisch.","El zumo es fresco."],["Jag tar smör på brödet.","Ich nehme Butter aufs Brot.","Pongo mantequilla en el pan."]]},
+  {id:"restaurang",name:"På restaurangen",w:[["📋","meny","die Speisekarte","la carta"],["🧾","nota","die Rechnung","la cuenta"],["🧑‍🍳","kock","der Koch","el cocinero"],["🍷","vin","der Wein","el vino"],["🍰","efterrätt","der Nachtisch","el postre"],["🥗","sallad","der Salat","la ensalada"]],
+   s:[["Kan jag få menyn, tack?","Kann ich die Speisekarte haben, bitte?","¿Me trae la carta, por favor?"],["Notan, tack.","Die Rechnung, bitte.","La cuenta, por favor."],["Jag vill ha en sallad.","Ich möchte einen Salat.","Quiero una ensalada."],["Efterrätten är jättegod.","Der Nachtisch ist sehr lecker.","El postre está muy rico."]]},
+  {id:"handla",name:"Matbutiken",w:[["🛒","kundvagn","der Einkaufswagen","el carrito"],["🥕","morot","die Karotte","la zanahoria"],["🍌","banan","die Banane","el plátano"],["🍗","kyckling","das Hähnchen","el pollo"],["🍚","ris","der Reis","el arroz"],["🧂","salt","das Salz","la sal"]],
+   s:[["Vi behöver ris och salt.","Wir brauchen Reis und Salz.","Necesitamos arroz y sal."],["Hur mycket kostar bananerna?","Wie viel kosten die Bananen?","¿Cuánto cuestan los plátanos?"],["Jag köper kyckling till middag.","Ich kaufe Hähnchen zum Abendessen.","Compro pollo para la cena."],["Affären stänger klockan åtta.","Der Laden schließt um acht Uhr.","La tienda cierra a las ocho."]]},
+ ]},
+ {title:"Vardagsliv",desc:"Morgonen, hushållet och klockan",lessons:[
+  {id:"morgon",name:"Morgonen",w:[["⏰","väckarklocka","der Wecker","el despertador"],["🚿","dusch","die Dusche","la ducha"],["🪥","tandborste","die Zahnbürste","el cepillo de dientes"],["🪞","spegel","der Spiegel","el espejo"],["🧼","tvål","die Seife","el jabón"],["🥱","trött","müde","cansado"]],
+   s:[["Jag vaknar klockan sju.","Ich wache um sieben Uhr auf.","Me despierto a las siete."],["Han duschar varje morgon.","Er duscht jeden Morgen.","Él se ducha cada mañana."],["Jag borstar tänderna.","Ich putze mir die Zähne.","Me lavo los dientes."],["Hon är trött idag.","Sie ist heute müde.","Ella está cansada hoy."]]},
+  {id:"hushall",name:"Hushållet",w:[["🧹","kvast","der Besen","la escoba"],["🧺","tvätt","die Wäsche","la colada"],["🗑️","sopor","der Müll","la basura"],["🪴","växt","die Pflanze","la planta"],["🔑","nyckel","der Schlüssel","la llave"],["🧽","svamp","der Schwamm","la esponja"]],
+   s:[["Jag tar ut soporna.","Ich bringe den Müll raus.","Saco la basura."],["Var är mina nycklar?","Wo sind meine Schlüssel?","¿Dónde están mis llaves?"],["Vi städar på lördag.","Wir putzen am Samstag.","Limpiamos el sábado."],["Växten behöver vatten.","Die Pflanze braucht Wasser.","La planta necesita agua."]]},
+  {id:"klockan",name:"Klockan",w:[["🕐","klocka","die Uhr","el reloj"],["⏱️","minut","die Minute","el minuto"],["🌄","morgon","der Morgen","la mañana"],["🌇","kväll","der Abend","la tarde"],["🕛","mitt på dagen","der Mittag","el mediodía"],["🔜","snart","bald","pronto"]],
+   s:[["Vad är klockan?","Wie spät ist es?","¿Qué hora es?"],["Klockan är halv tre.","Es ist halb drei.","Son las dos y media."],["Vi ses snart!","Bis bald!","¡Hasta pronto!"],["Tåget går om tio minuter.","Der Zug fährt in zehn Minuten.","El tren sale en diez minutos."]]},
+ ]},
+ {title:"Handla",desc:"Affärer, pengar och storlekar",lessons:[
+  {id:"affar",name:"I affären",w:[["🏪","affär","der Laden","la tienda"],["💳","kort","die Karte","la tarjeta"],["🛍️","påse","die Tüte","la bolsa"],["🧾","kvitto","die Quittung","el recibo"],["🏷️","pris","der Preis","el precio"],["🎁","present","das Geschenk","el regalo"]],
+   s:[["Kan jag betala med kort?","Kann ich mit Karte zahlen?","¿Puedo pagar con tarjeta?"],["Behöver du en påse?","Brauchst du eine Tüte?","¿Necesitas una bolsa?"],["Jag köper en present till min vän.","Ich kaufe ein Geschenk für meinen Freund.","Compro un regalo para mi amigo."],["Priset är bra.","Der Preis ist gut.","El precio es bueno."]]},
+  {id:"pengar",name:"Pengar",w:[["💶","euro","der Euro","el euro"],["🪙","mynt","die Münze","la moneda"],["💵","sedel","der Geldschein","el billete"],["🏦","bank","die Bank","el banco"],["💎","dyr","teuer","caro"],["🤑","billig","billig","barato"]],
+   s:[["Det är för dyrt.","Das ist zu teuer.","Es demasiado caro."],["Skorna är billiga.","Die Schuhe sind billig.","Los zapatos son baratos."],["Jag har inga pengar.","Ich habe kein Geld.","No tengo dinero."],["Banken ligger bredvid kaféet.","Die Bank ist neben dem Café.","El banco está al lado del café."]]},
+  {id:"storlek",name:"Storlekar och mått",w:[["🔼","stor","groß","grande"],["🔽","liten","klein","pequeño"],["📏","lång","lang","largo"],["✂️","kort","kurz","corto"],["⚖️","kilo","das Kilo","el kilo"],["🫗","liter","der Liter","el litro"]],
+   s:[["Har ni en större storlek?","Haben Sie eine größere Größe?","¿Tiene una talla más grande?"],["Byxorna är för korta.","Die Hose ist zu kurz.","Los pantalones son demasiado cortos."],["Ett kilo äpplen, tack.","Ein Kilo Äpfel, bitte.","Un kilo de manzanas, por favor."],["Tröjan är för liten.","Der Pullover ist zu klein.","El jersey es demasiado pequeño."]]},
+ ]},
+ {title:"Resa och trafik",desc:"Tåg, bil och vägbeskrivningar",lessons:[
+  {id:"tag",name:"Resa med tåg",w:[["🎫","biljett","die Fahrkarte","el billete"],["🚆","tåg","der Zug","el tren"],["🛤️","spår","das Gleis","la vía"],["🧳","resväska","der Koffer","la maleta"],["⌛","försenad","verspätet","retrasado"],["💺","plats","der Platz","el asiento"]],
+   s:[["En biljett till centrum, tack.","Eine Fahrkarte ins Zentrum, bitte.","Un billete al centro, por favor."],["Tåget är försenat.","Der Zug hat Verspätung.","El tren llega tarde."],["Från vilket spår går tåget?","Von welchem Gleis fährt der Zug?","¿De qué vía sale el tren?"],["Är den här platsen ledig?","Ist dieser Platz frei?","¿Está libre este asiento?"]]},
+  {id:"bil",name:"Bilen och trafiken",w:[["🚗","bil","das Auto","el coche"],["🚦","trafikljus","die Ampel","el semáforo"],["⛽","bensin","das Benzin","la gasolina"],["🅿️","parkering","der Parkplatz","el aparcamiento"],["🚌","buss","der Bus","el autobús"],["🚲","cykel","das Fahrrad","la bicicleta"]],
+   s:[["Jag kör bil till jobbet.","Ich fahre mit dem Auto zur Arbeit.","Voy en coche al trabajo."],["Bussen kommer snart.","Der Bus kommt bald.","El autobús llega pronto."],["Stanna vid trafikljuset.","Halt an der Ampel.","Para en el semáforo."],["Hon cyklar till skolan.","Sie fährt mit dem Fahrrad zur Schule.","Ella va en bicicleta al colegio."]]},
+  {id:"vagen",name:"Hitta vägen",w:[["⬅️","vänster","links","izquierda"],["➡️","höger","rechts","derecha"],["⬆️","rakt fram","geradeaus","todo recto"],["🗺️","karta","die Karte","el mapa"],["📐","hörn","die Ecke","la esquina"],["🌉","bro","die Brücke","el puente"]],
+   s:[["Sväng vänster vid hörnet.","Biegen Sie an der Ecke links ab.","Gire a la izquierda en la esquina."],["Gå rakt fram.","Gehen Sie geradeaus.","Siga todo recto."],["Museet ligger till höger.","Das Museum ist rechts.","El museo está a la derecha."],["Är det långt härifrån?","Ist es weit von hier?","¿Está lejos de aquí?"]]},
+ ]},
+ {title:"Naturen",desc:"Landskap, årstider, växter och djur",lessons:[
+  {id:"landskap",name:"Landskap",w:[["⛰️","berg","der Berg","la montaña"],["🌊","hav","das Meer","el mar"],["🏝️","ö","die Insel","la isla"],["🌲","skog","der Wald","el bosque"],["🏞️","sjö","der See","el lago"],["🏖️","strand","der Strand","la playa"]],
+   s:[["Vi åker till havet i sommar.","Wir fahren im Sommer ans Meer.","Vamos al mar en verano."],["Skogen är tyst.","Der Wald ist still.","El bosque está tranquilo."],["Berget är mycket högt.","Der Berg ist sehr hoch.","La montaña es muy alta."],["Vi badar i sjön.","Wir baden im See.","Nos bañamos en el lago."]]},
+  {id:"arstider",name:"Årstider",w:[["🌸","vår","der Frühling","la primavera"],["🌞","sommar","der Sommer","el verano"],["🍂","höst","der Herbst","el otoño"],["⛄","vinter","der Winter","el invierno"],["📆","månad","der Monat","el mes"],["🎂","år","das Jahr","el año"]],
+   s:[["Min favoritårstid är hösten.","Meine Lieblingsjahreszeit ist der Herbst.","Mi estación favorita es el otoño."],["På vintern snöar det.","Im Winter schneit es.","En invierno nieva."],["Ett år har tolv månader.","Ein Jahr hat zwölf Monate.","Un año tiene doce meses."],["Våren kommer snart.","Der Frühling kommt bald.","La primavera llega pronto."]]},
+  {id:"vaxter",name:"Växter och vilda djur",w:[["🌻","blomma","die Blume","la flor"],["🌳","träd","der Baum","el árbol"],["🌿","gräs","das Gras","la hierba"],["🐻","björn","der Bär","el oso"],["🦊","räv","der Fuchs","el zorro"],["🐝","bi","die Biene","la abeja"]],
+   s:[["Blommorna är vackra.","Die Blumen sind schön.","Las flores son bonitas."],["Björnen sover på vintern.","Der Bär schläft im Winter.","El oso duerme en invierno."],["Räven bor i skogen.","Der Fuchs lebt im Wald.","El zorro vive en el bosque."],["Trädet är gammalt.","Der Baum ist alt.","El árbol es viejo."]]},
+ ]},
+ /* ---------- Enhet 11–15: B1 ---------- */
+ {title:"Känslor och relationer",desc:"Hur man mår och vilka man är",lessons:[
+  {id:"kanslor",name:"Känslor",w:[["😊","glad","froh","contento"],["😢","ledsen","traurig","triste"],["😠","arg","wütend","enfadado"],["😨","rädd","ängstlich","asustado"],["😌","lugn","ruhig","tranquilo"],["😲","förvånad","überrascht","sorprendido"]],
+   s:[["Jag är glad idag.","Ich bin heute froh.","Hoy estoy contento."],["Varför är du ledsen?","Warum bist du traurig?","¿Por qué estás triste?"],["Han blir arg ibland.","Er wird manchmal wütend.","A veces se enfada."],["Var inte rädd!","Hab keine Angst!","¡No tengas miedo!"]]},
+  {id:"personlighet",name:"Personlighet",w:[["😄","rolig","lustig","divertido"],["🤓","smart","klug","listo"],["😇","snäll","nett","amable"],["💪","stark","stark","fuerte"],["🦥","lat","faul","perezoso"],["🙈","blyg","schüchtern","tímido"]],
+   s:[["Min vän är väldigt rolig.","Mein Freund ist sehr lustig.","Mi amigo es muy divertido."],["Hon är smart och snäll.","Sie ist klug und nett.","Ella es lista y amable."],["Jag är lite blyg.","Ich bin ein bisschen schüchtern.","Soy un poco tímido."],["Katten är lat.","Die Katze ist faul.","El gato es perezoso."]]},
+  {id:"relationer",name:"Relationer",w:[["🧑‍🤝‍🧑","vän","der Freund","el amigo"],["💑","partner","der Partner","la pareja"],["💍","bröllop","die Hochzeit","la boda"],["🏘️","granne","der Nachbar","el vecino"],["👵","mormor","die Oma","la abuela"],["👴","morfar","der Opa","el abuelo"]],
+   s:[["Min mormor är åttio år.","Meine Oma ist achtzig Jahre alt.","Mi abuela tiene ochenta años."],["Vi träffar våra vänner på fredag.","Wir treffen unsere Freunde am Freitag.","Vemos a nuestros amigos el viernes."],["Bröllopet är i juni.","Die Hochzeit ist im Juni.","La boda es en junio."],["Vår granne är mycket trevlig.","Unser Nachbar ist sehr nett.","Nuestro vecino es muy simpático."]]},
+ ]},
+ {title:"Skola och studier",desc:"Klassrummet, ämnen och att lära sig",lessons:[
+  {id:"klassrum",name:"Klassrummet",w:[["👩‍🏫","lärare","der Lehrer","el profesor"],["🧑‍🎓","elev","der Schüler","el alumno"],["✏️","penna","der Stift","el lápiz"],["📓","anteckningsbok","das Heft","el cuaderno"],["🎒","ryggsäck","der Rucksack","la mochila"],["🟩","tavla","die Tafel","la pizarra"]],
+   s:[["Läraren skriver på tavlan.","Der Lehrer schreibt an die Tafel.","El profesor escribe en la pizarra."],["Jag glömde min penna.","Ich habe meinen Stift vergessen.","Olvidé mi lápiz."],["Eleverna är i klassrummet.","Die Schüler sind im Klassenzimmer.","Los alumnos están en el aula."],["Ryggsäcken är tung.","Der Rucksack ist schwer.","La mochila pesa mucho."]]},
+  {id:"amnen",name:"Skolämnen",w:[["➗","matte","die Mathematik","las matemáticas"],["📜","historia","die Geschichte","la historia"],["🎨","konst","die Kunst","el arte"],["🧪","kemi","die Chemie","la química"],["🌍","geografi","die Erdkunde","la geografía"],["🗣️","språk","die Sprache","el idioma"]],
+   s:[["Jag gillar historia.","Ich mag Geschichte.","Me gusta la historia."],["Matte är svårt.","Mathe ist schwer.","Las matemáticas son difíciles."],["Vi har kemi på tisdag.","Wir haben am Dienstag Chemie.","Tenemos química el martes."],["Hur många språk talar du?","Wie viele Sprachen sprichst du?","¿Cuántos idiomas hablas?"]]},
+  {id:"lara",name:"Att lära sig",w:[["❓","fråga","die Frage","la pregunta"],["💡","svar","die Antwort","la respuesta"],["📝","prov","die Prüfung","el examen"],["📚","läxa","die Hausaufgabe","los deberes"],["🧠","minnas","sich erinnern","recordar"],["🙋","förstå","verstehen","entender"]],
+   s:[["Jag har en fråga.","Ich habe eine Frage.","Tengo una pregunta."],["Jag förstår inte.","Ich verstehe nicht.","No entiendo."],["Provet är på måndag.","Die Prüfung ist am Montag.","El examen es el lunes."],["Kan du upprepa, tack?","Kannst du das wiederholen, bitte?","¿Puedes repetir, por favor?"]]},
+ ]},
+ {title:"Hälsa",desc:"Hos läkaren, må bra och träna",lessons:[
+  {id:"lakare",name:"Hos läkaren",w:[["🩺","läkare","der Arzt","el médico"],["💊","medicin","das Medikament","la medicina"],["🏥","sjukhus","das Krankenhaus","el hospital"],["🤒","feber","das Fieber","la fiebre"],["🤕","huvudvärk","die Kopfschmerzen","el dolor de cabeza"],["🤧","förkyld","erkältet","resfriado"]],
+   s:[["Jag behöver en läkare.","Ich brauche einen Arzt.","Necesito un médico."],["Jag har feber.","Ich habe Fieber.","Tengo fiebre."],["Hon är förkyld.","Sie ist erkältet.","Ella está resfriada."],["Var ligger sjukhuset?","Wo ist das Krankenhaus?","¿Dónde está el hospital?"]]},
+  {id:"mabra",name:"Må bra",w:[["😴","sömn","der Schlaf","el sueño"],["🥦","grönsaker","das Gemüse","las verduras"],["🧘","vila","die Ruhe","el descanso"],["🚰","törstig","durstig","sediento"],["🍽️","hungrig","hungrig","hambriento"],["❤️","frisk","gesund","sano"]],
+   s:[["Jag är hungrig.","Ich habe Hunger.","Tengo hambre."],["Grönsaker är nyttiga.","Gemüse ist gesund.","Las verduras son sanas."],["Du behöver mer sömn.","Du brauchst mehr Schlaf.","Necesitas dormir más."],["Hur mår du?","Wie geht es dir?","¿Cómo estás?"]]},
+  {id:"sport",name:"Sport",w:[["🏃","springa","laufen","correr"],["🏋️","träna","trainieren","entrenar"],["🎾","tennis","das Tennis","el tenis"],["🏀","basket","der Basketball","el baloncesto"],["⛷️","åka skidor","Ski fahren","esquiar"],["🏆","vinna","gewinnen","ganar"]],
+   s:[["Jag springer tre gånger i veckan.","Ich laufe dreimal pro Woche.","Corro tres veces a la semana."],["Vi tränar på gymmet.","Wir trainieren im Fitnessstudio.","Entrenamos en el gimnasio."],["Vilket lag vann?","Welche Mannschaft hat gewonnen?","¿Qué equipo ganó?"],["På vintern åker vi skidor.","Im Winter fahren wir Ski.","En invierno esquiamos."]]},
+ ]},
+ {title:"Dåtid",desc:"Berätta om sådant som har hänt",lessons:[
+  {id:"igar",name:"Igår och förr",w:[["⏪","igår","gestern","ayer"],["⏮️","i förrgår","vorgestern","anteayer"],["🗓️","förra veckan","letzte Woche","la semana pasada"],["📆","förra året","letztes Jahr","el año pasado"],["✅","redan","schon","ya"],["🚫","aldrig","nie","nunca"]],
+   s:[["Igår var jag hemma.","Gestern war ich zu Hause.","Ayer estuve en casa."],["Jag har redan ätit.","Ich habe schon gegessen.","Ya he comido."],["Förra veckan var jag sjuk.","Letzte Woche war ich krank.","La semana pasada estuve enfermo."],["Jag har aldrig varit i Japan.","Ich war noch nie in Japan.","Nunca he estado en Japón."]]},
+  {id:"semester",name:"Semestern",w:[["🏖️","semester","der Urlaub","las vacaciones"],["📸","foto","das Foto","la foto"],["🧭","resa","die Reise","el viaje"],["🎒","äventyr","das Abenteuer","la aventura"],["🌍","utlandet","das Ausland","el extranjero"],["🛂","pass","der Reisepass","el pasaporte"]],
+   s:[["Vi var på semester i Italien.","Wir waren im Urlaub in Italien.","Estuvimos de vacaciones en Italia."],["Jag tog många foton.","Ich habe viele Fotos gemacht.","Hice muchas fotos."],["Resan var fantastisk.","Die Reise war fantastisch.","El viaje fue fantástico."],["Jag glömde mitt pass.","Ich habe meinen Reisepass vergessen.","Olvidé mi pasaporte."]]},
+  {id:"beratta",name:"Berätta",w:[["📖","berättelse","die Geschichte","el cuento"],["🎬","hända","passieren","pasar"],["🤔","tänka","denken","pensar"],["🚪","åka iväg","wegfahren","irse"],["😂","skratta","lachen","reír"],["👂","höra","hören","oír"]],
+   s:[["Vad hände igår?","Was ist gestern passiert?","¿Qué pasó ayer?"],["Vi skrattade hela kvällen.","Wir haben den ganzen Abend gelacht.","Nos reímos toda la noche."],["Jag hörde en konstig historia.","Ich habe eine seltsame Geschichte gehört.","Oí una historia extraña."],["Hon åkte iväg på morgonen.","Sie ist am Morgen weggefahren.","Ella se fue por la mañana."]]},
+ ]},
+ {title:"Framtid och planer",desc:"Planer, drömmar och löften",lessons:[
+  {id:"planer",name:"Planer",w:[["⏩","imorgon","morgen","mañana"],["📅","nästa vecka","nächste Woche","la semana que viene"],["🗒️","plan","der Plan","el plan"],["🤞","kanske","vielleicht","quizás"],["✔️","säker","sicher","seguro"],["🎯","mål","das Ziel","la meta"]],
+   s:[["Imorgon ska jag jobba.","Morgen werde ich arbeiten.","Mañana voy a trabajar."],["Vad ska du göra nästa vecka?","Was machst du nächste Woche?","¿Qué vas a hacer la semana que viene?"],["Kanske regnar det.","Vielleicht regnet es.","Quizás llueva."],["Mitt mål är att tala flytande.","Mein Ziel ist, fließend zu sprechen.","Mi meta es hablar con fluidez."]]},
+  {id:"drommar",name:"Drömmar",w:[["💭","dröm","der Traum","el sueño"],["🔮","framtid","die Zukunft","el futuro"],["🌎","värld","die Welt","el mundo"],["🎸","hobby","das Hobby","el pasatiempo"],["📈","karriär","die Karriere","la carrera"],["🌟","önska","wünschen","desear"]],
+   s:[["Jag drömmer om att resa.","Ich träume vom Reisen.","Sueño con viajar."],["I framtiden vill jag bo vid havet.","In der Zukunft möchte ich am Meer wohnen.","En el futuro quiero vivir junto al mar."],["Jag önskar dig lycka till!","Ich wünsche dir viel Glück!","¡Te deseo mucha suerte!"],["Världen är stor.","Die Welt ist groß.","El mundo es grande."]]},
+  {id:"loften",name:"Löften och hjälp",w:[["🤝","lova","versprechen","prometer"],["💡","förslag","der Vorschlag","la propuesta"],["🙌","hjälpa","helfen","ayudar"],["📞","ringa","anrufen","llamar"],["✉️","skicka","schicken","enviar"],["🔙","komma tillbaka","zurückkommen","volver"]],
+   s:[["Jag lovar att ringa dig.","Ich verspreche, dich anzurufen.","Te prometo que te llamaré."],["Kan du hjälpa mig?","Kannst du mir helfen?","¿Puedes ayudarme?"],["Jag skickar ett meddelande imorgon.","Ich schicke morgen eine Nachricht.","Mañana envío un mensaje."],["När kommer du tillbaka?","Wann kommst du zurück?","¿Cuándo vuelves?"]]},
+ ]},
+ /* ---------- Enhet 16–20: B2 ---------- */
+ {title:"Arbetsliv",desc:"Yrken, söka jobb och kollegor",lessons:[
+  {id:"yrken",name:"Yrken",w:[["👮","polis","der Polizist","el policía"],["👩‍⚕️","sjuksköterska","die Krankenpflegerin","la enfermera"],["🧑‍🔧","mekaniker","der Mechaniker","el mecánico"],["👨‍💻","programmerare","der Programmierer","el programador"],["🧑‍🌾","bonde","der Bauer","el agricultor"],["🧑‍⚖️","advokat","der Anwalt","el abogado"]],
+   s:[["Vad jobbar du med?","Was machst du beruflich?","¿A qué te dedicas?"],["Min syster är sjuksköterska.","Meine Schwester ist Krankenpflegerin.","Mi hermana es enfermera."],["Han jobbar som programmerare.","Er arbeitet als Programmierer.","Trabaja como programador."],["Mekanikern lagar bilen.","Der Mechaniker repariert das Auto.","El mecánico arregla el coche."]]},
+  {id:"sokajobb",name:"Söka jobb",w:[["📄","cv","der Lebenslauf","el currículum"],["🎙️","intervju","das Vorstellungsgespräch","la entrevista"],["💶","lön","das Gehalt","el sueldo"],["🏭","företag","die Firma","la empresa"],["✍️","ansöka","sich bewerben","solicitar"],["📃","kontrakt","der Vertrag","el contrato"]],
+   s:[["Jag söker ett nytt jobb.","Ich suche eine neue Stelle.","Busco un trabajo nuevo."],["Intervjun är imorgon klockan tio.","Das Vorstellungsgespräch ist morgen um zehn Uhr.","La entrevista es mañana a las diez."],["Företaget har femtio anställda.","Die Firma hat fünfzig Mitarbeiter.","La empresa tiene cincuenta empleados."],["Jag skriver under kontraktet.","Ich unterschreibe den Vertrag.","Firmo el contrato."]]},
+  {id:"kollegor",name:"Kollegor och möten",w:[["👥","kollega","der Kollege","el compañero"],["👔","chef","der Chef","el jefe"],["📊","projekt","das Projekt","el proyecto"],["⏳","tidsfrist","die Frist","el plazo"],["🖥️","presentation","die Präsentation","la presentación"],["☕","paus","die Pause","la pausa"]],
+   s:[["Min chef är på semester.","Mein Chef ist im Urlaub.","Mi jefe está de vacaciones."],["Vi tar en paus nu.","Wir machen jetzt eine Pause.","Hacemos una pausa ahora."],["Projektet är nästan klart.","Das Projekt ist fast fertig.","El proyecto está casi terminado."],["Presentationen gick bra.","Die Präsentation lief gut.","La presentación salió bien."]]},
+ ]},
+ {title:"Boende",desc:"Flytta, köket och grannskapet",lessons:[
+  {id:"flytta",name:"Flytta",w:[["🏢","lägenhet","die Wohnung","el piso"],["🔑","hyra","die Miete","el alquiler"],["📦","låda","der Karton","la caja"],["🛋️","soffa","das Sofa","el sofá"],["🧱","vägg","die Wand","la pared"],["🪜","trappa","die Treppe","la escalera"]],
+   s:[["Vi flyttar till en ny lägenhet.","Wir ziehen in eine neue Wohnung.","Nos mudamos a un piso nuevo."],["Hyran är ganska hög.","Die Miete ist ziemlich hoch.","El alquiler es bastante alto."],["Lådorna står i hallen.","Die Kartons stehen im Flur.","Las cajas están en el pasillo."],["Soffan är för stor.","Das Sofa ist zu groß.","El sofá es demasiado grande."]]},
+  {id:"koket",name:"Köket",w:[["🍳","stekpanna","die Pfanne","la sartén"],["🔪","kniv","das Messer","el cuchillo"],["🥄","sked","der Löffel","la cuchara"],["🍴","gaffel","die Gabel","el tenedor"],["🧊","kylskåp","der Kühlschrank","la nevera"],["🔥","ugn","der Ofen","el horno"]],
+   s:[["Mjölken står i kylskåpet.","Die Milch ist im Kühlschrank.","La leche está en la nevera."],["Kan du duka bordet?","Kannst du den Tisch decken?","¿Puedes poner la mesa?"],["Kniven är vass.","Das Messer ist scharf.","El cuchillo está afilado."],["Kakan är i ugnen.","Der Kuchen ist im Ofen.","El pastel está en el horno."]]},
+  {id:"grannskap",name:"Grannskapet",w:[["🏫","skola","die Schule","el colegio"],["📬","brevlåda","der Briefkasten","el buzón"],["🌳","park","der Park","el parque"],["🥐","bageri","die Bäckerei","la panadería"],["💊","apotek","die Apotheke","la farmacia"],["📚","bibliotek","die Bibliothek","la biblioteca"]],
+   s:[["Apoteket stänger klockan sex.","Die Apotheke schließt um sechs Uhr.","La farmacia cierra a las seis."],["Barnen leker i parken.","Die Kinder spielen im Park.","Los niños juegan en el parque."],["Jag köper bröd på bageriet.","Ich kaufe Brot in der Bäckerei.","Compro pan en la panadería."],["Biblioteket ligger nära skolan.","Die Bibliothek ist nahe der Schule.","La biblioteca está cerca del colegio."]]},
+ ]},
+ {title:"Teknik och media",desc:"Mobilen, internet och nyheter",lessons:[
+  {id:"mobil",name:"Mobilen",w:[["📱","mobil","das Handy","el móvil"],["🔋","batteri","der Akku","la batería"],["🔌","laddare","das Ladegerät","el cargador"],["💬","meddelande","die Nachricht","el mensaje"],["📷","kamera","die Kamera","la cámara"],["🔒","lösenord","das Passwort","la contraseña"]],
+   s:[["Mitt batteri är nästan slut.","Mein Akku ist fast leer.","Mi batería está casi agotada."],["Har du en laddare?","Hast du ein Ladegerät?","¿Tienes un cargador?"],["Jag skickar ett meddelande till dig.","Ich schicke dir eine Nachricht.","Te envío un mensaje."],["Jag har glömt mitt lösenord.","Ich habe mein Passwort vergessen.","He olvidado mi contraseña."]]},
+  {id:"internet",name:"Internet",w:[["🌐","webbsida","die Webseite","la página web"],["🔍","söka","suchen","buscar"],["⬇️","ladda ner","herunterladen","descargar"],["📶","wifi","das WLAN","el wifi"],["🖥️","skärm","der Bildschirm","la pantalla"],["📲","app","die App","la aplicación"]],
+   s:[["Finns det wifi här?","Gibt es hier WLAN?","¿Hay wifi aquí?"],["Jag laddar ner appen.","Ich lade die App herunter.","Descargo la aplicación."],["Sök på internet!","Such im Internet!","¡Busca en internet!"],["Skärmen är trasig.","Der Bildschirm ist kaputt.","La pantalla está rota."]]},
+  {id:"nyheter",name:"Nyheter",w:[["📰","tidning","die Zeitung","el periódico"],["📺","tv","der Fernseher","la televisión"],["📻","radio","das Radio","la radio"],["🗞️","artikel","der Artikel","el artículo"],["🎤","journalist","der Journalist","el periodista"],["🆕","nyheter","die Nachrichten","las noticias"]],
+   s:[["Jag läser tidningen varje morgon.","Ich lese jeden Morgen die Zeitung.","Leo el periódico cada mañana."],["Har du sett nyheterna?","Hast du die Nachrichten gesehen?","¿Has visto las noticias?"],["Artikeln är mycket intressant.","Der Artikel ist sehr interessant.","El artículo es muy interesante."],["Vi lyssnar på radio i bilen.","Wir hören Radio im Auto.","Escuchamos la radio en el coche."]]},
+ ]},
+ {title:"Samhälle och miljö",desc:"Miljön, samhället och kultur",lessons:[
+  {id:"miljo",name:"Miljön",w:[["♻️","återvinna","recyceln","reciclar"],["🌡️","klimat","das Klima","el clima"],["🏭","förorening","die Verschmutzung","la contaminación"],["⚡","energi","die Energie","la energía"],["🌱","natur","die Natur","la naturaleza"],["🚮","avfall","der Abfall","los residuos"]],
+   s:[["Vi måste skydda naturen.","Wir müssen die Natur schützen.","Tenemos que proteger la naturaleza."],["Klimatet förändras.","Das Klima verändert sich.","El clima está cambiando."],["Jag återvinner plast och papper.","Ich recycle Plastik und Papier.","Reciclo plástico y papel."],["Solenergi är framtiden.","Solarenergie ist die Zukunft.","La energía solar es el futuro."]]},
+  {id:"samhalle",name:"Samhället",w:[["🏛️","regering","die Regierung","el gobierno"],["🗳️","val","die Wahl","las elecciones"],["⚖️","lag","das Gesetz","la ley"],["👥","befolkning","die Bevölkerung","la población"],["🏙️","huvudstad","die Hauptstadt","la capital"],["🤝","samarbete","die Zusammenarbeit","la cooperación"]],
+   s:[["Huvudstaden har många museer.","Die Hauptstadt hat viele Museen.","La capital tiene muchos museos."],["Valet är i september.","Die Wahl ist im September.","Las elecciones son en septiembre."],["Den nya lagen gäller från januari.","Das neue Gesetz gilt ab Januar.","La nueva ley entra en vigor en enero."],["Samarbete är viktigt.","Zusammenarbeit ist wichtig.","La cooperación es importante."]]},
+  {id:"kultur",name:"Kultur",w:[["🎭","teater","das Theater","el teatro"],["🖼️","museum","das Museum","el museo"],["🎼","konsert","das Konzert","el concierto"],["📕","roman","der Roman","la novela"],["🎨","konstnär","der Künstler","el artista"],["🎟️","föreställning","die Vorstellung","la función"]],
+   s:[["Vi går på teater ikväll.","Wir gehen heute Abend ins Theater.","Vamos al teatro esta noche."],["Museet är gratis på söndagar.","Das Museum ist sonntags kostenlos.","El museo es gratis los domingos."],["Jag läser en spännande roman.","Ich lese einen spannenden Roman.","Leo una novela emocionante."],["Konserten började sent.","Das Konzert hat spät angefangen.","El concierto empezó tarde."]]},
+ ]},
+ {title:"Avancerat",desc:"Åsikter, abstrakta ord och uttryck",lessons:[
+  {id:"asikter",name:"Åsikter",w:[["🤔","åsikt","die Meinung","la opinión"],["👍","hålla med","zustimmen","estar de acuerdo"],["➕","fördel","der Vorteil","la ventaja"],["➖","nackdel","der Nachteil","la desventaja"],["💬","argument","das Argument","el argumento"],["🔎","anledning","der Grund","la razón"]],
+   s:[["Enligt mig är det en bra idé.","Meiner Meinung nach ist das eine gute Idee.","En mi opinión, es una buena idea."],["Jag håller inte med dig.","Ich stimme dir nicht zu.","No estoy de acuerdo contigo."],["Vilka är fördelarna?","Was sind die Vorteile?","¿Cuáles son las ventajas?"],["Det finns en bra anledning.","Es gibt einen guten Grund.","Hay una buena razón."]]},
+  {id:"abstrakt",name:"Abstrakta begrepp",w:[["🕊️","frihet","die Freiheit","la libertad"],["⚖️","rättvisa","die Gerechtigkeit","la justicia"],["🎖️","ansvar","die Verantwortung","la responsabilidad"],["💞","förtroende","das Vertrauen","la confianza"],["📈","utveckling","die Entwicklung","el desarrollo"],["🎲","möjlighet","die Möglichkeit","la oportunidad"]],
+   s:[["Frihet är viktigt för alla.","Freiheit ist für alle wichtig.","La libertad es importante para todos."],["Du har ett stort ansvar.","Du hast eine große Verantwortung.","Tienes una gran responsabilidad."],["Förtroende tar tid.","Vertrauen braucht Zeit.","La confianza lleva tiempo."],["Det är en unik möjlighet.","Das ist eine einmalige Möglichkeit.","Es una oportunidad única."]]},
+  {id:"uttryck",name:"Vardagsuttryck",w:[["🍀","lycka till","viel Glück","buena suerte"],["😅","ingen fara","kein Problem","no pasa nada"],["🥂","skål","prost","salud"],["🙏","förlåt","Entschuldigung","perdón"],["🎉","grattis","herzlichen Glückwunsch","felicidades"],["👌","självklart","natürlich","claro"]],
+   s:[["Lycka till på provet!","Viel Glück bei der Prüfung!","¡Buena suerte en el examen!"],["Förlåt, jag är sen.","Entschuldigung, ich bin spät dran.","Perdón, llego tarde."],["Grattis på födelsedagen!","Alles Gute zum Geburtstag!","¡Feliz cumpleaños!"],["Självklart kan du komma!","Natürlich kannst du kommen!","¡Claro que puedes venir!"]]},
+ ]},
+];
+/* Färg och nivå per enhet */
+const PALETTE=[["--green","--green-d"],["--purple","--purple-d"],["--orange","--orange-d"],["--blue","--blue-d"],["--pink","--pink-d"],["--teal","--teal-d"]];
+DATA.forEach((u,i)=>{const p=PALETTE[i%PALETTE.length];u.c=p[0];u.cd=p[1];u.lvl=i<5?"A1":i<10?"A2":i<15?"B1":"B2";});
+
+/* Franska: samma ordning som de svenska orden och meningarna i DATA */
+const FR={
+ halsa:[["salut","au revoir","merci","de rien","oui","non","bonjour"],["Bonjour, Anna !","Salut, je suis Max.","Oui, merci.","Au revoir et merci !"]],
+ mat:[["le pain","l'eau","la pomme","le café","le lait","le fromage"],["Je mange du pain.","Je bois du café.","L'eau est froide.","Le fromage est bon."]],
+ siffror:[["un","deux","trois","quatre","cinq","dix"],["J'ai deux pommes.","Trois cafés, s'il vous plaît.","Un, deux, trois !","Quatre pains, s'il vous plaît."]],
+ djur:[["le chien","le chat","l'oiseau","le cheval","la vache","le poisson"],["Le chien est grand.","Le chat dort.","J'ai un chien.","Le cheval est rapide."]],
+ familj:[["la mère","le père","le frère","la sœur","l'enfant","la famille"],["C'est ma mère.","Mon frère s'appelle Max.","Nous sommes une famille.","Ma sœur est gentille."]],
+ hemma:[["la maison","la porte","le lit","la chaise","la lampe","la fenêtre"],["La maison est petite.","La porte est ouverte.","Je dors dans le lit.","La lampe est neuve."]],
+ staden:[["la gare","l'aéroport","l'hôtel","la rue","le restaurant","la ville"],["Où est la gare ?","L'hôtel est là-bas.","Je cherche un restaurant.","La ville est belle."]],
+ vader:[["le soleil","la pluie","la neige","le vent","chaud","froid"],["Aujourd'hui, le soleil brille.","Il fait très froid.","Demain, il va pleuvoir.","Le vent est fort."]],
+ verb:[["marcher","manger","boire","dormir","lire","parler"],["Je parle suédois.","Tu lis un livre.","Nous rentrons à la maison.","Il boit de l'eau."]],
+ farger:[["rouge","bleu","vert","jaune","noir","blanc"],["La voiture est rouge.","Le ciel est bleu.","J'aime le vert.","Le chat est noir."]],
+ klader:[["le t-shirt","le pantalon","la robe","les chaussures","la veste","la casquette"],["J'achète une veste.","Les chaussures sont neuves.","La robe est belle.","Où est mon pantalon ?"]],
+ kroppen:[["l'œil","le nez","l'oreille","la main","le pied","la dent"],["Je me lave les mains.","J'ai mal au pied.","Elle a les yeux bleus.","Le chien a un grand nez."]],
+ tid:[["le lundi","le vendredi","le samedi","le jour","la nuit","l'heure"],["Aujourd'hui, c'est lundi.","On se voit samedi.","Bonne nuit !","Ça prend une heure."]],
+ fritid:[["le football","la musique","le film","nager","jouer","cuisiner"],["Je joue au football.","Nous écoutons de la musique.","Le film est bon.","Elle nage tous les jours."]],
+ jobb:[["le travail","le bureau","l'ordinateur","l'e-mail","le téléphone","la réunion"],["Je travaille dans un bureau.","La réunion commence maintenant.","J'écris un e-mail.","L'ordinateur est neuf."]],
+ frukost:[["l'œuf","le beurre","le miel","le thé","les céréales","le jus"],["Je mange un œuf au petit-déjeuner.","Tu veux du thé ou du café ?","Le jus est frais.","Je mets du beurre sur le pain."]],
+ restaurang:[["la carte","l'addition","le cuisinier","le vin","le dessert","la salade"],["Je peux avoir la carte, s'il vous plaît ?","L'addition, s'il vous plaît.","Je voudrais une salade.","Le dessert est délicieux."]],
+ handla:[["le chariot","la carotte","la banane","le poulet","le riz","le sel"],["Nous avons besoin de riz et de sel.","Combien coûtent les bananes ?","J'achète du poulet pour le dîner.","Le magasin ferme à huit heures."]],
+ morgon:[["le réveil","la douche","la brosse à dents","le miroir","le savon","fatigué"],["Je me réveille à sept heures.","Il prend une douche chaque matin.","Je me brosse les dents.","Elle est fatiguée aujourd'hui."]],
+ hushall:[["le balai","le linge","les ordures","la plante","la clé","l'éponge"],["Je sors les poubelles.","Où sont mes clés ?","Nous faisons le ménage samedi.","La plante a besoin d'eau."]],
+ klockan:[["l'horloge","la minute","le matin","le soir","midi","bientôt"],["Quelle heure est-il ?","Il est deux heures et demie.","À bientôt !","Le train part dans dix minutes."]],
+ affar:[["le magasin","la carte bancaire","le sac","le reçu","le prix","le cadeau"],["Je peux payer par carte ?","Tu as besoin d'un sac ?","J'achète un cadeau pour mon ami.","Le prix est bon."]],
+ pengar:[["l'euro","la pièce","le billet","la banque","cher","bon marché"],["C'est trop cher.","Les chaussures sont bon marché.","Je n'ai pas d'argent.","La banque est à côté du café."]],
+ storlek:[["grand","petit","long","court","le kilo","le litre"],["Vous avez une taille plus grande ?","Le pantalon est trop court.","Un kilo de pommes, s'il vous plaît.","Le pull est trop petit."]],
+ tag:[["le ticket","le train","la voie","la valise","en retard","la place"],["Un ticket pour le centre, s'il vous plaît.","Le train est en retard.","De quelle voie part le train ?","Cette place est libre ?"]],
+ bil:[["la voiture","le feu","l'essence","le parking","le bus","le vélo"],["Je vais au travail en voiture.","Le bus arrive bientôt.","Arrêtez-vous au feu.","Elle va à l'école à vélo."]],
+ vagen:[["à gauche","à droite","tout droit","le plan","le coin","le pont"],["Tournez à gauche au coin.","Allez tout droit.","Le musée est à droite.","C'est loin d'ici ?"]],
+ landskap:[["la montagne","la mer","l'île","la forêt","le lac","la plage"],["Nous allons à la mer cet été.","La forêt est calme.","La montagne est très haute.","Nous nous baignons dans le lac."]],
+ arstider:[["le printemps","l'été","l'automne","l'hiver","le mois","l'année"],["Ma saison préférée est l'automne.","En hiver, il neige.","Une année a douze mois.","Le printemps arrive bientôt."]],
+ vaxter:[["la fleur","l'arbre","l'herbe","l'ours","le renard","l'abeille"],["Les fleurs sont belles.","L'ours dort en hiver.","Le renard vit dans la forêt.","L'arbre est vieux."]],
+ kanslor:[["content","triste","fâché","effrayé","calme","surpris"],["Je suis content aujourd'hui.","Pourquoi es-tu triste ?","Il se fâche parfois.","N'aie pas peur !"]],
+ personlighet:[["drôle","intelligent","gentil","fort","paresseux","timide"],["Mon ami est très drôle.","Elle est intelligente et gentille.","Je suis un peu timide.","Le chat est paresseux."]],
+ relationer:[["l'ami","le partenaire","le mariage","le voisin","la grand-mère","le grand-père"],["Ma grand-mère a quatre-vingts ans.","Nous voyons nos amis vendredi.","Le mariage est en juin.","Notre voisin est très sympa."]],
+ klassrum:[["le professeur","l'élève","le crayon","le cahier","le sac à dos","le tableau"],["Le professeur écrit au tableau.","J'ai oublié mon crayon.","Les élèves sont dans la classe.","Le sac à dos est lourd."]],
+ amnen:[["les maths","l'histoire","l'art","la chimie","la géographie","la langue"],["J'aime l'histoire.","Les maths sont difficiles.","Nous avons chimie mardi.","Combien de langues parles-tu ?"]],
+ lara:[["la question","la réponse","l'examen","les devoirs","se souvenir","comprendre"],["J'ai une question.","Je ne comprends pas.","L'examen est lundi.","Tu peux répéter, s'il te plaît ?"]],
+ lakare:[["le médecin","le médicament","l'hôpital","la fièvre","le mal de tête","enrhumé"],["J'ai besoin d'un médecin.","J'ai de la fièvre.","Elle est enrhumée.","Où est l'hôpital ?"]],
+ mabra:[["le sommeil","les légumes","le repos","assoiffé","affamé","en bonne santé"],["J'ai faim.","Les légumes sont bons pour la santé.","Tu as besoin de plus de sommeil.","Comment ça va ?"]],
+ sport:[["courir","s'entraîner","le tennis","le basket","faire du ski","gagner"],["Je cours trois fois par semaine.","Nous nous entraînons à la salle de sport.","Quelle équipe a gagné ?","En hiver, nous faisons du ski."]],
+ igar:[["hier","avant-hier","la semaine dernière","l'année dernière","déjà","jamais"],["Hier, j'étais à la maison.","J'ai déjà mangé.","La semaine dernière, j'étais malade.","Je ne suis jamais allé au Japon."]],
+ semester:[["les vacances","la photo","le voyage","l'aventure","l'étranger","le passeport"],["Nous étions en vacances en Italie.","J'ai pris beaucoup de photos.","Le voyage était fantastique.","J'ai oublié mon passeport."]],
+ beratta:[["le récit","se passer","penser","partir","rire","entendre"],["Qu'est-ce qui s'est passé hier ?","Nous avons ri toute la soirée.","J'ai entendu une histoire bizarre.","Elle est partie le matin."]],
+ planer:[["demain","la semaine prochaine","le plan","peut-être","sûr","le but"],["Demain, je vais travailler.","Qu'est-ce que tu fais la semaine prochaine ?","Il va peut-être pleuvoir.","Mon but est de parler couramment."]],
+ drommar:[["le rêve","l'avenir","le monde","le passe-temps","la carrière","souhaiter"],["Je rêve de voyager.","À l'avenir, je veux vivre au bord de la mer.","Je te souhaite bonne chance !","Le monde est grand."]],
+ loften:[["promettre","la proposition","aider","appeler","envoyer","revenir"],["Je promets de t'appeler.","Tu peux m'aider ?","J'envoie un message demain.","Quand est-ce que tu reviens ?"]],
+ yrken:[["le policier","l'infirmière","le mécanicien","le programmeur","l'agriculteur","l'avocat"],["Qu'est-ce que tu fais dans la vie ?","Ma sœur est infirmière.","Il travaille comme programmeur.","Le mécanicien répare la voiture."]],
+ sokajobb:[["le CV","l'entretien","le salaire","l'entreprise","postuler","le contrat"],["Je cherche un nouveau travail.","L'entretien est demain à dix heures.","L'entreprise a cinquante employés.","Je signe le contrat."]],
+ kollegor:[["le collègue","le chef","le projet","le délai","la présentation","la pause"],["Mon chef est en vacances.","Nous faisons une pause maintenant.","Le projet est presque terminé.","La présentation s'est bien passée."]],
+ flytta:[["l'appartement","le loyer","le carton","le canapé","le mur","l'escalier"],["Nous déménageons dans un nouvel appartement.","Le loyer est assez élevé.","Les cartons sont dans l'entrée.","Le canapé est trop grand."]],
+ koket:[["la poêle","le couteau","la cuillère","la fourchette","le frigo","le four"],["Le lait est dans le frigo.","Tu peux mettre la table ?","Le couteau est tranchant.","Le gâteau est dans le four."]],
+ grannskap:[["l'école","la boîte aux lettres","le parc","la boulangerie","la pharmacie","la bibliothèque"],["La pharmacie ferme à six heures.","Les enfants jouent dans le parc.","J'achète du pain à la boulangerie.","La bibliothèque est près de l'école."]],
+ mobil:[["le portable","la batterie","le chargeur","le message","l'appareil photo","le mot de passe"],["Ma batterie est presque vide.","Tu as un chargeur ?","Je t'envoie un message.","J'ai oublié mon mot de passe."]],
+ internet:[["le site web","chercher","télécharger","le wifi","l'écran","l'application"],["Il y a du wifi ici ?","Je télécharge l'application.","Cherche sur internet !","L'écran est cassé."]],
+ nyheter:[["le journal","la télé","la radio","l'article","le journaliste","les informations"],["Je lis le journal chaque matin.","Tu as vu les informations ?","L'article est très intéressant.","Nous écoutons la radio dans la voiture."]],
+ miljo:[["recycler","le climat","la pollution","l'énergie","la nature","les déchets"],["Nous devons protéger la nature.","Le climat change.","Je recycle le plastique et le papier.","L'énergie solaire est l'avenir."]],
+ samhalle:[["le gouvernement","les élections","la loi","la population","la capitale","la coopération"],["La capitale a beaucoup de musées.","Les élections sont en septembre.","La nouvelle loi s'applique à partir de janvier.","La coopération est importante."]],
+ kultur:[["le théâtre","le musée","le concert","le roman","l'artiste","le spectacle"],["Nous allons au théâtre ce soir.","Le musée est gratuit le dimanche.","Je lis un roman passionnant.","Le concert a commencé tard."]],
+ asikter:[["l'avis","être d'accord","l'avantage","l'inconvénient","l'argument","la raison"],["À mon avis, c'est une bonne idée.","Je ne suis pas d'accord avec toi.","Quels sont les avantages ?","Il y a une bonne raison."]],
+ abstrakt:[["la liberté","la justice","la responsabilité","la confiance","le développement","l'occasion"],["La liberté est importante pour tous.","Tu as une grande responsabilité.","La confiance prend du temps.","C'est une occasion unique."]],
+ uttryck:[["bonne chance","pas de problème","santé","pardon","félicitations","bien sûr"],["Bonne chance pour l'examen !","Pardon, je suis en retard.","Joyeux anniversaire !","Bien sûr que tu peux venir !"]],
+};
+function buildCourse(code){
+  const wi=code==="de"?2:3, si=code==="de"?1:2;
+  const fw=(l,a,i)=>code==="fr"?FR[l.id][0][i]:a[wi];
+  const fs=(l,a,i)=>code==="fr"?FR[l.id][1][i]:a[si];
+  const units=DATA.map((u,ui)=>{
+    const lessons=u.lessons.map(l=>({id:l.id,name:l.name,
+      words:l.w.map((a,i)=>({e:a[0],sv:a[1],t:fw(l,a,i)})),
+      sents:l.s.map((a,i)=>({sv:a[0],t:fs(l,a,i)}))}));
+    const test={id:"prov"+(ui+1),name:"Enhetsprov",test:true,words:lessons.flatMap(l=>l.words),sents:lessons.flatMap(l=>l.sents)};
+    return Object.assign({},u,{nodes:[...lessons,test]});
+  });
+  const nodes=[];
+  units.forEach((u,ui)=>u.nodes.forEach((n,ni)=>{n.unit=ui;n.ni=ni;n.idx=nodes.length;nodes.push(n);}));
+  return{units,nodes,sents:nodes.filter(n=>!n.test).flatMap(n=>n.sents)};
+}
+const COURSES={de:buildCourse("de"),es:buildCourse("es"),fr:buildCourse("fr")};
+const LESSON_COUNT=COURSES.de.nodes.length;
+
+/* ================= Profiler (sparas i webbläsaren) ================= */
+const KEY="sprakstigen-v2";
+let DB={users:{},current:null};
+try{const raw=localStorage.getItem(KEY);if(raw)DB=Object.assign(DB,JSON.parse(raw));}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(DB));}catch(e){}}
+const U=()=>DB.users[DB.current];
+const LANG=()=>LANGS[U().course];
+const COURSE=()=>COURSES[U().course];
+const CS=()=>U().courses[U().course];
+function newUser(name){
+  const u={name,hearts:5,streak:0,lastDay:null,course:null,courses:{},color:null};
+  const cols=["--green","--blue","--purple","--orange","--pink","--teal"];
+  let h=0;for(const ch of name)h=(h*31+ch.charCodeAt(0))>>>0;u.color=cols[h%cols.length];
+  /* ta med framsteg från den gamla tyska versionen om den finns */
+  try{const old=JSON.parse(localStorage.getItem("brezel-tyska-v1")||"null");
+    if(old&&!Object.keys(DB.users).length&&old.done&&Object.keys(old.done).length){
+      u.courses.de={done:old.done,start:0,reason:null};u.streak=old.streak||0;u.lastDay=old.lastDay||null;u.hearts=old.hearts??5;}}catch(e){}
+  return u;
+}
+
+function dayStr(d){d=d||new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function yesterday(){const d=new Date();d.setDate(d.getDate()-1);return dayStr(d);}
+function streakNow(){const u=U();return (u.lastDay===dayStr()||u.lastDay===yesterday())?u.streak:0;}
+function curIdx(){const c=CS(),n=COURSE().nodes;const i=n.findIndex(x=>x.idx>=c.start&&!c.done[x.id]);return i<0?n.length:i;}
+function nodeState(n){const c=CS(),cur=curIdx();if(c.done[n.id])return"done";if(n.idx===cur)return"current";if(n.idx<cur)return"open";return"locked";}
+
+/* ================= Hjälpfunktioner ================= */
+const $=s=>document.querySelector(s);
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const pick=a=>a[Math.random()*a.length|0];
+const tok=s=>s.replace(/[.,!?¿¡]/g,"").split(/\s+/).filter(Boolean);
+const same=(a,b)=>a.map(x=>x.toLowerCase()).join(" ")===b.map(x=>x.toLowerCase()).join(" ");
+const NAME=()=>esc(U().name);
+function artHTML(t,lang){const L=lang||LANG();const m=t.match(L.artRe);if(!m)return esc(t);const a=m[1].toLowerCase();
+  return `<span class="art ${L.artCls[a]||"n"}">${esc(m[1])}</span>${a.endsWith("'")?"":" "}${esc(m[2])}`;}
+function lev(a,b){const d=Array.from({length:a.length+1},(_,i)=>[i]);for(let j=1;j<=b.length;j++)d[0][j]=j;
+  for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[a.length][b.length];}
+function toast(msg){const t=document.createElement("div");t.className="toast";t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2400);}
+function timeGreeting(){const h=new Date().getHours();return h<5?"Sent uppe":h<10?"God morgon":h<17?"Hej":"God kväll";}
+const REASONS={
+  travel:{e:"✈️",label:"Resor",line:"Varje ord tar dig närmare nästa resa."},
+  work:{e:"💼",label:"Jobbet",line:"Det här kommer du ha nytta av på jobbet."},
+  school:{e:"🎓",label:"Skolan",line:"Plugga lite i dag så sitter det till provet."},
+  people:{e:"💬",label:"Familj och vänner",line:"Snart kan du prata med dem på deras språk."},
+  fun:{e:"🎉",label:"Bara för skojs skull",line:"Lite språk varje dag gör hjärnan glad."},
+};
+
+/* Tal */
+const HAS_TTS="speechSynthesis" in window&&typeof SpeechSynthesisUtterance!=="undefined";
+function speak(text,slow){
+  if(!HAS_TTS||!DB.current||!U().course)return;
+  try{speechSynthesis.cancel();const L=LANG();
+    const u=new SpeechSynthesisUtterance(text);u.lang=L.tts;u.rate=slow?0.55:0.9;
+    const v=speechSynthesis.getVoices().find(v=>v.lang&&v.lang.toLowerCase().startsWith(L.code));if(v)u.voice=v;
+    speechSynthesis.speak(u);}catch(e){}
+}
+function spkBtn(text,cls){const slow=cls&&cls.includes("slow");return `<button class="spk ${cls||""}" data-say="${esc(text)}" ${slow?'data-slow="1"':""} aria-label="${slow?"Lyssna långsamt":"Lyssna"}">${slow?IC.snail:IC.speaker}</button>`;}
+document.addEventListener("click",e=>{const b=e.target.closest(".spk");if(b)speak(b.dataset.say,!!b.dataset.slow);});
+if(HAS_TTS){try{speechSynthesis.getVoices();}catch(e){}}
+
+/* Ljudeffekter */
+let AC=null;
+function sfx(kind){
+  try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==="suspended")AC.resume();
+    const t=AC.currentTime;
+    const n=(f,s,d,type,v)=>{const o=AC.createOscillator(),g=AC.createGain();o.type=type||"sine";o.frequency.value=f;
+      g.gain.setValueAtTime(0,t+s);g.gain.linearRampToValueAtTime(v||.16,t+s+.015);g.gain.exponentialRampToValueAtTime(.0001,t+s+d);
+      o.connect(g).connect(AC.destination);o.start(t+s);o.stop(t+s+d+.02);};
+    if(kind==="good"){n(660,0,.14,"triangle");n(990,.08,.22,"triangle");}
+    else if(kind==="bad"){n(220,0,.22,"square",.07);n(170,.1,.3,"square",.07);}
+    else if(kind==="win"){[523,659,784,1047].forEach((f,i)=>n(f,i*.11,.3,"triangle",.15));}
+    else if(kind==="tap"){n(520,0,.05,"sine",.06);}
+  }catch(e){}
+}
+
+/* ================= Inloggning ================= */
+function showAuth(){$("#auth").hidden=false;$("#topbar").hidden=true;$("#bottomnav").hidden=true;$("#main").innerHTML="";}
+function hideAuth(){$("#auth").hidden=true;$("#topbar").hidden=false;$("#bottomnav").hidden=false;}
+
+function renderLogin(){
+  showAuth();
+  const users=Object.entries(DB.users);
+  $("#authIn").innerHTML=`
+    <div class="login-hero">${brezel()}${naranja()}</div>
+    <h1 class="brand">Språkstigen</h1>
+    <p class="tagline">Lär dig tyska eller spanska med korta lektioner varje dag.</p>
+    <form class="lcard" id="loginForm" novalidate>
+      <label for="nameIn">Vad heter du?</label>
+      <input class="field" id="nameIn" maxlength="20" autocomplete="given-name" placeholder="Ditt förnamn">
+      <p class="err" id="nameErr" hidden>Skriv ditt namn för att logga in.</p>
+      <button class="btn wide" type="submit">Logga in</button>
+      <p class="hint">Finns inget konto med namnet skapas ett nytt. Profilen sparas i den här webbläsaren.</p>
+    </form>
+    ${users.length?`<div class="divider">Tidigare profiler</div><div class="profs">${users.map(([id,u])=>`
+      <button class="opt prof" data-id="${esc(id)}"><span class="avatar" style="--av:var(${u.color})">${esc(u.name[0].toUpperCase())}</span>
+      <div><b>${esc(u.name)}</b><span>${Object.keys(u.courses).map(c=>LANGS[c].name).join(", ")||"Ingen kurs ännu"}</span></div></button>`).join("")}</div>`:""}`;
+  const f=$("#loginForm"),inp=$("#nameIn");
+  f.onsubmit=e=>{e.preventDefault();
+    const name=inp.value.trim().replace(/\s+/g," ");
+    if(!name){$("#nameErr").hidden=false;inp.focus();return;}
+    const pretty=name.charAt(0).toUpperCase()+name.slice(1);
+    const id=pretty.toLowerCase();
+    if(!DB.users[id])DB.users[id]=newUser(pretty);
+    login(id);
+  };
+  inp.oninput=()=>{$("#nameErr").hidden=true;};
+  document.querySelectorAll(".prof").forEach(b=>b.onclick=()=>login(b.dataset.id));
+  setTimeout(()=>inp.focus(),80);
+}
+function login(id){
+  DB.current=id;save();
+  const u=U();
+  if(u.course&&u.courses[u.course]){enterApp(true);if(!LS)toast(`Välkommen tillbaka, ${u.name}!`);}
+  else if(Object.keys(u.courses).length){u.course=Object.keys(u.courses)[0];save();enterApp(true);}
+  else startOnboarding("new");
+}
+function logout(){DB.current=null;save();closeModal();renderLogin();}
+
+/* ================= Introduktion (anpassning) ================= */
+let ONB=null;
+function startOnboarding(mode,lang){
+  ONB={mode,lang:lang||null,reason:null,i:0};
+  ONB.steps=mode==="new"?["lang","reason","ready"]:["reason","ready"];
+  showAuth();renderOnb();
+}
+function renderOnb(){
+  const u=U(),st=ONB.steps[ONB.i],n=esc(u.name);
+  const L=ONB.lang?LANGS[ONB.lang]:null;
+  const Masc=L?L.mascot:brezel;
+  let body="",ready=false;
+  if(st==="lang"){
+    body=`<div class="prompt">${brezel()}<div class="bubble plain">Hej ${n}! Vilket språk vill du lära dig?</div></div>
+      <div class="rows">${Object.values(LANGS).map(l=>`<button class="opt row plain ${ONB.lang===l.code?"sel":""}" data-v="${l.code}">${l.flag.replace('class="flag','class="flag big')}<div><b style="font-size:20px">${l.name}</b><small>${LESSON_COUNT} lektioner och prov · ${l.mascotName} hänger med</small></div></button>`).join("")}</div>`;
+    ready=!!ONB.lang;
+  }else if(st==="reason"){
+    body=`<div class="prompt">${Masc()}<div class="bubble plain">Varför vill du lära dig ${L.lower}, ${n}?</div></div>
+      <div class="rows">${Object.entries(REASONS).map(([k,r])=>`<button class="opt row plain ${ONB.reason===k?"sel":""}" data-v="${k}"><span class="lead">${r.e}</span>${r.label}</button>`).join("")}</div>`;
+    ready=!!ONB.reason;
+  }else if(st==="ready"){
+    body=`<div class="finish" style="padding-top:0">${Masc()}<h1 style="color:var(--green)">Allt klart, ${n}!</h1>
+      <p>${REASONS[ONB.reason].line}</p></div>
+      <div class="summary"><div><span>Kurs</span><b>${L.name}</b></div>
+      <div><span>Du börjar på</span><b>Enhet 1: ${DATA[0].title}</b></div></div>`;
+    ready=true;
+  }
+  const pct=(ONB.i+1)/ONB.steps.length*100;
+  $("#authIn").innerHTML=`<div class="onb-head"><button class="backbtn" id="onbBack" aria-label="Tillbaka">${IC.back}</button><div class="onb-bar"><i style="width:${pct}%"></i></div></div>
+    <div class="onb-body">${body}</div>
+    <div class="onb-foot"><button class="btn wide" id="onbNext" ${ready?"":"disabled"}>${st==="ready"?"Börja lära dig":"Fortsätt"}</button></div>`;
+  document.querySelectorAll(".onb-body .opt").forEach(b=>b.onclick=()=>{
+    const v=b.dataset.v;sfx("tap");
+    if(st==="lang")ONB.lang=v;else if(st==="reason")ONB.reason=v;
+    renderOnb();
+  });
+  $("#onbBack").onclick=()=>{
+    if(ONB.i>0){ONB.i--;renderOnb();}
+    else if(ONB.mode==="new"){DB.current=null;save();renderLogin();}
+    else{ONB=null;enterApp();}
+  };
+  $("#onbNext").onclick=()=>{
+    if(st==="lang"&&U().courses[ONB.lang]){ /* kursen fanns redan (t.ex. importerad) */
+      ONB.steps=["lang","done"];}
+    if(st==="ready"||ONB.steps[ONB.i+1]==="done"){finishOnb();return;}
+    ONB.i++;renderOnb();
+  };
+}
+function finishOnb(){
+  const u=U();
+  if(!u.courses[ONB.lang]){
+    u.courses[ONB.lang]={done:{},start:0,reason:ONB.reason};
+  }
+  u.course=ONB.lang;ONB=null;save();
+  enterApp(true);
+  /* ny kurs: hoppa direkt in i första lektionen */
+  const c=CS();if(!Object.keys(c.done).length&&!LS)startLesson(COURSE().nodes[0],false);
+}
+
+/* ================= Appen ================= */
+let TAB="learn",scrolled=false;
+function enterApp(fresh){hideAuth();if(fresh){TAB="learn";scrolled=false;}render();window.scrollTo(0,0);if(fresh)resumeLesson();}
+$("#nav-learn").innerHTML=IC.path+"Lär dig";
+$("#nav-words").innerHTML=IC.book+"Ordlista";
+$("#nav-profile").innerHTML=IC.user+"Profil";
+document.querySelectorAll(".navbtn").forEach(b=>b.onclick=()=>{TAB=b.dataset.tab;render();window.scrollTo(0,0);});
+$("#tFlag").onclick=()=>openCourseSheet();
+
+function renderTop(){
+  const u=U(),st=streakNow();
+  $("#tFlag").innerHTML=LANG().flag;
+  $("#tStreak").className="stat streak"+(st?"":" off");$("#tStreak").innerHTML=IC.flame+st;
+  $("#tHearts").innerHTML=IC.heart+u.hearts;
+}
+function render(){
+  renderTop();
+  document.querySelectorAll(".navbtn").forEach(b=>b.classList.toggle("on",b.dataset.tab===TAB));
+  if(TAB==="learn")renderPath();else if(TAB==="words")renderWords();else renderProfile();
+}
+
+function openCourseSheet(){
+  const u=U();
+  openModal(`<div class="sheet"><h2>Dina kurser</h2><p>Växla mellan språk, ${NAME()}. Framstegen sparas för varje kurs.</p>
+    ${Object.values(LANGS).map(l=>{
+      const c=u.courses[l.code];const nd=c?Object.keys(c.done).length:0;
+      return `<div class="course-row ${u.course===l.code?"active":""}">${l.flag}<div class="ct"><b>${l.name}</b><span>${c?`${nd} av ${LESSON_COUNT} klara`:"Inte påbörjad"}</span></div>
+      ${u.course===l.code?'<span style="color:var(--blue-d);font-weight:900">Aktiv</span>':`<button class="btn ${c?"blue":""}" data-lang="${l.code}">${c?"Byt":"Lägg till"}</button>`}</div>`;}).join("")}
+    <div class="btns"><button class="btn ghost wide" id="closeBtn">Stäng</button></div></div>`);
+  document.querySelectorAll("[data-lang]").forEach(b=>b.onclick=()=>{
+    const code=b.dataset.lang;closeModal();
+    if(u.courses[code]){u.course=code;save();scrolled=false;render();if(!resumeLesson())toast(`Du pluggar nu ${LANGS[code].lower}.`);}
+    else startOnboarding("add",code);
+  });
+  $("#closeBtn").onclick=closeModal;
+}
+
+/* ---------- Stigen ---------- */
+const OFF=[0,-52,-76,-52,0,52,76,52];
+function renderPath(){
+  const u=U(),L=LANG(),C=COURSE(),c=CS(),cur=curIdx();
+  const doneN=C.nodes.filter(n=>c.done[n.id]).length,gp=doneN/C.nodes.length*100;
+  const reason=c.reason&&REASONS[c.reason];
+  let sub=reason?reason.line:"Dags för dagens lektion.";
+  let h=`<section class="greet">${L.mascot()}<div class="greet-txt"><h2>${L.hello}, ${NAME()}!</h2><p>${timeGreeting()}! ${sub}</p>
+    <div class="goalrow"><span>Kursen</span><div class="goalbar"><i style="width:${gp}%"></i></div><span>${doneN}/${C.nodes.length}</span></div></div></section>`;
+  if(C.nodes.some(n=>!n.test&&c.done[n.id]))h+=`<div class="practice-row"><button class="btn ghost" id="practiceBtn">${IC.dumbbell} Repetera ord</button></div>`;
+  C.units.forEach((un,ui)=>{
+    const doneCount=un.nodes.filter(n=>c.done[n.id]).length;
+    h+=`<section class="unit" style="--u:var(${un.c});--ud:var(${un.cd})">
+      <header class="unit-head"><div><p class="unit-kicker">Enhet ${ui+1} · Nivå ${un.lvl}</p><h2>${un.title}</h2><p class="d">${un.desc}</p></div>
+      <span class="unit-count">${doneCount}/${un.nodes.length}</span></header><div class="nodes">`;
+    un.nodes.forEach((n,li)=>{
+      const off=OFF[(li*2+ui*3)%8],state=nodeState(n);
+      const icon=state==="done"?IC.check:state==="locked"?IC.lock:(n.test?IC.trophy:IC.star);
+      const cr=c.done[n.id]>1?`<span class="crowns">×${c.done[n.id]}</span>`:"";
+      h+=`<div class="node-wrap ${state}" style="transform:translateX(${off}px)">
+        ${state==="current"?'<div class="start-bubble">BÖRJA</div>':""}
+        <button class="node ${state}${n.test?" test":""}" data-idx="${n.idx}" aria-label="${n.name}${state==="locked"?" (låst)":""}">${icon}</button>${cr}
+        <span class="node-label">${n.name}</span></div>`;
+    });
+    h+=`<div class="path-mascot" style="${ui%2?"left:3%":"right:3%"}">${L.mascot()}</div></div></section>`;
+  });
+  h+=`<p class="path-end">${cur>=C.nodes.length?`Du har klarat hela kursen, ${NAME()}! Repetera för att hålla orden fräscha.`:"Nästa lektion låses upp när du klarar den förra."}</p>`;
+  $("#main").innerHTML=h;
+  document.querySelectorAll(".node").forEach(b=>b.onclick=()=>openLessonSheet(+b.dataset.idx));
+  const pb=$("#practiceBtn");if(pb)pb.onclick=startPractice;
+  const curEl=document.querySelector(".node.current");
+  if(curEl&&!scrolled&&cur>0){scrolled=true;setTimeout(()=>curEl.scrollIntoView({block:"center",behavior:"smooth"}),150);}
+  scrolled=true;
+}
+function openLessonSheet(idx){
+  const n=COURSE().nodes[idx],state=nodeState(n),c=CS();
+  if(state==="locked"){toast("Klara de tidigare lektionerna först.");return;}
+  const un=COURSE().units[n.unit],done=c.done[n.id]||0;
+  openModal(`<div class="sheet">
+    <p class="unit-kicker" style="color:var(${un.c})">Enhet ${n.unit+1} · ${n.test?"Prov":`Lektion ${n.ni+1} av 3`}</p>
+    <h2>${n.name}${n.test?`: ${un.title}`:""}</h2>
+    <p>${n.test?"Blandar alla ord och meningar från enheten. Längre än en vanlig lektion.":(done?`Klarad ${done} ${done>1?"gånger":"gång"}. Kör igen för att befästa orden.`:"Nya ord i lektionen:")}</p>
+    ${n.test?"":`<div class="chips">${n.words.map(w=>`<span class="chip">${artHTML(w.t)}</span>`).join("")}</div>`}
+    <div class="btns"><button class="btn wide" id="goBtn">${done?"Öva igen":"Starta"}</button>
+    <button class="btn ghost wide" id="closeBtn">Stäng</button></div></div>`);
+  $("#goBtn").onclick=()=>{closeModal();startLesson(n,false);};
+  $("#closeBtn").onclick=closeModal;
+}
+
+/* ---------- Ordlista ---------- */
+function renderWords(){
+  const L=LANG(),C=COURSE(),c=CS(),cur=curIdx();
+  let h=`<h1 class="page-title">Ordlista · ${L.name}</h1><p class="page-sub">Tryck på högtalaren för att höra uttalet.</p>
+    <div class="legend">${L.legend.map(([a,cl,t])=>`<span><b class="art ${cl}">${a}</b> ${t}</span>`).join("")}</div>`;
+  C.nodes.filter(n=>!n.test).forEach(n=>{
+    const open=c.done[n.id]||n.idx<=cur;
+    h+=`<div class="wgroup"><h3>${n.name}<small>${open?n.words.length+" ord":"Låst"}</small></h3>`;
+    h+=open?n.words.map(w=>`<div class="wrow"><span class="e">${w.e}</span><span>${artHTML(w.t)}</span><span class="sv">${esc(w.sv)}</span>${spkBtn(w.t)}</div>`).join("")
+          :`<p class="wlocked">Klara lektionerna före för att låsa upp orden.</p>`;
+    h+=`</div>`;
+  });
+  $("#main").innerHTML=h;
+}
+
+/* ---------- Profil ---------- */
+function renderProfile(){
+  const u=U(),L=LANG(),C=COURSE(),c=CS();
+  const doneN=C.nodes.filter(n=>c.done[n.id]).length;
+  const words=C.nodes.filter(n=>!n.test&&c.done[n.id]).reduce((s,n)=>s+n.words.length,0);
+  const courses=Object.keys(u.courses).map(k=>LANGS[k].lower);
+  $("#main").innerHTML=`<div class="phead"><span class="avatar big" style="--av:var(${u.color})">${esc(u.name[0].toUpperCase())}</span>
+    <div><h1>${NAME()}</h1><p>Lär sig ${courses.join(" och ")}</p></div></div>
+    <div class="stats">
+      <div class="sbox" style="color:var(--orange)">${IC.flame}<div><b>${streakNow()}</b><span>dagar i rad</span></div></div>
+      <div class="sbox" style="color:var(--red)">${IC.heart}<div><b>${u.hearts}</b><span>hjärtan</span></div></div>
+      <div class="sbox" style="color:var(--gold-d)">${IC.trophy}<div><b>${doneN}/${C.nodes.length}</b><span>klart i ${L.lower}</span></div></div>
+      <div class="sbox" style="color:var(--green)">${IC.book}<div><b>${words}</b><span>ord lärda</span></div></div>
+    </div>
+    <div class="pbtns">
+      <button class="btn ghost wide" id="courseBtn">Byt eller lägg till språk</button>
+      <button class="btn ghost wide" id="logoutBtn">Logga ut</button>
+      <button class="btn ghost wide" id="resetBtn" style="color:var(--red)">Nollställ ${L.lower}</button>
+    </div>`;
+  $("#courseBtn").onclick=openCourseSheet;
+  $("#logoutBtn").onclick=logout;
+  $("#resetBtn").onclick=()=>{
+    openModal(`<div class="sheet"><h2>Nollställa ${L.lower}?</h2><p>Alla klarade lektioner i ${L.lower} raderas, ${NAME()}. Dina dagar i rad finns kvar. Det går inte att ångra.</p>
+    <div class="btns"><button class="btn red wide" id="yesReset">Nollställ</button><button class="btn ghost wide" id="noReset">Avbryt</button></div></div>`);
+    $("#yesReset").onclick=()=>{c.done={};save();closeModal();scrolled=false;render();toast(`Kursen i ${L.lower} är nollställd.`);};
+    $("#noReset").onclick=closeModal;
+  };
+}
+
+/* ---------- Modal ---------- */
+function openModal(html,sticky){const m=$("#modal");m.innerHTML=html;m.hidden=false;
+  m.onclick=e=>{if(e.target===m&&!sticky)closeModal();};const f=m.querySelector("button");if(f)f.focus();}
+function closeModal(){const m=$("#modal");m.hidden=true;m.innerHTML="";}
+
+/* ================= Övningar ================= */
+/* Hittar felaktiga alternativ som liknar det rätta svaret */
+const plainT=s=>s.toLowerCase().replace(/^(der|die|das|el|la|los|las|le|les)\s+/,"").replace(/^l'/,"").replace(/ß/g,"ss").normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+function artOfT(t){const m=t.match(LANG().artRe);return m?m[1].toLowerCase():"";}
+function simScore(a,b){
+  const x=plainT(a.t),y=plainT(b.t);
+  let s=lev(x,y)/Math.max(x.length,y.length);
+  if(x[0]===y[0])s-=.15;
+  if(x.slice(-2)===y.slice(-2))s-=.12;
+  if(artOfT(a.t)&&artOfT(a.t)===artOfT(b.t))s-=.08;
+  if(Math.abs(x.length-y.length)<=2)s-=.05;
+  return s;
+}
+function similar(w,pool,k){
+  const seenT=new Set([w.t.toLowerCase()]),seenSv=new Set([w.sv]),c=[];
+  for(const x of pool){const t=x.t.toLowerCase();if(seenT.has(t)||seenSv.has(x.sv))continue;seenT.add(t);seenSv.add(x.sv);c.push(x);}
+  c.sort((a,b)=>simScore(w,a)-simScore(w,b));
+  return shuffle(c.slice(0,k+2)).slice(0,k);
+}
+function wrongArticle(t){
+  const L=LANG(),m=t.match(L.artRe);if(!m)return null;
+  const a=m[1].toLowerCase();
+  if(L.code==="fr"&&(a==="l'"||a==="les"))return null;
+  const arts=L.code==="de"?["der","die","das"]:L.code==="fr"?["le","la"]:(a.endsWith("s")?["los","las"]:["el","la"]);
+  return shuffle(arts.filter(x=>x!==a))[0]+" "+m[2];
+}
+/* Felaktiga alternativ: i första hand ord från samma tema (svårt att gissa på betydelsen),
+   plus en "fälla" som liknar det rätta ordet i stavning eller har fel artikel. */
+const plainSv=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+function okDistractor(w,x,out){return x&&x.sv!==w.sv&&x.t.toLowerCase()!==w.t.toLowerCase()&&!out.some(o=>o.sv===x.sv||o.t.toLowerCase()===x.t.toLowerCase());}
+function lookalikeSv(w,pool){ /* svenskt ord som ser ut som det främmande ordet */
+  const tt=plainT(w.t);let best=null,bs=1;
+  for(const x of pool){if(x.sv===w.sv)continue;const y=plainSv(x.sv);const sc=lev(tt,y)/Math.max(tt.length,y.length);if(sc<bs){bs=sc;best=x;}}
+  return bs<.55?best:null;
+}
+function distractors(w,ctx,k,dir){
+  const out=[],add=x=>{if(out.length<k&&okDistractor(w,x,out))out.push(x);};
+  if(dir==="t"){const wa=wrongArticle(w.t);if(wa&&Math.random()<.7)add({t:wa,sv:"\u0000"+wa});add(similar(w,ctx.pool,1)[0]);}
+  else if(Math.random()<.6)add(lookalikeSv(w,ctx.pool));
+  shuffle(ctx.lesson).forEach(add);
+  shuffle(ctx.unit).forEach(add);
+  similar(w,ctx.pool,k+3).forEach(add);
+  return out;
+}
+function mkPick(w,ctx){return{type:"pick",word:w,options:shuffle([w,...distractors(w,ctx,3,"sv")])};}
+function mkChoice(w,ctx){return{type:"choice",word:w,options:shuffle([w.sv,...distractors(w,ctx,3,"sv").map(x=>x.sv)])};}
+function mkRChoice(w,ctx){return{type:"rchoice",word:w,options:shuffle([w.t,...distractors(w,ctx,3,"t").map(x=>x.t)])};}
+function mkMatch(ws){return{type:"match",pairs:ws};}
+function mkType(w){return{type:"type",word:w};}
+function mkBank(s,from,type){
+  const target=(type==="listen"||from==="sv")?"t":"sv";
+  const ans=tok(s[target]),low=new Set(ans.map(x=>x.toLowerCase())),extra=[];
+  const add=x=>{const l=x.toLowerCase();if(!low.has(l)&&!extra.some(e=>e.toLowerCase()===l))extra.push(x);};
+  /* lurigare brickor: fel artikel, fel verbform eller fel pronomen */
+  const groups=target==="sv"?[["en","ett"],["är","har"],["jag","du","vi","han","hon"],["den","det"],["min","mitt","mina"]]
+    :U().course==="de"?[["der","die","das","den","dem"],["ein","eine","einen"],["ist","sind","bin"],["ich","du","wir","er","sie"],["mein","meine","meinen"]]
+    :U().course==="fr"?[["le","la","les"],["un","une","des"],["est","sont","suis"],["je","tu","nous","il","elle"],["mon","ma","mes"],["du","de","au"]]
+    :[["el","la","los","las"],["un","una"],["es","son","soy"],["mi","mis","tu"],["en","de","a"]];
+  for(const tk of shuffle(ans)){
+    const g=groups.find(g=>g.includes(tk.toLowerCase()));if(!g)continue;
+    const alt=shuffle(g.filter(x=>x!==tk.toLowerCase()))[0];
+    add(tk[0]!==tk[0].toLowerCase()?alt[0].toUpperCase()+alt.slice(1):alt);
+    if(extra.length>=2)break;
+  }
+  /* ord från meningar som liknar den rätta */
+  const want=ans.length<=3?4:5;
+  const others=COURSE().sents.filter(x=>x!==s)
+    .map(x=>({x,o:tok(x[target]).filter(w=>low.has(w.toLowerCase())).length+Math.random()*.8}))
+    .sort((a,b)=>b.o-a.o);
+  for(const {x} of others){if(extra.length>=want)break;for(const w of shuffle(tok(x[target]))){if(extra.length>=want)break;add(w);}}
+  return{type:type||"bank",sent:s,from,target,tiles:shuffle([...ans,...extra])};
+}
+const listenOr=s=>HAS_TTS?mkBank(s,"t","listen"):mkBank(s,"sv");
+function regen(ex){const c=Object.assign({},ex);if(c.options)c.options=shuffle(c.options);if(c.tiles)c.tiles=shuffle(c.tiles);if(c.pairs)c.pairs=shuffle(c.pairs);return c;}
+function buildExercises(words,sents,long,ctx){
+  const w=shuffle(words),s=shuffle(sents),W=i=>w[i%w.length],S=i=>s[i%s.length];
+  const lvl=ctx.level||0; /* 0 = A1, 1 = A2, 2 = B1, 3 = B2 */
+  const out=[
+    mkPick(W(0),ctx),
+    lvl>=2?mkRChoice(W(1),ctx):mkPick(W(1),ctx),
+    mkChoice(W(2),ctx),
+    mkMatch(shuffle(words).slice(0,5)),
+    lvl>=1?mkType(W(3)):mkPick(W(3),ctx),
+    mkBank(S(0),"sv"),
+    mkRChoice(W(4),ctx),
+    mkType(W(5)),
+    mkBank(S(1),"t"),
+    lvl>=3?mkType(W(0)):mkChoice(W(0),ctx),
+    listenOr(S(2)),
+    mkType(W(1)),
+    mkRChoice(W(2),ctx),
+    mkBank(S(3),"sv")];
+  if(long)out.push(mkMatch(shuffle(words).slice(0,5)),mkType(W(6)),mkBank(S(4),"t"),mkRChoice(W(7),ctx),listenOr(S(5)),mkType(W(8)),mkBank(S(6),"sv"));
+  return out;
+}
+
+const RENDER={};
+function choiceList(root,options,label,ready,onPick){
+  const btns=[...root.querySelectorAll(".opt")];let sel=-1;
+  const choose=i=>{sel=i;btns.forEach((b,j)=>b.classList.toggle("sel",j===i));onPick&&onPick(i);ready(true);};
+  btns.forEach((b,i)=>b.onclick=()=>choose(i));
+  return{btns,get sel(){return sel;},choose};
+}
+RENDER.pick=(ex,root,ready)=>{
+  root.innerHTML=`<h1 class="q-title">Vad betyder ordet?</h1>
+   <div class="prompt">${LANG().mascot()}<div class="bubble">${spkBtn(ex.word.t)}<span class="tl">${esc(ex.word.t)}</span></div></div>
+   <div class="pick-grid">${ex.options.map((w,i)=>`<button class="opt pick"><span class="key">${i+1}</span><span class="pick-emoji" aria-hidden="true"></span><span class="pick-word">${esc(w.sv)}</span></button>`).join("")}</div>`;
+  setTimeout(()=>speak(ex.word.t),250);
+  const C=choiceList(root,ex.options,null,ready,()=>sfx("tap"));
+  return{key:n=>{if(n>=1&&n<=C.btns.length)C.choose(n-1);},
+    check(){const ok=ex.options[C.sel].t===ex.word.t;const b=C.btns[C.sel];b.classList.remove("sel");b.classList.add(ok?"right":"wrong");
+      /* visa bilden först nu, som belöning och minneshjälp */
+      C.btns.forEach((bt,i)=>{bt.querySelector(".pick-emoji").textContent=ex.options[i].e||"";
+        if(!ok&&ex.options[i].t===ex.word.t)bt.classList.add("right");});
+      return{ok,answer:`${ex.word.t} = ${ex.word.sv}`,say:ex.word.t};}};
+};
+RENDER.choice=(ex,root,ready)=>{
+  root.innerHTML=`<h1 class="q-title">Vad betyder det här?</h1>
+   <div class="prompt">${LANG().mascot()}<div class="bubble">${spkBtn(ex.word.t)}<span class="tl">${esc(ex.word.t)}</span></div></div>
+   <div class="rows">${ex.options.map((o,i)=>`<button class="opt row"><span class="key">${i+1}</span>${esc(o)}</button>`).join("")}</div>`;
+  setTimeout(()=>speak(ex.word.t),250);
+  const C=choiceList(root,ex.options,null,ready,()=>sfx("tap"));
+  return{key:n=>{if(n>=1&&n<=C.btns.length)C.choose(n-1);},
+    check(){const ok=ex.options[C.sel]===ex.word.sv;const b=C.btns[C.sel];b.classList.remove("sel");b.classList.add(ok?"right":"wrong");return{ok,answer:ex.word.sv};}};
+};
+RENDER.rchoice=(ex,root,ready)=>{
+  root.innerHTML=`<h1 class="q-title">Hur säger man ”${esc(ex.word.sv)}” på ${LANG().lower}?</h1>
+   <div class="rows">${ex.options.map((o,i)=>`<button class="opt row"><span class="key">${i+1}</span>${esc(o)}</button>`).join("")}</div>`;
+  const C=choiceList(root,ex.options,null,ready,i=>speak(ex.options[i]));
+  return{key:n=>{if(n>=1&&n<=C.btns.length)C.choose(n-1);},
+    check(){const ok=ex.options[C.sel]===ex.word.t;const b=C.btns[C.sel];b.classList.remove("sel");b.classList.add(ok?"right":"wrong");return{ok,answer:ex.word.t,say:ex.word.t};}};
+};
+RENDER.type=(ex,root,ready)=>{
+  const L=LANG();
+  root.innerHTML=`<h1 class="q-title">Skriv på ${L.lower}</h1>
+   <div class="typecard"><span class="e">${ex.word.e}</span><div><small>Svenska</small><span class="w">${esc(ex.word.sv)}</span></div></div>
+   <textarea class="tinput" id="tin" rows="2" placeholder="Skriv på ${L.lower}" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Ditt svar på ${L.lower}"></textarea>
+   <div class="specials">${L.special.map(c=>`<button type="button" data-c="${c}">${c}</button>`).join("")}</div>`;
+  const inp=root.querySelector("#tin");
+  inp.addEventListener("input",()=>ready(inp.value.trim().length>0));
+  inp.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();onMain();}});
+  root.querySelectorAll(".specials button").forEach(b=>b.onclick=()=>{
+    const s=inp.selectionStart,e=inp.selectionEnd;inp.value=inp.value.slice(0,s)+b.dataset.c+inp.value.slice(e);
+    inp.focus();inp.selectionStart=inp.selectionEnd=s+1;ready(true);});
+  setTimeout(()=>inp.focus(),60);
+  return{check(){
+    const norm=s=>s.toLowerCase().replace(/ß/g,"ss").replace(/[.,!?¿¡]/g,"").replace(/\s+/g," ").trim();
+    const deacc=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"");
+    const artOf=s=>{const m=s.match(L.artRe);return m?m[1].toLowerCase():null;};
+    const strip=s=>{const m=s.match(L.artRe);return m?m[2]:s;};
+    const a=norm(inp.value),t=norm(ex.word.t);
+    const R={answer:ex.word.t,say:ex.word.t};
+    const aA=artOf(a),aT=artOf(t);
+    if(aA&&aT&&aA!==aT)return Object.assign(R,{ok:false,note:`Fel artikel. Det heter <b>${artHTML(ex.word.t)}</b>.`});
+    if(a===t)return Object.assign(R,{ok:true});
+    const aa=strip(a),tt=strip(t);
+    if(aa===tt)return Object.assign(R,{ok:true,note:`Lär dig artikeln också: <b>${artHTML(ex.word.t)}</b>`});
+    if(deacc(aa)===deacc(tt)||(tt.length>4&&lev(deacc(aa),deacc(tt))<=1))return Object.assign(R,{ok:true,note:`Litet stavfel. Det stavas <b>${artHTML(ex.word.t)}</b>`});
+    return Object.assign(R,{ok:false});
+  }};
+};
+function bankUI(root,ex,ready){
+  const ansEl=root.querySelector(".bank-answer"),poolEl=root.querySelector(".bank-pool");
+  poolEl.innerHTML=ex.tiles.map((t,i)=>`<button class="tile" data-i="${i}">${esc(t)}</button>`).join("");
+  const chosen=[];const sync=()=>ready(chosen.length>0);
+  poolEl.querySelectorAll(".tile").forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.i;b.classList.add("used");chosen.push(i);sfx("tap");
+    if(ex.target==="t")speak(ex.tiles[i]);
+    const a=document.createElement("button");a.className="tile pop";a.textContent=ex.tiles[i];
+    a.onclick=()=>{const k=chosen.indexOf(i);if(k>-1)chosen.splice(k,1);a.remove();b.classList.remove("used");sfx("tap");sync();};
+    ansEl.appendChild(a);sync();
+  });
+  return()=>chosen.map(i=>ex.tiles[i]);
+}
+RENDER.bank=(ex,root,ready)=>{
+  const src=ex.sent[ex.from],isT=ex.from==="t";
+  root.innerHTML=`<h1 class="q-title">Översätt meningen</h1>
+   <div class="prompt">${LANG().mascot()}<div class="bubble">${isT?spkBtn(src):""}<span class="${isT?"tl":""}">${esc(src)}</span></div></div>
+   <div class="bank-answer" aria-label="Ditt svar"></div><div class="bank-pool"></div>`;
+  if(isT)setTimeout(()=>speak(src),250);
+  const get=bankUI(root,ex,ready);
+  return{check(){const ok=same(get(),tok(ex.sent[ex.target]));return{ok,answer:ex.sent[ex.target],say:ex.sent.t};}};
+};
+RENDER.listen=(ex,root,ready)=>{
+  root.innerHTML=`<h1 class="q-title">Skriv det du hör</h1>
+   <div class="listen-row">${spkBtn(ex.sent.t,"big")}${spkBtn(ex.sent.t,"slow")}</div>
+   <div class="bank-answer" aria-label="Ditt svar"></div><div class="bank-pool"></div>`;
+  setTimeout(()=>speak(ex.sent.t),300);
+  const get=bankUI(root,ex,ready);
+  return{check(){const ok=same(get(),tok(ex.sent.t));return{ok,answer:ex.sent.t,extra:ex.sent.sv};}};
+};
+RENDER.match=(ex,root,ready,autoCheck)=>{
+  const L1=shuffle(ex.pairs),R1=shuffle(ex.pairs);
+  root.innerHTML=`<h1 class="q-title">Para ihop orden</h1><div class="match">
+   <div class="col">${L1.map((w,i)=>`<button class="opt mbtn" data-s="l" data-i="${i}">${esc(w.t)}</button>`).join("")}</div>
+   <div class="col">${R1.map((w,i)=>`<button class="opt mbtn" data-s="r" data-i="${i}">${esc(w.sv)}</button>`).join("")}</div></div>`;
+  let sl=null,sr=null,left=ex.pairs.length;
+  const btn=(s,i)=>root.querySelector(`.mbtn[data-s="${s}"][data-i="${i}"]`);
+  const test=()=>{
+    if(sl===null||sr===null)return;
+    const a=btn("l",sl),b=btn("r",sr);
+    if(L1[sl]===R1[sr]){
+      [a,b].forEach(x=>{x.classList.remove("sel");x.classList.add("flash");x.disabled=true;});
+      sfx("good");setTimeout(()=>[a,b].forEach(x=>{x.classList.remove("flash");x.classList.add("gone");}),450);
+      left--;if(left===0)setTimeout(autoCheck,500);
+    }else{
+      [a,b].forEach(x=>{x.classList.remove("sel");x.classList.add("wrong");});sfx("bad");
+      setTimeout(()=>[a,b].forEach(x=>x.classList.remove("wrong")),500);
+    }
+    sl=sr=null;
+  };
+  root.querySelectorAll(".mbtn").forEach(b=>b.onclick=()=>{
+    const s=b.dataset.s,i=+b.dataset.i;
+    root.querySelectorAll(`.mbtn[data-s="${s}"]`).forEach(x=>x.classList.remove("sel"));
+    b.classList.add("sel");
+    if(s==="l"){sl=i;speak(L1[i].t);}else{sr=i;sfx("tap");}
+    test();
+  });
+  return{check(){return{ok:true,matchDone:true};}};
+};
+
+/* ================= Lektionsmotor ================= */
+let LS=null;
+const lessonEl=$("#lesson"),lbody=$("#lbody"),lfoot=$("#lfoot"),mainBtn=$("#mainBtn"),fbox=$("#fbox");
+$("#quitBtn").innerHTML=IC.x;
+function setReady(v){if(LS&&LS.state==="answer")mainBtn.disabled=!v;}
+
+function saveResume(){
+  if(!LS||LS.state==="finished")return;
+  const u=U();
+  u.resume={course:u.course,nodeId:LS.node.id,practiceNode:LS.practice?LS.node:null,queue:[LS.ex,...LS.queue],
+    done:LS.done,mistakes:LS.mistakes,combo:LS.combo,total:LS.total,elapsed:Date.now()-LS.start};
+  save();
+}
+function clearResume(){const u=DB.current&&U();if(u&&u.resume){delete u.resume;save();}}
+function resumeLesson(){
+  const u=U(),r=u.resume;
+  if(LS||!r||r.course!==u.course)return false;
+  const node=r.practiceNode||COURSE().nodes.find(n=>n.id===r.nodeId);
+  if(!node||!r.queue||!r.queue.length){clearResume();return false;}
+  LS={node,practice:!!r.practiceNode,queue:r.queue,done:r.done,mistakes:r.mistakes,combo:r.combo,total:r.total,start:Date.now()-(r.elapsed||0),state:"answer"};
+  lessonEl.hidden=false;document.body.style.overflow="hidden";
+  updateLessonTop();nextEx();
+  toast(`Välkommen tillbaka, ${u.name}! Du fortsätter där du slutade.`);
+  return true;
+}
+function ctxFor(node){
+  if(node.unit==null)return{lesson:node.words,unit:node.words,pool:node.words,level:0};
+  const C=COURSE(),un=C.units[node.unit].nodes.filter(n=>!n.test);
+  const unitWords=un.flatMap(n=>n.words);
+  return{lesson:node.test?unitWords:node.words,unit:unitWords,
+    pool:C.nodes.filter(n=>!n.test&&n.unit<=node.unit+1).flatMap(n=>n.words),level:Math.floor(node.unit/5)};
+}
+function startLesson(node,practice){
+  LS={node,practice,queue:buildExercises(node.words,node.sents,!!node.test,ctxFor(node)),done:0,mistakes:0,combo:0,start:Date.now(),state:"answer"};
+  LS.total=LS.queue.length;
+  lessonEl.hidden=false;document.body.style.overflow="hidden";
+  updateLessonTop();nextEx();
+}
+function startPractice(){
+  const c=CS(),learned=COURSE().nodes.filter(n=>!n.test&&c.done[n.id]);
+  if(!learned.length){toast("Klara en lektion först.");return;}
+  startLesson({id:"practice",name:"Repetition",words:shuffle(learned.flatMap(l=>l.words)).slice(0,8),sents:shuffle(learned.flatMap(l=>l.sents)).slice(0,5)},true);
+}
+function updateLessonTop(){
+  $("#pfill").style.width=(LS?LS.done/LS.total*100:0)+"%";
+  const lh=$("#lHearts");
+  if(LS&&LS.practice){lh.className="lhearts inf";lh.innerHTML=IC.infinity;}
+  else{lh.className="lhearts";lh.innerHTML=IC.heart+U().hearts;}
+  const c=$("#combo");
+  if(LS&&LS.combo>=3){c.textContent=LS.combo>=5?`${LS.combo} i rad, ${U().name}!`:`${LS.combo} i rad!`;c.classList.add("on");}else c.classList.remove("on");
+}
+function nextEx(){
+  if(!LS.queue.length){finishLesson();return;}
+  LS.ex=LS.queue.shift();LS.state="answer";saveResume();
+  lfoot.className="lfoot";fbox.hidden=true;fbox.innerHTML="";
+  mainBtn.textContent="Kontrollera";mainBtn.disabled=true;mainBtn.hidden=(LS.ex.type==="match");
+  lbody.innerHTML=`<div class="lbody-in"></div>`;lbody.scrollTop=0;
+  LS.ctl=RENDER[LS.ex.type](LS.ex,lbody.firstChild,setReady,()=>{if(LS&&LS.state==="answer")doCheck(true);});
+}
+function onMain(){
+  if(!LS)return;
+  if(LS.state==="answer"){if(!mainBtn.disabled)doCheck();}
+  else if(LS.state==="feedback")cont();
+  else if(LS.state==="finished")closeLesson();
+}
+mainBtn.onclick=onMain;
+function praiseTitle(){
+  const n=U().name;
+  return pick(Math.random()<.55
+    ?[`Bra jobbat, ${n}!`,`Snyggt, ${n}!`,`Helt rätt, ${n}!`,`Du är grym, ${n}!`,`Perfekt, ${n}!`]
+    :["Helt rätt!","Snyggt!","Perfekt!",...LANG().cheer]);
+}
+function doCheck(auto){
+  if(!auto&&mainBtn.disabled)return;
+  const r=LS.ctl.check(),u=U();LS.state="feedback";
+  lbody.querySelectorAll("button:not(.spk),textarea").forEach(b=>b.disabled=true);
+  if(r.ok){LS.done++;LS.combo++;sfx("good");}
+  else{
+    LS.mistakes++;LS.combo=0;sfx("bad");
+    if(!LS.practice){u.hearts=Math.max(0,u.hearts-1);save();renderTop();
+      const lh=$("#lHearts");lh.classList.remove("hit");void lh.offsetWidth;lh.classList.add("hit");}
+    LS.queue.push(regen(LS.ex));
+  }
+  if(r.say)setTimeout(()=>speak(r.say),200);
+  const text=r.ok?(r.note||(r.matchDone?"Alla par stämmer.":"")):
+    `Rätt svar: <b>${LS.ex.type==="type"?artHTML(r.answer):esc(r.answer)}</b>${r.extra?`<br>(${esc(r.extra)})`:""}${r.note?`<br>${r.note}`:""}`;
+  const title=r.ok?praiseTitle():pick(["Inte riktigt","Nästan, "+u.name,"Oj, inte den"]);
+  fbox.innerHTML=`<div class="fbadge">${r.ok?IC.check:IC.x}</div><div><p class="ftitle">${esc(title)}</p>${text?`<p class="ftext">${text}</p>`:""}</div>`;
+  fbox.hidden=false;lfoot.className="lfoot "+(r.ok?"ok":"bad");
+  mainBtn.hidden=false;mainBtn.disabled=false;mainBtn.textContent=r.ok?"Fortsätt":"Uppfattat";
+  updateLessonTop();setTimeout(()=>mainBtn.focus(),30);
+}
+function cont(){if(!LS.practice&&U().hearts<=0){outOfHearts();return;}nextEx();}
+function outOfHearts(){
+  openModal(`<div class="sheet"><div class="big-heart">${IC.heart}</div><h2 style="text-align:center">Slut på hjärtan</h2>
+    <p style="text-align:center">Ingen fara, ${NAME()}. Alla gör fel när de lär sig. Fyll på hjärtan och fortsätt där du var, eller ta en paus.</p>
+    <div class="btns"><button class="btn blue wide" id="refill">Fyll på hjärtan</button><button class="btn ghost wide" id="giveup">Avsluta lektionen</button></div></div>`,true);
+  $("#refill").onclick=()=>{U().hearts=5;save();renderTop();closeModal();updateLessonTop();nextEx();};
+  $("#giveup").onclick=()=>{closeModal();closeLesson();};
+}
+function finishLesson(){
+  const u=U(),c=CS(),n=LS.node;LS.state="finished";sfx("win");delete u.resume;
+  if(!LS.practice)c.done[n.id]=(c.done[n.id]||0)+1;
+  u.hearts=Math.min(5,u.hearts+1);
+  const today=dayStr();
+  if(u.lastDay!==today){u.streak=(u.lastDay===yesterday())?u.streak+1:1;u.lastDay=today;}
+  save();renderTop();
+  const acc=Math.round(LS.done/(LS.done+LS.mistakes)*100),secs=Math.round((Date.now()-LS.start)/1000);
+  const nm=NAME();
+  const title=n.test?`Enhetsprovet klart, ${nm}!`:LS.practice?`Bra repeterat, ${nm}!`:(LS.mistakes===0?`Felfritt, ${nm}!`:`Lektionen klar, ${nm}!`);
+  const line=LS.mistakes===0?"Inga fel alls.":`Du gjorde ${LS.mistakes} fel och rättade dem alla.`;
+  $("#pfill").style.width="100%";lfoot.className="lfoot";fbox.hidden=true;$("#combo").classList.remove("on");
+  lbody.innerHTML=`<div class="lbody-in"><div class="finish">${LANG().mascot()}
+    <h1>${title}</h1><p>${line}</p>
+    <div class="fstats">
+      <div class="fstat" style="--c:var(--orange)"><span>I rad</span><b>${u.streak} ${u.streak===1?"dag":"dgr"}</b></div>
+      <div class="fstat" style="--c:var(--green)"><span>Rätt</span><b>${acc}%</b></div>
+      <div class="fstat" style="--c:var(--blue)"><span>Tid</span><b>${Math.floor(secs/60)}:${String(secs%60).padStart(2,"0")}</b></div>
+    </div>
+    </div></div>`;
+  mainBtn.hidden=false;mainBtn.disabled=false;mainBtn.textContent="Fortsätt";
+}
+function closeLesson(){
+  clearResume();LS=null;lessonEl.hidden=true;document.body.style.overflow="";
+  try{speechSynthesis.cancel();}catch(e){}
+  render();
+}
+$("#quitBtn").onclick=()=>{
+  if(!LS||LS.state==="finished"){closeLesson();return;}
+  openModal(`<div class="sheet"><div style="width:110px;align-self:center">${LANG().mascot("sad")}</div>
+    <h2 style="text-align:center">Vänta, ${NAME()}! Du är på god väg.</h2><p style="text-align:center">Avslutar du nu försvinner framstegen i den här lektionen.</p>
+    <div class="btns"><button class="btn blue wide" id="stay">Fortsätt öva</button><button class="btn ghost wide" id="leave" style="color:var(--red)">Avsluta</button></div></div>`);
+  $("#stay").onclick=closeModal;
+  $("#leave").onclick=()=>{closeModal();closeLesson();};
+};
+
+document.addEventListener("keydown",e=>{
+  if(!LS||!$("#modal").hidden)return;
+  if(e.target.tagName==="TEXTAREA")return;
+  if(e.key==="Enter"){e.preventDefault();onMain();}
+  else if(/^[1-4]$/.test(e.key)&&LS.state==="answer"&&LS.ctl&&LS.ctl.key)LS.ctl.key(+e.key);
+});
+
+/* ================= Start ================= */
+if(DB.current&&DB.users[DB.current]&&U().course&&U().courses[U().course])enterApp(true);
+else{DB.current=null;renderLogin();}
+</script>
+</body>
+</html>
