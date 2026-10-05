@@ -555,6 +555,8 @@
   .sldsvg .t-gw{font-size:7.5px;font-weight:800;fill:#4c8a1a;letter-spacing:.2px}
   .sldsvg .t-mdl{font-size:6.2px;font-weight:800;fill:#2b3640}
   .sldsvg .t-mm{font-size:7.6px;font-weight:700;fill:#5f6b76;letter-spacing:.1px}
+  .sldsvg .sghost{opacity:.22;filter:grayscale(1)}
+  .sldsvg .sghost .sl,.sldsvg .sghost .snet.sl{animation:none}
   /* ===== step 3: online + incoming point ===== */
   .dgrp{margin-top:9px}
   .dgh{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11px;font-weight:700;color:var(--mut);margin:0 1px 5px}
@@ -575,6 +577,14 @@
   .inchain .icn.bad b{color:var(--amb)}
   .inchain .iar{flex:0 0 14px;height:2px;margin:0 2px;background:repeating-linear-gradient(90deg,var(--line2) 0 4px,transparent 4px 7px)}
   .opt.mcard{display:block;width:100%;margin-top:8px}
+  /* add-on under the chosen monitoring device: a small tree link shows it belongs to that card */
+  .addon{position:relative;margin:7px 0 3px 16px}
+  .addon::before{content:"";position:absolute;left:-12px;top:-7px;height:25px;width:8px;border-left:2px solid var(--grnLine);border-bottom:2px solid var(--grnLine);border-bottom-left-radius:7px}
+  .addon.nolink{margin-left:0;margin-top:8px}
+  .addon.nolink::before{display:none}
+  .addon .opt.mcard{margin-top:0}
+  .addon .locked{padding:9px 11px}
+  .addon .locked+.opt.mcard{margin-top:7px}
   .opt.mcard .tg{margin-left:7px}
   .opt.lockon{cursor:default}
   .mspec{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:12px;row-gap:2px;margin-top:6px;color:var(--text)}
@@ -650,8 +660,8 @@ var DONGLES={
     how:'Carries its own SIM and connects over the mobile network, so the site needs no internet of its own. Typical for holiday homes, farms and sites without broadband. Check mobile coverage at the inverter before choosing it, and remember the subscription is an ongoing cost.'},
   shinesem:{name:'Growatt ShineSEM\u2011X',desc:'Smart Energy Manager \u2014 metering included',
     how:'A DIN\u2011rail energy manager rather than a stick. It talks to the inverters over RS485, and its <b>built\u2011in CT metering</b> measures the grid connection point \u2014 it takes the smart meter\u2019s place at the incoming point, so no separate meter is needed. It handles several inverters at once and is what enables export limiting and self\u2011consumption control across the whole system.'},
-  shinemaster:{name:'Growatt ShineMaster',desc:'Multi\u2011inverter datalogger (C&I)',
-    how:'A datalogger for larger C&amp;I plants. It collects data from many inverters over RS485 and sends it on to ShineServer or a local SCADA system, and gives the same placement and battery\u2011side functions as ShineSEM\u2011X. <b>Metering is not built in</b> \u2014 a separate smart meter is added at the incoming point, otherwise the system has no reading of the grid connection point.'},
+  shinemaster:{name:'Growatt ShineMaster',desc:'Multi\u2011inverter datalogger',
+    how:'A datalogger for larger plants. It collects data from many inverters over RS485 and sends it on to ShineServer or a local SCADA system, and gives the same placement and battery\u2011side functions as ShineSEM\u2011X. <b>Metering is not built in</b> \u2014 a separate smart meter is added at the incoming point, otherwise the system has no reading of the grid connection point.'},
   grohome:{name:'GroHome\u200bManager\u2011X',desc:'HEMS \u2014 CT + RF included',
     how:'The home energy management system. It sits by the consumer unit, measures the grid connection with its <b>own CT clamps</b>, and steers charging, discharging and export for the whole home \u2014 it takes the smart meter\u2019s place at the incoming point, with its CT clamps right under it. It reaches each inverter either over RS485 or wirelessly through a ShineRFStick\u2011X2 (one per inverter, up to 12).'}
 };
@@ -739,6 +749,11 @@ CABLES['MOD-XH-ARK']=CABLES['MOD-XH'];
 function cableSpec(withBat){
   if(!state.family||!state.kw||!CABLES[state.family])return null;
   var c=CABLES[state.family], r=c.f(state.kw,!!withBat);
+  // APX: the DC power cable comes with the battery (power / master module); only the MOD-XH quick guide gives mm\u00b2
+  if(fam()&&fam().battery==='APX'){
+    r.bat=state.family==='MOD-XH'?'4\u20136':'APX cable \u00b7 supplied';
+    r.batNote=(state.family==='MOD-XH'?'battery 4\u20136 mm\u00b2 per the MOD\u2011XH quick guide (PV/battery terminal), ':'')+'the APX power cable is supplied with the battery \u2014 the APX and inverter manuals give no mm\u00b2';
+  }
   r.src=c.src;return r;
 }
 
@@ -797,7 +812,7 @@ function maxOffgridKw(){if(!state.family||!state.kw)return 0;var bk=batteryTotal
 function famValid(k){return FAMILIES[k].kw.some(kwValid);}
 function famMaxKWp(k){return 2*Math.max.apply(null,FAMILIES[k].kw);}
 function selInvalid(){return state.family&&state.kw&&state.panelCount>0&&!kwValid(state.kw);}
-function synItem(){return (state.family==='WIT-HU'||state.family==='WIT-XHU')?'Growatt SYN backup box (WIT \u2014 verify model)|separate, not integrated':'Growatt SYN 100\u2011XH\u201130|3\u2011phase backup box';}
+function synItem(){return (state.family==='WIT-HU'||state.family==='WIT-XHU')?'Growatt SYN backup box (WIT \u2014 verify model)|separate, not integrated':'Growatt SYN 100\u2011XH\u201130|3\u2011phase backup box \u2014 at the incoming point, under the smart meter';}
 function clampInputs(){
   if(!state.family)return;
   if(fam().battery==='RISE'){state.inputs=[];return;}
@@ -913,7 +928,7 @@ function buildBOM(){var map={};function add(x){if(x.qty<=0)return;var k=x.g+'|'+
         add({g:'Battery',item:'Growatt APX 2.0 Power Module (BMS)|incl. 5 kWh module + heating',qty:t.bms});
         add({g:'Battery',item:'Growatt APX 2.0 battery module|5 kWh, built\u2011in heating',qty:t.mods});
       } else {
-        add({g:'Battery',item:'Growatt APX 98034\u2011P2|Power Module / BMS',qty:t.bms});
+        add({g:'Battery',item:'Growatt APX 98034\u2011P2|Power Module / BMS \u2014 controller only, no battery module',qty:t.bms});
         add({g:'Battery',item:'Growatt APX 5.0P\u2011B1 battery module|5 kWh LiFePO4',qty:t.mods});
       }
       if(fam().battery==='APX'){
@@ -1073,12 +1088,12 @@ function invFamSectionHTML(){
     var brk=acBreaker();
     var cs=cableSpec(batteryTotals().kwh>0);
     function spr(k,v){return v?('<span class="k">'+k+'</span><span class="v">'+v+'</span>'):'';}
-    function mm2(v){return v?(v.indexOf('Cat')===0?v:v+' mm\u00b2'):'';}
+    function mm2(v){return v?(/^[0-9\u2265]/.test(v)?v+' mm\u00b2':v):'';}
     var brkNote=(brk&&!selInvalid())?('<div class="notice g">'+ic('check',14)+'<div style="flex:1;min-width:0"><b>'+(brk.manual?'Per the Growatt manual':'Installation')+' \u2014 '+f.name+' '+state.kw+' kW</b>'+
       '<div class="mspec">'+spr('AC breaker',brk.txt+' \u00b7 3\u2011pole'+(brk.manual?'':' (calculated)'))+
         (brk.load&&brk.load.a!==brk.a?spr('Load breaker',brk.load.txt):'')+
-        (cs?spr('AC cable',mm2(cs.ac))+(cs.bk&&cs.bk!==cs.ac?spr('Load cable',mm2(cs.bk)):'')+spr('PV cable',mm2(cs.pv))+spr('Battery cable',mm2(cs.bat))+spr('Earth (PE)',mm2(cs.pe))+spr('Communication',mm2(cs.com)):'')+
-      '</div><div class="mspecsrc">Breaker '+brk.src+(cs?' \u00b7 cables per the '+cs.src:'')+'. The AC breaker is added to your system'+(state.segment==='res'?'; cable sizes are written on the diagram in high resolution':'')+'.</div></div></div>'):'';
+        (cs?spr('AC cable',mm2(cs.ac))+(cs.bk&&cs.bk!==cs.ac?spr('Load cable',mm2(cs.bk)):'')+spr('PV cable',mm2(cs.pv))+spr('Battery cable',mm2(cs.bat))+(cs.batNote?spr('Battery DC breaker','35 A/1000 V dc \u00b7 if fitted'):'')+spr('Earth (PE)',mm2(cs.pe))+spr('Communication',mm2(cs.com)):'')+
+      '</div><div class="mspecsrc">Breaker '+brk.src+(cs?' \u00b7 cables per the '+cs.src+(cs.batNote?'; '+cs.batNote:''):'')+'. The AC breaker is added to your system'+(state.segment==='res'?'; cable sizes are written on the diagram in high resolution':'')+'.</div></div></div>'):'';
     invSection='<div class="sublabel" style="margin-top:16px">Power rating</div><div class="chips">'+chips+'</div>'+warn+brkNote+'<div class="note">'+ic('info',14)+'<span>'+f.note+'</span></div>';
   } else invSection='<div class="notice g" style="margin-top:14px">'+ic('info',14)+'<span>Now pick a suitable inverter below \u2014 sizes too small for your panels are crossed out.</span></div>';
   return '<div class="sublabel" style="margin-top:16px">Inverter</div><div class="grid g3">'+cards+'</div>'+invSection;
@@ -1110,9 +1125,9 @@ function aiPanelHTML(){
 function invStep(){return '<div class="step'+(stepOpen('stp-inv')?'':' collapsed')+'" id="stp-inv">'+stepHead(2,'cpu','Panels &amp; inverter','Enter your panels first \u2014 it sets which inverters are suitable',null,'stp-inv')+'<div class="step-b" id="invStepBody">'+invStepBodyHTML()+'</div></div>';}
 // ---- step 3: how the system gets online + what sits at the incoming point (smart meter or energy manager)
 var DEV_GROUPS=[
-  {t:'Dongle on the inverter',tag:'smart meter optional',cls:'',keys:['wifi','lan','4g']},
-  {t:'Energy manager at the incoming point',tag:'takes the meter\u2019s place',cls:'ok',keys:['shinesem','grohome']},
-  {t:'Datalogger (C&amp;I)',tag:'smart meter required',cls:'req',keys:['shinemaster']}
+  {k:'stick',t:'Dongle on the inverter',tag:'smart meter as add\u2011on',cls:'',keys:['wifi','lan','4g']},
+  {k:'ems',t:'Energy manager at the incoming point',tag:'is the meter',cls:'ok',keys:['shinesem','grohome']},
+  {k:'log',t:'Datalogger',tag:'smart meter required',cls:'req',keys:['shinemaster']}
 ];
 function shortDev(k){return DONGLES[k]?DONGLES[k].name.replace('Growatt ',''):'';}
 function emsAtIncoming(){return state.dongle==='shinesem'||state.dongle==='grohome';}
@@ -1133,41 +1148,49 @@ function meteringText(){
 function onlineStep(){
   var multiLock=state.multi&&state.units.length>1;
   var dg=state.dongle, ems=emsAtIncoming(), m=state.metering==='meter', need=meterNeed();
-  var stickOk=dg==='wifi'||dg==='lan'||dg==='4g';
+  var needNote=need?('<div class="'+(m?'notice g':'pverr')+'" style="margin-top:6px">'+ic(m?'check':'alert',14)+'<span><b>Smart meter '+(m?'added':'required')+'</b> \u2014 '+need+'.</span></div>'):'';
+  // the smart meter card, as it was in the old meter step
+  function meterCard(title,sub){
+    var lockOn=dg==='shinemaster'&&m;
+    var tag=need?'<span class="tg req">Required</span>':'<span class="tg ok">Recommended</span>';
+    return '<button class="opt compact mcard'+(m?' on':'')+(lockOn?' lockon':'')+'" data-act="metering" data-m="meter"'+(lockOn?' title="Required with ShineMaster"':'')+'>'+
+      '<div class="name">'+(m?title:'+ '+title)+tag+'</div><div class="meta">'+sub+'</div></button>';
+  }
+  // what the chosen device needs at the incoming point - right under its card
+  function addon(gk){
+    if(gk==='ems'){
+      var o='<div class="locked"><span class="ico">'+ic('check',18)+'</span><div><div class="t">'+shortDev(dg)+' is the meter</div><div class="s">In the smart meter\u2019s place at the incoming point \u2014 its own CT clamps (L1\u2013L3) sit right under it. No separate smart meter.</div></div></div>';
+      if(state.thirdParty||m)o+=meterCard(state.thirdParty?'Smart meter for the third\u2011party inverter':'Extra smart meter',state.thirdParty?('TPM\u20116CT\u2011C \u00b7 2\u00d7CT \u2014 CT2 on the third\u2011party inverter, read by the '+shortDev(dg)+' over RS485'):('TPM\u20116CT\u2011C \u2014 not needed with '+shortDev(dg)+', tap to remove'))+needNote;
+      return '<div class="addon">'+o+'</div>';
+    }
+    var sub=gk==='log'?'TPM\u20116CT\u2011C \u00b7 2\u00d7CT \u2014 at the incoming point, read by the ShineMaster over RS485'
+      :('TPM\u20116CT\u2011C \u00b7 2\u00d7CT \u2014 CT1 under the utility meter'+(state.thirdParty?', CT2 on the third\u2011party inverter':'')+' \u00b7 RS485 to the inverter');
+    return '<div class="addon">'+meterCard(m?'Smart meter added':'Add smart meter',sub)+needNote+'</div>';
+  }
   var groups=DEV_GROUPS.map(function(g){
     var cards=g.keys.map(function(k){
       var d=DONGLES[k],on=dg===k;
       if(multiLock&&(k==='wifi'||k==='lan'||k==='4g'))return '<button class="opt compact crossed" disabled title="Not enough for several inverters"><div class="name">'+shortDev(k)+'</div><div class="meta">'+d.desc+'</div><div class="x">'+ic('alert',11)+'Single inverter only</div></button>';
       return '<button class="opt compact'+(on?' on':'')+'" data-act="dongle" data-k="'+k+'"><div class="name">'+shortDev(k)+'</div><div class="meta">'+d.desc+'</div></button>';
     }).join('');
-    return '<div class="dgrp"><div class="dgh"><span>'+g.t+'</span><span class="tg '+g.cls+'">'+g.tag+'</span></div><div class="grid dg'+g.keys.length+'">'+cards+'</div></div>';
+    var add=g.keys.indexOf(dg)>=0?addon(g.k):'';
+    return '<div class="dgrp"><div class="dgh"><span>'+g.t+'</span><span class="tg '+g.cls+'">'+g.tag+'</span></div><div class="grid dg'+g.keys.length+'">'+cards+'</div>'+add+'</div>';
   }).join('');
   var sel;
   if(dg)sel='<div class="note">'+ic('info',14)+'<span><b>'+DONGLES[dg].name+'</b> \u2014 '+DONGLES[dg].how+' <span style="color:var(--faint)">Tap it again to remove.</span></span></div>';
   else if(multiLock)sel='<div class="pverr" style="margin-top:10px">'+ic('alert',15)+'<span>Several inverters need <b>ShineSEM\u2011X</b>, <b>GroHome\u200bManager\u2011X</b> or <b>ShineMaster</b> \u2014 pick one above.</span></div>';
-  else sel='<div class="note">'+ic('info',14)+'<span>Pick how the system gets online \u2014 <b>ShineWiFi\u2011X</b> is the standard stick and all a single inverter needs.</span></div>';
+  else sel='<div class="note">'+ic('info',14)+'<span>Pick how the system gets online \u2014 <b>ShineWiFi\u2011X</b> is the standard stick. A <b>smart meter</b> can be added right under it.</span></div>';
   if(dg==='grohome')sel+='<div class="sublabel">GroHome\u200bManager\u2011X \u2192 each inverter</div><div class="chips"><button class="chip sm '+(state.groHomeMode==='rs485'?'on':'')+'" data-act="grohomemode" data-v="rs485">RS485 \u00b7 wired</button><button class="chip sm '+(state.groHomeMode==='wireless'?'on':'')+'" data-act="grohomemode" data-v="wireless">Wireless \u00b7 ShineRFStick\u2011X2</button></div>';
   // the incoming point as it is drawn in the diagram: grid -> main switch -> smart meter / energy manager
   var fuse=state.mainFuseA>0?(state.mainFuseA+' A'):'\u2014 A';
   var mp;
   if(ems)mp='<div class="icn on">'+ic('cpu',14)+'<b>'+shortDev(dg)+'</b><small>own CT clamps under it</small></div>';
   else if(m)mp='<div class="icn on">'+ic('activity',14)+'<b>Smart meter</b><small>TPM\u20116CT\u2011C \u00b7 CT1</small></div>';
-  else mp='<div class="icn '+(need?'bad':'off')+'">'+ic('activity',14)+'<b>No meter</b><small>'+(need?'required':'optional')+'</small></div>';
+  else mp='<div class="icn '+(need?'bad':'off')+'">'+ic('activity',14)+'<b>No meter</b><small>'+(need?'required':'add under the dongle')+'</small></div>';
   var chain='<div class="inchain"><div class="icn">'+ic('zap',14)+'<b>Grid</b><small>utility meter</small></div><span class="iar"></span>'+
     '<div class="icn'+(state.mainFuseA>0?'':' off')+'">'+ic('shield',14)+'<b>Q1 \u00b7 '+fuse+'</b><small>main switch</small></div><span class="iar"></span>'+mp+'</div>';
-  function meterCard(t,sub){
-    var lockOn=dg==='shinemaster'&&m;
-    var tag=need?'<span class="tg req">Required</span>':'<span class="tg">Optional</span>';
-    return '<button class="opt compact mcard'+(m?' on':'')+(lockOn?' lockon':'')+'" data-act="metering" data-m="meter"'+(lockOn?' title="Required with ShineMaster"':'')+'><div class="name">'+t+tag+'</div><div class="meta">'+sub+'</div></button>';
-  }
-  var ctl;
-  if(ems){
-    ctl='<div class="locked" style="margin-top:8px"><span class="ico">'+ic('check',20)+'</span><div><div class="t">'+shortDev(dg)+' is the meter</div><div class="s">It sits at the incoming point in the smart meter\u2019s place \u2014 its own CT clamps (L1\u2013L3) right under it measure the grid. No separate smart meter.</div></div></div>';
-    if(state.thirdParty||m)ctl+=meterCard(state.thirdParty?'Smart meter for the third\u2011party inverter':'Extra smart meter',state.thirdParty?('TPM\u20116CT\u2011C \u00b7 CT2 on the third\u2011party inverter, read by the '+shortDev(dg)+' over RS485'):'TPM\u20116CT\u2011C \u2014 not needed with '+shortDev(dg)+', tap to remove');
-  } else {
-    ctl=meterCard('Smart meter','TPM\u20116CT\u2011C \u00b7 CT1 under the utility meter'+(state.thirdParty?' \u00b7 CT2 on the third\u2011party inverter':'')+(stickOk?' \u2014 optional with a dongle':''));
-  }
-  var needNote=need?('<div class="'+(m?'notice g':'pverr')+'" style="margin-top:8px">'+ic(m?'check':'alert',14)+'<span><b>Smart meter '+(m?'added':'required')+'</b> \u2014 '+need+'.</span></div>'):'';
+  // no monitoring device chosen: the meter can still be added here (a SYN box or a third-party inverter needs one)
+  var fallback=(!dg&&(need||m))?('<div class="addon nolink">'+meterCard(m?'Smart meter added':'Add smart meter','TPM\u20116CT\u2011C \u00b7 2\u00d7CT \u2014 CT1 under the utility meter'+(state.thirdParty?', CT2 on the third\u2011party inverter':''))+needNote+'</div>'):'';
   var FUSE_SIZES_ALL=[16,20,25,35,50,63,80,100,125,160,200,250,315,400];
   var FUSE_SIZES=state.segment==='res'?FUSE_SIZES_ALL.filter(function(a){return a<=63;}):FUSE_SIZES_ALL;
   if(state.segment==='res'&&state.mainFuseA>63)state.mainFuseA=null;
@@ -1180,7 +1203,7 @@ function onlineStep(){
   var desc=multiLock?'ShineSEM\u2011X, GroHome\u200bManager\u2011X or ShineMaster for several inverters':'Monitoring device and what sits at the incoming point';
   return '<div class="step'+(stepOpen('stp-online')?'':' collapsed')+'" id="stp-online">'+stepHead(3,'wifi','Online &amp; meter',desc,badge,'stp-online')+
     '<div class="step-b"><div class="sublabel" style="margin-top:0">Monitoring device</div>'+groups+sel+
-    '<div class="sublabel">Incoming point</div>'+chain+ctl+needNote+fuseField+'</div></div>';
+    '<div class="sublabel">Incoming point</div>'+chain+fallback+fuseField+'</div></div>';
 }
 function loadCalcHTML(){
   var mo=maxOffgridKw();
@@ -1255,8 +1278,8 @@ function backupBodyHTML(){
         :state.units.length>1
           ?'<div class="note" style="margin-top:10px">'+ic('info',14)+'<span>A SYN box can only be added with a <b>single inverter</b> \u2014 not available with multiple '+fam().name+' units.</span></div>'
           :'');
-    else if(bt==='box-required') body='<div class="reqcard"><span class="ico">'+ic('alert',22)+'</span><div><div class="t">Backup not integrated \u2014 needs to be added</div><div class="s">'+fam().name+' requires a separate SYN box. Added automatically.</div></div></div><div class="notice g">'+ic('check',14)+'<span><b>'+synItem().split('|')[0]+'</b> added to your system.</span></div>';
-    else body='<div class="switchrow"><div><div class="lab">Include SYN backup box</div><div class="s2">'+fam().name+' backup is <b>not integrated</b> \u2014 add a SYN box for off\u2011grid.</div></div><span class="sw '+(state.backupOn?'on':'')+'" data-act="backup"><span class="knob"></span></span></div>'+(state.backupOn?'<div class="notice g">'+ic('check',14)+'<span><b>Growatt SYN 100\u2011XH\u201130</b> (3\u2011phase) added. Switch time &lt; 0.5 s.</span></div>':'<div class="note">'+ic('info',14)+'<span>No backup box \u2014 grid\u2011tied only (no power during outages).</span></div>');
+    else if(bt==='box-required') body='<div class="reqcard"><span class="ico">'+ic('alert',22)+'</span><div><div class="t">Backup not integrated \u2014 needs to be added</div><div class="s">'+fam().name+' requires a separate SYN box. Added automatically.</div></div></div><div class="notice g">'+ic('check',14)+'<span><b>'+synItem().split('|')[0]+'</b> added to your system \u2014 it sits at the incoming point, right under the smart meter.</span></div>';
+    else body='<div class="switchrow"><div><div class="lab">Include SYN backup box</div><div class="s2">'+fam().name+' backup is <b>not integrated</b> \u2014 add a SYN box for off\u2011grid.</div></div><span class="sw '+(state.backupOn?'on':'')+'" data-act="backup"><span class="knob"></span></span></div>'+(state.backupOn?'<div class="notice g">'+ic('check',14)+'<span><b>Growatt SYN 100\u2011XH\u201130</b> (3\u2011phase) added. Switch time &lt; 0.5 s. It sits at the incoming point, right under the smart meter.</span></div>':'<div class="note">'+ic('info',14)+'<span>No backup box \u2014 grid\u2011tied only (no power during outages).</span></div>');
   }
   var loadSection='';
   if(state.family&&has_('Battery')){
@@ -1535,7 +1558,7 @@ function offGridHotspotHTML(cxPct,cyPct){
     '<button class="hotbtn'+(state.offGrid&&!state.inverterBroken?' on':'')+'" data-act="offgrid" data-v="off">Off\u2011grid \u2014 island mode</button>'+
     '<button class="hotbtn'+(state.inverterBroken?' on':'')+'" data-act="invbroken">Bypass breaker</button>'+
     '<div style="font-size:10.5px;color:var(--mut);line-height:1.35;margin-top:6px">'+
-    (state.inverterBroken?'Bypass breaker closed \u2014 the inverter is isolated and taken out of the drawing. Only the backup circuit between the SYN box and the load stays live.':(state.offGrid?'Utility feed is disconnected \u2014 only the backup loads are supplied, by the inverter; everything else is switched off.':'Normal operation \u2014 utility, inverters and load are all connected.'))+'</div>';
+    (state.inverterBroken?'Bypass breaker closed \u2014 the inverter is isolated and drawn faint grey; the grid, the busbar and every load keep running.':(state.offGrid?'Utility feed is disconnected \u2014 only the backup loads are supplied, by the inverter; everything else is switched off.':'Normal operation \u2014 utility, inverters and load are all connected.'))+'</div>';
   return hotWrap('grid',cxPct,cyPct,body,'zap');
 }
 function bypassHotspotHTML(cxPct,cyPct){
@@ -1543,7 +1566,7 @@ function bypassHotspotHTML(cxPct,cyPct){
     '<button class="hotbtn'+(!state.bypassOn?' on':'')+'" data-act="bypasson" data-v="off">Bypass OFF</button>'+
     '<button class="hotbtn'+(state.bypassOn?' on':'')+'" data-act="bypasson" data-v="on">Bypass ON</button>'+
     '<div style="font-size:10.5px;color:var(--mut);line-height:1.35;margin-top:6px">'+
-    (state.bypassOn?'Load is fed past the inverter \u2014 the inverter is isolated and shown shaded.':'Load is fed through the inverter.')+'</div>';
+    (state.bypassOn?'Load is fed past the inverter \u2014 the inverter is isolated and drawn faint grey; everything else keeps running.':'Load is fed through the inverter.')+'</div>';
   return hotWrap('bypass',cxPct,cyPct,body,'plug');
 }
 function highResHotspotHTML(cxPct,cyPct){
@@ -1578,6 +1601,8 @@ function emHotspotHTML(cxPct,cyPct){
 // conductor ticks (3~/N/PE); high resolution draws L1 L2 L3 N PE as separate conductors.
 // Every cable is dashed; energised cables carry a slow flow animation.
 // Layout: rows  cabinet | SYN boxes | equipment | DC  and one column per busbar feeder.
+// One inverter with a SYN box: the SYN (K1) sits at the incoming point right under the smart meter - grid-side
+// circuits on the main busbar above it, the inverter (Q2) and the backup load (Q3) on the backup busbar below it.
 // Off-grid: the utility side disappears and only the inverters, their backup path and
 // the backup loads (with their earthing) are drawn.
 // Earthing: the main load takes its PE from the main earthing bar; a backup load takes its PE
@@ -1589,7 +1614,7 @@ function sldSceneHTML(){
   var C={paper:'#ffffff',sheet:'#fafbfa',ink:'#2b3640',mut:'#66727e',faint:'#a3adb7',grn:'#4c8a1a',acc:'#1f7a45',
     ac:'#2c9d5e',dcP:'#d64541',dcN:'#2b3540',com:'#f08a1d',net:'#3b82f6',dead:'#c9d0d7',enc:'#8d99a6',
     warn:'#c0392b',bus:'#33414c',grnBox:'#f2f8ec',pv:'#b58700',pvBox:'#fffaf0',batBox:'#f3f7fa',netBox:'#f3f8ff',amber:'#b9740a',
-    meterBody:'#f6f7f9',meterEdge:'#5f6b76',lcd:'#22303b',growatt:'#7bc24a',peTxt:'#5f7a2a'};
+    meterBody:'#f6f7f9',meterEdge:'#5f6b76',lcd:'#22303b',growatt:'#7bc24a',peTxt:'#5f7a2a',qTile:'#e9f5dc'};
   var bom=buildBOM();
   var onlOn=bom.some(function(r){return r.g==='Connectivity';});
   var hasItem=function(g,t){return bom.some(function(r){return r.g===g&&r.item.indexOf(t)>=0;});};
@@ -1637,23 +1662,38 @@ function sldSceneHTML(){
   var emsName={shinesem:'ShineSEM\u2011X',shinemaster:'ShineMaster',grohome:'GroHomeManager\u2011X'}[dg]||'';
   function sn(id){var ds=stepDefs();for(var i=0;i<ds.length;i++)if(ds[i].id===id)return i+1;return '';}
   var offGrid=!!state.offGrid, invHidden=!!(state.inverterBroken&&anyInv), bpOn=!!state.bypassOn;
-  var HG=offGrid;                      // off-grid: the utility side (supply, meters, main switch, third party) disappears
-  var OG=offGrid&&!trunkSyn;           // ...and with it the whole cabinet: only the backup side is drawn
-  var tpN=(state.thirdParty&&anyInv&&!HG)?Math.min(state.tpCount||1,3):0;
+  // Off-grid keeps exactly the on-grid layout - nothing moves. The island (inverter, PV, battery, backup path,
+  // backup load + the earthing) stays live; the utility side and everything else is drawn very faint grey ("ghost").
+  var HG=offGrid;                      // off-grid: the utility side (supply, meters, main switch, third party, monitoring) is ghosted
+  var tpN=(state.thirdParty&&anyInv)?Math.min(state.tpCount||1,3):0;   // their columns keep their place off-grid, ghosted
+  var U0=UN[0]||{};
+  // one inverter with a SYN box: the SYN sits at the incoming point, right under the smart meter (K1 in the supply trunk).
+  // Its LOAD/INV side feeds a backup busbar (Q2 inverter, Q3 backup load); the grid-side circuits (main load, third-party PV)
+  // stay on the main busbar between the meter and the SYN (gBus).
+  var sSyn=!isMulti&&!!(U0.ok&&U0.syn);
+  var kSyn=trunkSyn||sSyn;
+  var gBus=sSyn&&(U0.mode!=='whole'||tpN>0);
+  var synNm=(U0.fk==='WIT-HU'||U0.fk==='WIT-XHU')?'SYN BOX (WIT)':'SYN 100\u2011XH\u201130';
+  var OG=offGrid&&!kSyn;               // ...and with it the cabinet - unless a SYN in the trunk keeps the busbar in the island
   // a local earth electrode only comes with backup - otherwise the utility's PE is the earth
   var anyBackup=ALL.some(function(o){return o.ok&&o.mode;})||trunkSyn;
-  var U0=UN[0]||{};
   var whole=isMulti?trunkSyn:!!(U0.ok&&U0.mode==='whole');
-  var gridLive=!offGrid&&!invHidden;
-  var busLive=trunkSyn||gridLive;
+  var gridLive=!offGrid;
+  // bypass breaker closed (or the inverter taken out): the inverter is isolated and ghosted - everything else keeps running
+  function iso(o){return !!(o&&o.ok&&(invHidden||(bpOn&&o.bypass&&!offGrid)));}
   // an inverter is energised unless isolated; off-grid only while it feeds a backup load
-  function uLive(o){return !!(o.ok&&!invHidden&&(!offGrid||(o.mode&&(o.branch||trunkSyn))));}
+  function uLive(o){return !!(o.ok&&!iso(o)&&(!offGrid||(o.mode&&(o.branch||trunkSyn))));}
+  // the (backup) busbar: on the grid - or off-grid behind a SYN while its inverter runs the island
+  var busLive=gridLive||trunkSyn||(sSyn&&uLive(U0));
   var fuseA=state.mainFuseA>0?state.mainFuseA:0, fuseKw=fuseA?Math.round(fuseA*230*3/100)/10:0;
   var online=!!(dg&&onlOn&&(dg!=='shinemaster'||meter));
 
   // ================= LAYERS + PRIMITIVES =================
   // background | wires | symbols (white fills hide wires) | text | click targets
   var BL=[],WL=[],SL=[],TL=[],HL=[];
+  // what is switched off is not removed but drawn very faint and grey: same layers, separate (ghost) group
+  var LIVE={BL:BL,WL:WL,SL:SL,TL:TL}, GHO={BL:[],WL:[],SL:[],TL:[]};
+  function ghost(on){var t=on?GHO:LIVE;BL=t.BL;WL=t.WL;SL=t.SL;TL=t.TL;}
   var f1=function(v){return Math.round(v*10)/10;};
   var E=function(t){return escHtml(t);};
   var tw=function(t,fs){return String(t).length*fs*0.6;};
@@ -1757,6 +1797,15 @@ function sldSceneHTML(){
     if(HR){for(var k=0;k<(noPE?4:5);k++){var xk=x+(k-2)*s;cond([[xk,busY(k)],[xk,yEnd]],k,live,true);dot(xk,busY(k),k,live);}}
     else{cond([[x,yBus],[x,yEnd]],-1,live,true);dot(x,yBus,-1,live);}
   }
+  // a drop off the grid-side main busbar (SYN at the incoming point): L1 L2 L3 N from that busbar, PE from the main earthing bar
+  function tapG(x,yEnd,live){
+    if(HR){
+      for(var k=0;k<4;k++){var xk=x+(k-2)*s;cond([[xk,gY(k)],[xk,yEnd]],k,live,true);dot(xk,gY(k),k,live);}
+      cond([[x+2*s,metY],[x+2*s,yEnd]],4,true,true);dot(x+2*s,metY,4,true);
+    } else {cond([[x,yTrunk],[x,yEnd]],-1,live,true);dot(x,yTrunk,-1,live);}
+  }
+  // N and PE are never switched: in high resolution they run straight past a breaker (the phases have the gap)
+  function thru(x,live,ks){if(!HR)return;ks.forEach(function(k){var xk=x+(k-2)*s;cond([[xk,yQ-10],[xk,yQ+10]],k,k===4||live);});}
   var BH=HR?2*s:3;                                       // half width of a cable bundle
   function devLabel(x,y,a,b,anc){TL.push(txt(x,y-1.5,a,'t-d',anc)+(b?txt(x,y+9.5,b,'t-x2',anc):''));}
   // current transformers: one ring per measured phase, with an arrow on the conductor for the measuring direction
@@ -1800,18 +1849,21 @@ function sldSceneHTML(){
     (xs||[]).forEach(function(x){o+='<circle cx="'+f1(x)+'" cy="'+f1(y0)+'" r="1.3" fill="#fff" stroke="'+C.meterEdge+'" stroke-width=".8"/><circle cx="'+f1(x)+'" cy="'+f1(y0+h)+'" r="1.3" fill="#fff" stroke="'+C.meterEdge+'" stroke-width=".8"/>';});
     return o;
   }
-  function mm(v){return v?(v+' mm\u00b2'):'';}
+  function mm(v){return v?(/^[0-9\u2265]/.test(v)?v+' mm\u00b2':v):'';}
   // ---- battery towers as configured in the battery step: APX = per battery input 1 or 2 towers (BMS on top of tower A),
   //      ARK = one tower with the BDC controller on top. Every tower stands on its base.
   function towerSpec(o){
     if(!o||!o.ok||!(o.kwh>0))return null;
-    if(o.bat==='APX'){var sp=(o.inputs||[]).map(function(p){return p.cols===2?[{top:'bms',n:p.c1||0},{top:null,n:p.c2||0}]:[{top:'bms',n:p.mods||0}];});return sp.length?sp:null;}
+    // APX 2.0: the BMS / power module carries its own 5 kWh module ('bms2'); APX 1.0: the BMS is only the controller
+    var bm=o.apx==='2.0'?'bms2':'bms';
+    if(o.bat==='APX'){var sp=(o.inputs||[]).map(function(p){return p.cols===2?[{top:bm,n:p.c1||0},{top:null,n:p.c2||0}]:[{top:bm,n:p.mods||0}];});return sp.length?sp:null;}
     if(o.bat==='ARK'){var m=(o.inputs&&o.inputs[0]&&o.inputs[0].modules)||0;return m?[[{top:'bdc',n:m}]]:null;}
     return null;
   }
+  function topU(tw){return tw.top==='bms2'?2:(tw.top?1:0);}   // the APX 2.0 BMS is two slabs high: controller + 5 kWh module
   function towerGeo(o){
     var sp=towerSpec(o);if(!sp)return null;
-    var maxU=1;sp.forEach(function(p){p.forEach(function(tw){maxU=Math.max(maxU,tw.n+(tw.top?1:0));});});
+    var maxU=1;sp.forEach(function(p){p.forEach(function(tw){maxU=Math.max(maxU,tw.n+topU(tw));});});
     var small=isMulti||maxU>7;
     var g={sp:sp,TW:isMulti?30:46,SH:small?(isMulti?7:8):11,SG:small?2:3,AB:isMulti?8:12,IG:isMulti?8:14,BH:5};
     g.uh=g.SH+g.SG;g.stackH=maxU*g.uh-g.SG;
@@ -1829,32 +1881,36 @@ function sldSceneHTML(){
   // ================= STATUS CHIPS (needed early: the grid-mode hotspot sits on them off-grid) =================
   var chips=[];
   if(offGrid)chips.push([anyBackup?'OFF\u2011GRID \u00b7 island mode \u00b7 only backup loads supplied':'OFF\u2011GRID \u00b7 no backup load configured \u00b7 system off','#fdecec',C.warn]);
-  if(invHidden)chips.push(['BYPASS BREAKER \u00b7 inverter isolated','#fff4e5',C.amber]);
-  if(bpOn&&!invHidden&&!offGrid&&UN.some(function(o){return o.bypass;}))chips.push(['BYPASS ON \u00b7 backup load on grid','#fff4e5',C.amber]);
+  if(invHidden)chips.push(['BYPASS BREAKER \u00b7 inverter isolated \u00b7 loads on grid','#fff4e5',C.amber]);
+  if(bpOn&&!invHidden&&!offGrid&&UN.some(function(o){return o.bypass;}))chips.push(['BYPASS ON \u00b7 inverter isolated \u00b7 loads on grid','#fff4e5',C.amber]);
   if(moreUnits>0)chips.push(['+'+moreUnits+' MORE INVERTER'+(moreUnits>1?'S':'')+' \u00b7 NOT DRAWN','#eef6e8',C.grn,C.acc]);
   if(state.aiMode&&anyInv){if(state.aiSmart)chips.push(['AI SMART','#0f1b2d','#33da7a','#8ffcb8']);if(state.aiPeak)chips.push(['PEAK SHAVING','#0f1b2d','#33da7a','#8ffcb8']);if(state.aiUnbal)chips.push(['UNBALANCED 3\u2011PH','#0f1b2d','#33da7a','#8ffcb8']);}
-  var chipX=[],chx=16;
-  chips.forEach(function(c,i){var w=c[0].length*6+14;chipX.push([chx,w]);chx+=w+6+(i===0&&HG?24:0);});
-  var chipsR=chx;
+  // the status chips sit on the title row, right of the title (placed with it once the sheet size is known)
+  var chipX=[],chx=0;
+  chips.forEach(function(c,i){var w=c[0].length*6+14;chipX.push([chx,w]);chx+=w+6;});
+  var chipsW=chx;
 
   // ================= VERTICAL PLAN =================
   var XT=70;                                             // supply trunk
   // trunk conductors: L1 L2 L3 N centred on XT; PE runs apart on the left (it never passes Q1 or P1)
   function trX(k){return HR?(k===4?XT-30:XT+(k-1.5)*s):XT;}
-  var yGrid=92,yKwh=134,yCT=160,yCabTop=(HG&&trunkSyn)?156:180,yQ1=208,yP1=254;   // off-grid the cabinet moves up to where the supply was
-  var emsT=emsAt&&!HG;                                   // an energy manager + its CTs make the supply trunk longer
+  var yGrid=72,yKwh=114,yCT=140,yCabTop=160,yQ1=188,yP1=234;
+  var emsT=emsAt;                                        // an energy manager + its CTs make the supply trunk longer
   var yCTe=yP1-MH/2+EH+16;                               // its CT clamps, right under it
-  var yTrunk=emsT?336:300;
-  var yK1=trunkSyn?(HG?yCabTop+26:yTrunk):null,hK1=50;
-  var busTop0=trunkSyn?(yK1+hK1+42):yTrunk;
+  var yTrunk=emsT?yCTe+40:yP1+MH/2+28;
+  // SYN at the incoming point: the grid-side main busbar (gBus) right under the meter, K1 under it, then the backup busbar
+  function gY(k){return HR?yTrunk+k*s:yTrunk;}
+  var hK1=sSyn?54:50;
+  var yK1=kSyn?(gBus?gY(3)+(HR?30:28):yTrunk):null;
+  var busTop0=kSyn?(yK1+hK1+42):yTrunk;
   var yBus=HR?busTop0+2*s:busTop0;
   function busY(k){return HR?yBus+(k-2)*s:yBus;}
   var busTop=busY(0),busBot=busY(4);
-  var yLane=busTop-12;                                   // RS485 / RF lane, just above the busbar
-  var metY=OG?156:(HR?busBot:yBus+10);                   // main earthing bar (the PE line in high resolution)
-  var yQ=busBot+54;                                      // outgoing protective devices
-  var yCabBot=OG?metY+26:yQ+30;
-  var anySyn=UN.some(function(o){return o.ok&&o.syn;});
+  var yLane=busTop-((sSyn&&rfLink)?18:12);              // RS485 / RF lane, just above the busbar (RF + SYN: room for its own cable)
+  var metY=HR?busBot:yBus+10;                            // main earthing bar (the PE line in high resolution)
+  var yQ=busBot+60;                                      // outgoing protective devices
+  var yCabBot=yQ+42;
+  var anySyn=UN.some(function(o){return o.ok&&o.syn;})&&!sSyn;   // SYN boxes in their own row under the cabinet (multi)
   var ySynT=yCabBot+28,hSyn=54,ySynB=ySynT+hSyn;
   var yInv=anySyn?ySynB+44:yCabBot+36;
   var hInv=90;
@@ -1867,7 +1923,7 @@ function sldSceneHTML(){
   var cols=[];
   (UN.length?UN:[{i:0,ok:false}]).forEach(function(o){
     var c={k:'unit',o:o,iL:cx,iR:cx+IWb,ac:cx+34,com:cx-14};
-    c.xi=o.syn?Math.round(cx+IWb*0.56):c.ac;             // inverter AC port (under the SYN INV terminal)
+    c.xi=(o.syn&&!sSyn)?Math.round(cx+IWb*0.56):c.ac;    // inverter AC port (under the SYN INV terminal)
     var r=c.iR;
     if(o.ok&&o.branch){
       if(o.syn)c.bbL=c.iR+32;
@@ -1888,25 +1944,26 @@ function sldSceneHTML(){
   var tpCols=[];
   for(var t=0;t<tpN;t++){var c2={k:'tp',t:t,l:cx,r:cx+124,a:cx+62};tpCols.push(c2);cx=c2.r+GAP;}
   var mainCol=null;
-  if(!OG&&(!whole||trunkSyn)){mainCol={k:whole?'wmain':'main',l:cx,r:cx+156,a:cx+78};cx=mainCol.r+GAP;}
+  if(!whole||trunkSyn){mainCol={k:whole?'wmain':'main',l:cx,r:cx+156,a:cx+78};cx=mainCol.r+GAP;}
   var taps=[];
-  cols.forEach(function(c){taps.push(c.ac);if(c.xq)taps.push(c.xq);});
+  cols.forEach(function(c){taps.push(c.ac);if(c.xq)taps.push(c.xq);if(sSyn&&c.o.ok&&c.o.mode)taps.push(c.bk);});
   tpCols.forEach(function(c){taps.push(c.a);});
   if(mainCol)taps.push(mainCol.a);
   var lastTap=Math.max.apply(null,taps);
   var busEnd=Math.max(lastTap+104,XT+330);
+  // with a grid-side main busbar the backup busbar stops before the first grid-side drop
+  var bEnd=gBus?((U0.mode?cols[0].bk:cols[0].ac)+108):busEnd;
   var A1w=150,A1h=44;
   var lastU=cols[cols.length-1];
   var unitsR=lastU.rowD?lastU.bbR:(lastU.iR+(isMulti?0:(lastU.o.ok?(lastU.o.bat==='MODA'?168:80):0)));
   if(lastU.tg)unitsR=Math.max(unitsR,isMulti?lastU.btX+lastU.tg.W:lastU.btX+lastU.tg.W+12+140);
   var colsR=cx-GAP;
-  if(OG&&anyBackup&&!invHidden)cols.forEach(function(c){if(c.o.ok)c.ogPE=c.ac+(HR?2*s:0);});
+  if(OG&&anyBackup)cols.forEach(function(c){if(c.o.ok)c.ogPE=c.ac+(HR?2*s:0);});
   var peXs=[];cols.forEach(function(c){if(c.ogPE)peXs.push(c.ogPE);});
   var metL=XT-52, rodX=XT-44;
   var peMax=peXs.length?Math.max.apply(null,peXs)+12:0;
-  if(!OG)busEnd=Math.max(busEnd,peMax);                 // busbar and MET end together, past the last PE riser
-  var metR=OG?Math.max(metL+150,peMax+2):Math.max(busEnd,peMax);   // long enough for every inverter PE off-grid
-  var cabR=OG?0:Math.max(busEnd+14,metR+14,XT+300,((a1Log||p2Meter)&&!HG)?(XT+352+A1w+14):0);
+  var metR=busEnd;                                       // the MET runs under the whole busbar (off-grid too: it is the earth)
+  var cabR=Math.max(busEnd+14,metR+14,XT+300,(a1Log||p2Meter)?(XT+352+A1w+14):0);
   // top-right block (online monitoring next to an energy manager, otherwise the legend) and a
   // bottom-right block in the DC row (online monitoring next to a stick dongle, otherwise the legend)
   var onlineTop=!stick;
@@ -1915,14 +1972,14 @@ function sldSceneHTML(){
       ['CT','arrow: grid \u2192 load','ct'],['Grey','de\u2011energised','dead']]
     :[['AC 3~/N/PE','power cable','ac'],['DC + / \u2212','PV & battery','dc'],['PE','protective earth','pe'],['CT','arrow: grid \u2192 load','ct'],
       ['RS485 / CAN','communication','com'],['Internet / RF','monitoring','net'],['Grey','de\u2011energised','dead']];
-  var ctDrawn=(p1Meter||emsAt||(meter&&tpN>0))&&!HG;
+  var ctDrawn=p1Meter||emsAt||(meter&&tpN>0);
   lgItems=lgItems.filter(function(it){return it[2]!=='ct'||ctDrawn;});
   var lgCols=4, lgRows=Math.ceil(lgItems.length/lgCols), lgColW=122;
   var lgW=lgCols*lgColW, lgH=16+lgRows*22;
   var onW=268;
   var topW=onlineTop?onW:lgW, botW=onlineTop?lgW:onW;
-  var topT=chips.length?72:58;
-  var topMinL=Math.max(XT+282,HG?chipsR+16:0);         // clear of the supply labels (and the status chips)
+  var topT=8;                                            // up beside the title - unless the subtitle or the chips reach it (set below)
+  var topMinL=XT+282;                                    // clear of the supply labels
   var botL=unitsR+36;
   var Wc=Math.max(cabR+16,colsR+16,topMinL+topW+16,botL+botW+16,metR+16,760);
 
@@ -1934,131 +1991,182 @@ function sldSceneHTML(){
   subBits.push('3~ 400/230 V 50 Hz');
   subBits.push(isMulti?(trunkSyn?'whole\u2011home backup via SYN':(UN.some(function(o){return o.mode;})?'partial backup':'no backup'))
     :(U0.mode?((U0.mode==='whole'?'whole\u2011home':'partial')+' backup \u00b7 '+(U0.syn?'SYN box':(U0.fk==='MODA'?'integrated 63 A bypass':'integrated'))):(U0.ok&&U0.syn?'SYN box \u00b7 no backup mode':'no backup')));
-  TL.push(txt(16,26,'SINGLE\u2011LINE DIAGRAM','t-h',null,' textLength="204" lengthAdjust="spacing"')+txt(16,42,E(subBits.join('  \u00b7  ')),'t-s'));
-  chips.forEach(function(c,i){var x=chipX[i][0],w=chipX[i][1];TL.push('<rect x="'+f1(x)+'" y="50" width="'+f1(w)+'" height="15" rx="7.5" fill="'+c[1]+'" stroke="'+c[2]+'" stroke-width=".8"/>'+txt(x+w/2,60.5,c[0],'t-chip','middle',' fill="'+(c[3]||c[2])+'"'));});
+  var subTxt=subBits.join('  \u00b7  '), subW=tw(subTxt,10)*0.95+6;   // drawn top left of the sheet once its size is known
 
-  // ================= SUPPLY TRUNK (gone off-grid) =================
-  if(!HG){
-    if(HR){
-      for(var k=0;k<4;k++){
-        var xk=trX(k);
-        cond([[xk,yGrid+13],[xk,yQ1-9.5]],k,gridLive);
-        cond([[xk,yQ1+9.5],[xk,trunkSyn?yK1:busY(k)]],k,gridLive,true);
-        if(!trunkSyn)dot(xk,busY(k),k,gridLive);
-      }
-      cond([[trX(4),yGrid+13],[trX(4),busY(4)]],4,true,true);
-      dot(trX(4),busY(4),4,true);
-    } else {
-      cond([[XT,yGrid+13],[XT,yQ1-9.5]],-1,gridLive);
-      cond([[XT,yQ1+9.5],[XT,trunkSyn?yK1:yBus]],-1,gridLive);
-      ticks(XT,yGrid+30,'v',gridLive);
-      if(!trunkSyn)dot(XT,yBus,-1,gridLive);
+  // ================= SUPPLY TRUNK (ghosted off-grid) =================
+  // only the phases are switched: N and PE run straight through every breaker
+  ghost(HG);
+  if(HR){
+    for(var k=0;k<4;k++){
+      var xk=trX(k);
+      if(k===3)cond([[xk,yGrid+13],[xk,kSyn?yK1:busY(k)]],k,gridLive,true);
+      else{cond([[xk,yGrid+13],[xk,yQ1-9.5]],k,gridLive);cond([[xk,yQ1+9.5],[xk,kSyn?yK1:busY(k)]],k,gridLive,true);}
+      if(!kSyn)dot(xk,busY(k),k,gridLive);
+      if(gBus)dot(xk,gY(k),k,gridLive);
     }
-    // supply symbol
-    var sbw=HR?34:24;
-    SL.push(rect(XT-sbw,yGrid-13,2*sbw,26,{stroke:C.ink,sw:1.5,rx:4})+
-      '<path d="M'+(XT-13)+','+yGrid+' C'+(XT-9)+','+(yGrid-9)+' '+(XT-4)+','+(yGrid-9)+' '+XT+','+yGrid+' S'+(XT+9)+','+(yGrid+9)+' '+(XT+13)+','+yGrid+'" fill="none" stroke="'+C.ink+'" stroke-width="1.6"/>');
-    lbl(XT+44,yGrid-3,[['UTILITY GRID','t-n'],['3~ 400/230 V \u00b7 50 Hz \u00b7 DSO network','t-x']]);
-    // utility (DSO) meter - spans L1..N, PE passes beside it
-    var mL=HR?trX(0)-7:XT-15, mR=HR?trX(3)+7:XT+15;
-    SL.push(rect(mL,yKwh-11,mR-mL,22,{stroke:C.ink,sw:1.3,rx:2})+txt((mL+mR)/2,yKwh+3.5,'kWh','t-p','middle'));
-    lbl(XT+44,yKwh-2,[['Utility meter','t-n2'],['DSO billing meter','t-x']]);
+    cond([[trX(4),yGrid+13],[trX(4),busY(4)]],4,true,true);
+    dot(trX(4),busY(4),4,true);
+  } else {
+    cond([[XT,yGrid+13],[XT,yQ1-9.5]],-1,gridLive);
+    cond([[XT,yQ1+9.5],[XT,kSyn?yK1:yBus]],-1,gridLive);
+    ticks(XT,yGrid+30,'v',gridLive);
+    if(!kSyn)dot(XT,yBus,-1,gridLive);
+    if(gBus)dot(XT,yTrunk,-1,gridLive);
   }
+  // supply symbol
+  var sbw=HR?34:24;
+  SL.push(rect(XT-sbw,yGrid-13,2*sbw,26,{stroke:C.ink,sw:1.5,rx:4})+
+    '<path d="M'+(XT-13)+','+yGrid+' C'+(XT-9)+','+(yGrid-9)+' '+(XT-4)+','+(yGrid-9)+' '+XT+','+yGrid+' S'+(XT+9)+','+(yGrid+9)+' '+(XT+13)+','+yGrid+'" fill="none" stroke="'+C.ink+'" stroke-width="1.6"/>');
+  lbl(XT+44,yGrid-3,[['UTILITY GRID','t-n'],['3~ 400/230 V \u00b7 50 Hz \u00b7 DSO network','t-x']]);
+  // utility (DSO) meter - spans L1..N, PE passes beside it
+  var mL=HR?trX(0)-7:XT-15, mR=HR?trX(3)+7:XT+15;
+  SL.push(rect(mL,yKwh-11,mR-mL,22,{stroke:C.ink,sw:1.3,rx:2})+txt((mL+mR)/2,yKwh+3.5,'kWh','t-p','middle'));
+  lbl(XT+44,yKwh-2,[['Utility meter','t-n2'],['DSO billing meter','t-x']]);
   // CT1 on the incoming phases (grid connection point), under the utility meter, for the smart meter.
   // Growatt: every CT arrow points from the grid towards the load (K -> L)
   var ct1X=HR?[trX(0),trX(1),trX(2)]:[XT];
-  if(p1Meter&&!HG){
+  if(p1Meter){
     ctSet(ct1X,yCT,gridLive,'down');
     TL.push(txt(HR?trX(4)-6:XT-10,yCT+3.5,'CT1','t-p','end',' fill="'+C.acc+'"'));
   }
+  ghost(false);
 
   // ================= ELECTRICAL CABINET =================
-  if(!OG)BL.push('<rect x="16" y="'+yCabTop+'" width="'+f1(cabR-16)+'" height="'+f1(yCabBot-yCabTop)+'" rx="6" fill="'+C.sheet+'" stroke="'+C.enc+'" stroke-width="1.2" stroke-dasharray="10 4 2 4"/>');
+  ghost(OG);
+  BL.push('<rect x="16" y="'+yCabTop+'" width="'+f1(cabR-16)+'" height="'+f1(yCabBot-yCabTop)+'" rx="6" fill="'+C.sheet+'" stroke="'+C.enc+'" stroke-width="1.2" stroke-dasharray="10 4 2 4"/>');
+  ghost(false);
   var q1L=XT+44;
   var p1L=XT-MW/2, p1R=XT+MW/2, p1T=yP1-MH/2;
   var A1x=null,A1y=yCabTop+12;
-  if(!HG){
-    // Q1 main switch (4P) - the main fuse rating is shown here only
-    poles(HR?[trX(0),trX(1),trX(2),trX(3)]:[XT],yQ1,'switch',false,gridLive);
-    if(!HR)TL.push(txt(XT+7,yQ1+3,'4P','t-p'));
-    lbl(q1L,yQ1-9,[['Q1 \u00b7 MAIN SWITCH 4P','t-d',15],[fuseA?(fuseA+' A'):'\u2014 A','t-r',12],[fuseA?(fuseKw+' kW allowed'):'set the main fuse in step '+sn('stp-online'),'t-x']]);
-    hit(XT-30,yQ1-20,220,36,'stepopen','stp-online',null,'Main switch \u2014 the main fuse size is set in step '+sn('stp-online'));
-    var trunkXs=HR?[trX(0),trX(1),trX(2),trX(3)]:[XT];
-    var x0c=Math.max.apply(null,ct1X)+(HR?3.4:6.2);
-    // Growatt smart meter in series (L1-L3 + N pass through it, PE does not) - its name sits on the symbol
-    if(p1Meter){
-      SL.push(meterIcon(XT,p1T,gridLive,trunkXs,'TPM\u20116CT\u2011C'));
-      hit(p1L-4,p1T-4,MW+8,MH+8,'stepopen','stp-online',null,'Growatt smart meter TPM\u20116CT\u2011C \u2014 step '+sn('stp-online'));
-      // CT1 secondary wiring (measurement) - thin dashed
-      var xw=p1R+8;var dP='M'+f1(x0c)+','+yCT+' L'+xw+','+yCT+' L'+xw+','+(yP1-14)+' L'+f1(p1R)+','+(yP1-14);
-      WL.push('<path class="sh2" d="'+dP+'"/><path class="sct" d="'+dP+'"/>');
-    }
-    // ShineSEM-X / GroHomeManager-X take the smart meter's place, with their own CT clamps right under them
-    if(emsAt){
-      SL.push(emsIcon(XT,p1T,gridLive,trunkXs,dg));
-      lbl(q1L,p1T+18,[['A1 \u00b7 ENERGY MANAGER','t-d'],[emsName,'t-n2'],[dg==='grohome'?'HEMS \u00b7 own CT clamps':'EMS \u00b7 own CT clamps','t-x2']]);
-      hit(p1L-4,p1T-4,MW+8,EH+8,'stepopen','stp-online',null,emsName+' at the incoming point \u2014 step '+sn('stp-online'));
-      ctSet(ct1X,yCTe,gridLive,'down');
-      TL.push(txt(HR?trX(4)-6:XT-10,yCTe+3.5,'CT','t-p','end',' fill="'+C.acc+'"'));
-      var dE='M'+f1(x0c)+','+yCTe+' L'+f1(XT+16)+','+yCTe+' L'+f1(XT+16)+','+f1(p1T+EH);
-      WL.push('<path class="sh2" d="'+dE+'"/><path class="sct" d="'+dE+'"/>');
-    }
-    // A1 datalogger (ShineMaster), top right of the cabinet - it reads the smart meter over RS485
-    if(a1Log){
-      A1x=cabR-14-A1w;
-      SL.push(rect(A1x,A1y,A1w,A1h,{fill:C.grnBox,stroke:C.grn,sw:1.5,rx:4}));
-      TL.push(txt(A1x+9,A1y+13,'A1 \u00b7 DATALOGGER','t-d')+txt(A1x+9,A1y+26,emsName,'t-n2')+txt(A1x+9,A1y+37,meter?'reads the smart meter':'needs a smart meter',meter?'t-x2':'t-w'));
-      hit(A1x,A1y,A1w,A1h,'stepopen','stp-online',null,emsName+' \u2014 step '+sn('stp-online'));
-    }
-    // with an energy manager at the incoming point, a smart meter is only there for the third-party inverter (CT2)
-    if(p2Meter){
-      var p2x=cabR-14-MW/2-4, p2T=A1y;
-      SL.push(meterIcon(p2x,p2T,gridLive,[],'TPM\u20116CT\u2011C'));
-      lbl(p2x-MW/2-8,p2T+14,[['P2 \u00b7 SMART METER','t-d'],[tpN?'Third\u2011party PV':'TPM\u20116CT\u2011C','t-n2'],[tpN?'measured with CT2':'extra measurement','t-x2']],'end');
-      hit(p2x-MW/2-4,p2T-4,MW+8,MH+8,'stepopen','stp-online',null,'Smart meter for the third\u2011party inverter \u2014 step '+sn('stp-online'));
-      A1x=p2x-MW/2-8-106;
-      var p2Com=[p2x,p2T+MH];
-    }
+  ghost(HG);
+  // Q1 main switch (3P - N and PE are not switched) - the main fuse rating is shown here only
+  poles(HR?[trX(0),trX(1),trX(2)]:[XT],yQ1,'switch',false,gridLive);
+  if(!HR)TL.push(txt(XT+7,yQ1+3,'3P','t-p'));
+  lbl(q1L,yQ1-9,[['Q1 \u00b7 MAIN SWITCH 3P','t-d',15],[fuseA?(fuseA+' A'):'\u2014 A','t-r',12],[fuseA?(fuseKw+' kW allowed'):'set the main fuse in step '+sn('stp-online'),'t-x']]);
+  hit(XT-30,yQ1-20,220,36,'stepopen','stp-online',null,'Main switch \u2014 the main fuse size is set in step '+sn('stp-online'));
+  var trunkXs=HR?[trX(0),trX(1),trX(2),trX(3)]:[XT];
+  var x0c=Math.max.apply(null,ct1X)+(HR?3.4:6.2);
+  // Growatt smart meter in series (L1-L3 + N pass through it, PE does not) - its name sits on the symbol
+  if(p1Meter){
+    SL.push(meterIcon(XT,p1T,gridLive,trunkXs,'TPM\u20116CT\u2011C'));
+    hit(p1L-4,p1T-4,MW+8,MH+8,'stepopen','stp-online',null,'Growatt smart meter TPM\u20116CT\u2011C \u2014 step '+sn('stp-online'));
+    // CT1 secondary wiring (measurement) - thin dashed
+    var xw=p1R+8;var dP='M'+f1(x0c)+','+yCT+' L'+xw+','+yCT+' L'+xw+','+(yP1-14)+' L'+f1(p1R)+','+(yP1-14);
+    WL.push('<path class="sh2" d="'+dP+'"/><path class="sct" d="'+dP+'"/>');
   }
-  if(!OG)TL.push(txt(A1x!==null?A1x-12:cabR-10,yCabTop+14,'ELECTRICAL CABINET','t-cab','end'));
-  // ================= TRUNK SYN (multi-inverter whole-home) =================
-  if(trunkSyn){
-    var kL=HR?trX(0)-8:XT-24,kR=HR?trX(3)+8:XT+24,kT=yK1,kB=yK1+hK1;
+  // ShineSEM-X / GroHomeManager-X take the smart meter's place, with their own CT clamps right under them
+  if(emsAt){
+    SL.push(emsIcon(XT,p1T,gridLive,trunkXs,dg));
+    lbl(q1L,p1T+26,[[emsName,'t-n2']]);
+    hit(p1L-4,p1T-4,MW+8,EH+8,'stepopen','stp-online',null,emsName+' at the incoming point \u2014 step '+sn('stp-online'));
+    ctSet(ct1X,yCTe,gridLive,'down');
+    TL.push(txt(HR?trX(4)-6:XT-10,yCTe+3.5,'CT','t-p','end',' fill="'+C.acc+'"'));
+    var xCw=XT+(HR?13:10);                              // CT wire close to the trunk - the COM leg runs down just right of it
+    var dE='M'+f1(x0c)+','+yCTe+' L'+f1(xCw)+','+yCTe+' L'+f1(xCw)+','+f1(p1T+EH);
+    WL.push('<path class="sh2" d="'+dE+'"/><path class="sct" d="'+dE+'"/>');
+  }
+  // A1 datalogger (ShineMaster), top right of the cabinet - it reads the smart meter over RS485
+  if(a1Log){
+    A1x=cabR-14-A1w;
+    SL.push(rect(A1x,A1y,A1w,A1h,{fill:C.grnBox,stroke:C.grn,sw:1.5,rx:4}));
+    TL.push(txt(A1x+9,A1y+13,'A1 \u00b7 DATALOGGER','t-d')+txt(A1x+9,A1y+26,emsName,'t-n2')+txt(A1x+9,A1y+37,meter?'reads the smart meter':'needs a smart meter',meter?'t-x2':'t-w'));
+    hit(A1x,A1y,A1w,A1h,'stepopen','stp-online',null,emsName+' \u2014 step '+sn('stp-online'));
+  }
+  // with an energy manager at the incoming point, a smart meter is only there for the third-party inverter (CT2)
+  if(p2Meter){
+    var p2x=cabR-14-MW/2-4, p2T=A1y;
+    SL.push(meterIcon(p2x,p2T,gridLive,[],'TPM\u20116CT\u2011C'));
+    lbl(p2x-MW/2-8,p2T+14,[['P2 \u00b7 SMART METER','t-d'],[tpN?'Third\u2011party PV':'TPM\u20116CT\u2011C','t-n2'],[tpN?'measured with CT2':'extra measurement','t-x2']],'end');
+    hit(p2x-MW/2-4,p2T-4,MW+8,MH+8,'stepopen','stp-online',null,'Smart meter for the third\u2011party inverter \u2014 step '+sn('stp-online'));
+    A1x=p2x-MW/2-8-106;
+    var p2Com=[p2x,p2T+MH];
+  }
+  ghost(false);
+  ghost(OG);
+  TL.push(txt(A1x!==null?A1x-12:cabR-10,yCabTop+14,'ELECTRICAL CABINET','t-cab','end'));
+  ghost(false);
+  // ================= SYN IN THE SUPPLY TRUNK =================
+  // multi-inverter whole-home: K1 switches the whole house. One inverter with a SYN box: K1 at the incoming point,
+  // right under the smart meter - GRID from the meter (via the grid-side main busbar), LOAD/INV feed the backup busbar
+  var kL=null,kR=null,kT=null,kB=null;
+  if(kSyn){
+    kL=HR?trX(0)-(sSyn?16:8):XT-(sSyn?30:24); kR=HR?trX(3)+(sSyn?22:8):XT+(sSyn?30:24); kT=yK1; kB=yK1+hK1;
     SL.push(rect(kL,kT,kR-kL,hK1,{stroke:C.grn,sw:1.6,rx:5}));
-    TL.push(txt((kL+kR)/2,kT+11,'GRID','t-port','middle')+txt((kL+kR)/2,kB-5,'LOAD','t-port','middle'));
-    lbl(XT+44,kT+12,[['K1 \u00b7 SYN 100\u2011XH\u201130','t-d'],['Whole\u2011home backup','t-n2'],[HG?'ATS open \u00b7 island \u00b7 LOAD feeds the busbar':'ATS \u00b7 up to 58 A \u00b7 LOAD feeds the busbar','t-x']]);
+    {
+      // inside: the ATS on the phases (N and PE are never switched) - open off-grid, then the inverter runs the LOAD/INV side
+      var ym=kT+hK1/2+1, axs=HR?[trX(0),trX(1),trX(2)]:[XT], inner='';
+      (HR?[trX(0),trX(1),trX(2),trX(3)]:[XT]).forEach(function(x,k){
+        if(HR&&k===3)inner+='<line x1="'+f1(x)+'" y1="'+f1(kT+16)+'" x2="'+f1(x)+'" y2="'+f1(kB-15)+'" stroke="'+C.mut+'" stroke-width="1"/>';
+        else inner+='<path d="M'+f1(x)+','+f1(kT+16)+' L'+f1(x)+','+f1(ym-9.5)+' M'+f1(x)+','+f1(ym+8)+' L'+f1(x)+','+f1(kB-15)+'" stroke="'+C.mut+'" stroke-width="1"/>';
+      });
+      SL.push(inner);
+      poles(axs,ym,'switch',offGrid,true,'#fff');
+      var kfs=HR?' style="font-size:6.8px;letter-spacing:.2px"':'';
+      TL.push(txt(XT,kT+11,'GRID','t-port','middle',kfs)+txt(XT,kB-5,sSyn?'LOAD/INV':'LOAD','t-port','middle',kfs));
+      if(!HR&&sSyn)TL.push(txt(XT+7,ym+3,'ATS','t-port',null,offGrid?' fill="'+C.warn+'"':''));
+    }
+    if(sSyn){
+      var kLines=[['K1 \u00b7 '+synNm,'t-d'],['Backup box at the incoming point','t-n2']];
+      if(offGrid)kLines.push(['ATS open \u00b7 the inverter feeds LOAD/INV','t-x']);
+      else kLines.push([synNm==='SYN 100\u2011XH\u201130'?'ATS \u00b7 grid \u2264 90 A \u00b7 backup \u2264 58 A':'ATS \u00b7 verify model and ratings','t-x']);
+      if(U0.mode==='whole'&&!offGrid&&fuseA>90&&synNm==='SYN 100\u2011XH\u201130')kLines.push(['main fuse '+fuseA+' A > 90 A grid rating','t-w']);
+      else if(rfLink)kLines.push(['COM to T1 by cable: RS485 + BOX.EN','t-x2']);
+      else kLines.push([gBus?'grid\u2011side circuits stay above K1':'every circuit is on the backup busbar','t-x2']);
+      lbl(XT+44,kT+11,kLines);
+    } else {
+      lbl(XT+44,kT+12,[['K1 \u00b7 SYN 100\u2011XH\u201130','t-d'],['Whole\u2011home backup','t-n2'],[HG?'ATS open \u00b7 island \u00b7 LOAD feeds the busbar':'ATS \u00b7 up to 58 A \u00b7 LOAD feeds the busbar','t-x']]);
+    }
     if(HR){for(var k2=0;k2<4;k2++){var xk2=trX(k2);cond([[xk2,kB],[xk2,busY(k2)]],k2,busLive,true);dot(xk2,busY(k2),k2,busLive);}}
     else{cond([[XT,kB],[XT,yBus]],-1,busLive);dot(XT,yBus,-1,busLive);}
-    hit(kL-4,kT,XT+250-kL,hK1,'stepopen','stp-backup',null,'SYN 100\u2011XH\u201130 \u2014 whole\u2011home backup');
+    hit(kL-4,kT,XT+250-kL,hK1,'stepopen','stp-backup',null,sSyn?(synNm+' at the incoming point \u2014 step '+sn('stp-backup')):'SYN 100\u2011XH\u201130 \u2014 whole\u2011home backup');
   }
   // ================= BUSBAR + MAIN EARTHING BAR =================
-  if(!OG){
-    if(HR){
-      for(var kb=0;kb<4;kb++)WL.push('<line class="sbus" x1="'+f1(trX(kb))+'" y1="'+f1(busY(kb))+'" x2="'+f1(busEnd)+'" y2="'+f1(busY(kb))+'" stroke="'+(busLive?PHASE_WIRES[kb].c:C.dead)+'"/>');
-    } else {
-      WL.push('<line class="sbus" x1="'+XT+'" y1="'+yBus+'" x2="'+f1(busEnd)+'" y2="'+yBus+'" stroke="'+(busLive?C.bus:C.dead)+'" stroke-width="4"/>');
+  // the CT2 cable of a third-party inverter climbs just right of its feeder, to the smart meter
+  var ct2X=(meter&&tpN)?tpCols[0].a+(HR?2*s+8:12):null;
+  // a busbar name, as far right as it fits between the drops, PE risers and cables that cross there
+  function busLabel(name,xEnd,y,obs){
+    var w=name.length*7.2, r=null, cs=[xEnd].concat(obs.map(function(v){return v[0]-4;})).sort(function(p,q){return q-p;});
+    for(var i=0;i<cs.length&&r===null;i++){
+      var R0=cs[i];
+      if(R0>xEnd||R0-w<XT+64)continue;
+      if(!obs.some(function(v){return v[1]>R0-w&&v[0]<R0;}))r=R0;
     }
-    // busbar name under the MET, as far right as it fits between the drops, PE risers and the CT2 label
-    var busName=trunkSyn?'BACKUP BUSBAR':'MAIN BUSBAR', bnW=busName.length*6.6;
-    var vObs=[];
-    taps.forEach(function(x){vObs.push([x-BH-3,x+BH+3]);});
-    peXs.forEach(function(x){vObs.push([x-3,x+3]);});
-    if(meter&&!HG&&tpN){var ctx0=tpCols[0].a;vObs.push([ctx0-(HR?2*s:0)-30,ctx0+8]);}
-    var bnR=null, cands=[busEnd].concat(vObs.map(function(v){return v[0]-4;})).sort(function(p,q){return q-p;});
-    for(var bi=0;bi<cands.length&&bnR===null;bi++){
-      var R0=cands[bi];
-      if(R0>busEnd||R0-bnW<XT+64)continue;
-      if(!vObs.some(function(v){return v[1]>R0-bnW&&v[0]<R0;}))bnR=R0;
-    }
-    if(bnR!==null)TL.push(txt(bnR,metY+(HR?15:14),busName,'t-cab','end'));
+    if(r!==null)TL.push(txt(r,y,name,'t-cab','end'));
   }
-  var drawMET=!OG||anyBackup;
-  if(drawMET){
-    // a slim bar under the busbar: every PE lands on its own terminal; cables crossing it leave a gap
-    WL.push('<rect class="smet" x="'+f1(metL)+'" y="'+f1(metY-1.7)+'" width="'+f1(metR-metL)+'" height="3.4" rx="1.2"/>');
-    if(!OG&&!HR){cond([[XT,yBus],[XT,metY]],4,true);dot(XT,metY,4,true);}
-    TL.push(txt(rodX+7,metY+14,'MET','t-d')+txt(rodX+7,metY+24,'main earthing bar','t-x2'));
+  var vObs=[];
+  taps.forEach(function(x){vObs.push([x-BH-3,x+BH+3]);});
+  peXs.forEach(function(x){vObs.push([x-3,x+3]);});
+  cols.forEach(function(c){if(c.o.ok&&(meter||ems||sSyn))vObs.push([c.com-3,c.com+3]);});
+  if(ct2X!==null){var ctx0=tpCols[0].a;vObs.push([ctx0-(HR?2*s:0)-30,ct2X+10]);}
+  // the busbar (behind a SYN in the trunk: the backup busbar) with the main earthing bar under it
+  ghost(OG);
+  if(HR){
+    for(var kb=0;kb<4;kb++)WL.push('<line class="sbus" x1="'+f1(trX(kb))+'" y1="'+f1(busY(kb))+'" x2="'+f1(bEnd)+'" y2="'+f1(busY(kb))+'" stroke="'+(busLive?PHASE_WIRES[kb].c:C.dead)+'"/>');
+  } else {
+    WL.push('<line class="sbus" x1="'+XT+'" y1="'+yBus+'" x2="'+f1(bEnd)+'" y2="'+yBus+'" stroke="'+(busLive?C.bus:C.dead)+'" stroke-width="4"/>');
   }
+  busLabel(kSyn?'BACKUP BUSBAR':'MAIN BUSBAR',bEnd,metY+(HR?15:14),vObs);
+  if(!HR){cond([[XT,yBus],[XT,metY]],4,true);dot(XT,metY,4,true);}
+  ghost(false);
+  // SYN at the incoming point (partial backup / third-party PV): the grid-side main busbar between the meter and K1
+  if(gBus){
+    ghost(HG);
+    if(HR){for(var kg=0;kg<4;kg++)WL.push('<line class="sbus" x1="'+f1(trX(kg))+'" y1="'+f1(gY(kg))+'" x2="'+f1(busEnd)+'" y2="'+f1(gY(kg))+'" stroke="'+(gridLive?PHASE_WIRES[kg].c:C.dead)+'"/>');}
+    else WL.push('<line class="sbus" x1="'+XT+'" y1="'+yTrunk+'" x2="'+f1(busEnd)+'" y2="'+yTrunk+'" stroke="'+(gridLive?C.bus:C.dead)+'" stroke-width="4"/>');
+    var gObs=[];
+    tpCols.forEach(function(c){gObs.push([c.a-BH-3,c.a+BH+3]);});
+    if(mainCol)gObs.push([mainCol.a-BH-3,mainCol.a+BH+3]);
+    if(ct2X!==null)gObs.push([tpCols[0].a-(HR?2*s:0)-30,ct2X+10]);
+    if(a1Log&&A1x!==null)gObs.push([A1x+13,A1x+19]);
+    if(p2Meter)gObs.push([p2x-3,p2x+3]);
+    busLabel('MAIN BUSBAR',busEnd,gY(3)+14,gObs);
+    ghost(false);
+  }
+  // a slim bar under the busbar: every PE lands on its own terminal (it is the earth, so off-grid it stays)
+  ghost(OG&&!anyBackup);
+  WL.push('<rect class="smet" x="'+f1(metL)+'" y="'+f1(metY-1.7)+'" width="'+f1(metR-metL)+'" height="3.4" rx="1.2"/>');
+  TL.push(txt(rodX+7,metY+14,'MET','t-d')+txt(rodX+7,metY+24,'main earthing bar','t-x2'));
+  ghost(false);
   var ge=yCabBot+20;
   if(anyBackup){
     // earth electrode - only with backup; without it the utility PE is the earth
@@ -2066,12 +2174,14 @@ function sldSceneHTML(){
     dot(rodX,metY,4,true);
     SL.push('<path d="M'+rodX+','+ge+' L'+rodX+','+(ge+10)+' M'+(rodX-11)+','+(ge+10)+' L'+(rodX+11)+','+(ge+10)+' M'+(rodX-7)+','+(ge+14.5)+' L'+(rodX+7)+','+(ge+14.5)+' M'+(rodX-3)+','+(ge+19)+' L'+(rodX+3)+','+(ge+19)+'" fill="none" stroke="'+C.ink+'" stroke-width="1.7"/>');
     lbl(14,ge+34,[['E1 \u00b7 GROUND ROD','t-d'],['R \u2264 100 \u03a9','t-n2'],['Good value?','t-x'],['\u2192 stable value','t-x']]);
-  } else if(!OG){
+  } else {
+    ghost(OG);
     lbl(14,ge,[['EARTH VIA GRID PE','t-d'],['no ground rod','t-x2'],['without backup','t-x2']]);
+    ghost(false);
   }
 
   // ================= OUTGOING FEEDERS =================
-  var qn=2, kn=trunkSyn?2:1;
+  var qn=2, kn=kSyn?2:1;
   var hot=[];
   var comDrops=[];
   var dcBottom=yDC+hDC;
@@ -2080,7 +2190,7 @@ function sldSceneHTML(){
   cols.forEach(function(c){
     var o=c.o,uIdx=isMulti?o.i:null;
     if(!o.ok){
-      if(!OG)tap(c.ac,yInv,false);
+      ghost(OG);tap(c.ac,yInv,false);ghost(false);
       SL.push(rect(c.iL,yInv,IWb,66,{stroke:C.faint,sw:1.2,rx:6,dash:'5 4'}));
       TL.push(txt(c.iL+IWb/2,yInv+30,'Choose an inverter','t-n2','middle')+txt(c.iL+IWb/2,yInv+44,'step 2 \u00b7 panels & inverter','t-x','middle'));
       hit(c.iL,yInv,IWb,66,'stepopen','stp-inv',uIdx,'Choose an inverter \u2014 step 2');
@@ -2088,7 +2198,7 @@ function sldSceneHTML(){
     }
     var tn=o.i+1;
     var uL=uLive(o);
-    var tapLive=busLive&&!invHidden;
+    var tapLive=busLive, isoU=iso(o);
     // off-grid the supply cable is gone, but the inverter (or its SYN box) keeps its PE to the MET;
     // the backup load gets its PE from the inverter, with the backup cable
     var cb=HR?(o.cab||{}):{};                         // cable sizes from the manual - written on the cables in high resolution
@@ -2096,23 +2206,50 @@ function sldSceneHTML(){
       var peTop=o.syn?ySynT:yInv;
       cond([[c.ogPE,metY],[c.ogPE,peTop]],4,true,true);
       dot(c.ogPE,metY,4,true);
-      if(cb.pe&&!o.syn)TL.push(o.bat==='MODA'?txt(c.ogPE-4,peTop-10,'PE \u00b7 '+mm(cb.pe),'t-mm','end',' fill="'+C.peTxt+'"'):txt(c.ogPE+4,peTop-5,'PE \u00b7 '+mm(cb.pe),'t-mm',null,' fill="'+C.peTxt+'"'));
+      // off-grid the (faint) AC cable carries no size label - the PE riser gets it, clear of the faint conductors
+      if(cb.pe&&!o.syn)TL.push(txt(c.ogPE+5,yCabBot+15,'PE \u00b7 '+mm(cb.pe),'t-mm',null,' fill="'+C.peTxt+'"'));
       else TL.push(txt(c.ogPE+4,peTop-(o.bat==='MODA'?10:5),'PE','t-port',null,' fill="'+C.peTxt+'"'));
     }
     // ---- inverter AC breaker (sized by the same rule as the BOM, written as in the manual)
     var qI=qn++;
-    if(!OG){
+    ghost(OG);
+    {
+      // the inverter's AC breaker, set off on a light tile so it is easy to find, with the size the manual recommends
+      var qlx=c.ac+(HR?2*s+7:10), qT1='Q'+qI+' \u00b7 AC BREAKER', qT2=o.brk?(o.brk.txt+' \u00b7 3P'):'3P', qT3=o.brk?(o.brk.manual?'recommended size':'calculated \u00b7 verify'):'';
+      var tileL=c.ac-(HR?2*s+13:13), tileR=qlx+Math.max(tw(qT1,9.5)+qT1.length*.3,tw(qT2,10.5),tw(qT3,9))+6;
+      BL.push('<rect x="'+f1(tileL)+'" y="'+f1(yQ-19)+'" width="'+f1(tileR-tileL)+'" height="45" rx="6" fill="'+C.qTile+'"/>');
       tap(c.ac,yQ-9.5,tapLive);
-      poles(poleXs(c.ac,3),yQ,'breaker',invHidden&&!o.syn,tapLive);
-      devLabel(c.ac+(HR?2*s+7:10),yQ,'Q'+qI,(o.brk?o.brk.txt+' \u00b7 3P':'3P'));
-      if(cb.ac&&!o.syn)TL.push(txt(c.ac+BH+5,yCabBot+15,mm(cb.ac),'t-mm'));
+      poles(poleXs(c.ac,3),yQ,'breaker',isoU&&(!o.syn||sSyn),tapLive,C.qTile);
+      thru(c.ac,tapLive,[3,4]);
+      lbl(qlx,yQ-7,[[qT1,'t-d'],[qT2,'t-n2'],[qT3,'t-x2']]);
+      hit(tileL,yQ-19,tileR-tileL,45,'stepopen','stp-inv',uIdx,'Recommended AC breaker '+(o.brk?o.brk.txt+' \u2014 '+o.brk.src:'')+' \u00b7 step '+sn('stp-inv'));
     }
+    ghost(false);
     var yq=yInv+32;
-    if(o.syn){
+    if(sSyn){
+      // ---- SYN at the incoming point: Q2 feeds the inverter, Q3 the backup load - both off the backup busbar (K1 LOAD/INV)
+      ghost(isoU);
+      circuit([[c.ac,yQ+9.5],[c.ac,yInv]],tapLive&&!isoU,{halo:true,tick:[c.ac,yCabBot+15]});
+      if(cb.ac)TL.push(txt(c.ac+BH+5,yCabBot+15,mm(cb.ac),'t-mm'));
+      ghost(false);
+      if(o.mode){
+        var qL3=qn++;
+        tap(c.bk,yQ-9.5,busLive);
+        poles(poleXs(c.bk,3),yQ,'breaker',false,busLive);
+        thru(c.bk,busLive,[3,4]);
+        devLabel(c.bk+(HR?2*s+7:10),yQ,'Q'+qL3,'3P \u00b7 backup load');
+        circuit([[c.bk,yQ+9.5],[c.bk,yInv]],busLive,{halo:true,tick:[c.bk,yCabBot+15]});
+        loadBox(c,'feed',busLive);
+      } else {
+        SL.push(rect(c.bbL,yInv,BBW,58,{stroke:C.faint,sw:1.1,rx:5,dash:'5 4'}));
+        TL.push(txt(c.bk,yInv+24,'LOAD port free','t-n2','middle')+txt(c.bk,yInv+37,'choose backup mode','t-x2','middle')+txt(c.bk,yInv+48,'in step '+sn('stp-backup'),'t-x2','middle'));
+        hit(c.bbL,yInv,BBW,58,'stepopen','stp-backup',uIdx,'Choose a backup mode \u2014 step '+sn('stp-backup'));
+      }
+    } else if(o.syn){
       // ---- SYN box: GRID from the cabinet, INV to the inverter, LOAD to the backup load
       var kN=kn++;
       var sL=c.ac-(HR?20:14), sR=c.bk+(isMulti?42:48), sT=ySynT, sB=ySynB, ym=sT+35, kx=(c.ac+c.xi)/2;
-      if(!OG)circuit([[c.ac,yQ+9.5],[c.ac,sT]],tapLive,{halo:true,tick:[c.ac,yCabBot+15]});
+      ghost(OG);circuit([[c.ac,yQ+9.5],[c.ac,sT]],tapLive,{halo:true,tick:[c.ac,yCabBot+15]});ghost(false);
       SL.push(rect(sL,sT,sR-sL,hSyn,{stroke:C.grn,sw:1.7,rx:5}));
       var atsOpen=offGrid;
       SL.push('<path d="M'+f1(c.ac)+','+sT+' L'+f1(c.ac)+','+ym+' L'+f1(kx-8)+','+ym+' M'+f1(kx+8)+','+ym+' L'+f1(c.bk)+','+ym+' L'+f1(c.bk)+','+sB+' M'+f1(c.xi)+','+ym+' L'+f1(c.xi)+','+sB+'" fill="none" stroke="'+C.mut+'" stroke-width="1.2"/>'+
@@ -2124,14 +2261,16 @@ function sldSceneHTML(){
         txt(kx,sB-6,'BYPASS','t-port','middle',' fill="'+C.faint+'"')+txt(c.xi+BH+4,sB-6,'INV','t-port')+txt(c.bk+BH+4,sB-6,'LOAD','t-port'));
       hit(sL,sT,sR-sL,hSyn,'stepopen','stp-backup',uIdx,'SYN 100\u2011XH\u201130 backup box \u2014 step '+sn('stp-backup'));
       // INV terminal -> inverter AC port; COM link SYN <-> inverter (RS485 + BOX.EN)
+      ghost(isoU);
       circuit([[c.xi,sB],[c.xi,yInv]],uL,{tick:[c.xi,sB+16]});
       if(cb.ac)TL.push(txt(c.xi+BH+5,sB+22,mm(cb.ac),'t-mm'));
+      ghost(false);
       var sComX=sL+9;
       WL.push('<path class="scom" d="M'+f1(sComX)+','+sB+' L'+f1(sComX)+','+yInv+'"/>');
       TL.push(txt(sComX+4,sB+12,'BOX.EN','t-port',null,' fill="'+C.com+'"'));
       // LOAD terminal -> backup load: L1 L2 L3 N + PE from the SYN box's earth bar
       if(o.mode){
-        var lLive=invHidden||busLive||(uL&&(o.kwh>0||o.kwp>0));
+        var lLive=isoU||busLive||(uL&&(o.kwh>0||o.kwp>0));
         circuit([[c.bk,sB],[c.bk,yInv]],lLive,{tick:[c.bk,sB+10]});
         loadBox(c,'top',lLive);
       } else {
@@ -2140,27 +2279,36 @@ function sldSceneHTML(){
         hit(c.bbL,yInv,BBW,58,'stepopen','stp-backup',uIdx,'Choose a backup mode \u2014 step '+sn('stp-backup'));
       }
     } else {
-      if(!OG)circuit([[c.ac,yQ+9.5],[c.ac,yInv]],tapLive,{halo:true,tick:[c.ac,yCabBot+15]});
+      ghost(OG||isoU);
+      circuit([[c.ac,yQ+9.5],[c.ac,yInv]],tapLive&&!isoU,{halo:true,tick:[c.ac,yCabBot+15]});
+      if(cb.ac&&!OG)TL.push(txt(c.ac+BH+5,yCabBot+15,mm(cb.ac),'t-mm'));
+      ghost(false);
       if(o.bypass){
         // ---- bypass changeover just outside the inverter: grid (top) / inverter BACKUP (left) -> load
         var qF=qn++, qC=qn++;
         var xq=c.xq, qT=yq-20, qB=yq+20, qL=xq-20, qR=xq+20;
         // the bypass feed carries L1 L2 L3 N only: the backup load's PE always comes from the inverter
-        if(!OG){
+        ghost(OG);
+        {
           tap(xq,yQ-9.5,tapLive,true);
-          poles(poleXs(xq,4),yQ,'breaker',false,tapLive);
+          poles(poleXs(xq,3),yQ,'breaker',false,tapLive);
+          thru(xq,tapLive,[3]);
           if(c.rowD)devLabel(xq-12,yQ,'Q'+qF,'bypass feed','end');   // compact: the next feeder is close on the right
           else devLabel(xq+(HR?2*s+7:10),yQ,'Q'+qF,'bypass feed');
           circuit([[xq,yQ+9.5],[xq,qT]],tapLive,{halo:true,noPE:true,tick:[xq,yCabBot+15]});
         }
-        var onGrid=!offGrid&&(bpOn||invHidden);
+        ghost(false);
+        var onGrid=!offGrid&&isoU;
         var bkLive=uL&&!onGrid;
-        var outLive=invHidden||(onGrid?busLive:(uL&&(busLive||o.kwh>0||o.kwp>0)));
+        var outLive=onGrid?busLive:(uL&&(busLive||o.kwh>0||o.kwp>0));
         // inverter BACKUP port -> bypass switch -> backup load: L1 L2 L3 N + PE (the load's earth comes from the inverter)
+        ghost(isoU);
         circuit([[c.iR,yq],[qL,yq]],bkLive,{tick:[c.iR+(c.rowD?24:31),yq,'h']});
+        if((cb.bk||cb.ac)&&!c.rowD)TL.push(txt(c.iR+(o.bat==='MODA'?9:3),yq-BH-13,mm(cb.bk||cb.ac),'t-mm'));
+        TL.push(txt(c.iR+(o.bat==='MODA'?9:3),yq-BH-4,c.rowD?'BK':'BACKUP','t-port'));
+        ghost(false);
         if(c.rowD)circuit([[xq,qB],[xq,yDC]],outLive,{tick:[xq,qB+16]});
         else circuit([[qR,yq],[c.bbL,yq]],outLive);
-        if((cb.bk||cb.ac)&&!c.rowD)TL.push(txt(c.iR+(o.bat==='MODA'?9:3),yq-BH-13,mm(cb.bk||cb.ac),'t-mm'));
         SL.push(rect(qL,qT,40,40,{stroke:onGrid?C.amber:C.ink,sw:1.5,rx:4}));
         var gcy=qT+9, icx=qL+9, pcx=c.rowD?xq:qR-9, pcy=c.rowD?qB-9:yq;
         SL.push('<path d="M'+xq+','+qT+' L'+xq+','+(gcy-1.5)+' M'+qL+','+yq+' L'+(icx-1.5)+','+yq+(c.rowD?(' M'+xq+','+(pcy+1.5)+' L'+xq+','+qB):(' M'+(pcx+1.5)+','+yq+' L'+qR+','+yq))+'" stroke="'+C.ink+'" stroke-width="1.2"/>'+
@@ -2169,17 +2317,14 @@ function sldSceneHTML(){
           txt(xq-3,qT+16,'I','t-port','end')+txt(icx,yq+11,'II','t-port','middle'));
         if(c.rowD)TL.push(txt(qL-5,qB+8,'Q'+qC,'t-d','end')+txt(qL-5,qB+18.5,'bypass','t-x2','end'));
         else TL.push(txt(xq,qB+12,'Q'+qC+' \u00b7 BYPASS','t-d','middle')+txt(xq,qB+22.5,onGrid?'switched to grid':'I grid \u00b7 II inverter','t-x2','middle'));
-        TL.push(txt(c.iR+(o.bat==='MODA'?9:3),yq-BH-4,c.rowD?'BK':'BACKUP','t-port'));
         if(!hot.some(function(h){return h.k==='bypass';}))hot.push({k:'bypass',x:c.rowD?qL-3:qR+9,y:qT-6});
         loadBox(c,c.rowD?'down':'left',outLive);
       }
     }
     // ---- the inverter
     var iL=c.iL,iR=c.iR,iT=yInv,iB=yInv+hInv;
-    if(invHidden){
-      SL.push(rect(iL,iT,IWb,hInv,{stroke:C.faint,sw:1.2,rx:6,dash:'5 4'}));
-      TL.push(txt((iL+iR)/2,iT+42,'Inverter isolated','t-n2','middle',' fill="'+C.faint+'"')+txt((iL+iR)/2,iT+56,'bypass breaker closed','t-x','middle'));
-    } else {
+    ghost(isoU);                                       // isolated by the bypass: the inverter and its DC side are drawn faint
+    {
       SL.push(rect(iL,iT,IWb,hInv,{stroke:uL?C.grn:C.faint,sw:1.9,rx:6}));
       var sz=isMulti?26:36, sx=iL+(isMulti?8:10), sy=iT+14;
       SL.push('<rect x="'+sx+'" y="'+sy+'" width="'+sz+'" height="'+sz+'" fill="#fff" stroke="'+C.ink+'" stroke-width="1.2"/>'+
@@ -2200,7 +2345,7 @@ function sldSceneHTML(){
     hot.push({k:'inv',o:o,x:iL+2,y:iT+2,u:uIdx});
     // COM entry on the left side
     var ci2=cols.indexOf(c);
-    if((meter||ems)&&!HG)comDrops.push({x:c.com,y:iT+22,iL:iL,lab:ci2===0||c.com-27>cols[ci2-1].rowCR});
+    if(meter||ems||sSyn)comDrops.push({x:c.com,y:iT+22,iL:iL,lab:ci2===0||c.com-27>cols[ci2-1].rowCR});
     // ---- DC side: PV array and battery
     var a=(iL+iR)/2, pvL=isMulti?iL:iL-52, pvR=isMulti?a-5:a-8, btL=isMulti?a+5:a+8, btR=isMulti?iR:btL+168;
     var pvLive=uL&&o.kwp>0;
@@ -2253,13 +2398,22 @@ function sldSceneHTML(){
       var g=c.tg, nIn=g.sp.length, floorY=yDC+g.stackH+g.BH, txx=c.btX, tops=[], st='', minTop=1e9, anySer=false;
       g.sp.forEach(function(inp,k){
         inp.forEach(function(tw,ti){
-          var x=txx+ti*(g.TW+g.AB), nU=tw.n+(tw.top?1:0), top=floorY-g.BH-(nU*g.uh-g.SG);
+          var x=txx+ti*(g.TW+g.AB), nU=tw.n+topU(tw), top=floorY-g.BH-(nU*g.uh-g.SG);
           if(ti===0)tops.push({x:x,y:top});
           minTop=Math.min(minTop,top);
           st+='<rect x="'+f1(x-2)+'" y="'+f1(floorY-g.BH)+'" width="'+f1(g.TW+4)+'" height="'+g.BH+'" rx="1.2" fill="'+(uL?C.meterEdge:C.faint)+'"/>';
           for(var u=0;u<nU;u++){
             var yy=top+u*g.uh;
-            if(u===0&&tw.top){
+            if(u===0&&tw.top==='bms2'){
+              // APX 2.0 BMS: one unit - the controller band on top of its own 5 kWh battery module
+              var hh=2*g.SH+g.SG, ym2=yy+g.SH, cin2=Math.min(4,(hh-g.SH)/2-1);
+              st+=rect(x,yy,g.TW,hh,{fill:uL?'#eaf4e1':'#f4f6f8',stroke:uL?'#33414c':C.faint,sw:1.1,rx:2})+
+                rect(x,yy,g.TW,g.SH,{fill:uL?'#33414c':'#c3cad1',stroke:uL?'#33414c':C.faint,sw:1,rx:2})+
+                '<path d="M'+f1(x+5)+','+f1(ym2+2)+' L'+f1(x+5)+','+f1(yy+hh-2)+' M'+f1(x+8)+','+f1(ym2+cin2)+' L'+f1(x+8)+','+f1(yy+hh-cin2)+'" stroke="'+C.ink+'" stroke-width="1"/>';
+              if(g.SH>=10)st+=txt(x+g.TW/2,yy+g.SH-2.7,'BMS','t-mod','middle',' fill="#fff"');
+              if(g.SH>=10&&g.TW>=40)st+=txt(x+g.TW-4,yy+hh-3.6,MODULE_KWH+' kWh','t-mod','end');
+              u++;
+            } else if(u===0&&tw.top){
               st+=rect(x,yy,g.TW,g.SH,{fill:uL?'#33414c':'#c3cad1',stroke:uL?'#33414c':C.faint,sw:1,rx:2});
               if(g.SH>=10)st+=txt(x+g.TW/2,yy+g.SH-2.7,tw.top==='bms'?'BMS':'BDC','t-mod','middle',' fill="#fff"');
             } else {
@@ -2291,9 +2445,10 @@ function sldSceneHTML(){
         if(nIn>1&&!isMulti)TL.push(txt(tp.x+25,tp.y-4,'BAT '+(k+1),'t-port'));
       });
       if(nIn===1)TL.push(txt(tops[0].x+4,iB+13,'CAN','t-port','end',' fill="'+C.com+'"'));
+      if(nIn===1&&cb.bat)TL.push(txt(tops[0].x+26,iB+27,mm(cb.bat),'t-mm'));   // battery cable, as in the manuals
       if(isMulti)lbl(c.btX+g.W/2,floorY+14,[[batShort(o,1),'t-d'],[o.kwh+' kWh','t-n2']],'middle');
       else lbl(c.btX+g.W+12,yDC+14,[['G2 \u00b7 '+batShort(o),'t-d'],[o.kwh+' kWh \u00b7 '+o.bkw+' kW','t-n2'],[towerSum(o,g),'t-x2'],
-        [o.bat==='ARK'?'BDC 95045 on top':(o.apx==='2.0'?'BMS (5 kWh) on tower A':'BMS on top of tower A'),'t-x2']]);
+        [o.bat==='ARK'?'BDC 95045 on top':(o.apx==='2.0'?'BMS incl. 5 kWh module':'BMS \u00b7 no battery module'),'t-x2']]);
       hit(c.btX-3,minTop-3,g.W+6,floorY-minTop+6,'stepopen','stp-battery',uIdx,'Battery towers \u2014 step '+sn('stp-battery'));
       dcBottom=Math.max(dcBottom,floorY+(isMulti?32:(anySer?14:6)));
     } else if(o.kwh>0){
@@ -2316,25 +2471,28 @@ function sldSceneHTML(){
       TL.push(txt((btL+btR)/2,yDC+27,'+ Add battery','t-n2','middle')+txt((btL+btR)/2,yDC+40,'step '+sn('stp-battery'),'t-x','middle'));
       hit(btL,yDC,btR-btL,hDC,'stepopen','stp-battery',uIdx,'Battery \u2014 step '+sn('stp-battery'));
     }
-    // ---- stick dongle on the COM port, hanging under the inverter
-    if(c===stickCol&&!invHidden){
+    // ---- stick dongle on the COM port, hanging under the inverter (monitoring is not drawn off-grid)
+    if(c===stickCol){
+      ghost(isoU||HG);
       var dW=40,dL=iR-dW-5,dT=iB;
       SL.push(rect(dL,dT,dW,15,{fill:'#eef5ff',stroke:C.net,sw:1.2,rx:3}));
       TL.push(txt(dL+dW/2,dT+10.5,{wifi:'WiFi\u2011X',lan:'LAN\u2011X','4g':'4G\u2011X'}[stick],'t-port','middle',' fill="'+C.net+'"'));
       hit(dL,dT,dW,15,'stepopen','stp-online',null,DONGLES[stick].name+' \u2014 step '+sn('stp-online'));
       c.stickAt=[dL+dW,dT+7.5];
+      ghost(false);
     }
+    ghost(false);
   });
-  // backup load: a distribution board with its 4P incomer on the box edge; its PE arrives with the backup cable
+  // backup load: a distribution board with its 3P incomer on the box edge (N and PE pass); its PE arrives with the backup cable
   function loadBox(c,entry,live){
-    var o=c.o,bL=c.bbL,bW=BBW,bT=entry==='top'?yInv:(entry==='down'?yDC:yInv+6),bH=entry==='left'?70:(entry==='down'?hDC+4:68);
+    var o=c.o,bL=c.bbL,bW=BBW,bT=(entry==='top'||entry==='feed')?yInv:(entry==='down'?yDC:yInv+6),bH=entry==='left'?70:(entry==='down'?hDC+4:68);
     var name=o.mode==='whole'?'WHOLE\u2011HOME LOAD':'PARTIAL LOAD';
     var sub=o.mode==='whole'?'every house circuit':'essential circuits';
-    if(entry!=='left')poles(poleXs(c.bk,4),bT-14,'breaker',false,live,C.paper);
-    else polesH(bL-15,yInv+32,4,'breaker',false,live,C.paper);
+    if(entry==='top'||entry==='down')poles(poleXs(c.bk,3),bT-14,'breaker',false,live,C.paper);
+    else if(entry==='left')polesH(bL-15,yInv+32,3,'breaker',false,live,C.paper);
     SL.push(rect(bL,bT,bW,bH,{stroke:C.ink,sw:1.5,rx:5}));
     // the load breaker as given in the manual (MODA / MOD-HU: the same table covers GRID and LOAD)
-    var lb=(entry==='left'&&o.brk&&o.brk.load)?[o.brk.load.txt+' \u00b7 4P','t-x2']:null;
+    var lb=(entry==='left'&&o.brk&&o.brk.load)?[o.brk.load.txt+' \u00b7 3P','t-x2']:null;
     lbl(bL+10,bT+16,[[name,'t-d'],[o.loadKw?(o.loadKw+' kW'):'set kW in step '+sn('stp-backup'),'t-n2'],entry==='down'?null:[sub,'t-x2'],lb]);
     loadGlyph(bL+bW-19,bT+bH-17);
     hit(bL,bT,bW,bH,'stepopen','stp-backup',isMulti?o.i:null,'Backup load \u2014 step '+sn('stp-backup'));
@@ -2359,16 +2517,24 @@ function sldSceneHTML(){
     if(o.bat==='ARK')return (b.mods||0)+' modules + BDC';
     return '';
   }
-  // ---- third-party inverters (existing, AC-coupled) on the busbar - not drawn off-grid
+  // ---- third-party inverters (existing, AC-coupled) on the busbar - ghosted off-grid
   tpCols.forEach(function(c,ti){
-    var a=c.a,live=busLive&&!invHidden;
+    var a=c.a,live=gBus?gridLive:busLive;
     var q=qn++;
-    tap(a,yQ-9.5,live);
+    ghost(HG);
+    (gBus?tapG:tap)(a,yQ-9.5,live);
     poles(poleXs(a,3),yQ,'breaker',false,live);
+    thru(a,live,[3,4]);
     devLabel(a+(HR?2*s+7:10),yQ,'Q'+q,'3P');
     if(meter&&ti===0){
-      var c3=ctSet(HR?[a-2*s,a-s,a]:[a],busBot+(HR?22:24),live,'down');
-      TL.push(txt(Math.min.apply(null,c3)-(HR?7:10),busBot+(HR?25.5:27.5),'CT2','t-p','end',' fill="'+C.acc+'"'));
+      var cy2=(gBus?gY(3):busBot)+(HR?22:24);
+      var c3=ctSet(HR?[a-2*s,a-s,a]:[a],cy2,live,'down');
+      TL.push(txt(Math.min.apply(null,c3)-(HR?7:10),cy2+3.5,'CT2','t-p','end',' fill="'+C.acc+'"'));
+      // CT2 secondary cable: right past the feeder, up over the busbar, to the smart meter it belongs to
+      var xr2=Math.max.apply(null,c3)+(HR?3.4:6.2), dC=null;
+      if(p1Meter)dC='M'+f1(xr2)+','+f1(cy2)+' L'+f1(ct2X)+','+f1(cy2)+' L'+f1(ct2X)+','+f1(yP1)+' L'+f1(p1R)+','+f1(yP1);
+      else if(p2Meter){var yj=p2T+MH+14;dC='M'+f1(xr2)+','+f1(cy2)+' L'+f1(ct2X)+','+f1(cy2)+' L'+f1(ct2X)+','+f1(yj)+' L'+f1(p2x-12)+','+f1(yj)+' L'+f1(p2x-12)+','+f1(p2T+MH);}
+      if(dC)WL.push('<path class="sh2" d="'+dC+'"/><path class="sct" d="'+dC+'"/>');
     }
     circuit([[a,yQ+9.5],[a,yInv]],live,{halo:true,tick:[a,yCabBot+15]});
     SL.push(rect(c.l,yInv,c.r-c.l,78,{stroke:C.ink,sw:1.4,rx:6,dash:'6 3'}));
@@ -2380,43 +2546,99 @@ function sldSceneHTML(){
     TL.push(txt(sx+sz+7,yInv+21,'T'+(nInv+1+ti),'t-d')+txt(sx+sz+7,yInv+32,'PV inverter','t-x2'));
     lbl(c.l+9,yInv+52,[[E(lab),'t-n2'],['AC\u2011coupled \u00b7 existing','t-x2']]);
     hit(c.l,yInv,c.r-c.l,78,'stepopen','stp-seg',null,'Third\u2011party inverter \u2014 step 1, advanced settings');
+    ghost(false);
   });
-  // ---- main load (house circuits on the grid side) or the whole-home load behind K1
+  // ---- main load (house circuits on the grid side) or the whole-home load behind K1;
+  //      off-grid the grid-side main load is not supplied and ghosted (with K1 the whole home stays live)
   if(mainCol){
-    var am=mainCol.a, mq=qn++, ml=busLive&&(trunkSyn||!invHidden);
-    tap(am,yQ-9.5,ml);
-    poles(poleXs(am,4),yQ,'breaker',false,ml);
-    devLabel(am+(HR?2*s+7:10),yQ,'Q'+mq,'4P \u00b7 house');
+    var mq=qn++;
+    ghost(HG&&!trunkSyn);
+    var am=mainCol.a, ml=gBus?gridLive:busLive;
+    (gBus?tapG:tap)(am,yQ-9.5,ml);
+    poles(poleXs(am,3),yQ,'breaker',false,ml);
+    thru(am,ml,[3,4]);
+    devLabel(am+(HR?2*s+7:10),yQ,'Q'+mq,'3P \u00b7 house');
     circuit([[am,yQ+9.5],[am,yInv]],ml,{halo:true,tick:[am,yCabBot+15]});
     SL.push(rect(mainCol.l,yInv,mainCol.r-mainCol.l,70,{stroke:C.ink,sw:1.5,rx:6}));
     if(mainCol.k==='main')lbl(mainCol.l+10,yInv+17,[['MAIN LOAD','t-d'],['House circuits','t-n2'],[(U0.mode==='partial'&&!isMulti)?'grid side \u00b7 not backed up':'all other circuits','t-x2']]);
     else lbl(mainCol.l+10,yInv+17,[['WHOLE\u2011HOME LOAD','t-d'],['House circuits','t-n2'],['on backup via K1','t-x2']]);
     loadGlyph(mainCol.r-19,yInv+53);
     hit(mainCol.l,yInv,mainCol.r-mainCol.l,70,'stepopen','stp-backup',null,mainCol.k==='wmain'?'Whole\u2011home load':'Main load');
+    ghost(false);
   }
 
   // ================= COMMUNICATION =================
   // RS485 (or RF for GroHome wireless) from the device at the incoming point (smart meter or energy manager),
   // the ShineMaster datalogger and a third-party meter, to every inverter COM port
+  // the incoming leg runs straight down out of the bottom of the smart meter / energy manager - on through K1 when the
+  // SYN sits under it - and then right along the lane to the inverters: down, then right (no sideways jog)
+  var comVX=XT+(HR?19:15);
+  var legEnd=kSyn?kT:yLane;                              // under K1 the leg carries on out of its bottom (drawn below)
   var comSrcs=[];
-  if(!HG){
-    if(p1Meter){var comX=p1R+15;comSrcs.push({x:comX,d:'M'+f1(p1R)+','+(yP1+14)+' L'+f1(comX)+','+(yP1+14)+' L'+f1(comX)+','+yLane});}
-    if(emsAt){var comE=p1R+15,eyc=p1T+EH-12;comSrcs.push({x:comE,d:'M'+f1(p1R)+','+eyc+' L'+f1(comE)+','+eyc+' L'+f1(comE)+','+yLane});}
-    if(a1Log&&A1x!==null){var ax=A1x+16;comSrcs.push({x:ax,d:'M'+f1(ax)+','+(A1y+A1h)+' L'+f1(ax)+','+yLane});}
-    if(p2Meter&&p2Com){comSrcs.push({x:p2Com[0],d:'M'+f1(p2Com[0])+','+f1(p2Com[1])+' L'+f1(p2Com[0])+','+yLane});}
+  ghost(HG);
+  {
+    if(p1Meter)comSrcs.push({x:comVX,d:'M'+f1(comVX)+','+f1(p1T+MH)+' L'+f1(comVX)+','+f1(legEnd)});
+    if(emsAt)comSrcs.push({x:comVX,d:'M'+f1(comVX)+','+f1(p1T+EH)+' L'+f1(comVX)+','+f1(legEnd)});
+    // with a grid-side main busbar the datalogger / P2 meter join the incoming leg above that busbar - not across its drops
+    var joinX=(gBus&&(p1Meter||emsAt))?comVX:null, yLG=yTrunk-12;
+    function farSrc(x0,y0){
+      if(joinX===null)comSrcs.push({x:x0,d:'M'+f1(x0)+','+f1(y0)+' L'+f1(x0)+','+yLane});
+      else{comSrcs.push({x:joinX,d:'M'+f1(x0)+','+f1(y0)+' L'+f1(x0)+','+yLG+' L'+f1(joinX)+','+yLG});
+        TL.push('<circle cx="'+f1(joinX)+'" cy="'+yLG+'" r="1.8" fill="'+(rfLink?C.net:C.com)+'"/>');}
+    }
+    if(a1Log&&A1x!==null)farSrc(A1x+16,A1y+A1h);
+    if(p2Meter&&p2Com)farSrc(p2Com[0],p2Com[1]);
   }
-  if(comSrcs.length&&comDrops.length){
+  ghost(false);
+  // a SYN at the incoming point shares the inverter's COM port: RS485 + BOX.EN - live off-grid, it runs the island
+  var synCom=null;
+  if(sSyn&&U0.ok&&comDrops.length)synCom={x:comVX};
+  if((comSrcs.length||synCom)&&comDrops.length){
+    var wiredSyn=synCom&&!rfLink;
     var ccol=rfLink?C.net:C.com;
     var xs=comDrops.map(function(c){return c.x;}).concat(comSrcs.map(function(c){return c.x;}));
+    if(wiredSyn)xs.push(synCom.x);
     var lx0=Math.min.apply(null,xs),lx1=Math.max.apply(null,xs);
-    var dd=comSrcs.map(function(c){return c.d;}).join(' ')+' M'+f1(lx0)+','+yLane+' L'+f1(lx1)+','+yLane;
-    comDrops.forEach(function(c){dd+=' M'+f1(c.x)+','+yLane+' L'+f1(c.x)+','+c.y+' L'+f1(c.iL)+','+c.y;});
-    WL.push('<path class="sh2" d="'+dd+'"/><path class="'+(rfLink?'srf':'scom')+'" d="'+dd+'"/>');
-    comDrops.forEach(function(c){TL.push('<circle cx="'+f1(c.x)+'" cy="'+yLane+'" r="1.8" fill="'+ccol+'"/>'+(c.lab?txt(c.x-4,c.y+3,rfLink?'RF':'COM','t-port','end',' fill="'+ccol+'"'):''));});
-    var lanLab=rfLink?'RF \u00b7 ShineRFStick\u2011X2 per inverter':('RS485 A/B'+(HR&&U0.cab&&U0.cab.com?' \u00b7 '+mm(U0.cab.com):''));
-    if(p1Meter||emsAt)TL.push(txt(p1R+19,yLane-4,lanLab,'t-port',null,' fill="'+ccol+'"'));
-    else TL.push(txt(A1x+11,yLane-4,lanLab,'t-port','end',' fill="'+ccol+'"'));
+    var dd=comSrcs.map(function(c){return c.d;}).join(' ');
+    var dl=' M'+f1(lx0)+','+yLane+' L'+f1(lx1)+','+yLane;
+    comDrops.forEach(function(c){dl+=' M'+f1(c.x)+','+yLane+' L'+f1(c.x)+','+c.y+' L'+f1(c.iL)+','+c.y;});
+    // the meter / energy manager / datalogger legs are grid side; the lane to the inverters stays live while the SYN uses it
+    ghost(HG);
+    if(dd)WL.push('<path class="sh2" d="'+dd+'"/><path class="'+(rfLink?'srf':'scom')+'" d="'+dd+'"/>');
+    ghost(HG&&!wiredSyn);
+    if(comSrcs.length||wiredSyn){
+      WL.push('<path class="sh2" d="'+dl+'"/><path class="'+(rfLink?'srf':'scom')+'" d="'+dl+'"/>');
+      comDrops.forEach(function(c){TL.push('<circle cx="'+f1(c.x)+'" cy="'+yLane+'" r="1.8" fill="'+ccol+'"/>'+(c.lab?txt(c.x-4,c.y+3,rfLink?'RF':'COM','t-port','end',' fill="'+ccol+'"'):''));});
+      var lanLab=rfLink?'RF \u00b7 ShineRFStick\u2011X2 per inverter':((wiredSyn?'RS485 + BOX.EN':'RS485 A/B')+(HR&&U0.cab&&U0.cab.com?' \u00b7 '+mm(U0.cab.com):''));
+      if(p1Meter||emsAt||wiredSyn)TL.push(txt(comVX+((synCom&&rfLink)?13:5),yLane-4,lanLab,'t-port',null,' fill="'+ccol+'"'));
+      else TL.push(txt(A1x+11,yLane-4,lanLab,'t-port','end',' fill="'+ccol+'"'));
+    }
+    // multi-inverter K1 in the trunk: the incoming leg carries on out of its bottom
+    if(trunkSyn&&(p1Meter||emsAt)){
+      ghost(HG);
+      var dT='M'+f1(comVX)+','+f1(kB)+' L'+f1(comVX)+','+yLane;
+      WL.push('<path class="sh2" d="'+dT+'"/><path class="'+(rfLink?'srf':'scom')+'" d="'+dT+'"/>');
+    }
+    ghost(false);
+    if(synCom){
+      var dS, c0=comDrops[0];
+      if(wiredSyn){
+        // the leg carries on out of the bottom of K1 (its RS485 + BOX.EN) down to the lane
+        dS='M'+f1(comVX)+','+f1(kB)+' L'+f1(comVX)+','+yLane;
+        WL.push('<path class="sh2" d="'+dS+'"/><path class="scom" d="'+dS+'"/>');
+      } else {
+        // GroHome over RF: the RF leg carries on under K1; the SYN keeps its own cable to the inverter COM, under the RF lane
+        ghost(HG);
+        var dR='M'+f1(comVX)+','+f1(kB)+' L'+f1(comVX)+','+yLane;
+        WL.push('<path class="sh2" d="'+dR+'"/><path class="srf" d="'+dR+'"/>');
+        ghost(false);
+        var xS=comVX+8, yS=yLane+9, xD=c0.x-8, yD=c0.y-10;
+        dS='M'+f1(xS)+','+f1(kB)+' L'+f1(xS)+','+f1(yS)+' L'+f1(xD)+','+f1(yS)+' L'+f1(xD)+','+f1(yD)+' L'+f1(c0.iL)+','+f1(yD);
+        WL.push('<path class="sh2" d="'+dS+'"/><path class="scom" d="'+dS+'"/>');
+      }
+    }
   }
+  ghost(false);
 
   // ================= TOP-RIGHT + BOTTOM-RIGHT BLOCKS =================
   var topR=Wc-16, topL=topR-topW;
@@ -2435,7 +2657,7 @@ function sldSceneHTML(){
       txt(pX+31,bx+23,'ShinePhone','t-n2')+txt(pX+31,bx+35,'app','t-x2')+'</g>');
     var cy=linkFrom==='below'?y+8:bx+h+13;
     var tw2=17*7.4+10;
-    TL.push(txt(x,cy,'ONLINE MONITORING','t-cab')+txt(x+tw2,cy,online?(DONGLES[dg]?DONGLES[dg].name.replace('Growatt ',''):''):(dg?'not online \u2014 add a smart meter':'not online \u2014 choose in step '+sn('stp-online')),'t-port',null,' fill="'+(online?C.net:C.warn)+'"'));
+    TL.push(txt(x,cy,'ONLINE MONITORING','t-cab')+txt(x+tw2,cy,online?(DONGLES[dg]?DONGLES[dg].name.replace('Growatt ',''):''):(offTxt||(dg?'not online \u2014 add a smart meter':'not online \u2014 choose in step '+sn('stp-online'))),'t-port',null,' fill="'+(online?C.net:C.warn)+'"'));
     hit(x,bx,onW,h,'stepopen','stp-online',null,'Online monitoring \u2014 step '+sn('stp-online'));
     hot.push({k:'em',x:x-12,y:bx+h/2});
     return {sX:sX,sW:sW,bx:bx,h:h};
@@ -2459,50 +2681,66 @@ function sldSceneHTML(){
     });
     TL.push(o);
   }
+  // ================= SHEET SIZE =================
+  var bottom=Math.max(dcBottom,anyBackup?ge+80:ge+40,onlineTop?(botT+lgH):(botT+4+56+18))+16;
+  // the sheet keeps the usual 1000:770 format, but a wide, low drawing (off-grid, several inverters) gets a lower sheet
+  var AR=Math.min(2,Math.max(1000/770,Wc/bottom));
+  var Wv=Math.max(Wc,bottom*AR), Hv=Wv/AR;
+  var vbX=-(Wv-Wc)/2, vbY=0;
+  // ================= SHEET TITLE: top left of the sheet, the status chips on its row =================
+  var titleX=vbX+16, chip0=titleX+204+34;
+  TL.push(txt(titleX,22,'SINGLE\u2011LINE DIAGRAM','t-h',null,' textLength="204" lengthAdjust="spacing"')+txt(titleX,40,E(subTxt),'t-s'));
+  chips.forEach(function(c,i){var x=chip0+chipX[i][0],w=chipX[i][1];TL.push('<rect x="'+f1(x)+'" y="10" width="'+f1(w)+'" height="15" rx="7.5" fill="'+c[1]+'" stroke="'+c[2]+'" stroke-width=".8"/>'+txt(x+w/2,20.5,c[0],'t-chip','middle',' fill="'+(c[3]||c[2])+'"'));});
+  // the top-right block moves up beside the title when the subtitle and the chips leave it room
+  var topLow=onlineTop?48:40;
+  if(titleX+subW+12>topL)topT=topLow;
+  if(chips.length&&chip0+chipsW+8>topL)topT=topLow;
   var onTop=null,onBot=null;
-  if(onlineTop){onTop=onlineBlock(topL,topT,false,'below');legendBlock(botL,botT);}
-  else{legendBlock(topL,topT+6);onBot=onlineBlock(botL,botT+4,true,'above');}
+  // a stick on an isolated inverter is off too
+  var offTxt=null;
+  if(online&&stickCol&&iso(stickCol.o)){online=false;offTxt='offline \u2014 inverter isolated';}
+  // off-grid the monitoring is not part of the island: it is ghosted, the legend stays as it is
+  ghost(HG);
+  if(onlineTop){onTop=onlineBlock(topL,topT,false,'below');}
+  else{onBot=onlineBlock(botL,botT+4,true,'above');}
+  ghost(false);
+  if(onlineTop)legendBlock(botL,botT);else legendBlock(topL,topT+6);
   // internet links: datalogger / energy manager -> cloud (top right), stick dongle -> cloud (bottom right)
-  if(onTop&&a1Log&&A1x!==null&&!HG){
+  ghost(HG);
+  if(onTop&&a1Log&&A1x!==null){
     var ixA=A1x+A1w-22, yy0=onTop.bx+onTop.h+16, xs0=onTop.sX+onTop.sW/2;
     var dn='M'+f1(ixA)+','+A1y+' L'+f1(ixA)+','+f1(yy0)+' L'+f1(xs0)+','+f1(yy0)+' L'+f1(xs0)+','+f1(onTop.bx+onTop.h);
     WL.push('<path class="sh2" d="'+dn+'"/><path class="snet'+(online?' sl':'')+'" d="'+dn+'"/>');
   }
-  if(onTop&&emsAt&&!HG){
+  if(onTop&&emsAt){
     // out of the energy manager's side, up past the main switch, over the cabinet to the cloud
     var xe=p1R+8, ye0=p1T+8, ye1=yCabTop-8, xs1=onTop.sX+onTop.sW/2;
     var dnE='M'+f1(p1R)+','+ye0+' L'+f1(xe)+','+ye0+' L'+f1(xe)+','+ye1+' L'+f1(xs1)+','+ye1+' L'+f1(xs1)+','+f1(onTop.bx+onTop.h);
     WL.push('<path class="sh2" d="'+dnE+'"/><path class="snet'+(online?' sl':'')+'" d="'+dnE+'"/>');
   }
   if(onBot&&stickCol&&stickCol.stickAt){
+    ghost(HG||iso(stickCol.o));
     var sa=stickCol.stickAt, xin=onBot.sX+28;
     var dn2='M'+f1(sa[0])+','+f1(sa[1])+' L'+f1(xin)+','+f1(sa[1])+' L'+f1(xin)+','+f1(onBot.bx);
     WL.push('<path class="sh2" d="'+dn2+'"/><path class="snet'+(online?' sl':'')+'" d="'+dn2+'"/>');
     var sLx=stickCol.rowD?Math.max(sa[0]+6,stickCol.xq+BH+6):(sa[0]+(stickCol.o.bat==='MODA'?11:6));
     TL.push(txt(sLx,sa[1]-4,{wifi:'Wi\u2011Fi',lan:'LAN','4g':'4G'}[stick]+' \u2192 internet','t-port',null,' fill="'+C.net+'"'));
   }
+  ghost(false);
 
-  // ================= SHEET SIZE =================
-  var bottom=Math.max(dcBottom,anyBackup?ge+80:(OG?0:ge+40),onlineTop?(botT+lgH):(botT+4+56+18))+16;
-  // the sheet keeps the usual 1000:770 format, but a wide, low drawing (off-grid, several inverters) gets a lower sheet
-  var AR=Math.min(2,Math.max(1000/770,Wc/bottom));
-  var Wv=Math.max(Wc,bottom*AR), Hv=Wv/AR;
-  var vbX=-(Wv-Wc)/2, vbY=0;
   var px=function(x){return ((x-vbX)/Wv*100).toFixed(2);}, py=function(y){return ((y-vbY)/Hv*100).toFixed(2);};
   var svg='<svg class="sldsvg" viewBox="'+f1(vbX)+' '+f1(vbY)+' '+f1(Wv)+' '+f1(Hv)+'" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Single\u2011line diagram">'+
     '<rect x="'+f1(vbX)+'" y="'+f1(vbY)+'" width="'+f1(Wv)+'" height="'+f1(Hv)+'" fill="'+C.paper+'"/>'+
-    BL.join('')+WL.join('')+SL.join('')+TL.join('')+HL.join('')+'</svg>';
+    LIVE.BL.join('')+'<g class="sghost">'+GHO.BL.join('')+GHO.WL.join('')+GHO.SL.join('')+GHO.TL.join('')+'</g>'+LIVE.WL.join('')+LIVE.SL.join('')+LIVE.TL.join('')+HL.join('')+'</svg>';
   // ---- interactive hotspots (same panels as before); off-grid the grid-mode button sits on its status chip
   var hs='';
-  // the dot has a fixed screen size: on a wide sheet it is larger in sheet units, so it slides down clear of the subtitle
-  if(HG&&chipX.length)hs+=offGridHotspotHTML(px(chipX[0][0]+chipX[0][1]+14),py(Math.max(57.5,46+8.5*Wv/944)));
-  else hs+=offGridHotspotHTML(px(XT-(HR?48:38)),py(yGrid));
+  hs+=offGridHotspotHTML(px(XT-(HR?48:38)),py(yGrid));   // keeps its place next to the grid - off-grid too, where the grid is hidden
   hot.forEach(function(h){
     if(h.k==='inv')hs+=invHotspotHTML(px(h.x),py(h.y),isMulti?(':'+h.u):'',isMulti?src[h.u]:undefined,isMulti?h.u:undefined);
     else if(h.k==='bypass')hs+=bypassHotspotHTML(px(h.x),py(h.y));
     else if(h.k==='em')hs+=emHotspotHTML(px(h.x),py(h.y));
   });
-  if(!isMulti&&anyInv&&state.segment==='res')hs+=highResHotspotHTML(px(16+204+16),py(21));
+  if(!isMulti&&anyInv&&state.segment==='res')hs+=highResHotspotHTML(px(titleX+204+16),py(14));
   return '<div class="housephoto sldwrap"><div class="photostage" style="aspect-ratio:'+f1(Wv)+'/'+f1(Hv)+';--ar:'+(Wv/Hv).toFixed(4)+'">'+svg+hs+'</div></div>';
 }
 function housePhotoHTML(){
