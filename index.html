@@ -592,6 +592,35 @@
   .mspec .v{font-weight:750;font-family:var(--mono);font-size:.95em}
   .mspecsrc{margin-top:6px;font-size:.9em;color:var(--mut);line-height:1.4}
 
+  /* ===== step 2: PV arrays, one per string input, each on an MPPT ===== */
+  .pvarr{border:1px solid var(--line);border-radius:12px;padding:9px 11px 11px;margin-top:8px;background:var(--card2)}
+  .pvarr:first-child{margin-top:0}
+  .pvah{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:12.5px;min-height:24px}
+  .pvah b{font-weight:800;white-space:nowrap}
+  .pvah .kwp{margin-left:auto;font-size:11.5px;font-weight:750;color:var(--grnD);font-family:var(--mono);white-space:nowrap}
+  .pvsel{font-family:inherit;font-size:11.5px;font-weight:700;border:1px solid var(--line2);border-radius:8px;padding:3px 6px;background:#fff;color:var(--text);cursor:pointer;width:104px}
+  .pvmp{font-size:11px;font-weight:700;color:var(--mut);border:1px solid var(--line2);border-radius:8px;padding:2px 7px;background:#fff;white-space:nowrap}
+  .pvx{border:1px solid var(--line2);background:#fff;color:var(--mut);cursor:pointer;padding:2px 4px;border-radius:7px;display:inline-flex;align-items:center}
+  .pvx:hover{color:var(--red);border-color:var(--red)}
+  .pvah .kwp+.pvx{margin-left:2px}
+  .pvah .pvx:only-of-type{margin-left:auto}
+  .btn.pvadd{margin-top:8px;font-size:12.5px;padding:6px 11px}
+  .btn.pvadd[disabled]{opacity:.5;cursor:default}
+  .pvcap{margin-left:6px;font-size:11px;font-weight:700;color:var(--mut);font-family:var(--mono)}
+  #pvWarn .pverr{margin-top:8px}
+  .opt.dsg .name{padding-right:18px}
+  .notice.a{background:var(--ambBg);border:1px solid var(--ambLine);color:var(--amb)}
+
+  /* ===== enlarge the single-line diagram to the whole window ===== */
+  .housephoto.sldwrap{padding-top:40px}
+  .sldmax{position:absolute;top:7px;right:9px;z-index:6;display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-size:12.5px;font-weight:700;color:var(--text);background:#fff;border:1px solid var(--line2);border-radius:9px;padding:6px 11px;cursor:pointer;line-height:1;box-shadow:0 1px 3px rgba(16,27,45,.10)}
+  .sldmax:hover{border-color:var(--grn);color:var(--grnD)}
+  .sldmax svg{width:14px;height:14px;flex-shrink:0}
+  .housephoto.sldwrap.max{position:fixed;inset:0;z-index:1000;margin:0!important;border-radius:0;box-shadow:none;background:#fff;padding:48px 14px 14px;overflow:auto;align-items:flex-start}
+  .housephoto.sldwrap.max .photostage{width:min(100%,calc((100vh - 64px) * var(--ar,1.3)))!important;margin:0 auto}
+  .housephoto.sldwrap.max .sldmax{top:9px;right:14px;position:fixed}
+  body.sldopen{overflow:hidden}
+
   /* ===== print: a compact bill of materials (about a third smaller) so the diagram gets the page ===== */
   @media print{
     @page{margin:10mm}
@@ -613,6 +642,8 @@
     .capstrip{column-span:all;margin-top:6px!important;padding-top:6px!important}
     .capstrip>div{padding:4px!important}
     .cart-disc{padding:0 12px 8px!important}
+    .sldmax{display:none!important}
+    .housephoto.sldwrap,.housephoto.sldwrap.max{position:relative!important;padding:0!important;overflow:visible!important}
     .housephoto{margin-top:10px!important;box-shadow:none!important;border:1px solid #dfe3dc;display:flex!important;justify-content:center}
     /* full width, but never taller than one page - in landscape the diagram gets its own, bigger page */
     .photostage{width:min(100%,calc((100vh - 12mm) * var(--ar,1.3)))!important;margin:0 auto}
@@ -627,7 +658,7 @@ var AXEL_MAX_MODULES=10, AXEL_MODULE_A=60;
 var WIT_LV_BAT_A={4:110,5:125,6:150,8:200,10:220,12:250,15:290};
 var ARK_MODULE_KWH=2.56, ARK_MIN_MODULES=3, ARK_MAX_MODULES=10;
 // Models that cannot run with further inverters in parallel
-function noParallel(k){return !!(k&&FAMILIES[k]&&(k==='MODA'||FAMILIES[k].noParallel));}
+function noParallel(k){return !!(k&&FAMILIES[k]&&FAMILIES[k].noParallel);}
 var MOD_XH_BREAKER={3:10,4:10,5:16,6:16,8:25,10:25};
 var FAMILIES={
   'MOD-XH':{name:'MOD\u2011XH (BP)',phase:'3\u2011phase',backup:'box',inputs:1,battery:'APX',kw:[3,4,5,6,8,10],seg:'res',
@@ -635,11 +666,11 @@ var FAMILIES={
   'MOD-XH-ARK':{name:'MOD\u2011XH',phase:'3\u2011phase',backup:'none',inputs:1,battery:'ARK',kw:[3,4,5,6,7,8,9,10],seg:'res',noParallel:true,
     note:'3\u2011phase hybrid, 3\u201310 kW. Works with <b>ARK XH HV batteries only</b> \u2014 <b>7.68\u201325.6 kWh</b> (3\u201310 \u00d7 ARK 2.5H\u2011A1, 2.56 kWh each) in one tower with a <b>BDC 95045\u2011A1</b> controller on top. Max charge power 10 kW. <b>Does not work with the SYN box</b> \u2014 no backup. <b>Single inverter only</b> \u2014 not possible to have more inverters in parallel at all.'},
   'WIT-LV':{name:'WIT 4\u201115K\u2011HU',phase:'3\u2011phase',backup:'box',inputs:3,battery:'AXE',axeLV:true,kw:[4,5,6,8,10,12,15],seg:'res',
-    note:'3\u2011phase <b>low\u2011voltage (48 V)</b> hybrid, 4\u201315 kW. Battery 40\u201360 V (51.2 V nominal), max charge/discharge <b>110\u2013290 A</b> depending on model. 2 MPPT (20 A per string), 150% PV oversizing, 100% unbalanced output. Backup is <b>not integrated</b> in this design \u2014 add the <b>SYN box</b> for backup. Storage: <b>Growatt AXE 5.0L LV</b> (5.12 kWh modules, 1\u201310 per cluster). Parallel operation supported.'},
+    note:'3\u2011phase <b>low\u2011voltage (48 V)</b> hybrid, 4\u201315 kW. Battery 40\u201360 V (51.2 V nominal), max charge/discharge <b>110\u2013290 A</b> depending on model. 1 MPPT \u00d7 2 strings (4\u20136 kW), 2 MPPT (8\u201310 kW: 1 + 1, 12\u201315 kW: 2 + 1 strings), 150% PV oversizing, 100% unbalanced output. Backup is <b>not integrated</b> in this design \u2014 add the <b>SYN box</b> for backup. Storage: <b>Growatt AXE 5.0L LV</b> (5.12 kWh modules, 1\u201310 per cluster). Parallel operation supported.'},
   'MOD-HU':{name:'MOD\u2011HU',phase:'3\u2011phase',backup:'integrated',inputs:1,battery:'APX',kw:[3,4,5,6,8,10,11,12,13,15],seg:'res',
-    note:'3\u2011phase hybrid with <b>integrated backup</b> \u2014 no SYN box. 3 MPPT. <b>1 battery input</b> per the datasheet \u2014 APX 5\u201330 kWh (max charge 15 kW).'},
+    note:'3\u2011phase hybrid with <b>integrated backup</b> \u2014 no SYN box. 2 MPPT (3\u20138 kW) or 3 MPPT (10\u201315 kW), 1 string each. <b>1 battery input</b> per the datasheet \u2014 APX 5\u201330 kWh (max charge 15 kW).'},
   'MODA':{name:'MODA All\u2011in\u2011One',phase:'3\u2011phase',backup:'integrated',inputs:1,battery:'MODA',kw:[4,5,6,8,10,12,15],seg:'res',
-    note:'All\u2011in\u2011one ESS \u2014 inverter + battery stacked in one cabinet. Integrated backup: <b>63 A</b> whole\u2011home, <b>&lt;10 ms</b> switching, 150% peak (10 s). Up to 3 MPPT, 200% PV oversizing. Only compatible with <b>APX HV Battery 2.0</b> \u2014 no separate BMS module needed.'},
+    note:'All\u2011in\u2011one ESS \u2014 inverter + battery stacked in one cabinet. Integrated backup: <b>63 A</b> whole\u2011home, <b>&lt;10 ms</b> switching, 150% peak (10 s). 3 MPPT (1 string each, 20 A), 200% PV oversizing. Only compatible with <b>APX HV Battery 2.0</b> \u2014 no separate BMS module needed.'},
   'MID-XH':{name:'MID\u2011XH',phase:'3\u2011phase',backup:'box',inputs:2,battery:'APX',kw:[11,12,13,15,17,20,25,30],seg:'res',
     note:'Larger residential / light\u2011commercial hybrid, 11\u201330 kW, with <b>2 battery interfaces</b> and support for <b>5\u201360 kWh</b> APX (per the datasheet). Note: with only <b>one</b> battery port connected, max battery power is <b>15 kW</b> \u2014 use both inputs on the larger models for full power. Backup needs a separate <b>SYN 100\u2011XH\u201130</b> box.'},
   'WIT-HU':{name:'WIT (H\u2011U)',phase:'3\u2011phase',backup:'box-required',inputs:3,battery:'APX',kw:[50,63,75,100],seg:'com',
@@ -659,9 +690,9 @@ var DONGLES={
   '4g':{name:'Growatt Shine4G\u2011X',desc:'4G cellular dongle',
     how:'Carries its own SIM and connects over the mobile network, so the site needs no internet of its own. Typical for holiday homes, farms and sites without broadband. Check mobile coverage at the inverter before choosing it, and remember the subscription is an ongoing cost.'},
   shinesem:{name:'Growatt ShineSEM\u2011X',desc:'Smart Energy Manager \u2014 metering included',
-    how:'A DIN\u2011rail energy manager rather than a stick. It talks to the inverters over RS485, and its <b>built\u2011in CT metering</b> measures the grid connection point \u2014 it takes the smart meter\u2019s place at the incoming point, so no separate meter is needed. It handles several inverters at once and is what enables export limiting and self\u2011consumption control across the whole system.'},
+    how:'A DIN\u2011rail energy manager rather than a stick. It talks to the inverters over RS485, and its <b>built\u2011in CT metering</b> measures the grid connection point \u2014 the smart meter is built in, so no separate meter is needed (also not for a third\u2011party inverter). It handles several inverters at once and is what enables export limiting and self\u2011consumption control across the whole system.'},
   shinemaster:{name:'Growatt ShineMaster',desc:'Multi\u2011inverter datalogger',
-    how:'A datalogger for larger plants. It collects data from many inverters over RS485 and sends it on to ShineServer or a local SCADA system, and gives the same placement and battery\u2011side functions as ShineSEM\u2011X. <b>Metering is not built in</b> \u2014 a separate smart meter is added at the incoming point, otherwise the system has no reading of the grid connection point.'},
+    how:'A datalogger for larger plants. It collects data from many inverters over RS485 and sends it on to ShineServer or a local SCADA system, and gives the same placement and battery\u2011side functions as ShineSEM\u2011X. <b>Metering is not built in</b> \u2014 a separate smart meter is always added at the incoming point, and the ShineMaster sits right under it and reads it over RS485.'},
   grohome:{name:'GroHome\u200bManager\u2011X',desc:'HEMS \u2014 CT + RF included',
     how:'The home energy management system. It sits by the consumer unit, measures the grid connection with its <b>own CT clamps</b>, and steers charging, discharging and export for the whole home \u2014 it takes the smart meter\u2019s place at the incoming point, with its CT clamps right under it. It reaches each inverter either over RS485 or wirelessly through a ShineRFStick\u2011X2 (one per inverter, up to 12).'}
 };
@@ -758,9 +789,9 @@ function cableSpec(withBat){
 }
 
 // APX inputs: {mods,cols,c1,c2}. AXE inputs: {modules}. Shape depends on fam().battery.
-var state={page:'main',openStep:'stp-seg',openHot:null,offGrid:false,inverterBroken:false,bypassOn:false,segment:null,multi:false,thirdParty:false,tpCount:1,tpLabels:['','',''],synOptIn:false,groHomeMode:'rs485',aiMode:false,aiSmart:false,aiPeak:false,aiUnbal:false,unit:0,units:[],panelW:450,panelCount:0,family:null,kw:null,dongle:null,metering:null,meterType:'TPM-6CT-C',backupOn:false,apx:'1.0',inputs:[],wantBattery:null,loadKw:0,backupMode:null,backupLoadKw:0,mainFuseA:null,highRes:false};
-function snapshotUnit(){return {family:state.family,kw:state.kw,backupOn:state.backupOn,backupMode:state.backupMode,backupLoadKw:state.backupLoadKw,panelW:state.panelW,panelCount:state.panelCount,wantBattery:state.wantBattery,apx:state.apx,inputs:state.inputs};}
-function loadUnit(u){state.family=u.family;state.kw=u.kw;state.backupOn=u.backupOn;state.backupMode=(u.backupMode!==undefined?u.backupMode:null);state.backupLoadKw=(u.backupLoadKw!==undefined?u.backupLoadKw:0);state.panelW=(u.panelW!==undefined?u.panelW:450);state.panelCount=(u.panelCount!==undefined?u.panelCount:0);state.wantBattery=u.wantBattery;state.apx=u.apx;state.inputs=u.inputs;}
+var state={page:'main',openStep:'stp-seg',openHot:null,offGrid:false,inverterBroken:false,bypassOn:false,segment:null,multi:false,thirdParty:false,tpCount:1,tpLabels:['','',''],synOptIn:false,groHomeMode:'rs485',aiMode:false,aiSmart:false,aiPeak:false,aiUnbal:false,unit:0,units:[],panelW:450,panelCount:0,pvMore:[],pvM1:0,family:null,kw:null,dongle:null,metering:null,meterType:'TPM-6CT-C',backupOn:false,apx:'1.0',inputs:[],wantBattery:null,loadKw:0,backupMode:null,backupLoadKw:0,mainFuseA:null,highRes:false};
+function snapshotUnit(){return {family:state.family,kw:state.kw,backupOn:state.backupOn,backupMode:state.backupMode,backupLoadKw:state.backupLoadKw,panelW:state.panelW,panelCount:state.panelCount,pvMore:JSON.parse(JSON.stringify(state.pvMore||[])),pvM1:state.pvM1||0,wantBattery:state.wantBattery,apx:state.apx,inputs:state.inputs};}
+function loadUnit(u){state.family=u.family;state.kw=u.kw;state.backupOn=u.backupOn;state.backupMode=(u.backupMode!==undefined?u.backupMode:null);state.backupLoadKw=(u.backupLoadKw!==undefined?u.backupLoadKw:0);state.panelW=(u.panelW!==undefined?u.panelW:450);state.panelCount=(u.panelCount!==undefined?u.panelCount:0);state.pvMore=u.pvMore?JSON.parse(JSON.stringify(u.pvMore)):[];state.pvM1=u.pvM1||0;state.wantBattery=u.wantBattery;state.apx=u.apx;state.inputs=u.inputs;}
 function syncUnit(){state.units[state.unit]=snapshotUnit();}
 function switchUnit(i){syncUnit();state.unit=i;loadUnit(state.units[i]);}
 function unitCap(){syncUnit();var allRise=state.units.every(function(u){return !u.family||u.family==='RISE-261';});return allRise?10:6;}
@@ -796,22 +827,95 @@ function axeMax(){return isAxeLV()?AXEL_MAX_MODULES:AXE_MAX_MODULES;}
 function witLvA(){return (state.family==='WIT-LV'&&state.kw)?(WIT_LV_BAT_A[state.kw]||0):0;}
 function backupType(){return state.family?fam().backup:null;}
 function isHU(){return backupType()==='integrated';}
-function needsSyn(){var b=backupType();if(b==='none')return false;return b==='box-required'||(b==='box'&&state.backupOn);}
+function needsSyn(){var b=backupType();if(b==='none')return false;if(state.units.length>1)return false;   // the SYN box works with one inverter only (on-grid and off-grid)
+  return b==='box-required'||(b==='box'&&state.backupOn);}
+// backup with several inverters: only MOD-HU / MODA (backup built in, partial backup per inverter)
+function multiBkOK(){if(state.units.length<2)return true;return state.units.every(function(u,i){var f=(i===state.unit)?state.family:u.family;return f==='MOD-HU'||f==='MODA';});}
+function bkNormalize(){if(state.units.length<2)return;var ok=multiBkOK();if(!ok||state.backupMode==='whole')state.backupMode=null;state.units.forEach(function(u){if(!ok||u.backupMode==='whole')u.backupMode=null;});}
 function a2(){return state.apx==='2.0';}
 function maxInputs(){if(!fam())return 0;var b=fam().battery;if(b!=='APX')return fam().inputs;return Math.min(fam().inputs,a2()?3:2);}
 function minMods(){return a2()?0:1;}
 function maxMods(){return a2()?5:6;}
 function inputKwh(inp){return (a2()?(inp.mods+1):inp.mods)*MODULE_KWH;}
 function battKw(kwh){var k=kwh/2;if(isAxeLV()){k=Math.min(kwh*0.6,(witLvA()||290)*51.2/1000);}return Math.round(k*10)/10;}
-function totalKWp(){return Math.round(state.panelCount*state.panelW/10)/100;}
+// ---- PV arrays: one array per string input, each wired to an MPPT. String inputs per the datasheets:
+//      s = strings per MPPT (index = MPPT), a = max input current, v = verify (data not fully confirmed)
+function repN(v,n){var o=[];for(var i=0;i<n;i++)o.push(v);return o;}
+var PV_INPUTS={
+  'MOD-XH':function(){return {s:[1,1],a:'16 A per MPPT'};},
+  'MOD-XH-ARK':function(){return {s:[1,1],a:'16 A per MPPT'};},
+  'WIT-LV':function(kw){return kw<=4?{s:[2],a:'32 A'}:(kw<=6?{s:[2],a:'40 A'}:(kw<=10?{s:[1,1],a:'20 A per MPPT'}:{s:[2,1],a:'40 A / 20 A'}));},
+  'MOD-HU':function(kw){return kw<10?{s:[1,1],a:'20 A per MPPT'}:{s:[1,1,1],a:'20 A per MPPT'};},
+  'MODA':function(){return {s:[1,1,1],a:'20 A per MPPT'};},
+  'MID-XH':function(kw){return kw<25?{s:[2,2],a:'32 A per MPPT'}:{s:[2,2,2],a:'32 A per MPPT'};},
+  'WIT-HU':function(kw){return {s:repN(2,kw<=50?7:(kw<=63?8:10)),a:'32 A per MPPT (16 A per string)'};},
+  'MID-HU':function(kw){return {s:repN(2,kw<40?3:4),a:'40 A per MPPT',v:true};},
+  'WIT-XHU':function(){return {s:[2,2,2,2],a:'40 A per MPPT'};},
+  'RISE-261':function(){return {s:repN(2,10),a:'21 A per string',v:true};}
+};
+function pvSpec(k,kw){k=(typeof k==='string')?k:state.family;kw=kw||state.kw;var f=PV_INPUTS[k];if(!f||!kw)return null;var o=f(kw);o.total=o.s.reduce(function(t,x){return t+x;},0);return o;}
+function pvArrays(){return [{n:state.panelCount||0,w:state.panelW||0,m:state.pvM1||0}].concat((state.pvMore||[]).map(function(a){return {n:a.n||0,w:a.w||0,m:(a.m==null?-1:a.m)};}));}
+function pvUsed(){return pvArrays().map(function(a,i){a.i=i;return a;}).filter(function(a){return a.n>0;});}
+function pvPanels(){return pvArrays().reduce(function(t,a){return t+a.n;},0);}
+function totalKWp(){return Math.round(pvArrays().reduce(function(t,a){return t+a.n*a.w;},0)/10)/100;}
+function pvText(){var u=pvUsed();if(!u.length)return 'no panels';
+  if(u.length===1)return u[0].n+' x '+u[0].w+' Wp = '+totalKWp()+' kWp';
+  return u.length+' PV arrays: '+u.map(function(a){return 'PV'+(a.i+1)+' '+a.n+' x '+a.w+' Wp'+(pvSpec()?' (MPPT '+(a.m+1)+')':'');}).join(', ')+' = '+totalKWp()+' kWp';}
+// keep every array on an existing MPPT with a free string input - new or moved arrays go where most inputs are free
+function pvNormalize(){
+  var sp=pvSpec();if(!sp)return;
+  var cnt=sp.s.map(function(){return 0;});
+  pvArrays().forEach(function(a,k){
+    var ok=a.m>=0&&a.m<sp.s.length&&cnt[a.m]<sp.s[a.m];
+    if(!ok){var best=-1,free=0;sp.s.forEach(function(ns,mi){var fr=ns-cnt[mi];if(fr>free){free=fr;best=mi;}});
+      var m=best>=0?best:((a.m>=0&&a.m<sp.s.length)?a.m:0);
+      if(k===0)state.pvM1=m;else state.pvMore[k-1].m=m;a.m=m;}
+    cnt[a.m]++;
+  });
+}
+// why an inverter family is crossed out: too little power for the panels, or too few string inputs for the PV arrays
+function famWhy(k){var n=pvUsed().length,mx=Math.max.apply(null,FAMILIES[k].kw.map(function(p){var s=pvSpec(k,p);return s?s.total:99;}));
+  return n>mx?('Max '+mx+' PV array'+(mx>1?'s':'')+' \u00b7 you have '+n):('Max '+famMaxKWp(k)+' kWp'+' \u00b7 too small');}
+function pvSectionHTML(){
+  var arrs=pvArrays(), sp=pvSpec(), n=arrs.length, cap=sp?sp.total:20;
+  var cnt=sp?sp.s.map(function(){return 0;}):[];
+  arrs.forEach(function(a){if(sp&&a.m>=0&&a.m<cnt.length)cnt[a.m]++;});
+  var rows=arrs.map(function(a,k){
+    var idW=k?('pvW'+(k-1)):'panelW', idN=k?('pvN'+(k-1)):'panelCount', sel='';
+    if(sp&&sp.s.length>1)sel='<select id="pvMppt'+k+'" class="pvsel" aria-label="MPPT for PV array '+(k+1)+'">'+sp.s.map(function(ns,mi){var full=cnt[mi]>=ns&&a.m!==mi;
+      return '<option value="'+mi+'"'+(a.m===mi?' selected':'')+(full?' disabled':'')+'>MPPT '+(mi+1)+(full?' \u00b7 full':'')+'</option>';}).join('')+'</select>';
+    else if(sp)sel='<span class="pvmp">MPPT 1'+(sp.s[0]>1?' \u00b7 '+sp.s[0]+' strings':'')+'</span>';
+    var kwp=a.n>0?(Math.round(a.n*a.w/10)/100+' kWp'):'';
+    return '<div class="pvarr"><div class="pvah"><b>PV array '+(k+1)+'</b>'+sel+'<span class="kwp" id="pvK'+k+'">'+kwp+'</span>'+
+      (k?'<button class="pvx" data-act="pvdel" data-i="'+(k-1)+'" title="Remove PV array '+(k+1)+'">'+ic('minus',14)+'</button>':'')+'</div>'+
+      '<div class="grid g2"><div class="field"><label>Panel power</label><input id="'+idW+'" type="number" inputmode="numeric" min="100" max="800" step="5" value="'+a.w+'"><span class="unit">Wp per panel</span></div>'+
+      '<div class="field"><label>Number of panels</label><input id="'+idN+'" type="number" inputmode="numeric" min="0" max="400" step="1" value="'+(a.n||'')+'" placeholder="0"></div></div></div>';
+  }).join('');
+  var add='<button class="btn pvadd"'+(n<cap?' data-act="pvadd"':' disabled')+'>'+ic('plus',14)+'Add PV array'+(sp?'<span class="pvcap">'+n+' / '+cap+'</span>':'')+'</button>';
+  return '<div id="pvInputs">'+rows+'</div>'+add+'<div id="pvWarn">'+pvWarnHTML()+'</div>';
+}
+function pvWarnHTML(){
+  var arrs=pvArrays(), sp=pvSpec(), o='';
+  if(!sp)return '<div class="note">'+ic('info',14)+'<span>One PV array per string input. Pick the inverter below to see its MPPT inputs, then put each array on an MPPT.</span></div>';
+  var same=sp.s.every(function(x){return x===sp.s[0];});
+  var desc=sp.s.length+' MPPT \u00b7 '+(same?(sp.s[0]+' string'+(sp.s[0]>1?'s':'')+' each'):(sp.s.join(' / ')+' strings'))+' \u00b7 max '+sp.a;
+  o+='<div class="note">'+ic('info',14)+'<span><b>'+fam().name+' '+state.kw+' kW</b> \u2014 '+desc+' \u2192 up to <b>'+sp.total+' PV array'+(sp.total>1?'s':'')+'</b>, one per string input.'+(sp.v?' Verify the string data with your distributor.':'')+'</span></div>';
+  if(arrs.length>sp.total)o+='<div class="pverr">'+ic('alert',15)+'<span>Only <b>'+sp.total+'</b> string input'+(sp.total>1?'s':'')+' \u2014 remove '+(arrs.length-sp.total)+' PV array'+(arrs.length-sp.total>1?'s':'')+' or pick a larger inverter.</span></div>';
+  var by={};arrs.forEach(function(a,k){if(a.n>0)(by[a.m]=by[a.m]||[]).push(k);});
+  Object.keys(by).forEach(function(m){var ks=by[m];if(ks.length<2)return;var a0=arrs[ks[0]];
+    if(ks.some(function(k){return arrs[k].n!==a0.n||arrs[k].w!==a0.w;}))
+      o+='<div class="notice a">'+ic('alert',14)+'<span>PV '+ks.map(function(k){return k+1;}).join(' and ')+' share <b>MPPT '+(+m+1)+'</b> \u2014 strings on one MPPT should have the same panels, count and orientation.</span></div>';
+  });
+  return o;
+}
 function maxKWp(){return state.kw?state.kw*2:0;}
 function pvRatio(){return state.kw?(totalKWp()/state.kw*100):0;}
 function pvOver(){return state.kw>0&&totalKWp()>maxKWp()+1e-9;}
-function kwValid(kw){return state.panelCount<=0 || totalKWp()<=2*kw+1e-9;}
+function kwValid(kw,k){if(pvPanels()<=0)return true;if(totalKWp()>2*kw+1e-9)return false;var sp=pvSpec((typeof k==='string')?k:state.family,kw);return !sp||pvUsed().length<=sp.total;}
 function maxOffgridKw(){if(!state.family||!state.kw)return 0;var bk=batteryTotals().kwh;if(!bk)return 0;return Math.round(Math.min(state.kw,bk/2)*10)/10;}
-function famValid(k){return FAMILIES[k].kw.some(kwValid);}
+function famValid(k){return FAMILIES[k].kw.some(function(p){return kwValid(p,k);});}
 function famMaxKWp(k){return 2*Math.max.apply(null,FAMILIES[k].kw);}
-function selInvalid(){return state.family&&state.kw&&state.panelCount>0&&!kwValid(state.kw);}
+function selInvalid(){return state.family&&state.kw&&pvPanels()>0&&!kwValid(state.kw);}
 function synItem(){return (state.family==='WIT-HU'||state.family==='WIT-XHU')?'Growatt SYN backup box (WIT \u2014 verify model)|separate, not integrated':'Growatt SYN 100\u2011XH\u201130|3\u2011phase backup box \u2014 at the incoming point, under the smart meter';}
 function clampInputs(){
   if(!state.family)return;
@@ -898,20 +1002,20 @@ function totalBatteryKwh(){
   state.units.forEach(function(u){t+=unitBatteryKwh(u);});
   return Math.round(t*10)/10;
 }
-function unitKwp(u){return Math.round((u.panelCount||0)*(u.panelW||0)/10)/100;}
+function unitKwp(u){return Math.round(((u.panelCount||0)*(u.panelW||0)+(u.pvMore||[]).reduce(function(t,a){return t+(a.n||0)*(a.w||0);},0))/10)/100;}
 
 function buildBOM(){var map={};function add(x){if(x.qty<=0)return;var k=x.g+'|'+x.item;map[k]=map[k]||{g:x.g,item:x.item,qty:0};map[k].qty+=x.qty;}
   syncUnit();
-  var saved=snapshotUnit();
+  var saved=snapshotUnit(),mbk=multiBkOK();
   state.units.forEach(function(u){
     loadUnit(u);
     if(state.family&&state.kw){var f=fam();add({g:'Inverter',item:'Growatt '+f.name+' '+state.kw+' kW|'+f.phase+' hybrid',qty:1});
-      var brk=acBreaker();if(brk)add({g:'Electrical',item:'AC breaker '+brk.txt+', 3\u2011pole|'+brk.src,qty:1});
+      var brk=acBreaker();if(brk)add({g:'Electrical',item:'AC breaker '+brk.txt+', 4\u2011pole (3P+N)|'+brk.src,qty:1});
       if(f.battery==='RISE')add({g:'Battery',item:'RISE 261 kWh LFP battery|integrated in the cabinet \u2014 incl. UPS/EMS',qty:1});
     }
     if(needsSyn())add({g:'Backup',item:synItem(),qty:1});
-    if(state.family&&state.backupMode&&!needsSyn())add({g:'Backup',item:'Bypass breaker (recommended)|for backup service \u2014 mounted just outside the inverter',qty:1});
-    if(state.family==='MODA'&&state.backupMode)add({g:'Backup',item:'Integrated 63 A bypass|built into the MODA \u2014 grid can feed the backup load, auto\u2011switch on inverter fault',qty:1});
+    if(state.family&&state.backupMode&&mbk&&!needsSyn())add({g:'Backup',item:'Bypass breaker (recommended)|for backup service \u2014 mounted just outside the inverter',qty:1});
+    if(state.family==='MODA'&&state.backupMode&&mbk)add({g:'Backup',item:'Integrated 63 A bypass|built into the MODA \u2014 grid can feed the backup load, auto\u2011switch on inverter fault',qty:1});
     if(state.inputs.length&&fam()&&fam().battery==='ARK'){var ta=batteryTotals();
       add({g:'Battery',item:'Growatt BDC 95045\u2011A1|ARK XH high\u2011voltage controller (BMS) \u2014 top of the tower',qty:ta.bms});
       add({g:'Battery',item:'Growatt ARK 2.5H\u2011A1 battery module|2.56 kWh LiFePO4',qty:ta.mods});
@@ -944,12 +1048,12 @@ function buildBOM(){var map={};function add(x){if(x.qty<=0)return;var k=x.g+'|'+
   if(state.dongle)add({g:'Connectivity',item:DONGLES[state.dongle].name+'|'+DONGLES[state.dongle].desc,qty:1});
   if(state.dongle==='grohome')add({g:'Connectivity',item:'Growatt ShineRFStick\u2011X2|RF module, one per inverter',qty:Math.min(state.units.length||1,12)});
   if(state.thirdParty&&state.units.some(function(u){return !!u.family;}))add({g:'Inverter',item:'Third\u2011party PV inverter (existing)|AC\u2011coupled \u2014 verify grid settings &amp; compatibility',qty:(state.tpCount||1)});
-  if(state.units.length>1&&state.units.some(function(u){return u.backupMode==='whole';})&&state.units.every(function(u){return !u.family||!FAMILIES[u.family]||FAMILIES[u.family].backup==='integrated';}))add({g:'Backup',item:'Growatt SYN 100\u2011XH\u201130|whole\u2011home backup for multi\u2011inverter \u2014 up to 58 A',qty:1});
-  if(state.metering==='meter')add({g:'Metering',item:emsAtIncoming()?('Growatt Smart Meter TPM\u20116CT\u2011C|third\u2011party inverter (CT2) \u2014 read by the '+shortDev(state.dongle)+' over RS485'):'Growatt Smart Meter TPM\u20116CT\u2011C|at the incoming point \u2014 CT1 under the utility meter \u00b7 CT2 only on a third\u2011party inverter',qty:1});
+  // (no SYN box for several inverters - it works with one inverter only)
+  if(state.metering==='meter'&&state.dongle!=='shinesem')add({g:'Metering',item:emsAtIncoming()?('Growatt Smart Meter TPM\u20116CT\u2011C|third\u2011party inverter (CT2) \u2014 read by the '+shortDev(state.dongle)+' over RS485'):'Growatt Smart Meter TPM\u20116CT\u2011C|at the incoming point \u2014 CT1 under the utility meter \u00b7 CT2 only on a third\u2011party inverter',qty:1});
   return Object.keys(map).map(function(k){return map[k];}).sort(function(a,b){return GROUP_ORDER.indexOf(a.g)-GROUP_ORDER.indexOf(b.g);});}
 function buildText(){syncUnit();var saved=snapshotUnit();var s='GROWATT - SYSTEM DESIGN\n'+new Date().toLocaleDateString()+'\n\n';
   s+='Segment: '+(state.segment==='res'?'Residential':state.segment==='com'?'Commercial':'(not chosen)')+'\n';
-  s+='Solar: '+state.panelCount+' x '+state.panelW+' Wp = '+totalKWp()+' kWp'+(state.kw?' (DC/AC '+Math.round(pvRatio())+'% of '+state.kw+' kW, max 200%)'+(pvOver()?' *** OVER 200% ***':''):'')+'\n';
+  s+='Solar: '+pvText()+(state.kw?' (DC/AC '+Math.round(pvRatio())+'% of '+state.kw+' kW, max 200%)'+(pvOver()?' *** OVER 200% ***':''):'')+'\n';
   state.units.forEach(function(u,i){loadUnit(u);var pre=state.units.length>1?('Inverter '+(i+1)+': '):'Inverter: ';
     if(state.family&&state.kw){var f=fam();s+=pre+'Growatt '+f.name+' '+state.kw+' kW ('+f.phase+')';var bk=acBreaker();if(bk)s+=' \u2014 AC breaker '+bk.txt;s+='\n';
       if(f.battery==='RISE'){s+='  Battery: RISE integrated 261 kWh LFP\n';}
@@ -1003,7 +1107,7 @@ function gaugeHTML(){
     '<div class="pvhint" style="margin-top:9px">'+ic(over?'alert':'check',13,over?'var(--red)':'var(--grnD)')+'<span>'+headroom+'</span></div></div>';
 }
 function pvTopHTML(){
-  if(state.panelCount<=0) return '<div class="pvtop"><div class="pvrow"><div class="pvbig">0<small> kWp</small></div><div class="pvhint">Enter this inverter\u2019s panels to see its DC/AC ratio.</div></div></div>';
+  if(pvPanels()<=0) return '<div class="pvtop"><div class="pvrow"><div class="pvbig">0<small> kWp</small></div><div class="pvhint">Enter this inverter\u2019s panels to see its DC/AC ratio.</div></div></div>';
   var kwp=totalKWp();
   if(!state.kw){var minKW=Math.round(kwp/2*10)/10;
     return '<div class="pvtop"><div class="pvrow"><div class="pvbig">'+kwp+'<small> kWp</small></div><div class="pvhint">'+ic('cpu',13,'var(--grnD)')+'Inverter must be \u2265 <b>'+minKW+' kW</b> total (200% rule) \u2014 smaller models are crossed out.</div></div></div>';
@@ -1048,19 +1152,27 @@ function activeStepHTML(){
   if(out===null)out=ds[0].f();
   return out+stepNavHTML();
 }
+// the design level, chosen right under the system type: Quick Design (one line per AC circuit) or Advanced Design (SLD)
+function designHTML(){
+  if(!state.segment)return '';
+  var hr=!!state.highRes, multi=state.multi&&state.units.length>1;
+  return '<div class="sublabel">Design</div><div class="grid g2">'+
+    '<button class="opt dsg'+(!hr?' on':'')+'" data-act="design" data-v="quick"><div class="name">'+ic('zap',14)+' Quick Design</div><div class="meta">Single\u2011line overview \u2014 each AC circuit as one line with its conductor marks. Fast to read and to print.</div></button>'+
+    '<button class="opt dsg'+(hr?' on':'')+'" data-act="design" data-v="adv"><div class="name">'+ic('layers',14)+' Advanced Design (SLD)</div><div class="meta">Full single\u2011line diagram \u2014 L1, L2, L3, N and PE drawn one by one, cable sizes on the cables.</div></button></div>'+
+    '';
+}
 function segStep(){
   var segs=[['res','Residential','Villa / bostad \u2014 MOD, MID, MODA &amp; WIT\u2011HU \u00b7 APX, ARK &amp; AXE battery'],['com','Commercial','C&amp;I \u2014 MID, WIT &amp; RISE \u00b7 APX, AXE &amp; RISE storage']];
   var cards=segs.map(function(sg){var on=state.segment===sg[0];return '<button class="opt'+(on?' on':'')+'" data-act="seg" data-s="'+sg[0]+'"><div class="name">'+sg[1]+'</div><div class="meta">'+sg[2]+'</div></button>';}).join('');
   var isModaFam=noParallel(state.family);
   var adv=(isModaFam
     ?'<div class="note" style="margin-top:12px">'+ic('info',14)+'<span><b>'+(isModaFam?FAMILIES[state.family].name:'')+' supports one inverter only</b> \u2014 <b>not possible to have more inverters in parallel at all.</b> Need more AC power? Add a <b>third\u2011party inverter</b> below.</span></div>'
-    :'<div class="switchrow" style="margin-top:12px"><div><div class="lab">Advanced settings \u2014 multiple inverters</div><div class="s2">Add inverters \u2014 each starts as a copy of the one you\u2019re working on, then configure each \u2014 everything sums in \u201cYour system\u201d.'+(state.units.some(function(u){return u.family==='RISE-261';})||state.family==='RISE-261'?' <b>RISE 261H\u2011XH: up to 10 units in parallel (\u2248 2.61 MWh).</b>':'')+'</div></div><span class="sw '+(state.multi?'on':'')+'" data-act="multi"><span class="knob"></span></span></div>')+
+    :'<div class="switchrow" style="margin-top:12px"><div><div class="lab">Multiple inverters</div><div class="s2">Add inverters \u2014 each starts as a copy of the one you\u2019re working on, then configure each \u2014 everything sums in \u201cYour system\u201d.'+(state.units.some(function(u){return u.family==='RISE-261';})||state.family==='RISE-261'?' <b>RISE 261H\u2011XH: up to 10 units in parallel (\u2248 2.61 MWh).</b>':'')+' A <b>SYN box works with one inverter only</b> \u2014 backup in a group: MOD\u2011HU / MODA (partial, per inverter).</div></div><span class="sw '+(state.multi?'on':'')+'" data-act="multi"><span class="knob"></span></span></div>')+
     ('<div class="switchrow" style="margin-top:10px"><div><div class="lab">Third\u2011party inverter (AC\u2011coupled)</div><div class="s2">Add an existing third\u2011party PV inverter alongside the Growatt system.'+(state.family==='MODA'?' MODA works with <b>APX 2.0 only</b> \u2014 one battery stack.':'')+(state.units.length>1?' With multiple inverters a <b>smart meter</b> is required to measure it.':'')+'</div></div><span class="sw '+(state.thirdParty?'on':'')+'" data-act="thirdparty"><span class="knob"></span></span></div>'+(state.thirdParty?'<div class="chips" style="margin-top:8px">'+[1,2,3].map(function(n){return '<button class="chip sm '+(state.tpCount===n?'on':'')+'" data-act="tpcount" data-n="'+n+'">'+n+' \u00d7</button>';}).join('')+'</div>'+'<div style="margin-top:8px;display:flex;flex-direction:column;gap:6px">'+Array.apply(null,{length:state.tpCount||1}).map(function(_,i){return '<input id="tpLabel'+i+'" type="text" maxlength="24" placeholder="Inverter '+(i+1)+' \u2014 e.g. Huawei 10kW" value="'+escHtml((state.tpLabels&&state.tpLabels[i])||'')+'" style="border:1px solid var(--line2);border-radius:10px;padding:9px 11px;font-size:13px;font-family:var(--mono);font-weight:700;color:var(--text);background:#fff;width:100%">';}).join('')+'<div class="s2" style="margin-top:-2px">Brand + power \u2014 shown on that inverter in the diagram.</div></div>':''))+
-    (state.multi?'<div class="notice g" style="margin-top:10px">'+ic('info',14)+'<span>Multi\u2011inverter systems require <b>ShineSEM\u2011X</b> or <b>ShineMaster</b> for coordinated monitoring \u2014 set in step 3 (GroHome\u200bManager\u2011X also works, up to 12 inverters). A regular dongle (WiFi/LAN/4G) alone isn\u2019t enough for multiple units.</span></div>':'')+
-    (state.segment==='res'&&!state.multi?'<div class="switchrow" style="margin-top:10px"><div><div class="lab">High resolution AC <span style="font-weight:600;color:var(--mut)">(experimental)</span></div><div class="s2">Diagram only, fully independent of everything else. Draws the AC connection as 5 conductors \u2014 L1, L2, L3, N, PE \u2014 instead of one line. Single inverter only.</div></div><span class="sw '+(state.highRes?'on':'')+'" data-act="highres"><span class="knob"></span></span></div>':'');
+    (state.multi?'<div class="notice g" style="margin-top:10px">'+ic('info',14)+'<span>Multi\u2011inverter systems require <b>ShineSEM\u2011X</b> or <b>ShineMaster</b> for coordinated monitoring \u2014 set in step 3 (GroHome\u200bManager\u2011X also works, up to 12 inverters). A regular dongle (WiFi/LAN/4G) alone isn\u2019t enough for multiple units.</span></div>':'');
   var aiCard='<button class="opt ai" data-act="goai"><div class="name">'+ic('cpu',14)+' Growatt AI</div><div class="meta">How Smart Scheduling Mode works</div></button>'+
     '<button class="opt apx2" data-act="goapx2"><div class="name">'+ic('battery',14)+' APX HV Battery 2.0</div><div class="meta">Next\u2011gen stacked storage \u00b7 5\u201330 kWh</div></button>';
-  return '<div class="step'+(stepOpen('stp-seg')?'':' collapsed')+'" id="stp-seg">'+stepHead(1,'layers','System type','Residential or Commercial \u2014 filters inverters &amp; batteries',null,'stp-seg')+'<div class="step-b"><div class="grid g3">'+cards+aiCard+'</div>'+adv+'</div></div>';
+  return '<div class="step'+(stepOpen('stp-seg')?'':' collapsed')+'" id="stp-seg">'+stepHead(1,'layers','System type','Residential or Commercial \u2014 filters inverters &amp; batteries',null,'stp-seg')+'<div class="step-b"><div class="grid g3">'+cards+'</div>'+designHTML()+(state.segment?'<div class="sublabel">Multiple inverters &amp; third\u2011party</div>':'')+adv+'<div class="sublabel">Learn more</div><div class="grid g3">'+aiCard+'</div></div></div>';
 }
 function unitTabsHTML(){
   if(!state.multi)return '';
@@ -1078,21 +1190,21 @@ function invFamSectionHTML(){
     var modaLock=(noParallel(k)&&state.multi&&state.units.length>1);
     var cls='opt';if(valid&&on)cls+=' on';if(!valid||modaLock)cls+=' crossed';if(on&&!valid)cls+=' invalidsel';
     var badge=v.backup==='integrated'?'<span class="badge g">'+ic('shield',11)+'Integrated backup</span>':(v.backup==='none'?'<span class="badge a">'+ic('alert',11)+'No backup</span>':'<span class="badge a">'+ic('plug',11)+'Needs SYN box</span>');
-    var x=!valid?'<div class="x">'+ic('alert',11)+'Max '+famMaxKWp(k)+' kWp \u00b7 too small</div>':(modaLock?'<div class="x">'+ic('alert',11)+'Not possible to have more inverters in parallel at all</div>':'');
+    var x=!valid?'<div class="x">'+ic('alert',11)+famWhy(k)+'</div>':(modaLock?'<div class="x">'+ic('alert',11)+'Not possible to have more inverters in parallel at all</div>':'');
     return '<button class="'+cls+'" data-act="fam" data-k="'+k+'"'+(modaLock?' disabled title="'+v.name+' \u2014 not possible to have more inverters in parallel at all. Add a third\u2011party inverter instead"':'')+'><div class="name">'+v.name+'</div><div class="meta">'+v.phase+' \u00b7 '+v.inputs+' input'+(v.inputs>1?'s':'')+' \u00b7 '+v.battery+' battery</div>'+badge+x+'</button>';
   }).join('');
   var invSection;
   if(state.family){var f=fam();
     var chips=f.kw.map(function(p){var ok=kwValid(p);return '<button class="chip '+(state.kw===p?'on':'')+(ok?'':' crossed')+'" data-act="kw" data-p="'+p+'">'+p+' kW</button>';}).join('');
-    var warn=selInvalid()?'<div class="pverr" style="margin-top:13px">'+ic('alert',16)+'This inverter ('+state.kw+' kW) is too small for '+totalKWp()+' kWp (max '+maxKWp()+' kWp at 200%). Choose a larger one above \u2014 or reduce panels.</div>':'';
+    var warn=selInvalid()?'<div class="pverr" style="margin-top:13px">'+ic('alert',16)+(pvOver()?('This inverter ('+state.kw+' kW) is too small for '+totalKWp()+' kWp (max '+maxKWp()+' kWp at 200%). Choose a larger one above \u2014 or reduce panels.'):('This inverter ('+state.kw+' kW) has only '+pvSpec().total+' string inputs for '+pvUsed().length+' PV arrays. Choose a larger one above \u2014 or remove PV arrays.'))+'</div>':'';
     var brk=acBreaker();
     var cs=cableSpec(batteryTotals().kwh>0);
     function spr(k,v){return v?('<span class="k">'+k+'</span><span class="v">'+v+'</span>'):'';}
     function mm2(v){return v?(/^[0-9\u2265]/.test(v)?v+' mm\u00b2':v):'';}
     var brkNote=(brk&&!selInvalid())?('<div class="notice g">'+ic('check',14)+'<div style="flex:1;min-width:0"><b>'+(brk.manual?'Per the Growatt manual':'Installation')+' \u2014 '+f.name+' '+state.kw+' kW</b>'+
-      '<div class="mspec">'+spr('AC breaker',brk.txt+' \u00b7 3\u2011pole'+(brk.manual?'':' (calculated)'))+
+      '<div class="mspec">'+spr('AC breaker',brk.txt+' \u00b7 4\u2011pole (3P+N)'+(brk.manual?'':' (calculated)'))+
         (brk.load&&brk.load.a!==brk.a?spr('Load breaker',brk.load.txt):'')+
-        (cs?spr('AC cable',mm2(cs.ac))+(cs.bk&&cs.bk!==cs.ac?spr('Load cable',mm2(cs.bk)):'')+spr('PV cable',mm2(cs.pv))+spr('Battery cable',mm2(cs.bat))+(cs.batNote?spr('Battery DC breaker','35 A/1000 V dc \u00b7 if fitted'):'')+spr('Earth (PE)',mm2(cs.pe))+spr('Communication',mm2(cs.com)):'')+
+        (cs?spr('AC cable',mm2(cs.ac))+(cs.bk&&cs.bk!==cs.ac?spr('Load cable',mm2(cs.bk)):'')+spr('PV cable',mm2(cs.pv))+spr('Battery cable',mm2(cs.bat))+spr('Earth (PE)',mm2(cs.pe))+spr('Communication',mm2(cs.com)):'')+
       '</div><div class="mspecsrc">Breaker '+brk.src+(cs?' \u00b7 cables per the '+cs.src+(cs.batNote?'; '+cs.batNote:''):'')+'. The AC breaker is added to your system'+(state.segment==='res'?'; cable sizes are written on the diagram in high resolution':'')+'.</div></div></div>'):'';
     invSection='<div class="sublabel" style="margin-top:16px">Power rating</div><div class="chips">'+chips+'</div>'+warn+brkNote+'<div class="note">'+ic('info',14)+'<span>'+f.note+'</span></div>';
   } else invSection='<div class="notice g" style="margin-top:14px">'+ic('info',14)+'<span>Now pick a suitable inverter below \u2014 sizes too small for your panels are crossed out.</span></div>';
@@ -1101,11 +1213,8 @@ function invFamSectionHTML(){
 function invStepBodyHTML(){
   if(!state.segment) return '<div class="placeholder" style="flex-wrap:wrap"><span class="i">'+ic('info',15)+'</span><span>Pick the system type first:</span>'+
     '<button class="chip sm" data-act="seg" data-s="res">Residential</button><button class="chip sm" data-act="seg" data-s="com">Commercial</button></div>';
-  var panelSection='<div class="sublabel" id="pvInputsTop">Solar panels \u2014 this inverter</div>'+
-    '<div id="pvInputs" class="grid g2">'+
-      '<div class="field"><label>Panel power</label><input id="panelW" type="number" inputmode="numeric" min="100" max="800" step="5" value="'+state.panelW+'"><span class="unit">Wp per panel</span></div>'+
-      '<div class="field"><label>Number of panels</label><input id="panelCount" type="number" inputmode="numeric" min="0" max="400" step="1" value="'+(state.panelCount||'')+'" placeholder="0"></div>'+
-    '</div><div id="pvTop">'+pvTopHTML()+'</div>';
+  var panelSection='<div class="sublabel" id="pvInputsTop">Solar panels \u2014 this inverter \u00b7 one PV array per string input</div>'+
+    pvSectionHTML()+'<div id="pvTop">'+pvTopHTML()+'</div>';
   return unitTabsHTML()+panelSection+'<div id="invFamSection">'+invFamSectionHTML()+'</div>'+aiPanelHTML();
 }
 function aiPanelHTML(){
@@ -1134,6 +1243,7 @@ function emsAtIncoming(){return state.dongle==='shinesem'||state.dongle==='groho
 // why a smart meter is required right now ('' = it is not)
 function meterNeed(){
   var multi=state.units.length>1;
+  if(state.dongle==='shinesem')return '';           // smart meter built in
   if(state.thirdParty&&state.family==='MODA')return 'MODA + third\u2011party inverter \u2014 CT2 measures the third\u2011party inverter';
   if(state.thirdParty&&multi)return 'a third\u2011party inverter next to several Growatt inverters is measured with CT2';
   if(emsAtIncoming())return '';
@@ -1142,6 +1252,7 @@ function meterNeed(){
   return '';
 }
 function meteringText(){
+  if(state.dongle==='shinesem')return 'ShineSEM\u2011X at the incoming point \u2014 smart meter built in, own CT clamps (no separate meter)';
   if(emsAtIncoming())return shortDev(state.dongle)+' at the incoming point, own CT clamps'+(state.metering==='meter'?' + smart meter TPM\u20116CT\u2011C for the third\u2011party inverter (CT2)':'');
   return state.metering==='meter'?('Smart meter TPM\u20116CT\u2011C at the incoming point (CT1 grid'+(state.thirdParty?', CT2 third\u2011party inverter':'')+')'):'no smart meter';
 }
@@ -1159,11 +1270,13 @@ function onlineStep(){
   // what the chosen device needs at the incoming point - right under its card
   function addon(gk){
     if(gk==='ems'){
-      var o='<div class="locked"><span class="ico">'+ic('check',18)+'</span><div><div class="t">'+shortDev(dg)+' is the meter</div><div class="s">In the smart meter\u2019s place at the incoming point \u2014 its own CT clamps (L1\u2013L3) sit right under it. No separate smart meter.</div></div></div>';
-      if(state.thirdParty||m)o+=meterCard(state.thirdParty?'Smart meter for the third\u2011party inverter':'Extra smart meter',state.thirdParty?('TPM\u20116CT\u2011C \u00b7 2\u00d7CT \u2014 CT2 on the third\u2011party inverter, read by the '+shortDev(dg)+' over RS485'):('TPM\u20116CT\u2011C \u2014 not needed with '+shortDev(dg)+', tap to remove'))+needNote;
+      var o='<div class="locked"><span class="ico">'+ic('check',18)+'</span><div><div class="t">'+shortDev(dg)+' is the meter</div><div class="s">'+(dg==='shinesem'
+        ?('Smart meter built in \u2014 it sits in the meter\u2019s place at the incoming point with its own CT clamps (L1\u2013L3) right under it. No separate smart meter is needed'+(state.thirdParty?', also not for the third\u2011party inverter':'')+'.')
+        :'In the smart meter\u2019s place at the incoming point \u2014 its own CT clamps (L1\u2013L3) sit right under it. No separate smart meter.')+'</div></div></div>';
+      if(dg==='grohome'&&(state.thirdParty||m))o+=meterCard(state.thirdParty?'Smart meter for the third\u2011party inverter':'Extra smart meter',state.thirdParty?('TPM\u20116CT\u2011C \u00b7 2\u00d7CT \u2014 CT2 on the third\u2011party inverter, read by the '+shortDev(dg)+' over RS485'):('TPM\u20116CT\u2011C \u2014 not needed with '+shortDev(dg)+', tap to remove'))+needNote;
       return '<div class="addon">'+o+'</div>';
     }
-    var sub=gk==='log'?'TPM\u20116CT\u2011C \u00b7 2\u00d7CT \u2014 at the incoming point, read by the ShineMaster over RS485'
+    var sub=gk==='log'?'TPM\u20116CT\u2011C \u00b7 2\u00d7CT \u2014 always at the incoming point; the ShineMaster sits under it and reads it over RS485'
       :('TPM\u20116CT\u2011C \u00b7 2\u00d7CT \u2014 CT1 under the utility meter'+(state.thirdParty?', CT2 on the third\u2011party inverter':'')+' \u00b7 RS485 to the inverter');
     return '<div class="addon">'+meterCard(m?'Smart meter added':'Add smart meter',sub)+needNote+'</div>';
   }
@@ -1187,6 +1300,7 @@ function onlineStep(){
   if(ems)mp='<div class="icn on">'+ic('cpu',14)+'<b>'+shortDev(dg)+'</b><small>own CT clamps under it</small></div>';
   else if(m)mp='<div class="icn on">'+ic('activity',14)+'<b>Smart meter</b><small>TPM\u20116CT\u2011C \u00b7 CT1</small></div>';
   else mp='<div class="icn '+(need?'bad':'off')+'">'+ic('activity',14)+'<b>No meter</b><small>'+(need?'required':'add under the dongle')+'</small></div>';
+  if(dg==='shinemaster')mp+='<span class="iar"></span><div class="icn on">'+ic('cpu',14)+'<b>ShineMaster</b><small>under the meter</small></div>';
   var chain='<div class="inchain"><div class="icn">'+ic('zap',14)+'<b>Grid</b><small>utility meter</small></div><span class="iar"></span>'+
     '<div class="icn'+(state.mainFuseA>0?'':' off')+'">'+ic('shield',14)+'<b>Q1 \u00b7 '+fuse+'</b><small>main switch</small></div><span class="iar"></span>'+mp+'</div>';
   // no monitoring device chosen: the meter can still be added here (a SYN box or a third-party inverter needs one)
@@ -1231,12 +1345,7 @@ function backupGuidanceHTML(){
   var out='';
   if(state.backupMode==='whole'){
     if(multi){
-      var famsOk=state.units.every(function(u,i){var f=(i===state.unit)?state.family:u.family;return !f||SYN_FAMS[f];});
-      if(!famsOk) out+='<div class="pverr">'+ic('alert',15)+'<span>Whole\u2011home across <b>multiple inverters</b> needs SYN\u2011compatible models \u2014 <b>MOD\u2011XH (BP)</b>, <b>MOD\u2011HU</b> or <b>WIT\u2011HU</b> (residential). Adjust in step 2, or use a <b>single MOD\u2011HU</b> instead.</span></div>';
-      else{
-        out+='<div class="notice g">'+ic('check',14)+'<span>Multiple inverters + whole\u2011home \u2192 handled by a <b>SYN 100\u2011XH\u201130</b> \u2014 up to <b>58 A</b> backup. Added to your system. The inverters\u2019 own ratings still limit output.</span></div>';
-        if(bkw>40) out+='<div class="pverr">'+ic('alert',15)+'<span><b>'+bkw+' kW</b> backup load exceeds the SYN 100 limit of <b>58 A (\u2248 40 kW)</b>.</span></div>';
-      }
+      out+='<div class="pverr">'+ic('alert',15)+'<span>Whole\u2011home backup needs a <b>single inverter</b> \u2014 the <b>SYN box works with one inverter only</b>, on\u2011grid and off\u2011grid. With several MOD\u2011HU / MODA, use <b>partial backup</b> per inverter.</span></div>';
     } else if(state.family==='MOD-HU'){
       if(bkw>0&&state.kw&&bkw>state.kw) out+='<div class="pverr">'+ic('alert',15)+'<span>A <b>'+bkw+' kW</b> whole\u2011home load needs a <b>\u2265 '+bkw+' kW</b> inverter \u2014 this MOD\u2011HU is <b>'+state.kw+' kW</b>. Pick a higher power class in step 2.</span></div>';
       else if(bkw>0) out+='<div class="notice g">'+ic('check',14)+'<span><b>MOD\u2011HU integrated whole\u2011home backup</b> \u2014 the '+state.kw+' kW power class covers the '+bkw+' kW draw.</span></div>';
@@ -1278,27 +1387,28 @@ function backupBodyHTML(){
         :state.units.length>1
           ?'<div class="note" style="margin-top:10px">'+ic('info',14)+'<span>A SYN box can only be added with a <b>single inverter</b> \u2014 not available with multiple '+fam().name+' units.</span></div>'
           :'');
+    else if(state.units.length>1) body='<div class="reqcard"><span class="ico">'+ic('alert',22)+'</span><div><div class="t">No backup with several inverters</div><div class="s">The <b>SYN box works with one inverter only</b> \u2014 on\u2011grid and off\u2011grid. '+fam().name+' has no integrated backup, so this system is grid\u2011tied. For backup: a <b>single</b> '+fam().name+' with a SYN box \u2014 or <b>MOD\u2011HU</b> / <b>MODA</b>, which have backup built in (partial backup per inverter).</div></div></div>';
     else if(bt==='box-required') body='<div class="reqcard"><span class="ico">'+ic('alert',22)+'</span><div><div class="t">Backup not integrated \u2014 needs to be added</div><div class="s">'+fam().name+' requires a separate SYN box. Added automatically.</div></div></div><div class="notice g">'+ic('check',14)+'<span><b>'+synItem().split('|')[0]+'</b> added to your system \u2014 it sits at the incoming point, right under the smart meter.</span></div>';
     else body='<div class="switchrow"><div><div class="lab">Include SYN backup box</div><div class="s2">'+fam().name+' backup is <b>not integrated</b> \u2014 add a SYN box for off\u2011grid.</div></div><span class="sw '+(state.backupOn?'on':'')+'" data-act="backup"><span class="knob"></span></span></div>'+(state.backupOn?'<div class="notice g">'+ic('check',14)+'<span><b>Growatt SYN 100\u2011XH\u201130</b> (3\u2011phase) added. Switch time &lt; 0.5 s. It sits at the incoming point, right under the smart meter.</span></div>':'<div class="note">'+ic('info',14)+'<span>No backup box \u2014 grid\u2011tied only (no power during outages).</span></div>');
   }
   var loadSection='';
   if(state.family&&has_('Battery')){
-    var wholeDesc=(state.multi&&state.units.length>1)?'Every circuit stays on \u2014 <b>requires a SYN box</b> with multiple inverters':'Every circuit in the property stays on during an outage';
+    var wholeDesc=(state.multi&&state.units.length>1)?'Needs a <b>single inverter</b> \u2014 a SYN box works with one inverter only':'Every circuit in the property stays on during an outage';
     var modes=[['partial','Partial backup','Only essential circuits stay on \u2014 wired to the LOAD port'],['whole','Whole\u2011home backup',wholeDesc]];
     var mcards=modes.map(function(m){var on=state.backupMode===m[0];return '<button class="opt'+(on?' on':'')+'" data-act="backupmode" data-v="'+m[0]+'"><div class="name">'+m[1]+'</div><div class="meta">'+m[2]+'</div></button>';}).join('');
     var loadKwField='<div class="field" style="margin-top:13px"><label>Property peak load (kW) \u2014 manual estimate</label><input id="loadKw" type="number" inputmode="decimal" min="0" max="999" step="0.5" value="'+(state.loadKw||'')+'" placeholder="e.g. 6"></div>'+
       '<div id="loadCalc">'+loadCalcHTML()+'</div>';
     if(state.units.length>1){
-      var allModHu=state.units.every(function(u,i){var f=(i===state.unit)?state.family:u.family;return f==='MOD-HU';});
+      var allModHu=state.units.every(function(u,i){var f=(i===state.unit)?state.family:u.family;return f==='MOD-HU'||f==='MODA';});
       if(!allModHu){
         state.backupMode=null;state.units.forEach(function(u){u.backupMode=null;});
-        loadSection='<div class="pverr" style="margin-top:14px">'+ic('alert',15)+'<span><b>Backup is not available with multiple inverters</b> of this type. Backup needs a <b>single inverter with a SYN box</b> \u2014 or <b>MOD\u2011HU inverters</b>, which always support <b>partial backup</b> even in a group.</span></div>'+loadKwField;
+        loadSection=(backupType()==='integrated'?'<div class="pverr" style="margin-top:14px">'+ic('alert',15)+'<span><b>Backup is not available with this mix of inverters.</b> The <b>SYN box works with one inverter only</b> \u2014 on\u2011grid and off\u2011grid. In a group, backup needs <b>MOD\u2011HU</b> / <b>MODA</b> units only, with <b>partial backup</b> per inverter.</span></div>':'')+loadKwField;
         return body+loadSection;
       }
       if(state.backupMode==='whole'){state.backupMode=null;}
       state.units.forEach(function(u){if(u.backupMode==='whole')u.backupMode=null;});
-      mcards='<button class="opt'+(state.backupMode==='partial'?' on':'')+'" data-act="backupmode" data-v="partial"><div class="name">Partial backup</div><div class="meta">Only essential circuits stay on \u2014 always available with MOD\u2011HU, per inverter</div></button>'+
-        '<button class="opt crossed" disabled title="Whole\u2011home backup needs a single inverter"><div class="name">Whole\u2011home backup</div><div class="meta">Needs a <b>single inverter</b> (SYN box or one MOD\u2011HU)</div><div class="x">'+ic('alert',11)+'Single inverter only</div></button>';
+      mcards='<button class="opt'+(state.backupMode==='partial'?' on':'')+'" data-act="backupmode" data-v="partial"><div class="name">Partial backup</div><div class="meta">Only essential circuits stay on \u2014 MOD\u2011HU / MODA, one backup load per inverter</div></button>'+
+        '<button class="opt crossed" disabled title="Whole\u2011home backup needs a single inverter"><div class="name">Whole\u2011home backup</div><div class="meta">Needs a <b>single inverter</b> \u2014 a SYN box works with one inverter only</div><div class="x">'+ic('alert',11)+'Single inverter only</div></button>';
     } else if(backupType()==='box'&&!state.backupOn){
       state.backupMode=null;
       loadSection='<div class="note" style="margin-top:14px">'+ic('info',14)+'<span><b>Enable the SYN backup box above</b> to configure backup \u2014 without it the system is grid\u2011tied only.</span></div>'+loadKwField;
@@ -1570,9 +1680,9 @@ function bypassHotspotHTML(cxPct,cyPct){
   return hotWrap('bypass',cxPct,cyPct,body,'plug');
 }
 function highResHotspotHTML(cxPct,cyPct){
-  var body='<div class="hh">Diagram detail</div>'+
-    '<button class="hotbtn'+(!state.highRes?' on':'')+'" data-act="togglehighres" data-v="std">Standard</button>'+
-    '<button class="hotbtn'+(state.highRes?' on':'')+'" data-act="togglehighres" data-v="hr">High resolution</button>'+
+  var body='<div class="hh">Design</div>'+
+    '<button class="hotbtn'+(!state.highRes?' on':'')+'" data-act="togglehighres" data-v="std">Quick Design</button>'+
+    '<button class="hotbtn'+(state.highRes?' on':'')+'" data-act="togglehighres" data-v="hr">Advanced Design (SLD)</button>'+
     '<div style="font-size:10.5px;color:var(--mut);line-height:1.35;margin-top:6px">'+
     (state.highRes?'Draws the AC connection as 5 conductors \u2014 L1, L2, L3, N, PE.':'Draws the AC connection as a single line.')+'</div>';
   return hotWrap('hires',cxPct,cyPct,body,'zap');
@@ -1620,7 +1730,7 @@ function sldSceneHTML(){
   var hasItem=function(g,t){return bom.some(function(r){return r.g===g&&r.item.indexOf(t)>=0;});};
   syncUnit();
   var isMulti=!!(state.multi&&state.units.length>1);
-  var HR=!!state.highRes&&!isMulti;
+  var HR=!!state.highRes;                 // Advanced Design (SLD) - one or several inverters
   var s=HR?6:0;                       // conductor pitch in high resolution
   // ---- per-inverter facts, read through the same helpers the BOM uses
   var saved=snapshotUnit();
@@ -1634,6 +1744,7 @@ function sldSceneHTML(){
     var kwhU=okU?(+btU.kwh||0):0;
     ALL.push({i:ui,fm:fmU,fk:state.family,kw:state.kw,ok:okU,name:okU?modelName(state.family,state.kw):(fmU?fmU.name:''),
       kwp:totalKWp(),pc:state.panelCount||0,pw:state.panelW||0,over:!!(okU&&pvOver()),
+      pv:pvUsed().map(function(p){return {n:p.n,w:p.w,m:p.m,i:p.i};}),sp:okU?pvSpec():null,
       kwh:kwhU,bt:btU,bkw:kwhU?battMaxKw(kwhU):0,syn:!!(okU&&needsSyn()),mode:okU?state.backupMode:null,
       loadKw:+state.backupLoadKw||0,brk:okU?acBreaker():null,apx:state.apx,bat:fmU?fmU.battery:null,
       axeLV:!!(fmU&&fmU.axeLV),backup:fmU?fmU.backup:null,cab:okU?cableSpec(kwhU>0):null,
@@ -1654,9 +1765,9 @@ function sldSceneHTML(){
   var dg=state.dongle;
   var ems=(dg==='shinesem'||dg==='shinemaster'||dg==='grohome')?dg:null;
   var emsAt=dg==='shinesem'||dg==='grohome';           // energy manager in the smart meter's place at the incoming point
-  var a1Log=dg==='shinemaster';                         // datalogger, top right of the cabinet - reads a separate smart meter
+  var a1Log=dg==='shinemaster';                         // datalogger right under the smart meter - it reads the meter over RS485
   var p1Meter=meter&&!emsAt;                            // smart meter in the supply trunk (CT1 under the utility meter)
-  var p2Meter=meter&&emsAt;                             // with an energy manager a meter is only kept for a third-party inverter (CT2)
+  var p2Meter=meter&&dg==='grohome';                    // GroHome: a meter is only kept for a third-party inverter (CT2) - ShineSEM-X has it built in
   var stick=(dg==='wifi'||dg==='lan'||dg==='4g')?dg:null;
   var rfLink=dg==='grohome'&&state.groHomeMode==='wireless';
   var emsName={shinesem:'ShineSEM\u2011X',shinemaster:'ShineMaster',grohome:'GroHomeManager\u2011X'}[dg]||'';
@@ -1804,6 +1915,13 @@ function sldSceneHTML(){
       cond([[x+2*s,metY],[x+2*s,yEnd]],4,true,true);dot(x+2*s,metY,4,true);
     } else {cond([[x,yTrunk],[x,yEnd]],-1,live,true);dot(x,yTrunk,-1,live);}
   }
+  // a feeder out of the SYN box's INVERTER / LOAD terminals: L1 L2 L3 N from the box, PE from the main earthing bar under it
+  function synOut(x,yEnd,live){
+    if(HR){
+      for(var k=0;k<4;k++){var xk=x+(k-2)*s;cond([[xk,kB],[xk,yEnd]],k,live,true);}
+      cond([[x+2*s,metY],[x+2*s,yEnd]],4,true,true);dot(x+2*s,metY,4,true);
+    } else cond([[x,kB],[x,yEnd]],-1,live,true);
+  }
   // N and PE are never switched: in high resolution they run straight past a breaker (the phases have the gap)
   function thru(x,live,ks){if(!HR)return;ks.forEach(function(k){var xk=x+(k-2)*s;cond([[xk,yQ-10],[xk,yQ+10]],k,k===4||live);});}
   var BH=HR?2*s:3;                                       // half width of a cable bundle
@@ -1849,7 +1967,7 @@ function sldSceneHTML(){
     (xs||[]).forEach(function(x){o+='<circle cx="'+f1(x)+'" cy="'+f1(y0)+'" r="1.3" fill="#fff" stroke="'+C.meterEdge+'" stroke-width=".8"/><circle cx="'+f1(x)+'" cy="'+f1(y0+h)+'" r="1.3" fill="#fff" stroke="'+C.meterEdge+'" stroke-width=".8"/>';});
     return o;
   }
-  function mm(v){return v?(/^[0-9\u2265]/.test(v)?v+' mm\u00b2':v):'';}
+  function mm(v){if(v&&/\u2248/.test(v))v=v.replace(/^.*\u2248\s*/,'').replace(/\s*mm\u00b2$/,'');return v?(/^[0-9\u2265]/.test(v)?v+' mm\u00b2':v):'';}   // AWG sizes: the mm\u00b2 equivalent only
   // ---- battery towers as configured in the battery step: APX = per battery input 1 or 2 towers (BMS on top of tower A),
   //      ARK = one tower with the BDC controller on top. Every tower stands on its base.
   function towerSpec(o){
@@ -1894,21 +2012,24 @@ function sldSceneHTML(){
   var XT=70;                                             // supply trunk
   // trunk conductors: L1 L2 L3 N centred on XT; PE runs apart on the left (it never passes Q1 or P1)
   function trX(k){return HR?(k===4?XT-30:XT+(k-1.5)*s):XT;}
-  var yGrid=72,yKwh=114,yCT=140,yCabTop=160,yQ1=188,yP1=234;
+  var yGrid=72,yKwh=114,yCT=140,yCabTop=160,yQ1=190,yP1=250;
+  var QH=21;                                             // half height of the main switch body
   var emsT=emsAt;                                        // an energy manager + its CTs make the supply trunk longer
   var yCTe=yP1-MH/2+EH+16;                               // its CT clamps, right under it
-  var yTrunk=emsT?yCTe+40:yP1+MH/2+28;
+  var yA1=yP1+MH/2+16;                                   // ShineMaster: right under the smart meter, on its RS485 leg
+  var yTrunk=emsT?yCTe+40:(a1Log?yA1+44+28:yP1+MH/2+28);
   // SYN at the incoming point: the grid-side main busbar (gBus) right under the meter, K1 under it, then the backup busbar
   function gY(k){return HR?yTrunk+k*s:yTrunk;}
-  var hK1=sSyn?54:50;
+  var hK1=sSyn?80:50;
   var yK1=kSyn?(gBus?gY(3)+(HR?30:28):yTrunk):null;
-  var busTop0=kSyn?(yK1+hK1+42):yTrunk;
+  // one inverter + SYN: no busbar under the box - its INVERTER / LOAD terminals feed Q2 / Q3, the MET runs under it
+  var busTop0=trunkSyn?(yK1+hK1+42):(sSyn?(yK1+hK1+30-(HR?4*s:10)):yTrunk);
   var yBus=HR?busTop0+2*s:busTop0;
   function busY(k){return HR?yBus+(k-2)*s:yBus;}
   var busTop=busY(0),busBot=busY(4);
-  var yLane=busTop-((sSyn&&rfLink)?18:12);              // RS485 / RF lane, just above the busbar (RF + SYN: room for its own cable)
+  var yLane=sSyn?(yK1+hK1+14):(busTop-12);              // RS485 / RF lane, just above the busbar (under the SYN box with one)
   var metY=HR?busBot:yBus+10;                            // main earthing bar (the PE line in high resolution)
-  var yQ=busBot+60;                                      // outgoing protective devices
+  var yQ=sSyn?metY+46:busBot+60;                         // outgoing protective devices
   var yCabBot=yQ+42;
   var anySyn=UN.some(function(o){return o.ok&&o.syn;})&&!sSyn;   // SYN boxes in their own row under the cabinet (multi)
   var ySynT=yCabBot+28,hSyn=54,ySynB=ySynT+hSyn;
@@ -1927,7 +2048,7 @@ function sldSceneHTML(){
     var r=c.iR;
     if(o.ok&&o.branch){
       if(o.syn)c.bbL=c.iR+32;
-      else if(isMulti){c.xq=c.iR+70;c.bbL=c.xq-BBW/2;c.rowD=true;}   // compact: backup load drops into the DC row
+      else if(isMulti){c.xq=c.iR+(HR?114:70);c.bbL=c.xq-BBW/2;c.rowD=true;}   // compact: backup load drops into the DC row (wider for 5 conductors)
       else{c.xq=c.iR+(o.bat==='MODA'?72:64);c.bbL=c.xq+20+46;}   // MODA: room for BACKUP outside the cabinet outline
       c.bbR=c.bbL+BBW;c.bk=c.rowD?c.xq:(c.bbL+c.bbR)/2;r=c.bbR;
     }
@@ -1963,7 +2084,7 @@ function sldSceneHTML(){
   var metL=XT-52, rodX=XT-44;
   var peMax=peXs.length?Math.max.apply(null,peXs)+12:0;
   var metR=busEnd;                                       // the MET runs under the whole busbar (off-grid too: it is the earth)
-  var cabR=Math.max(busEnd+14,metR+14,XT+300,(a1Log||p2Meter)?(XT+352+A1w+14):0);
+  var cabR=Math.max(busEnd+14,metR+14,XT+300,p2Meter?(XT+352+A1w+14):0);
   // top-right block (online monitoring next to an energy manager, otherwise the legend) and a
   // bottom-right block in the DC row (online monitoring next to a stick dongle, otherwise the legend)
   var onlineTop=!stick;
@@ -1994,21 +2115,20 @@ function sldSceneHTML(){
   var subTxt=subBits.join('  \u00b7  '), subW=tw(subTxt,10)*0.95+6;   // drawn top left of the sheet once its size is known
 
   // ================= SUPPLY TRUNK (ghosted off-grid) =================
-  // only the phases are switched: N and PE run straight through every breaker
+  // every switching device switches L1 L2 L3 and N (4P); PE is never switched and runs past them
   ghost(HG);
   if(HR){
     for(var k=0;k<4;k++){
       var xk=trX(k);
-      if(k===3)cond([[xk,yGrid+13],[xk,kSyn?yK1:busY(k)]],k,gridLive,true);
-      else{cond([[xk,yGrid+13],[xk,yQ1-9.5]],k,gridLive);cond([[xk,yQ1+9.5],[xk,kSyn?yK1:busY(k)]],k,gridLive,true);}
+      cond([[xk,yGrid+13],[xk,yQ1-QH]],k,gridLive);cond([[xk,yQ1+QH],[xk,kSyn?yK1:busY(k)]],k,gridLive,true);
       if(!kSyn)dot(xk,busY(k),k,gridLive);
       if(gBus)dot(xk,gY(k),k,gridLive);
     }
     cond([[trX(4),yGrid+13],[trX(4),busY(4)]],4,true,true);
     dot(trX(4),busY(4),4,true);
   } else {
-    cond([[XT,yGrid+13],[XT,yQ1-9.5]],-1,gridLive);
-    cond([[XT,yQ1+9.5],[XT,kSyn?yK1:yBus]],-1,gridLive);
+    cond([[XT,yGrid+13],[XT,yQ1-QH]],-1,gridLive);
+    cond([[XT,yQ1+QH],[XT,kSyn?yK1:yBus]],-1,gridLive);
     ticks(XT,yGrid+30,'v',gridLive);
     if(!kSyn)dot(XT,yBus,-1,gridLive);
     if(gBus)dot(XT,yTrunk,-1,gridLive);
@@ -2039,11 +2159,26 @@ function sldSceneHTML(){
   var p1L=XT-MW/2, p1R=XT+MW/2, p1T=yP1-MH/2;
   var A1x=null,A1y=yCabTop+12;
   ghost(HG);
-  // Q1 main switch (3P - N and PE are not switched) - the main fuse rating is shown here only
-  poles(HR?[trX(0),trX(1),trX(2)]:[XT],yQ1,'switch',false,gridLive);
-  if(!HR)TL.push(txt(XT+7,yQ1+3,'3P','t-p'));
-  lbl(q1L,yQ1-9,[['Q1 \u00b7 MAIN SWITCH 3P','t-d',15],[fuseA?(fuseA+' A'):'\u2014 A','t-r',12],[fuseA?(fuseKw+' kW allowed'):'set the main fuse in step '+sn('stp-online'),'t-x']]);
-  hit(XT-30,yQ1-20,220,36,'stepopen','stp-online',null,'Main switch \u2014 the main fuse size is set in step '+sn('stp-online'));
+  // Q1 main switch as a component at the incoming point: a 4-pole switch-disconnector - L1 L2 L3 N go in at the top,
+  // through their contacts and out at the bottom (PE passes beside it); the rating is written on it
+  {
+    var qxs=HR?[trX(0),trX(1),trX(2),trX(3)]:[XT], qbL=XT-24, qbW=48, qT0=yQ1-QH, qB0=yQ1+QH;
+    SL.push(rect(qbL,qT0,qbW,2*QH,{fill:C.meterBody,stroke:C.meterEdge,sw:1.2,rx:3}));
+    var qin='';
+    qxs.forEach(function(x,k){
+      var col=!gridLive?C.dead:(HR?PHASE_WIRES[k].c:C.ac);
+      qin+='<path d="M'+f1(x)+','+f1(qT0)+' L'+f1(x)+','+f1(yQ1-9.5)+' M'+f1(x)+','+f1(yQ1+8)+' L'+f1(x)+','+f1(qB0)+'" stroke="'+col+'" stroke-width="'+(HR?1.5:2.2)+'"/>'+
+        '<circle cx="'+f1(x)+'" cy="'+f1(qT0)+'" r="1.4" fill="#fff" stroke="'+C.meterEdge+'" stroke-width=".8"/><circle cx="'+f1(x)+'" cy="'+f1(qB0)+'" r="1.4" fill="#fff" stroke="'+C.meterEdge+'" stroke-width=".8"/>';
+    });
+    SL.push(qin);
+    poles(qxs,yQ1,'switch',false,gridLive,C.meterBody);
+    // rotary handle + 4P, right on the body
+    var hx=XT+17, hy=yQ1-5;
+    SL.push('<circle cx="'+f1(hx)+'" cy="'+f1(hy)+'" r="4.4" fill="#fff" stroke="'+C.meterEdge+'" stroke-width="1"/><line x1="'+f1(hx)+'" y1="'+f1(hy-3.2)+'" x2="'+f1(hx)+'" y2="'+f1(hy+3.2)+'" stroke="'+(gridLive?C.ink:C.faint)+'" stroke-width="1.8" stroke-linecap="round"/>'+
+      txt(hx,yQ1+12,'4P','t-mdl','middle'));
+  }
+  lbl(q1L,yQ1-9,[['Q1 \u00b7 MAIN SWITCH 4P','t-d',15],[fuseA?(fuseA+' A'):'\u2014 A','t-r',12],[fuseA?(fuseKw+' kW allowed'):'set the main fuse in step '+sn('stp-online'),'t-x']]);
+  hit(XT-30,yQ1-QH-2,220,2*QH+4,'stepopen','stp-online',null,'Main switch \u2014 the main fuse size is set in step '+sn('stp-online'));
   var trunkXs=HR?[trX(0),trX(1),trX(2),trX(3)]:[XT];
   var x0c=Math.max.apply(null,ct1X)+(HR?3.4:6.2);
   // Growatt smart meter in series (L1-L3 + N pass through it, PE does not) - its name sits on the symbol
@@ -2067,7 +2202,8 @@ function sldSceneHTML(){
   }
   // A1 datalogger (ShineMaster), top right of the cabinet - it reads the smart meter over RS485
   if(a1Log){
-    A1x=cabR-14-A1w;
+    // the datalogger sits right under the smart meter: the meter's RS485 leg runs down into it and on to the inverters
+    A1x=XT+(HR?13:8);A1y=yA1;
     SL.push(rect(A1x,A1y,A1w,A1h,{fill:C.grnBox,stroke:C.grn,sw:1.5,rx:4}));
     TL.push(txt(A1x+9,A1y+13,'A1 \u00b7 DATALOGGER','t-d')+txt(A1x+9,A1y+26,emsName,'t-n2')+txt(A1x+9,A1y+37,meter?'reads the smart meter':'needs a smart meter',meter?'t-x2':'t-w'));
     hit(A1x,A1y,A1w,A1h,'stepopen','stp-online',null,emsName+' \u2014 step '+sn('stp-online'));
@@ -2083,42 +2219,81 @@ function sldSceneHTML(){
   }
   ghost(false);
   ghost(OG);
-  TL.push(txt(A1x!==null?A1x-12:cabR-10,yCabTop+14,'ELECTRICAL CABINET','t-cab','end'));
+  // the cabinet name: left of the P2 meter, or clear of the datalogger's internet cable to the cloud (top right)
+  TL.push(txt(p2Meter?A1x-12:((a1Log&&onlineTop)?Math.min(cabR-10,Wc-16-onW+202-12):cabR-10),yCabTop+14,'ELECTRICAL CABINET','t-cab','end'));
   ghost(false);
   // ================= SYN IN THE SUPPLY TRUNK =================
   // multi-inverter whole-home: K1 switches the whole house. One inverter with a SYN box: K1 at the incoming point,
   // right under the smart meter - GRID from the meter (via the grid-side main busbar), LOAD/INV feed the backup busbar
   var kL=null,kR=null,kT=null,kB=null;
-  if(kSyn){
-    kL=HR?trX(0)-(sSyn?16:8):XT-(sSyn?30:24); kR=HR?trX(3)+(sSyn?22:8):XT+(sSyn?30:24); kT=yK1; kB=yK1+hK1;
+  // conductors drawn inside a box (the symbol layer), with a white halo where they cross its PE bar
+  function condIn(pts,k,live){var w=WL;WL=SL;cond(pts,k,live,true);WL=w;}
+  if(sSyn){
+    // ---- one inverter: the SYN box right under the smart meter, drawn with its terminal blocks in one row as in the
+    //      SYN 100-XH-30 quick guide - GRID | BYPASS | INVERTER | LOAD (L1 L2 L3 N each) and the PE bar under them.
+    //      GRID comes from the meter above; INVERTER and LOAD leave from below to Q2 (inverter) and Q3 (backup load).
+    var cS=cols[0], xG=XT, xB=XT+54, xI=cS.ac, xL=cS.bk;
+    kL=HR?XT-24:XT-28; kR=xL+38; kT=yK1; kB=yK1+hK1;
+    var yH=kT+10, bT=kT+22, bB=kT+44, yLo=kT+56, yPEi=kT+70, xGap=((xB+24)+(xI-26))/2, a0=XT+30, a1=XT+46;
+    SL.push(rect(kL,kT,kR-kL,hK1,{stroke:C.grn,sw:1.7,rx:6}));
+    // internal wiring (schematic): GRID -> ATS -> INVERTER and LOAD (the switched side) - drawn under the terminal blocks
+    var atsOpen=offGrid;
+    SL.push('<path d="M'+f1(xG)+','+f1(bB)+' L'+f1(xG)+','+f1(yLo)+' L'+f1(a0)+','+f1(yLo)+' M'+f1(a1)+','+f1(yLo)+' L'+f1(xGap)+','+f1(yLo)+' L'+f1(xGap)+','+f1(yH)+' L'+f1(xL)+','+f1(yH)+' L'+f1(xL)+','+f1(bT)+' M'+f1(xI)+','+f1(yH)+' L'+f1(xI)+','+f1(bT)+'" fill="none" stroke="'+C.mut+'" stroke-width="1.2"/>'+
+      '<circle cx="'+f1(a1)+'" cy="'+f1(yLo)+'" r="1.5" fill="#fff" stroke="'+C.mut+'" stroke-width="1"/>'+
+      '<line x1="'+f1(a0)+'" y1="'+f1(yLo)+'" x2="'+f1(a1-1)+'" y2="'+f1(yLo-(atsOpen?7:2.5))+'" stroke="'+(atsOpen?C.warn:C.ink)+'" stroke-width="1.6" stroke-linecap="round"/>'+
+      '<circle cx="'+f1(xI)+'" cy="'+f1(yH)+'" r="2.1" fill="'+C.mut+'"/>');
+    TL.push(txt((a0+a1)/2,yLo+11,atsOpen?'ATS 4P open':'ATS 4P','t-port','middle',atsOpen?' fill="'+C.warn+'"':''));
+    // the PE bar of the box, bonded to the main earthing bar below it
+    SL.push('<rect class="smet" x="'+f1(kL+6)+'" y="'+f1(yPEi-1.3)+'" width="'+f1(kR-kL-12)+'" height="2.6" rx="1"/>');
+    TL.push(txt(kL+7,yPEi-3,'PE','t-port',null,' fill="'+C.peTxt+'"'));
+    condIn([[kL+12,yPEi],[kL+12,kB]],4,true);
+    cond([[kL+12,kB],[kL+12,metY]],4,true);dot(kL+12,metY,4,true);
+    // the external conductors inside the box: GRID down onto its terminals, INVERTER / LOAD from theirs to the bottom edge
+    if(HR){for(var kg=0;kg<4;kg++)condIn([[trX(kg),kT],[trX(kg),bT]],kg,gridLive);}
+    else condIn([[XT,kT],[XT,bT]],-1,gridLive);
+    var outLive=busLive;
+    [[xI,true],[xL,!!U0.mode]].forEach(function(q){
+      if(!q[1])return;
+      if(HR){for(var ko=0;ko<4;ko++)condIn([[q[0]+(ko-2)*s,bB],[q[0]+(ko-2)*s,kB]],ko,outLive);}
+      else condIn([[q[0],bB],[q[0],kB]],-1,outLive);
+    });
+    // terminal blocks: name + L1 L2 L3 N (on the side the cable comes from)
+    function tblock(x,half,name,side,live,off){
+      var col=live?C.ink:C.faint, o=rect(x-half,bT,2*half,bB-bT,{fill:'#fff',stroke:col,sw:1.1,rx:2});
+      var ty=side==='top'?bT+5:bB-5;
+      for(var k=0;k<4;k++)o+='<circle cx="'+f1(x+(k+off)*6)+'" cy="'+f1(ty)+'" r="1.7" fill="#fff" stroke="'+col+'" stroke-width=".9"/>';
+      o+=txt(x,side==='top'?bB-4:bT+9.5,name,'t-port','middle',' style="'+(live?'fill:'+C.ink+';':'')+'font-size:7.2px;letter-spacing:.3px"');
+      SL.push(o);
+    }
+    tblock(xG,14,'GRID','top',true,-1.5);
+    tblock(xB,24,'BYPASS','top',false,-1.5);
+    tblock(xI,26,'INVERTER','bottom',true,-2);
+    tblock(xL,26,'LOAD','bottom',!!U0.mode,-2);
+    var kLines=[['K1 \u00b7 '+synNm,'t-d'],['Backup box \u00b7 incoming point','t-n2']];
+    if(offGrid)kLines.push(['ATS open \u00b7 the inverter feeds LOAD','t-x']);
+    else kLines.push([synNm==='SYN 100\u2011XH\u201130'?'grid \u2264 90 A \u00b7 backup \u2264 58 A':'verify model and ratings','t-x']);
+    if(U0.mode==='whole'&&!offGrid&&fuseA>90&&synNm==='SYN 100\u2011XH\u201130')kLines.push(['main fuse '+fuseA+' A > 90 A','t-w']);
+    else if(rfLink)kLines.push(['COM to T1 by cable \u00b7 RS485 + BOX.EN','t-x2']);
+    else kLines.push([gBus?'grid\u2011side circuits on the main busbar':'every circuit on LOAD','t-x2']);
+    lbl(xI+36,kT+24,kLines);
+    hit(kL,kT,kR-kL,hK1,'stepopen','stp-backup',null,synNm+' at the incoming point \u2014 step '+sn('stp-backup'));
+  } else if(kSyn){
+    kL=HR?trX(0)-8:XT-24; kR=HR?trX(3)+8:XT+24; kT=yK1; kB=yK1+hK1;
     SL.push(rect(kL,kT,kR-kL,hK1,{stroke:C.grn,sw:1.6,rx:5}));
     {
-      // inside: the ATS on the phases (N and PE are never switched) - open off-grid, then the inverter runs the LOAD/INV side
-      var ym=kT+hK1/2+1, axs=HR?[trX(0),trX(1),trX(2)]:[XT], inner='';
+      // inside: the ATS on the phases (N and PE are never switched) - open off-grid
+      var ym=kT+hK1/2+1, axs=HR?[trX(0),trX(1),trX(2),trX(3)]:[XT], inner='';
       (HR?[trX(0),trX(1),trX(2),trX(3)]:[XT]).forEach(function(x,k){
-        if(HR&&k===3)inner+='<line x1="'+f1(x)+'" y1="'+f1(kT+16)+'" x2="'+f1(x)+'" y2="'+f1(kB-15)+'" stroke="'+C.mut+'" stroke-width="1"/>';
-        else inner+='<path d="M'+f1(x)+','+f1(kT+16)+' L'+f1(x)+','+f1(ym-9.5)+' M'+f1(x)+','+f1(ym+8)+' L'+f1(x)+','+f1(kB-15)+'" stroke="'+C.mut+'" stroke-width="1"/>';
+        inner+='<path d="M'+f1(x)+','+f1(kT+16)+' L'+f1(x)+','+f1(ym-9.5)+' M'+f1(x)+','+f1(ym+8)+' L'+f1(x)+','+f1(kB-15)+'" stroke="'+C.mut+'" stroke-width="1"/>';
       });
       SL.push(inner);
       poles(axs,ym,'switch',offGrid,true,'#fff');
-      var kfs=HR?' style="font-size:6.8px;letter-spacing:.2px"':'';
-      TL.push(txt(XT,kT+11,'GRID','t-port','middle',kfs)+txt(XT,kB-5,sSyn?'LOAD/INV':'LOAD','t-port','middle',kfs));
-      if(!HR&&sSyn)TL.push(txt(XT+7,ym+3,'ATS','t-port',null,offGrid?' fill="'+C.warn+'"':''));
+      TL.push(txt(XT,kT+11,'GRID','t-port','middle')+txt(XT,kB-5,'LOAD','t-port','middle'));
     }
-    if(sSyn){
-      var kLines=[['K1 \u00b7 '+synNm,'t-d'],['Backup box at the incoming point','t-n2']];
-      if(offGrid)kLines.push(['ATS open \u00b7 the inverter feeds LOAD/INV','t-x']);
-      else kLines.push([synNm==='SYN 100\u2011XH\u201130'?'ATS \u00b7 grid \u2264 90 A \u00b7 backup \u2264 58 A':'ATS \u00b7 verify model and ratings','t-x']);
-      if(U0.mode==='whole'&&!offGrid&&fuseA>90&&synNm==='SYN 100\u2011XH\u201130')kLines.push(['main fuse '+fuseA+' A > 90 A grid rating','t-w']);
-      else if(rfLink)kLines.push(['COM to T1 by cable: RS485 + BOX.EN','t-x2']);
-      else kLines.push([gBus?'grid\u2011side circuits stay above K1':'every circuit is on the backup busbar','t-x2']);
-      lbl(XT+44,kT+11,kLines);
-    } else {
-      lbl(XT+44,kT+12,[['K1 \u00b7 SYN 100\u2011XH\u201130','t-d'],['Whole\u2011home backup','t-n2'],[HG?'ATS open \u00b7 island \u00b7 LOAD feeds the busbar':'ATS \u00b7 up to 58 A \u00b7 LOAD feeds the busbar','t-x']]);
-    }
+    lbl(XT+44,kT+12,[['K1 \u00b7 SYN 100\u2011XH\u201130','t-d'],['Whole\u2011home backup','t-n2'],[HG?'ATS 4P open \u00b7 island \u00b7 LOAD feeds the busbar':'ATS 4P \u00b7 up to 58 A \u00b7 LOAD feeds the busbar','t-x']]);
     if(HR){for(var k2=0;k2<4;k2++){var xk2=trX(k2);cond([[xk2,kB],[xk2,busY(k2)]],k2,busLive,true);dot(xk2,busY(k2),k2,busLive);}}
     else{cond([[XT,kB],[XT,yBus]],-1,busLive);dot(XT,yBus,-1,busLive);}
-    hit(kL-4,kT,XT+250-kL,hK1,'stepopen','stp-backup',null,sSyn?(synNm+' at the incoming point \u2014 step '+sn('stp-backup')):'SYN 100\u2011XH\u201130 \u2014 whole\u2011home backup');
+    hit(kL-4,kT,XT+250-kL,hK1,'stepopen','stp-backup',null,'SYN 100\u2011XH\u201130 \u2014 whole\u2011home backup');
   }
   // ================= BUSBAR + MAIN EARTHING BAR =================
   // the CT2 cable of a third-party inverter climbs just right of its feeder, to the smart meter
@@ -2140,13 +2315,15 @@ function sldSceneHTML(){
   if(ct2X!==null){var ctx0=tpCols[0].a;vObs.push([ctx0-(HR?2*s:0)-30,ct2X+10]);}
   // the busbar (behind a SYN in the trunk: the backup busbar) with the main earthing bar under it
   ghost(OG);
-  if(HR){
-    for(var kb=0;kb<4;kb++)WL.push('<line class="sbus" x1="'+f1(trX(kb))+'" y1="'+f1(busY(kb))+'" x2="'+f1(bEnd)+'" y2="'+f1(busY(kb))+'" stroke="'+(busLive?PHASE_WIRES[kb].c:C.dead)+'"/>');
-  } else {
-    WL.push('<line class="sbus" x1="'+XT+'" y1="'+yBus+'" x2="'+f1(bEnd)+'" y2="'+yBus+'" stroke="'+(busLive?C.bus:C.dead)+'" stroke-width="4"/>');
+  if(!sSyn){                                             // with one SYN box its terminals take the busbar's place
+    if(HR){
+      for(var kb=0;kb<4;kb++)WL.push('<line class="sbus" x1="'+f1(trX(kb))+'" y1="'+f1(busY(kb))+'" x2="'+f1(bEnd)+'" y2="'+f1(busY(kb))+'" stroke="'+(busLive?PHASE_WIRES[kb].c:C.dead)+'"/>');
+    } else {
+      WL.push('<line class="sbus" x1="'+XT+'" y1="'+yBus+'" x2="'+f1(bEnd)+'" y2="'+yBus+'" stroke="'+(busLive?C.bus:C.dead)+'" stroke-width="4"/>');
+    }
+    busLabel(kSyn?'BACKUP BUSBAR':'MAIN BUSBAR',bEnd,metY+(HR?15:14),vObs);
+    if(!HR){cond([[XT,yBus],[XT,metY]],4,true);dot(XT,metY,4,true);}
   }
-  busLabel(kSyn?'BACKUP BUSBAR':'MAIN BUSBAR',bEnd,metY+(HR?15:14),vObs);
-  if(!HR){cond([[XT,yBus],[XT,metY]],4,true);dot(XT,metY,4,true);}
   ghost(false);
   // SYN at the incoming point (partial backup / third-party PV): the grid-side main busbar between the meter and K1
   if(gBus){
@@ -2157,7 +2334,6 @@ function sldSceneHTML(){
     tpCols.forEach(function(c){gObs.push([c.a-BH-3,c.a+BH+3]);});
     if(mainCol)gObs.push([mainCol.a-BH-3,mainCol.a+BH+3]);
     if(ct2X!==null)gObs.push([tpCols[0].a-(HR?2*s:0)-30,ct2X+10]);
-    if(a1Log&&A1x!==null)gObs.push([A1x+13,A1x+19]);
     if(p2Meter)gObs.push([p2x-3,p2x+3]);
     busLabel('MAIN BUSBAR',busEnd,gY(3)+14,gObs);
     ghost(false);
@@ -2173,7 +2349,7 @@ function sldSceneHTML(){
     cond([[rodX,metY],[rodX,ge]],4,true);
     dot(rodX,metY,4,true);
     SL.push('<path d="M'+rodX+','+ge+' L'+rodX+','+(ge+10)+' M'+(rodX-11)+','+(ge+10)+' L'+(rodX+11)+','+(ge+10)+' M'+(rodX-7)+','+(ge+14.5)+' L'+(rodX+7)+','+(ge+14.5)+' M'+(rodX-3)+','+(ge+19)+' L'+(rodX+3)+','+(ge+19)+'" fill="none" stroke="'+C.ink+'" stroke-width="1.7"/>');
-    lbl(14,ge+34,[['E1 \u00b7 GROUND ROD','t-d'],['R \u2264 100 \u03a9','t-n2'],['Good value?','t-x'],['\u2192 stable value','t-x']]);
+    lbl(14,ge+34,[['E1 \u00b7 GROUND ROD','t-d'],['Off\u2011grid requires an','t-x2'],['external ground rod','t-x2'],['in Sweden','t-x2',12.5],['R \u2264 100 \u03a9','t-n2'],['Good value?','t-x'],['\u2192 stable value','t-x']]);
   } else {
     ghost(OG);
     lbl(14,ge,[['EARTH VIA GRID PE','t-d'],['no ground rod','t-x2'],['without backup','t-x2']]);
@@ -2215,12 +2391,12 @@ function sldSceneHTML(){
     ghost(OG);
     {
       // the inverter's AC breaker, set off on a light tile so it is easy to find, with the size the manual recommends
-      var qlx=c.ac+(HR?2*s+7:10), qT1='Q'+qI+' \u00b7 AC BREAKER', qT2=o.brk?(o.brk.txt+' \u00b7 3P'):'3P', qT3=o.brk?(o.brk.manual?'recommended size':'calculated \u00b7 verify'):'';
+      var qlx=c.ac+(HR?2*s+7:10), qT1='Q'+qI+' \u00b7 AC BREAKER', qT2=o.brk?(o.brk.txt+' \u00b7 4P'):'4P', qT3=o.brk?(o.brk.manual?'recommended size':'calculated \u00b7 verify'):'';
       var tileL=c.ac-(HR?2*s+13:13), tileR=qlx+Math.max(tw(qT1,9.5)+qT1.length*.3,tw(qT2,10.5),tw(qT3,9))+6;
       BL.push('<rect x="'+f1(tileL)+'" y="'+f1(yQ-19)+'" width="'+f1(tileR-tileL)+'" height="45" rx="6" fill="'+C.qTile+'"/>');
-      tap(c.ac,yQ-9.5,tapLive);
-      poles(poleXs(c.ac,3),yQ,'breaker',isoU&&(!o.syn||sSyn),tapLive,C.qTile);
-      thru(c.ac,tapLive,[3,4]);
+      if(sSyn)synOut(c.ac,yQ-9.5,tapLive);else tap(c.ac,yQ-9.5,tapLive);
+      poles(poleXs(c.ac,4),yQ,'breaker',isoU&&(!o.syn||sSyn),tapLive,C.qTile);
+      thru(c.ac,tapLive,[4]);
       lbl(qlx,yQ-7,[[qT1,'t-d'],[qT2,'t-n2'],[qT3,'t-x2']]);
       hit(tileL,yQ-19,tileR-tileL,45,'stepopen','stp-inv',uIdx,'Recommended AC breaker '+(o.brk?o.brk.txt+' \u2014 '+o.brk.src:'')+' \u00b7 step '+sn('stp-inv'));
     }
@@ -2234,10 +2410,10 @@ function sldSceneHTML(){
       ghost(false);
       if(o.mode){
         var qL3=qn++;
-        tap(c.bk,yQ-9.5,busLive);
-        poles(poleXs(c.bk,3),yQ,'breaker',false,busLive);
-        thru(c.bk,busLive,[3,4]);
-        devLabel(c.bk+(HR?2*s+7:10),yQ,'Q'+qL3,'3P \u00b7 backup load');
+        synOut(c.bk,yQ-9.5,busLive);
+        poles(poleXs(c.bk,4),yQ,'breaker',false,busLive);
+        thru(c.bk,busLive,[4]);
+        devLabel(c.bk+(HR?2*s+7:10),yQ,'Q'+qL3,'4P \u00b7 backup load');
         circuit([[c.bk,yQ+9.5],[c.bk,yInv]],busLive,{halo:true,tick:[c.bk,yCabBot+15]});
         loadBox(c,'feed',busLive);
       } else {
@@ -2248,7 +2424,7 @@ function sldSceneHTML(){
     } else if(o.syn){
       // ---- SYN box: GRID from the cabinet, INV to the inverter, LOAD to the backup load
       var kN=kn++;
-      var sL=c.ac-(HR?20:14), sR=c.bk+(isMulti?42:48), sT=ySynT, sB=ySynB, ym=sT+35, kx=(c.ac+c.xi)/2;
+      var sL=c.ac-(HR?20:14), sR=c.bk+(isMulti?42:48)+(HR?12:0), sT=ySynT, sB=ySynB, ym=sT+35, kx=(c.ac+c.xi)/2;
       ghost(OG);circuit([[c.ac,yQ+9.5],[c.ac,sT]],tapLive,{halo:true,tick:[c.ac,yCabBot+15]});ghost(false);
       SL.push(rect(sL,sT,sR-sL,hSyn,{stroke:C.grn,sw:1.7,rx:5}));
       var atsOpen=offGrid;
@@ -2291,9 +2467,8 @@ function sldSceneHTML(){
         ghost(OG);
         {
           tap(xq,yQ-9.5,tapLive,true);
-          poles(poleXs(xq,3),yQ,'breaker',false,tapLive);
-          thru(xq,tapLive,[3]);
-          if(c.rowD)devLabel(xq-12,yQ,'Q'+qF,'bypass feed','end');   // compact: the next feeder is close on the right
+          poles(poleXs(xq,4),yQ,'breaker',false,tapLive);
+          if(c.rowD)devLabel(xq-BH-12,yQ,'Q'+qF,'bypass feed','end');   // compact: the next feeder is close on the right
           else devLabel(xq+(HR?2*s+7:10),yQ,'Q'+qF,'bypass feed');
           circuit([[xq,yQ+9.5],[xq,qT]],tapLive,{halo:true,noPE:true,tick:[xq,yCabBot+15]});
         }
@@ -2301,22 +2476,26 @@ function sldSceneHTML(){
         var onGrid=!offGrid&&isoU;
         var bkLive=uL&&!onGrid;
         var outLive=onGrid?busLive:(uL&&(busLive||o.kwh>0||o.kwp>0));
-        // inverter BACKUP port -> bypass switch -> backup load: L1 L2 L3 N + PE (the load's earth comes from the inverter)
+        // inverter BACKUP port -> bypass switch -> backup load: L1 L2 L3 N through the bypass switch. The load's PE comes
+        // from the inverter too, but it never passes the bypass switch: it runs beside it, under the switch, to the load
         ghost(isoU);
-        circuit([[c.iR,yq],[qL,yq]],bkLive,{tick:[c.iR+(c.rowD?24:31),yq,'h']});
+        circuit([[c.iR,yq],[qL,yq]],bkLive,{noPE:true,tick:[c.iR+(c.rowD?24:31),yq,'h']});
         if((cb.bk||cb.ac)&&!c.rowD)TL.push(txt(c.iR+(o.bat==='MODA'?9:3),yq-BH-13,mm(cb.bk||cb.ac),'t-mm'));
         TL.push(txt(c.iR+(o.bat==='MODA'?9:3),yq-BH-4,c.rowD?'BK':'BACKUP','t-port'));
         ghost(false);
-        if(c.rowD)circuit([[xq,qB],[xq,yDC]],outLive,{tick:[xq,qB+16]});
-        else circuit([[qR,yq],[c.bbL,yq]],outLive);
+        if(c.rowD)circuit([[xq,qB],[xq,yDC]],outLive,{noPE:true,tick:[xq,qB+16]});
+        else circuit([[qR,yq],[c.bbL,yq]],outLive,{noPE:true});
+        var yPE=yq+(HR?3*s:9), xPE=qL-(c.rowD?8:7);
+        cond(c.rowD?[[c.iR,yPE],[xPE,yPE],[xPE,yDC]]:[[c.iR,yPE],[xPE,yPE],[xPE,qB+7],[c.bbL,qB+7]],4,true,true);
+        TL.push(txt(c.iR+(o.bat==='MODA'?9:3),yPE+(HR?9:10),'PE','t-port',null,' fill="'+C.peTxt+'"'));
         SL.push(rect(qL,qT,40,40,{stroke:onGrid?C.amber:C.ink,sw:1.5,rx:4}));
         var gcy=qT+9, icx=qL+9, pcx=c.rowD?xq:qR-9, pcy=c.rowD?qB-9:yq;
         SL.push('<path d="M'+xq+','+qT+' L'+xq+','+(gcy-1.5)+' M'+qL+','+yq+' L'+(icx-1.5)+','+yq+(c.rowD?(' M'+xq+','+(pcy+1.5)+' L'+xq+','+qB):(' M'+(pcx+1.5)+','+yq+' L'+qR+','+yq))+'" stroke="'+C.ink+'" stroke-width="1.2"/>'+
           '<circle cx="'+xq+'" cy="'+gcy+'" r="1.5" fill="#fff" stroke="'+C.ink+'"/><circle cx="'+icx+'" cy="'+yq+'" r="1.5" fill="#fff" stroke="'+C.ink+'"/><circle cx="'+pcx+'" cy="'+pcy+'" r="1.7" fill="'+C.ink+'"/>'+
           '<line x1="'+pcx+'" y1="'+pcy+'" x2="'+(onGrid?xq+(c.rowD?1.6:1.2):icx+1.6)+'" y2="'+(onGrid?gcy+1.6:yq+(c.rowD?1.4:-1.6))+'" stroke="'+(onGrid?C.amber:C.ink)+'" stroke-width="1.8" stroke-linecap="round"/>'+
           txt(xq-3,qT+16,'I','t-port','end')+txt(icx,yq+11,'II','t-port','middle'));
-        if(c.rowD)TL.push(txt(qL-5,qB+8,'Q'+qC,'t-d','end')+txt(qL-5,qB+18.5,'bypass','t-x2','end'));
-        else TL.push(txt(xq,qB+12,'Q'+qC+' \u00b7 BYPASS','t-d','middle')+txt(xq,qB+22.5,onGrid?'switched to grid':'I grid \u00b7 II inverter','t-x2','middle'));
+        if(c.rowD)TL.push(txt(qL-12,qB+8,'Q'+qC,'t-d','end')+txt(qL-12,qB+18.5,'bypass','t-x2','end'));
+        else TL.push(txt(xq,qB+21,'Q'+qC+' \u00b7 BYPASS','t-d','middle')+txt(xq,qB+31.5,onGrid?'switched to grid':'I grid \u00b7 II inverter','t-x2','middle'));
         if(!hot.some(function(h){return h.k==='bypass';}))hot.push({k:'bypass',x:c.rowD?qL-3:qR+9,y:qT-6});
         loadBox(c,c.rowD?'down':'left',outLive);
       }
@@ -2333,7 +2512,7 @@ function sldSceneHTML(){
         '<line x1="'+(sx+5)+'" y1="'+(sy+sz-7)+'" x2="'+(sx+15)+'" y2="'+(sy+sz-7)+'" stroke="'+C.ink+'" stroke-width="1.2" stroke-dasharray="2.5 1.5"/>'+
         '<path d="M'+(sx+sz-17)+','+(sy+10)+' q3,-5 6,0 t6,0" fill="none" stroke="'+C.ink+'" stroke-width="1.2"/>');
       var tx0=sx+sz+8;
-      var bkTxt=o.backup==='integrated'?(o.fk==='MODA'?(isMulti?'backup + bypass':'backup + 63 A bypass'):'backup integrated'):(o.syn?'backup via SYN box':(o.backup==='none'?'no backup':'SYN box optional'));
+      var bkTxt=o.backup==='integrated'?(o.fk==='MODA'?(isMulti?'backup + bypass':'backup + 63 A bypass'):'backup integrated'):(o.syn?'backup via SYN box':(o.backup==='none'?'no backup':(isMulti?'SYN: 1 inverter only':'SYN box optional')));
       if(offGrid&&!uL)bkTxt='off \u2014 no backup load';
       var lines=[[(isMulti?('T'+tn+' \u00b7 INVERTER'):'T1 \u00b7 HYBRID INVERTER'),'t-d'],[E(o.name),(isMulti&&o.name.length>14)?'t-n3':'t-n2',12],[o.kw+' kW \u00b7 3~','t-x2'],[bkTxt,'t-x2']];
       if(o.bat==='RISE'&&!isMulti)lines.push(['261 kWh LFP \u00b7 UPS/STS','t-x2']);
@@ -2350,7 +2529,43 @@ function sldSceneHTML(){
     var a=(iL+iR)/2, pvL=isMulti?iL:iL-52, pvR=isMulti?a-5:a-8, btL=isMulti?a+5:a+8, btR=isMulti?iR:btL+168;
     var pvLive=uL&&o.kwp>0;
     var dcX1=iL+(isMulti?22:24), dcX2=dcX1+7;
-    if(o.kwp>0){
+    // PV arrays: one per string input, each on an MPPT. Several arrays get a row each with their own +/- pair up to the
+    // inverter (ordered by MPPT); when the pairs do not fit between the inverter's battery cables, one box sums them up.
+    var pvs=o.pv||[], nA=pvs.length, mUsed=[];
+    pvs.forEach(function(p){if(mUsed.indexOf(p.m)<0)mUsed.push(p.m);});
+    var zL=iL+12, zR=(c.tg&&c.tg.sp.length>1)?iL+44:a-14, pvPitch=10;
+    var nMp=o.sp?o.sp.s.length:0;
+    // every MPPT shows: an MPPT without a PV array is drawn as an empty (dashed) input, ready for an array from step 2
+    var frees=[];if(nMp&&o.kwp>0)o.sp.s.forEach(function(ns,mi){if(mUsed.indexOf(mi)<0)frees.push({free:true,m:mi,i:99,n:0,w:0});});
+    var rowsAll=pvs.concat(frees);
+    var rowsMode=!isMulti&&o.kwp>0&&rowsAll.length>1&&rowsAll.length<=Math.floor((zR-zL-5)/pvPitch)+1;
+    if(rowsMode){
+      var sorted=rowsAll.slice().sort(function(p,q){return p.m-q.m||p.i-q.i;});
+      var rowH=26,rowP=31,rL=16,rR=zL-8;
+      TL.push(txt(rL,yDC-6,'G1 \u00b7 PV ARRAY'+(nA>1?'S':'')+' \u00b7 '+o.kwp+' kWp','t-d',null,o.over?' fill="'+C.warn+'"':''));
+      sorted.forEach(function(p,k){
+        var y=yDC+k*rowP, ym=y+rowH/2, xk=zL+2.5+k*pvPitch;
+        var path=[[rR,ym],[xk,ym],[xk,iB]];
+        if(p.free){
+          // a free MPPT input: dashed row, de-energised cable pair
+          WL.push('<path class="sdc" d="'+dpath(offPts(path,2.5))+'" stroke="'+C.dead+'"/><path class="sdc" d="'+dpath(offPts(path,-2.5))+'" stroke="'+C.dead+'"/>');
+          SL.push(rect(rL,y,rR-rL,rowH,{stroke:C.faint,sw:1.1,rx:4,dash:'4 3'}));
+          TL.push(txt(rL+8,y+11,'MPPT '+(p.m+1)+' \u00b7 free input','t-x2',null,' fill="'+C.mut+'"')+txt(rL+8,y+21.5,'add a PV array in step 2','t-x2'));
+          hit(rL,y,rR-rL,rowH,'gopv',null,uIdx,'MPPT '+(p.m+1)+' is free \u2014 add a PV array in step 2');
+          return;
+        }
+        // + / - pair: out of the row's right end, along the row and up to its own string input (top row -> leftmost input)
+        WL.push('<path class="sdc'+(pvLive?' sl':'')+'" d="'+dpath(offPts(path,2.5))+'" stroke="'+(pvLive?C.dcP:C.dead)+'"/>'+
+          '<path class="sdc'+(pvLive?' sl':'')+'" d="'+dpath(offPts(path,-2.5))+'" stroke="'+(pvLive?C.dcN:C.dead)+'"/>');
+        SL.push(rect(rL,y,rR-rL,rowH,{fill:C.pvBox,stroke:C.pv,sw:1.2,rx:4}));
+        TL.push(txt(rL+8,y+11,'PV'+(p.i+1)+(nMp?' \u00b7 MPPT '+(p.m+1):''),'t-d')+txt(rL+8,y+21.5,p.n+' \u00d7 '+p.w+' Wp','t-x2')+
+          txt(rR-6,y+21.5,(Math.round(p.n*p.w/10)/100)+' kWp','t-n3','end'));
+        hit(rL,y,rR-rL,rowH,'gopv',null,uIdx,'PV array '+(p.i+1)+(nMp?' on MPPT '+(p.m+1):'')+' \u2014 step 2');
+      });
+      if(cb.pv)TL.push(txt(zL-3,iB+11,mm(cb.pv),'t-mm','end'));
+      dcBottom=Math.max(dcBottom,yDC+sorted.length*rowP+4);
+    } else if(o.kwp>0){
+      var p0=pvs[0]||{n:o.pc,w:o.pw,m:0};
       WL.push('<path class="sdc'+(pvLive?' sl':'')+'" d="M'+f1(dcX1)+','+yDC+' L'+f1(dcX1)+','+iB+'" stroke="'+(pvLive?C.dcP:C.dead)+'"/>'+
         '<path class="sdc'+(pvLive?' sl':'')+'" d="M'+f1(dcX2)+','+yDC+' L'+f1(dcX2)+','+iB+'" stroke="'+(pvLive?C.dcN:C.dead)+'"/>');
       TL.push(txt(dcX1-3,iB+13,'+','t-p','end',' fill="'+C.dcP+'"')+txt(dcX2+3,iB+13,'\u2212','t-p',null,' fill="'+C.dcN+'"'));
@@ -2360,13 +2575,14 @@ function sldSceneHTML(){
       SL.push('<rect x="'+gx+'" y="'+gy+'" width="20" height="15" fill="#fff" stroke="'+C.ink+'" stroke-width="1"/>'+
         '<path d="M'+(gx+6.7)+','+gy+' L'+(gx+6.7)+','+(gy+15)+' M'+(gx+13.3)+','+gy+' L'+(gx+13.3)+','+(gy+15)+' M'+gx+','+(gy+7.5)+' L'+(gx+20)+','+(gy+7.5)+'" stroke="'+C.ink+'" stroke-width=".6"/>'+
         '<path d="M'+(gx+14)+','+(gy-9)+' L'+(gx+19)+','+(gy-3)+'" stroke="'+C.pv+'" stroke-width="1.1"/><path d="M'+(gx+19)+','+(gy-3)+' l-3.4,-.4 l2.4,-2.4z" fill="'+C.pv+'"/>');
-      if(isMulti)lbl((pvL+pvR)/2,yDC+38,[['PV','t-d'],[o.kwp+' kWp',o.over?'t-w':'t-n2']],'middle');
-      else lbl(pvL+36,yDC+15,[['G1 \u00b7 PV ARRAY','t-d'],[o.kwp+' kWp',o.over?'t-w':'t-n2'],[o.pc+' \u00d7 '+o.pw+' Wp','t-x2']]);
+      if(isMulti)lbl((pvL+pvR)/2,yDC+38,[[nA>1?('PV \u00d7'+nA):'PV','t-d'],[o.kwp+' kWp',o.over?'t-w':'t-n2']],'middle');
+      else if(nA>1)lbl(pvL+36,yDC+15,[['G1 \u00b7 PV ARRAYS','t-d'],[o.kwp+' kWp',o.over?'t-w':'t-n2'],[nA+' arrays \u00b7 '+mUsed.length+' MPPT','t-x2']]);
+      else lbl(pvL+36,yDC+15,[['G1 \u00b7 PV ARRAY','t-d'],[o.kwp+' kWp',o.over?'t-w':'t-n2'],[p0.n+' \u00d7 '+p0.w+' Wp','t-x2'],nMp?['MPPT '+(p0.m+1)+' of '+nMp,'t-x2']:null]);
     } else {
       SL.push(rect(pvL,yDC,pvR-pvL,hDC,{stroke:C.faint,sw:1.1,rx:5,dash:'5 4'}));
       TL.push(txt((pvL+pvR)/2,yDC+27,'+ Add PV','t-n2','middle')+txt((pvL+pvR)/2,yDC+40,'step 2','t-x','middle'));
     }
-    hit(pvL,yDC,pvR-pvL,hDC,'gopv',null,uIdx,'PV array \u2014 step 2');
+    if(!rowsMode)hit(pvL,yDC,pvR-pvL,hDC,'gopv',null,uIdx,'PV array \u2014 step 2');
     if(o.bat==='RISE'){
       SL.push(rect(btL,yDC,btR-btL,hDC,{fill:C.grnBox,stroke:C.grn,sw:1.1,rx:5,dash:'3 3'}));
       TL.push(txt((btL+btR)/2,yDC+22,'Battery','t-n2','middle')+txt((btL+btR)/2,yDC+37,'integrated','t-x','middle')+txt((btL+btR)/2,yDC+48,'261 kWh LFP','t-x','middle'));
@@ -2405,13 +2621,12 @@ function sldSceneHTML(){
           for(var u=0;u<nU;u++){
             var yy=top+u*g.uh;
             if(u===0&&tw.top==='bms2'){
-              // APX 2.0 BMS: one unit - the controller band on top of its own 5 kWh battery module
-              var hh=2*g.SH+g.SG, ym2=yy+g.SH, cin2=Math.min(4,(hh-g.SH)/2-1);
-              st+=rect(x,yy,g.TW,hh,{fill:uL?'#eaf4e1':'#f4f6f8',stroke:uL?'#33414c':C.faint,sw:1.1,rx:2})+
-                rect(x,yy,g.TW,g.SH,{fill:uL?'#33414c':'#c3cad1',stroke:uL?'#33414c':C.faint,sw:1,rx:2})+
-                '<path d="M'+f1(x+5)+','+f1(ym2+2)+' L'+f1(x+5)+','+f1(yy+hh-2)+' M'+f1(x+8)+','+f1(ym2+cin2)+' L'+f1(x+8)+','+f1(yy+hh-cin2)+'" stroke="'+C.ink+'" stroke-width="1"/>';
-              if(g.SH>=10)st+=txt(x+g.TW/2,yy+g.SH-2.7,'BMS','t-mod','middle',' fill="#fff"');
-              if(g.SH>=10&&g.TW>=40)st+=txt(x+g.TW-4,yy+hh-3.6,MODULE_KWH+' kWh','t-mod','end');
+              // APX 2.0 BMS: the power module carries its own 5 kWh battery module - one dark unit, '5 kWh' written on it
+              var hh=2*g.SH+g.SG;
+              st+=rect(x,yy,g.TW,hh,{fill:uL?'#33414c':'#c3cad1',stroke:uL?'#33414c':C.faint,sw:1,rx:2})+
+                (g.SH>=10?'<line x1="'+f1(x+3)+'" y1="'+f1(yy+g.SH+g.SG/2)+'" x2="'+f1(x+g.TW-3)+'" y2="'+f1(yy+g.SH+g.SG/2)+'" stroke="#fff" stroke-opacity=".35" stroke-width=".8"/>':'');
+              if(g.SH>=10){st+=txt(x+g.TW/2,yy+g.SH-2.7,'BMS','t-mod','middle',' fill="#fff"')+txt(x+g.TW/2,yy+hh-3.4,MODULE_KWH+' kWh','t-mod','middle',' fill="#fff"');}
+              else if(g.TW>=26)st+=txt(x+g.TW/2,yy+hh/2+2.4,MODULE_KWH+' kWh','t-mod','middle',' style="fill:#fff;font-size:6px"');
               u++;
             } else if(u===0&&tw.top){
               st+=rect(x,yy,g.TW,g.SH,{fill:uL?'#33414c':'#c3cad1',stroke:uL?'#33414c':C.faint,sw:1,rx:2});
@@ -2445,7 +2660,7 @@ function sldSceneHTML(){
         if(nIn>1&&!isMulti)TL.push(txt(tp.x+25,tp.y-4,'BAT '+(k+1),'t-port'));
       });
       if(nIn===1)TL.push(txt(tops[0].x+4,iB+13,'CAN','t-port','end',' fill="'+C.com+'"'));
-      if(nIn===1&&cb.bat)TL.push(txt(tops[0].x+26,iB+27,mm(cb.bat),'t-mm'));   // battery cable, as in the manuals
+      if(nIn===1&&cb.bat&&(!isMulti||/^[0-9\u2265]/.test(cb.bat)))TL.push(txt(tops[0].x+26,iB+27,mm(cb.bat),'t-mm'));   // battery cable, as in the manuals
       if(isMulti)lbl(c.btX+g.W/2,floorY+14,[[batShort(o,1),'t-d'],[o.kwh+' kWh','t-n2']],'middle');
       else lbl(c.btX+g.W+12,yDC+14,[['G2 \u00b7 '+batShort(o),'t-d'],[o.kwh+' kWh \u00b7 '+o.bkw+' kW','t-n2'],[towerSum(o,g),'t-x2'],
         [o.bat==='ARK'?'BDC 95045 on top':(o.apx==='2.0'?'BMS incl. 5 kWh module':'BMS \u00b7 no battery module'),'t-x2']]);
@@ -2483,16 +2698,16 @@ function sldSceneHTML(){
     }
     ghost(false);
   });
-  // backup load: a distribution board with its 3P incomer on the box edge (N and PE pass); its PE arrives with the backup cable
+  // backup load: a distribution board with its 4P incomer on the box edge (PE passes); its PE arrives with the backup cable
   function loadBox(c,entry,live){
     var o=c.o,bL=c.bbL,bW=BBW,bT=(entry==='top'||entry==='feed')?yInv:(entry==='down'?yDC:yInv+6),bH=entry==='left'?70:(entry==='down'?hDC+4:68);
     var name=o.mode==='whole'?'WHOLE\u2011HOME LOAD':'PARTIAL LOAD';
     var sub=o.mode==='whole'?'every house circuit':'essential circuits';
-    if(entry==='top'||entry==='down')poles(poleXs(c.bk,3),bT-14,'breaker',false,live,C.paper);
-    else if(entry==='left')polesH(bL-15,yInv+32,3,'breaker',false,live,C.paper);
+    if(entry==='top'||entry==='down')poles(poleXs(c.bk,4),bT-14,'breaker',false,live,C.paper);
+    else if(entry==='left')polesH(bL-15,yInv+32,4,'breaker',false,live,C.paper);
     SL.push(rect(bL,bT,bW,bH,{stroke:C.ink,sw:1.5,rx:5}));
     // the load breaker as given in the manual (MODA / MOD-HU: the same table covers GRID and LOAD)
-    var lb=(entry==='left'&&o.brk&&o.brk.load)?[o.brk.load.txt+' \u00b7 3P','t-x2']:null;
+    var lb=(entry==='left'&&o.brk&&o.brk.load)?[o.brk.load.txt+' \u00b7 4P','t-x2']:null;
     lbl(bL+10,bT+16,[[name,'t-d'],[o.loadKw?(o.loadKw+' kW'):'set kW in step '+sn('stp-backup'),'t-n2'],entry==='down'?null:[sub,'t-x2'],lb]);
     loadGlyph(bL+bW-19,bT+bH-17);
     hit(bL,bT,bW,bH,'stepopen','stp-backup',isMulti?o.i:null,'Backup load \u2014 step '+sn('stp-backup'));
@@ -2523,9 +2738,9 @@ function sldSceneHTML(){
     var q=qn++;
     ghost(HG);
     (gBus?tapG:tap)(a,yQ-9.5,live);
-    poles(poleXs(a,3),yQ,'breaker',false,live);
-    thru(a,live,[3,4]);
-    devLabel(a+(HR?2*s+7:10),yQ,'Q'+q,'3P');
+    poles(poleXs(a,4),yQ,'breaker',false,live);
+    thru(a,live,[4]);
+    devLabel(a+(HR?2*s+7:10),yQ,'Q'+q,'4P');
     if(meter&&ti===0){
       var cy2=(gBus?gY(3):busBot)+(HR?22:24);
       var c3=ctSet(HR?[a-2*s,a-s,a]:[a],cy2,live,'down');
@@ -2555,9 +2770,9 @@ function sldSceneHTML(){
     ghost(HG&&!trunkSyn);
     var am=mainCol.a, ml=gBus?gridLive:busLive;
     (gBus?tapG:tap)(am,yQ-9.5,ml);
-    poles(poleXs(am,3),yQ,'breaker',false,ml);
-    thru(am,ml,[3,4]);
-    devLabel(am+(HR?2*s+7:10),yQ,'Q'+mq,'3P \u00b7 house');
+    poles(poleXs(am,4),yQ,'breaker',false,ml);
+    thru(am,ml,[4]);
+    devLabel(am+(HR?2*s+7:10),yQ,'Q'+mq,'4P \u00b7 house');
     circuit([[am,yQ+9.5],[am,yInv]],ml,{halo:true,tick:[am,yCabBot+15]});
     SL.push(rect(mainCol.l,yInv,mainCol.r-mainCol.l,70,{stroke:C.ink,sw:1.5,rx:6}));
     if(mainCol.k==='main')lbl(mainCol.l+10,yInv+17,[['MAIN LOAD','t-d'],['House circuits','t-n2'],[(U0.mode==='partial'&&!isMulti)?'grid side \u00b7 not backed up':'all other circuits','t-x2']]);
@@ -2577,7 +2792,9 @@ function sldSceneHTML(){
   var comSrcs=[];
   ghost(HG);
   {
-    if(p1Meter)comSrcs.push({x:comVX,d:'M'+f1(comVX)+','+f1(p1T+MH)+' L'+f1(comVX)+','+f1(legEnd)});
+    if(p1Meter)comSrcs.push({x:comVX,d:(a1Log&&A1x!==null)
+      ?('M'+f1(comVX)+','+f1(p1T+MH)+' L'+f1(comVX)+','+f1(A1y)+' M'+f1(comVX)+','+f1(A1y+A1h)+' L'+f1(comVX)+','+f1(legEnd))   // meter -> ShineMaster -> inverters
+      :('M'+f1(comVX)+','+f1(p1T+MH)+' L'+f1(comVX)+','+f1(legEnd))});
     if(emsAt)comSrcs.push({x:comVX,d:'M'+f1(comVX)+','+f1(p1T+EH)+' L'+f1(comVX)+','+f1(legEnd)});
     // with a grid-side main busbar the datalogger / P2 meter join the incoming leg above that busbar - not across its drops
     var joinX=(gBus&&(p1Meter||emsAt))?comVX:null, yLG=yTrunk-12;
@@ -2586,7 +2803,6 @@ function sldSceneHTML(){
       else{comSrcs.push({x:joinX,d:'M'+f1(x0)+','+f1(y0)+' L'+f1(x0)+','+yLG+' L'+f1(joinX)+','+yLG});
         TL.push('<circle cx="'+f1(joinX)+'" cy="'+yLG+'" r="1.8" fill="'+(rfLink?C.net:C.com)+'"/>');}
     }
-    if(a1Log&&A1x!==null)farSrc(A1x+16,A1y+A1h);
     if(p2Meter&&p2Com)farSrc(p2Com[0],p2Com[1]);
   }
   ghost(false);
@@ -2600,17 +2816,38 @@ function sldSceneHTML(){
     if(wiredSyn)xs.push(synCom.x);
     var lx0=Math.min.apply(null,xs),lx1=Math.max.apply(null,xs);
     var dd=comSrcs.map(function(c){return c.d;}).join(' ');
-    var dl=' M'+f1(lx0)+','+yLane+' L'+f1(lx1)+','+yLane;
-    comDrops.forEach(function(c){dl+=' M'+f1(c.x)+','+yLane+' L'+f1(c.x)+','+c.y+' L'+f1(c.iL)+','+c.y;});
+    var dl='';
+    // wired RS485 is a daisy chain: the cable goes into each inverter's COM port and out again to the next one -
+    // the lane is cut at every inverter and drawn as an in/out loop (the last inverter on the chain has only the cable in)
+    var chainOn=!rfLink;
+    var drops=comDrops.slice().sort(function(p,q){return p.x-q.x;}), cur=lx0;
+    drops.forEach(function(c){
+      var more=chainOn&&c.x<lx1-0.5;
+      if(more){
+        dl+=' M'+f1(cur)+','+yLane+' L'+f1(c.x-3)+','+yLane+' L'+f1(c.x-3)+','+f1(c.y-3)+' L'+f1(c.iL)+','+f1(c.y-3)+
+          ' M'+f1(c.iL)+','+f1(c.y+3)+' L'+f1(c.x+3)+','+f1(c.y+3)+' L'+f1(c.x+3)+','+yLane;
+        cur=c.x+3;c.loop=true;
+      } else {
+        dl+=' M'+f1(cur)+','+yLane+' L'+f1(c.x)+','+yLane+' L'+f1(c.x)+','+c.y+' L'+f1(c.iL)+','+c.y;
+        cur=c.x;
+      }
+    });
+    if(cur<lx1)dl+=' M'+f1(cur)+','+yLane+' L'+f1(lx1)+','+yLane;
     // the meter / energy manager / datalogger legs are grid side; the lane to the inverters stays live while the SYN uses it
     ghost(HG);
     if(dd)WL.push('<path class="sh2" d="'+dd+'"/><path class="'+(rfLink?'srf':'scom')+'" d="'+dd+'"/>');
     ghost(HG&&!wiredSyn);
     if(comSrcs.length||wiredSyn){
       WL.push('<path class="sh2" d="'+dl+'"/><path class="'+(rfLink?'srf':'scom')+'" d="'+dl+'"/>');
-      comDrops.forEach(function(c){TL.push('<circle cx="'+f1(c.x)+'" cy="'+yLane+'" r="1.8" fill="'+ccol+'"/>'+(c.lab?txt(c.x-4,c.y+3,rfLink?'RF':'COM','t-port','end',' fill="'+ccol+'"'):''));});
-      var lanLab=rfLink?'RF \u00b7 ShineRFStick\u2011X2 per inverter':((wiredSyn?'RS485 + BOX.EN':'RS485 A/B')+(HR&&U0.cab&&U0.cab.com?' \u00b7 '+mm(U0.cab.com):''));
-      if(p1Meter||emsAt||wiredSyn)TL.push(txt(comVX+((synCom&&rfLink)?13:5),yLane-4,lanLab,'t-port',null,' fill="'+ccol+'"'));
+      comDrops.forEach(function(c){TL.push((c.loop?'':'<circle cx="'+f1(c.x)+'" cy="'+yLane+'" r="1.8" fill="'+ccol+'"/>')+(c.lab?txt(c.x-(c.loop?7:4),c.y+3,rfLink?'RF':'COM','t-port','end',' fill="'+ccol+'"'):''));});
+      var chained=comDrops.some(function(c){return c.loop;});
+      var lanLab=rfLink?'RF \u00b7 ShineRFStick\u2011X2 per inverter':((wiredSyn?'RS485 + BOX.EN':'RS485 A/B')+(chained?' \u00b7 daisy chain':'')+(HR&&U0.cab&&U0.cab.com?' \u00b7 '+mm(U0.cab.com):''));
+      if(sSyn){   // the INVERTER feeder is close on the right: shorter text when the full one does not fit
+        var lx=comVX+5, room=cols[0].ac-BH-8-lx;
+        var cand=rfLink?[lanLab,'RF \u00b7 ShineRFStick\u2011X2','RF']:[lanLab,wiredSyn?'RS485 + BOX.EN':'RS485 A/B','RS485'];
+        for(var ci2=0;ci2<cand.length;ci2++){lanLab=cand[ci2];if(tw(lanLab,8.4)<=room)break;}
+      }
+      if(p1Meter||emsAt||wiredSyn)TL.push(txt(comVX+5,yLane-4,lanLab,'t-port',null,' fill="'+ccol+'"'));
       else TL.push(txt(A1x+11,yLane-4,lanLab,'t-port','end',' fill="'+ccol+'"'));
     }
     // multi-inverter K1 in the trunk: the incoming leg carries on out of its bottom
@@ -2632,7 +2869,7 @@ function sldSceneHTML(){
         var dR='M'+f1(comVX)+','+f1(kB)+' L'+f1(comVX)+','+yLane;
         WL.push('<path class="sh2" d="'+dR+'"/><path class="srf" d="'+dR+'"/>');
         ghost(false);
-        var xS=comVX+8, yS=yLane+9, xD=c0.x-8, yD=c0.y-10;
+        var xS=comVX-8, yS=yLane+9, xD=c0.x-8, yD=c0.y-10;   // left of the RF leg: the two never cross
         dS='M'+f1(xS)+','+f1(kB)+' L'+f1(xS)+','+f1(yS)+' L'+f1(xD)+','+f1(yS)+' L'+f1(xD)+','+f1(yD)+' L'+f1(c0.iL)+','+f1(yD);
         WL.push('<path class="sh2" d="'+dS+'"/><path class="scom" d="'+dS+'"/>');
       }
@@ -2682,13 +2919,15 @@ function sldSceneHTML(){
     TL.push(o);
   }
   // ================= SHEET SIZE =================
-  var bottom=Math.max(dcBottom,anyBackup?ge+80:ge+40,onlineTop?(botT+lgH):(botT+4+56+18))+16;
+  var bottom=Math.max(dcBottom,anyBackup?ge+116:ge+40,onlineTop?(botT+lgH):(botT+4+56+18))+16;
   // the sheet keeps the usual 1000:770 format, but a wide, low drawing (off-grid, several inverters) gets a lower sheet
   var AR=Math.min(2,Math.max(1000/770,Wc/bottom));
   var Wv=Math.max(Wc,bottom*AR), Hv=Wv/AR;
   var vbX=-(Wv-Wc)/2, vbY=0;
   // ================= SHEET TITLE: top left of the sheet, the status chips on its row =================
-  var titleX=vbX+16, chip0=titleX+204+34;
+  // the diagram-detail button beside the title: a fixed size on screen, so on a wide sheet it covers more of the drawing
+  var hotR=8.5*Wv/760, hotOK=hotR<=17;
+  var titleX=vbX+16, chip0=titleX+204+(hotOK?Math.max(34,12+2*hotR):14);
   TL.push(txt(titleX,22,'SINGLE\u2011LINE DIAGRAM','t-h',null,' textLength="204" lengthAdjust="spacing"')+txt(titleX,40,E(subTxt),'t-s'));
   chips.forEach(function(c,i){var x=chip0+chipX[i][0],w=chipX[i][1];TL.push('<rect x="'+f1(x)+'" y="10" width="'+f1(w)+'" height="15" rx="7.5" fill="'+c[1]+'" stroke="'+c[2]+'" stroke-width=".8"/>'+txt(x+w/2,20.5,c[0],'t-chip','middle',' fill="'+(c[3]||c[2])+'"'));});
   // the top-right block moves up beside the title when the subtitle and the chips leave it room
@@ -2708,8 +2947,9 @@ function sldSceneHTML(){
   // internet links: datalogger / energy manager -> cloud (top right), stick dongle -> cloud (bottom right)
   ghost(HG);
   if(onTop&&a1Log&&A1x!==null){
-    var ixA=A1x+A1w-22, yy0=onTop.bx+onTop.h+16, xs0=onTop.sX+onTop.sW/2;
-    var dn='M'+f1(ixA)+','+A1y+' L'+f1(ixA)+','+f1(yy0)+' L'+f1(xs0)+','+f1(yy0)+' L'+f1(xs0)+','+f1(onTop.bx+onTop.h);
+    // out of the datalogger's right side, across the cabinet and up to the cloud
+    var yA=A1y+A1h/2, xs0=onTop.sX+onTop.sW/2;
+    var dn='M'+f1(A1x+A1w)+','+f1(yA)+' L'+f1(xs0)+','+f1(yA)+' L'+f1(xs0)+','+f1(onTop.bx+onTop.h);
     WL.push('<path class="sh2" d="'+dn+'"/><path class="snet'+(online?' sl':'')+'" d="'+dn+'"/>');
   }
   if(onTop&&emsAt){
@@ -2740,8 +2980,14 @@ function sldSceneHTML(){
     else if(h.k==='bypass')hs+=bypassHotspotHTML(px(h.x),py(h.y));
     else if(h.k==='em')hs+=emHotspotHTML(px(h.x),py(h.y));
   });
-  if(!isMulti&&anyInv&&state.segment==='res')hs+=highResHotspotHTML(px(titleX+204+16),py(14));
-  return '<div class="housephoto sldwrap"><div class="photostage" style="aspect-ratio:'+f1(Wv)+'/'+f1(Hv)+';--ar:'+(Wv/Hv).toFixed(4)+'">'+svg+hs+'</div></div>';
+  if(anyInv&&hotOK)hs+=highResHotspotHTML(px(titleX+204+Math.max(16,6+hotR)),py(Math.min(14,32-hotR)));
+  // enlarge: the diagram fills the whole window (Esc or Close goes back)
+  var big=!!state.sldMax;
+  try{document.body.classList.toggle('sldopen',big);}catch(e){}
+  var mx='<button class="sldmax" data-act="sldmax" title="'+(big?'Close (Esc)':'Enlarge the single-line diagram')+'">'+
+    (big?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>Close'
+        :'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>Enlarge')+'</button>';
+  return '<div class="housephoto sldwrap'+(big?' max':'')+'">'+mx+'<div class="photostage" style="aspect-ratio:'+f1(Wv)+'/'+f1(Hv)+';--ar:'+(Wv/Hv).toFixed(4)+'">'+svg+hs+'</div></div>';
 }
 function housePhotoHTML(){
   return sldSceneHTML();
@@ -2772,7 +3018,7 @@ function printRecapHTML(){syncUnit();var saved=snapshotUnit();
   function rr(k,v){return '<div class="rr"><span class="k">'+k+'</span><span class="v">'+v+'</span></div>';}
   var out='<div class="printrecap">';
   out+=rr('Segment',state.segment==='res'?'Residential':state.segment==='com'?'Commercial':'(not chosen)');
-  out+=rr('Solar',state.panelCount+' x '+state.panelW+' Wp = '+totalKWp()+' kWp'+(state.kw?' \u00b7 DC/AC '+Math.round(pvRatio())+'%':''));
+  out+=rr('Solar',pvText()+(state.kw?' \u00b7 DC/AC '+Math.round(pvRatio())+'%':''));
   state.units.forEach(function(u,i){loadUnit(u);var lbl=state.units.length>1?'Inverter '+(i+1):'Inverter';
     var inv=state.family&&state.kw?'Growatt '+fam().name+' '+state.kw+' kW':'(not selected)';
     var b=batteryTotals(), brk=acBreaker();
@@ -2919,8 +3165,8 @@ function apx2PageHTML(){
       '<div class="ai-foot">Sources: Growatt APX 5.0–30.0M‑S3 datasheet (2025‑11, preliminary) and user manual (2026‑01); <a href="https://en.growatt.com/media/news/growatt-launches-apx-hv-battery-2.0,-redefining-energy-storage-with-easier-installation-and-higher-r" target="_blank" rel="noopener" style="color:#8ffcb8">Growatt launch news</a>. Product image © Growatt.</div>'+
     '</div></div>';
 }
-function render(){
-  if(state.segment!=='res')state.highRes=false;
+function render(){pvNormalize();bkNormalize();
+  if(!state.segment)state.highRes=false;
   if(state.page==='apx2'){
     document.getElementById('app').innerHTML='<div class="page">'+apx2PageHTML()+'</div>';
     if(state.apxTop){window.scrollTo({top:0,behavior:'instant'});state.apxTop=false;}
@@ -2974,7 +3220,9 @@ function refreshBackupStep(){
 function onLoadKw(){ refreshBackupStep(); }
 function onBackupLoadKw(){ refreshBackupStep(); }
 function onPanels(){
-  if(state.family&&state.kw&&state.panelCount>0&&!kwValid(state.kw)){var v=fam().kw.filter(kwValid);if(v.length)state.kw=v[0];}
+  if(state.family&&state.kw&&pvPanels()>0&&!kwValid(state.kw)){var v=fam().kw.filter(function(p){return kwValid(p);});if(v.length)state.kw=v[0];}
+  pvArrays().forEach(function(x,k){var el=document.getElementById('pvK'+k);if(el)el.textContent=x.n>0?(Math.round(x.n*x.w/10)/100+' kWp'):'';});
+  var pw=document.getElementById('pvWarn');if(pw)pw.innerHTML=pvWarnHTML();
   var a=document.getElementById('pvTop');if(a)a.innerHTML=pvTopHTML();
   var b=document.getElementById('invFamSection');if(b)b.innerHTML=invFamSectionHTML();
   var c=document.getElementById('cart');if(c)c.innerHTML=cartHTML();
@@ -2997,7 +3245,7 @@ document.addEventListener('click',function(e){
       state.aiMode=false;state.aiSmart=false;state.aiPeak=false;state.aiUnbal=false;
       state.loadKw=0;state.mainFuseA=null;state.groHomeMode='rs485';state.openHot=null;
     }
-    state.family=k;var f=FAMILIES[k];var v=f.kw.filter(kwValid);state.kw=v.length?v[0]:f.kw[0];
+    state.family=k;var f=FAMILIES[k];var v=f.kw.filter(function(p){return kwValid(p,k);});state.kw=v.length?v[0]:f.kw[0];
     state.inputs=(f.battery==='MODA')?state.inputs:state.inputs.slice(0,f.inputs);
     if(f.battery==='MODA')state.wantBattery=true;clampInputs();render();}
   else if(a==='kw'){var p=+el.getAttribute('data-p');if(!kwValid(p))return;state.kw=p;
@@ -3011,7 +3259,7 @@ document.addEventListener('click',function(e){
       state.thirdParty=false;state.tpCount=1;state.tpLabels=['','',''];
       state.synOptIn=false;state.groHomeMode='rs485';
       state.aiMode=false;state.aiSmart=false;state.aiPeak=false;state.aiUnbal=false;
-      state.panelW=450;state.panelCount=0;
+      state.panelW=450;state.panelCount=0;state.pvMore=[];state.pvM1=0;
       state.family=null;state.kw=null;state.dongle=null;state.metering=null;state.meterType='TPM-6CT-C';
       state.backupOn=false;state.apx='1.0';state.inputs=[];state.wantBattery=null;
       state.loadKw=0;state.backupMode=null;state.backupLoadKw=0;state.mainFuseA=null;
@@ -3025,6 +3273,8 @@ document.addEventListener('click',function(e){
   else if(a==='invbroken'){state.inverterBroken=!state.inverterBroken;if(state.inverterBroken)state.offGrid=false;render();}
   else if(a==='bypasson'){var bv_=el.getAttribute('data-v');state.bypassOn=bv_?bv_==='on':!state.bypassOn;render();}
   else if(a==='togglehighres'){var hv_=el.getAttribute('data-v');state.highRes=hv_?hv_==='hr':!state.highRes;render();}
+  else if(a==='pvadd'){var la=pvArrays();if(!state.pvMore)state.pvMore=[];var sp0=pvSpec();if(la.length>=(sp0?sp0.total:20))return;state.pvMore.push({n:0,w:la[la.length-1].w||450,m:-1});render();setTimeout(function(){var el=document.getElementById('pvN'+(state.pvMore.length-1));if(el)el.focus();},60);}
+  else if(a==='pvdel'){var di=+el.getAttribute('data-i');if(state.pvMore&&state.pvMore[di]){state.pvMore.splice(di,1);onPanels();render();}}
   else if(a==='gopv'){state.openStep='stp-inv';render();setTimeout(function(){var el=document.getElementById('panelCount');if(el){el.focus();el.select&&el.select();}},60);}
   else if(a==='stepopen'){var sid=el.getAttribute('data-s');state.openStep=sid;render();}
   else if(a==='grohomemode'){state.groHomeMode=el.getAttribute('data-v');render();}
@@ -3033,10 +3283,12 @@ document.addEventListener('click',function(e){
   else if(a==='aipeak'){state.aiPeak=!state.aiPeak;render();}
   else if(a==='aiunbal'){state.aiUnbal=!state.aiUnbal;render();}
   else if(a==='thirdparty'){state.thirdParty=!state.thirdParty;
-    if(state.thirdParty)state.metering='meter';
+    if(state.thirdParty)state.metering=(state.dongle==='shinesem')?null:'meter';
     else if(emsAtIncoming())state.metering=null;    // with an energy manager the meter was only there for CT2
     state.meterType='TPM-6CT-C';render();}
   else if(a==='highres'){state.highRes=!state.highRes;render();}
+  else if(a==='design'){state.highRes=el.getAttribute('data-v')==='adv';render();}
+  else if(a==='sldmax'){state.sldMax=!state.sldMax;var swm=document.getElementById('scenewrap');if(swm)swm.innerHTML=housePhotoHTML();}
   else if(a==='multi'){state.multi=!state.multi;if(state.multi&&state.dongle!=='shinesem'&&state.dongle!=='shinemaster'&&state.dongle!=='grohome')state.dongle=null;if(!state.multi){syncUnit();state.units=[state.units[state.unit]];state.unit=0;loadUnit(state.units[0]);}render();}
   else if(a==='unit'){var stepEl=el.closest('.step'),stepId=stepEl?stepEl.id:null;switchUnit(+el.getAttribute('data-i'));render();
     if(stepId==='stp-inv'){var pv1=document.getElementById('pvInputsTop');if(pv1)pv1.scrollIntoView({block:'start',behavior:'smooth'});}
@@ -3051,9 +3303,10 @@ document.addEventListener('click',function(e){
   else if(a==='dongle'){var k=el.getAttribute('data-k');if(state.multi&&state.units.length>1&&k!=='shinesem'&&k!=='shinemaster'&&k!=='grohome')return;state.dongle=(state.dongle===k)?null:k;
     // ShineMaster needs a separate smart meter; ShineSEM-X / GroHomeManager-X take the meter's place (a meter stays only for a third-party inverter)
     if(state.dongle==='shinemaster')state.metering='meter';
-    else if(state.dongle==='shinesem'||state.dongle==='grohome')state.metering=state.thirdParty?'meter':null;
+    else if(state.dongle==='shinesem')state.metering=null;
+    else if(state.dongle==='grohome')state.metering=state.thirdParty?'meter':null;
     state.meterType='TPM-6CT-C';render();}
-  else if(a==='metering'){if(state.dongle==='shinemaster'&&state.metering==='meter')return;var m=el.getAttribute('data-m');state.metering=(state.metering===m)?null:m;state.meterType='TPM-6CT-C';render();}
+  else if(a==='metering'){if(state.dongle==='shinemaster'&&state.metering==='meter')return;if(state.dongle==='shinesem')return;var m=el.getAttribute('data-m');state.metering=(state.metering===m)?null:m;state.meterType='TPM-6CT-C';render();}
   else if(a==='mt'){state.meterType=el.getAttribute('data-t');render();}
   else if(a==='backup'){state.backupOn=!state.backupOn;render();}
   else if(a==='backupmode'){var v=el.getAttribute('data-v');state.backupMode=(state.backupMode===v)?null:v;render();}
@@ -3082,9 +3335,12 @@ document.addEventListener('click',function(e){
   else if(a==='copy'){var t=buildText();function done(){var btn=document.getElementById('copyBtn');if(btn){btn.innerHTML=ic('check',15)+'Copied';btn.classList.add('ok');setTimeout(function(){if(btn){btn.innerHTML=ic('copy',15)+'Copy';btn.classList.remove('ok');}},1600);}}if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done).catch(function(){fb(t,done);});}else fb(t,done);}
 });
 function fb(t,d){var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);d();}
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&state.sldMax){state.sldMax=false;var swk=document.getElementById('scenewrap');if(swk)swk.innerHTML=housePhotoHTML();}});
 document.addEventListener('input',function(e){
   if(e.target.id==='panelW'){state.panelW=clamp(parseInt(e.target.value||'0',10)||0,0,800);refreshKeepFocus(onPanels);}
   else if(e.target.id==='panelCount'){state.panelCount=clamp(parseInt(e.target.value||'0',10)||0,0,400);refreshKeepFocus(onPanels);}
+  else if(/^pv[WN]\d+$/.test(e.target.id)){var pk=+e.target.id.slice(3),pa=state.pvMore&&state.pvMore[pk];if(pa){if(e.target.id.charAt(2)==='W')pa.w=clamp(parseInt(e.target.value||'0',10)||0,0,800);else pa.n=clamp(parseInt(e.target.value||'0',10)||0,0,400);refreshKeepFocus(onPanels);}}
+  else if(/^pvMppt\d+$/.test(e.target.id)){var mk=+e.target.id.slice(6),mv=+e.target.value;if(mk===0)state.pvM1=mv;else if(state.pvMore&&state.pvMore[mk-1])state.pvMore[mk-1].m=mv;render();}
   else if(e.target.id==='loadKw'){state.loadKw=clamp(parseFloat(e.target.value||'0')||0,0,999);refreshKeepFocus(onLoadKw);}
   else if(e.target.id==='backupLoadKw'){state.backupLoadKw=clamp(parseFloat(e.target.value||'0')||0,0,99);refreshKeepFocus(onBackupLoadKw);}
   else if(e.target.id==='mainFuseA'){state.mainFuseA=clamp(parseInt(e.target.value||'0',10)||0,0,1000);refreshKeepFocus(function(){var sw=document.getElementById('scenewrap');if(sw)sw.innerHTML=housePhotoHTML();});}
