@@ -924,6 +924,8 @@
   .ph-where{color:#9fb0c2}
   .ph-where.meter{color:#5aa9ff}
   .ph-where.earth{color:#9be37a}
+  .ph-where.grid{color:#f2c41b}
+  .ph-where.roof{color:#7fc4ff}
   .ph-bar{height:6px;border-radius:3px;background:rgba(255,255,255,.08);margin-top:7px;overflow:hidden}
   .ph-bar i{display:block;height:100%;background:#33da7a;transition:width .3s}
   .ph-call2{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12.5px;color:#fff;background:#0d1826;border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:6px 10px}
@@ -4847,7 +4849,7 @@ function M(k){
     glass:[0x10161b,.12,.2],lcd:[0x9fb7a4,.4],metal:[0xc7ccd2,.3,.9],steel:[0x9aa1a9,.38,.85],copper:[0xd98c55,.32,.75],brass:[0xd2ad5c,.3,1],tin:[0xd9dde2,.28,.95],
     wall:[0xc6cbd1,.96],wall2:[0xbac0c7,.96],floor:[0xb4b9bf,.9],green:[0x2fae5b,.5],red:[0xd83a34,.45],blue:[0x2f6fd6,.45],yellow:[0xf2c41b,.45],orange:[0xe8862a,.5],
     rail:[0xd9dde2,.3,.6],plate:[0xf3f4f5,.7],cream:[0xf3ead9,.55],chintBlue:[0x1d63b8,.45],termGreen:[0x1f8a4c,.5],nbar:[0x2f6fd6,.4],pebar:[0x35a853,.4],
-    jgrey:[0x5b6168,.62],jblack:[0x1e2124,.6],jnet:[0x2f7fe0,.5],jwhite:[0xe6e8ea,.6],clip:[0xf2f3f4,.6],trans:[0xdfe9f2,.1],devBlue:[0x2e3f93,.45],devBlack:[0x1b1e22,.55],capBlue:[0x2f7fe0,.45],band:[0xeef0f2,.45],wallIn:[0xdfe3e7,.55],apx:[0xeceef0,.42],hgrey:[0xb7bdc3,.4,.2],boxGrey:[0xdfe2e5,.5],soil:[0x5b4636,.95],fence:[0x9a7b5a,.85],trunk:[0xf1f3f5,.5]}[k]||[0xff00ff,.5];
+    jgrey:[0x5b6168,.62],jblack:[0x1e2124,.6],jnet:[0x2f7fe0,.5],jwhite:[0xe6e8ea,.6],clip:[0xf2f3f4,.6],trans:[0xdfe9f2,.1],devBlue:[0x2e3f93,.45],devBlack:[0x1b1e22,.55],capBlue:[0x2f7fe0,.45],band:[0xeef0f2,.45],wallIn:[0xdfe3e7,.55],apx:[0xeceef0,.42],hgrey:[0xb7bdc3,.4,.2],boxGrey:[0xdfe2e5,.5],soil:[0x5b4636,.95],fence:[0x9a7b5a,.85],trunk:[0xf1f3f5,.5],concrete:[0xb9b6ae,.9],subGreen:[0x7f917c,.7],subIn:[0xd9ddd6,.8],subRoof:[0x50565c,.7],trGrey:[0x8d989e,.5,.3],porcelain:[0xe8e2d4,.3],pvRail:[0xc0c6cc,.35,.6],asphalt:[0x6d7176,.95]}[k]||[0xff00ff,.5];
   var m=new T.MeshStandardMaterial({color:d[0],roughness:d[1],metalness:d[2]||0});
   if(k==='trans'){m.transparent=true;m.opacity=.45;}
   MATS[k]=m;return m;
@@ -5235,10 +5237,10 @@ function modaInverter(X,W,D,zc,yi){
   decal(g,.016,.016,drawEarth,xin+.0045,gyy,gz+.024,{f:'x',alpha:1,tip:'Grounding point (PE)'});
   // ---- left bay: PV1 \u00b7 PV2 \u00b7 PV3 \u00b7 COM, DC / BAT switches, START
   bandLabels(g,-1,W,yi+.334,[['PV1',-.1025],['PV2',-.0625],['PV3',-.0225],['COM',.055]],D);
-  var pvz=[-.112,-.093,-.072,-.053,-.032,-.013],pv=[];
+  var pvz=[-.112,-.093,-.072,-.053,-.032,-.013],pv=[],pvPl=[];
   pvz.forEach(function(z,j){var n=Math.floor(j/2),plus=j%2===0,x=-xp,nm='PV'+(n+1)+(plus?' +':' \u2212');
     cy(g,.0078,.0078,.034,'black',x,yb-.017,z,null,{tip:nm+' (MC4)'});cy(g,.0088,.0088,.004,'black',x,yb-.002,z,null,{ns:1,seg:6});
-    if(n===0){cy(g,.0074,.0074,.04,'dark2',x,yb-.054,z,null,{tip:nm+' \u2014 MC4 plug'});cy(g,.0072,.0066,.02,'mid',x,yb-.084,z,null,{seg:6,tip:nm+' \u2014 MC4 plug'});pv.push(V(X+x,yb-.094,zc+z));}
+    if(n===0){var pg=grp(g,0,0,0,nm+' \u2014 MC4 plug');cy(pg,.0074,.0074,.04,'dark2',x,yb-.054,z,null,{tip:nm+' \u2014 MC4 plug'});cy(pg,.0072,.0066,.02,'mid',x,yb-.084,z,null,{seg:6,tip:nm+' \u2014 MC4 plug'});pvPl.push(pg);pv.push(V(X+x,yb-.094,zc+z));}
     else{cy(g,.0068,.0068,.026,'capBlue',x,yb-.047,z,null,{tip:'Sealing cap (unused PV input)'});bx(g,.019,.003,.014,'capBlue',x-.004,yb-.061,z,{ns:1,tip:'Sealing cap (unused PV input)'});}
   });
   var zC=.055,xc=-xp,ports={},hole=new T.MeshStandardMaterial({color:0x050607,roughness:.8});
@@ -5258,7 +5260,7 @@ function modaInverter(X,W,D,zc,yi){
   });
   cy(g,.0095,.0095,.004,'red',-(xin+.008),yi+.062,.063,'x',{tip:'Black start button'});cy(g,.0065,.0065,.008,'black',-(xin+.011),yi+.062,.063,'x',{tip:'Black start button'});
   lab(g,'START',-(xin+.0065),yi+.047,.063,{h:.005,c:'#2b3138',f:'-x'});
-  return {g:g,xin:xin,yb:yb,xp:xp,grid:V(X+xp,yb-.032,zc+zG),load:V(X+xp,yb-.032,zc+zL),gnd:V(X+xin+.009,gyy,zc+gz),meterPort:ports.Meter,ports:ports,pv:pv,
+  return {g:g,xin:xin,yb:yb,xp:xp,grid:V(X+xp,yb-.032,zc+zG),load:V(X+xp,yb-.032,zc+zL),gnd:V(X+xin+.009,gyy,zc+gz),meterPort:ports.Meter,ports:ports,pv:pv,pvPl:pvPl,
     dlEnd:V(X+xp,yb-.172,zc+zU),knobs:knobs,comC:V(X+xc,yb,zc+zC),led:{ring:ring,disc:disc,soc:soc,off:tOff,on:tOn,hand:hand,state:'off'}};
 }
 // slotted protective covers, slide down then push in (manual 3.8.4)
@@ -5410,7 +5412,9 @@ function buildRoom(){
   var g=R.root,L=ROOM.L,Rr=ROOM.R,H=ROOM.H,D=ROOM.D,Tw=ROOM.T,z0=ROOM.DZ0,z1=ROOM.DZ1,Wd=Rr-L;
   function plane(w,h,mat,x,y,z,rx,ry,rec){var m=new T.Mesh(new T.PlaneGeometry(w,h),mat);m.position.set(x,y,z);if(rx)m.rotation.x=rx;if(ry)m.rotation.y=ry;m.receiveShadow=rec!==false;g.add(m);return m;}
   plane(Wd,D,new T.MeshStandardMaterial({map:texOf('tile',drawTiles,Wd/.6,D/.6),roughness:.55}),(L+Rr)/2,0,D/2,-Math.PI/2);
-  plane(16,16,new T.MeshStandardMaterial({map:texOf('grass',drawGrass,10,10),roughness:.95}),Rr+Tw+8,-.004,1.5,-Math.PI/2);
+  plane(18,20,new T.MeshStandardMaterial({map:texOf('grass',drawGrass,11,12),roughness:.95}),Rr+Tw+9,-.004,2.5,-Math.PI/2);
+  plane(12.65,6,new T.MeshStandardMaterial({map:texOf('grass',drawGrass,8,4),roughness:.95}),Rr+Tw-6.325,-.004,D+3,-Math.PI/2);
+  plane(Wd+Tw+.6,6,M('asphalt'),(L+Rr+Tw)/2,.001,D+3,-Math.PI/2);
   plane(Wd,H,panelMat(Wd/.88,H/.88),(L+Rr)/2,H/2,0);
   plane(D,H,panelMat(D/.88,H/.88),L,H/2,D/2,0,Math.PI/2);
   var ce=plane(Wd,D,panelMat(Wd/.88,D/.88),(L+Rr)/2,H,D/2,Math.PI/2);ce.receiveShadow=false;
@@ -5427,7 +5431,8 @@ function buildRoom(){
     for(var z=1.2;z<D;z+=1.3)bx(g,.03,.09,.03,'steel',x,H-.05,z,{ns:1});});
   for(var i=0;i<4;i++)bx(g,Wd-.34,.012,.5,'white',(L+Rr)/2,H-.14,D-.35-i*.5,{ns:1,tip:'Garage door (open)'});
   // the garden
-  [[6.2,-1.6,.55],[7.4,.4,.7],[5.4,4.6,.5],[8.6,3.0,.8]].forEach(function(q){var m=new T.Mesh(new T.SphereGeometry(q[2],8,6),new T.MeshStandardMaterial({color:0x4f7d3a,roughness:.9,flatShading:true}));m.position.set(q[0],q[2]*.7,q[1]);m.castShadow=true;m.userData.tip='Garden';g.add(m);});
+  [[6.2,-1.6,.55],[7.6,.6,.7],[5.6,8.6,.5],[9.2,-.9,.6],[8.8,7.9,.7]].forEach(function(q){var m=new T.Mesh(new T.SphereGeometry(q[2],8,6),new T.MeshStandardMaterial({color:0x4f7d3a,roughness:.9,flatShading:true}));m.position.set(q[0],q[2]*.7,q[1]);m.castShadow=true;m.userData.tip='Garden';g.add(m);});
+  buildRoof();
   for(var f=0;f<26;f++)bx(g,.09,1.1,.02,'fence',Rr+Tw+.6+f*.24,.55,-2.6,{ns:1,tip:'Fence'});bx(g,6.4,.06,.03,'fence',Rr+Tw+3.6,.85,-2.62,{ns:1});bx(g,6.4,.06,.03,'fence',Rr+Tw+3.6,.25,-2.62,{ns:1});
 }
 // ---------------------------------------------------------------- cable trunking on the wall: white channel with a clear lid, so you
@@ -5474,6 +5479,185 @@ function earthing(stepped,inPts,tgt){
   if(!stepped)['eRod0','eRod1','eCond','eMEB'].forEach(function(k){R.an[k].t=1;R.an[k].set(1);});
   R.st.earth={c:V(rodX-.25,.35,1.2),s:1.25,fr:V(1.15,.62,.9)};
   return {rodX:rodX,rz:rz,foot:foot};
+}
+// ---------------------------------------------------------------- the roof over the garage (ridge along z, 30\u00b0) and the solar panels on the
+// garden-side slope; the grid side outside: substation 10 kV / 0.4 kV, underground cable, cable cabinet, meter cabinet on the house wall
+var ROOF={P:30*Math.PI/180,rx:-.25,ex:3.05,lx:-3.55,z0:-.5,z1:7.0,t:.07};
+function roofYTop(x){var P=ROOF.P,YR=ROOM.H+.12+(ROOM.R+ROOM.T-ROOF.rx)*Math.tan(P);return YR-Math.abs(x-ROOF.rx)*Math.tan(P);}
+function drawRoofTiles(k){k.fillStyle='#3b4045';k.fillRect(0,0,256,256);
+  for(var r=0;r<8;r++){var y=r*32;for(var c=0;c<8;c++){var x=c*32+(r%2?16:0),v=55+Math.floor(Math.random()*14);k.fillStyle='rgb('+v+','+(v+4)+','+(v+8)+')';k.fillRect(x+1,y+1,30,27);k.fillStyle='rgba(0,0,0,.35)';k.fillRect(x,y+27,32,5);}}}
+function drawCells(k,w,h){
+  k.fillStyle='#0d1626';k.fillRect(0,0,w,h);var cw=w/10,ch=h/6;
+  for(var i=0;i<10;i++)for(var j=0;j<6;j++){var x=i*cw,y=j*ch,g=k.createLinearGradient(x,y,x+cw,y+ch);g.addColorStop(0,'#1b2c4a');g.addColorStop(1,'#101b31');k.fillStyle=g;k.fillRect(x+1.5,y+1.5,cw-3,ch-3);
+    k.fillStyle='rgba(190,200,215,.35)';k.fillRect(x+cw*.33,y+2,1,ch-4);k.fillRect(x+cw*.66,y+2,1,ch-4);}
+  k.strokeStyle='#c9ced3';k.lineWidth=4;k.strokeRect(2,2,w-4,h-4);
+}
+function buildRoof(){
+  var g=R.root,P=ROOF.P,cs=Math.cos(P),t=ROOF.t,Lz=ROOF.z1-ROOF.z0,zc=(ROOF.z0+ROOF.z1)/2;
+  var mat=new T.MeshStandardMaterial({map:texOf('roof',drawRoofTiles,Lz/.9,4),roughness:.8});
+  [[ROOF.rx,ROOF.ex,-1],[ROOF.lx,ROOF.rx,1]].forEach(function(q){var x0=q[0],x1=q[1],Ls=(x1-x0)/cs,mx=(x0+x1)/2,my=roofYTop(mx),
+    m=new T.Mesh(new T.BoxGeometry(Ls,t,Lz),mat);m.rotation.z=q[2]*P;m.position.set(mx-Math.sin(q[2]*-P)*0-(q[2]<0?Math.sin(P):-Math.sin(P))*t/2,my-cs*t/2,zc);m.userData.tip='Roof';g.add(m);
+    var fx=q[2]<0?x1:x0;bx(g,.03,.16,Lz,'white',fx,roofYTop(fx)-.1,zc,{ns:1,tip:'Fascia board'});});
+  bx(g,.16,.08,Lz+.02,'dark',ROOF.rx,roofYTop(ROOF.rx)+.015,zc,{ns:1,tip:'Roof ridge'});
+  // gables (back and front)
+  var und=t/cs,xs=[ROOM.L,ROOM.R+ROOM.T];
+  [0,ROOM.D].forEach(function(z,j){var sh=new T.Shape();sh.moveTo(xs[0],ROOM.H);sh.lineTo(xs[1],ROOM.H);sh.lineTo(xs[1],roofYTop(xs[1])-und);sh.lineTo(ROOF.rx,roofYTop(ROOF.rx)-und);sh.lineTo(xs[0],roofYTop(xs[0])-und);sh.closePath();
+    var m=new T.Mesh(new T.ShapeGeometry(sh),new T.MeshStandardMaterial({map:texOf('pan2',drawPanels,1/.88,1/.88),roughness:.85,side:T.DoubleSide}));m.position.z=z+(j?.003:-.003);m.userData.tip='Gable';g.add(m);});
+}
+// ---- the solar panels (12 \u00d7 example 440 W, portrait, 2 rows \u00d7 6) in one string to PV1
+function pvArray(stepped){
+  var P=ROOF.P,cs=Math.cos(P),sn=Math.sin(P),ex=ROOF.ex,y0=roofYTop(ex);
+  function W(s,z,h){return V(ex-s*cs+h*sn,y0+s*sn+h*cs,z);}
+  function place(o,s,z,h){var p=W(s,z,h);o.position.copy(p);o.rotation.z=-P;return o;}
+  var tex=(function(){var c=document.createElement('canvas');c.width=516;c.height=340;drawCells(c.getContext('2d'),516,340);var t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;t.anisotropy=8;return t;})();
+  var gm=new T.MeshStandardMaterial({map:tex,roughness:.18,metalness:.3}),fm=new T.MeshStandardMaterial({color:0xc4cad0,roughness:.35,metalness:.6});
+  var rowS=[.16+.861,.16+1.722+.02+.861],cols=[],i;for(i=0;i<6;i++)cols.push(.375+i*1.154);
+  // rails and roof hooks
+  var rg=grp(R.root,0,0,0,'Mounting rails on roof hooks');
+  rowS.forEach(function(s){[-.43,.43].forEach(function(o){var r=place(grp(rg,0,0,0,'Mounting rail (aluminium)'),s+o,3.26,.045);bx(r,.04,.035,7.05,'pvRail',0,0,0,{ns:1,tip:'Mounting rail (aluminium)'});
+    for(var z=-.1;z<6.9;z+=1.15){var hk=place(grp(rg,0,0,0,'Roof hook (under the tile)'),s+o,z,.02);bx(hk,.03,.05,.03,'steel',0,0,0,{ns:1,tip:'Roof hook (under the tile)'});}});});
+  var pans=[],order=[];
+  rowS.forEach(function(s,r){cols.forEach(function(z,c){var pg=grp(R.root,0,0,0,'Solar panel '+(r*6+c+1)+' (example 440 W)');place(pg,s,z,.1);
+    var fr=new T.Mesh(new T.BoxGeometry(1.722,.035,1.134),fm);fr.userData.tip='Solar panel (example 440 W, Voc \u2248 41 V, Vmp \u2248 34 V)';pg.add(fr);
+    var gl=new T.Mesh(new T.PlaneGeometry(1.70,1.112),gm);gl.rotation.x=-Math.PI/2;gl.position.y=.0181;gl.userData.tip=fr.userData.tip;pg.add(gl);
+    bx(pg,.12,.02,.09,'black',-.55,-.03,0,{ns:1,tip:'Junction box with + and \u2212 leads (MC4)'});
+    pans.push({g:pg,s:s,z:z,r:r,c:c});});});
+  rowS.forEach(function(s,r){var cc=r?cols.slice().reverse():cols;cc.forEach(function(z){order.push(pans.filter(function(p){return p.s===s&&p.z===z;})[0]);});});
+  // series links under the panels (MC4 jumpers), + at panel 1, \u2212 at the last panel
+  function jb(p,dz){return W(p.s+.55,p.z+dz,.06);}
+  var links=[];for(i=0;i<order.length-1;i++){var a=order[i],b=order[i+1],pa=a.r===b.r?jb(a,(b.z>a.z?.25:-.25)):jb(a,-.1),pb=a.r===b.r?jb(b,(b.z>a.z?-.25:.25)):jb(b,-.1),mid=pa.clone().lerp(pb,.5).add(W(0,0,-.015).sub(W(0,0,0)));
+    var ln=stat(0x16191c,.003,[pa,mid,pb],{tip:'MC4 jumper: + of one panel to \u2212 of the next (series)'});var mc=bx(R.root,.025,.012,.012,'black',mid.x,mid.y,mid.z,{ns:1,tip:'MC4 connector pair'});links.push({l:ln,m:mc});}
+  // home-run cables to the roof cable entry
+  var E=W(1.95,-.32,.0),boot=grp(R.root,E.x,E.y,E.z,'Roof cable entry (sealed boot)');boot.rotation.z=-P;cy(boot,.05,.06,.04,'black',0,.02,0,null,{ns:1});
+  var pP=jb(order[0],-.3),pM=jb(order[order.length-1],-.3),hr={};
+  [['+',pP,0xc8322b,.012],['\u2212',pM,0x16191c,-.012]].forEach(function(q){var p=q[1],b=[[p.x,p.y,p.z],[p.x,p.y,p.z-.25],[E.x+q[3]+.08,E.y+.02,E.z+.12],[E.x+q[3],E.y+.03,E.z+.02],[E.x+q[3],E.y+.03,E.z]];
+    var a=b.map(function(v,j){return j<2?v:[p.x+.05*j,p.y+.02,p.z-.25-.05*j];});
+    hr[q[0]]=new Core({col:q[2],r:.0035,a:a,b:b,end:'none',tip:'String cable '+q[0]+' (4\u20136 mm\u00b2 solar cable) \u2192 roof entry \u2192 inverter PV1'+q[0]});});
+  var gh=false;function ghost(on){if(gh===on)return;gh=on;[gm,fm].forEach(function(m){m.transparent=on;m.opacity=on?.22:1;m.depthWrite=!on;m.needsUpdate=true;});}
+  reg('pvRail',function(t){var u=ease(Math.min(1,t/.8));rg.visible=t>0;rg.position.set(sn*1.2*(1-u),cs*1.2*(1-u),0);});
+  reg('pvPan',function(t){pans.forEach(function(p,j){var k=j/pans.length*.82,u=ease(Math.max(0,Math.min(1,(t-k)/.18)));p.g.visible=t>k;place(p.g,p.s,p.z-.6*(1-u),.1+1.0*(1-u));});});
+  reg('pvStr',function(t){links.forEach(function(l,j){var v=t>j/links.length*.95&&t>0;l.l.mesh.visible=v;l.m.visible=v;});});
+  reg('pvCab',function(t){hr['+'].set(t);hr['\u2212'].set(t);var v=getT('pvStr')>0||t>0;hr['+'].mesh.visible=hr['\u2212'].mesh.visible=v;});
+  if(stepped){R.stepHooks.push(function(j){var a=stepOf('pvStr'),b=stepOf('pvCab'),st=R.steps[j];ghost(!!st&&(j===a||j===b));});}
+  R.hitAdd('pvRail',W(1.9,3.26,.08));R.hitAdd('pvPan',W(1.9,3.26,.15));R.hitAdd('pvStr',jb(order[0],.0));R.hitAdd('pvCab',E);
+  if(!stepped)['pvRail','pvPan','pvStr','pvCab'].forEach(function(k){R.an[k].t=1;R.an[k].set(1);});
+  R.st.roof={c:W(1.9,3.26,0),s:2.7,fr:V(1,.9,.45)};
+  return {W:W,E:E,c:W(1.9,3.26,0),first:jb(order[0],0)};
+}
+// ---------------------------------------------------------------- the grid side
+var GS={z:4.6,F:12.1,cab:10.4};
+function mainFuse(){var b=S().brk||25,l=[16,20,25,35,50,63,80,100,125,160,200,250,315,400,500,630];for(var i=0;i<l.length;i++)if(l[i]>=b)return l[i];return 630;}
+function drawPlate2(lines){return function(k,w,h){k.fillStyle='#eef0f2';k.fillRect(0,0,w,h);k.strokeStyle='#2b3138';k.lineWidth=w*.02;k.strokeRect(w*.02,h*.04,w*.96,h*.92);k.fillStyle='#2b3138';k.textAlign='center';k.textBaseline='middle';
+  lines.forEach(function(l,i){k.font=(i?'600 ':'800 ')+Math.round(h*(i?.13:.17))+'px Arial';k.fillText(l,w/2,h*(.2+i*.2));});};}
+function drawMeterFace(k,w,h){k.fillStyle='#2c3238';k.fillRect(0,0,w,h);k.fillStyle='#9fb7a4';k.fillRect(w*.12,h*.2,w*.76,h*.18);k.fillStyle='#1e2a22';k.font='700 '+Math.round(h*.12)+'px "Courier New",monospace';k.textAlign='right';k.textBaseline='middle';k.fillText('048213.7',w*.85,h*.29);
+  k.fillStyle='#e8edf2';k.textAlign='center';k.font='700 '+Math.round(h*.065)+'px Arial';k.fillText('GRID COMPANY',w/2,h*.08);k.font='600 '+Math.round(h*.05)+'px Arial';k.fillText('3 \u00d7 230/400 V   kWh',w/2,h*.47);
+  k.fillStyle='#d83a34';k.beginPath();k.arc(w*.25,h*.6,h*.025,0,Math.PI*2);k.fill();k.fillStyle='#9aa3ad';k.fillText('1000 imp/kWh',w*.6,h*.6);
+  k.fillStyle='#4a525b';k.fillRect(w*.1,h*.72,w*.8,h*.2);k.fillStyle='#e8edf2';k.fillText('L1  L1  L2  L2  L3  L3  N  N',w/2,h*.82);}
+function gridSide(stepped,J,wit){
+  var z=GS.z,F=GS.F,X0=ROOM.R+ROOM.T,mf=mainFuse(),za=z-1.1,zb=z+1.1,zHV=za+.65,zLV=z+.4,yb=.15,yt=1.85,TIPS='Substation (grid company) \u2014 10 kV / 0.4 kV';
+  var sg=grp(R.root,0,0,0,TIPS);
+  bx(sg,1.6,.15,2.4,'concrete',F+.7,.075,z,{tip:TIPS});
+  bx(sg,.05,yt-yb,2.2,'subGreen',F+1.375,(yb+yt)/2,z,{tip:TIPS});
+  [za+.025,zb-.025].forEach(function(zz){bx(sg,1.4,yt-yb,.05,'subGreen',F+.7,(yb+yt)/2,zz,{tip:TIPS});});
+  bx(sg,1.6,.08,2.45,'subRoof',F+.7,yt+.04,z,{tip:TIPS});
+  [zHV,zLV].forEach(function(zz){bx(sg,1.35,yt-yb,.03,'subIn',F+.7,(yb+yt)/2,zz,{ns:1});});
+  bx(sg,.06,.14,2.2,'subGreen',F+.03,yt-.07,z,{tip:TIPS});[za+.02,zHV,zLV,zb-.02].forEach(function(zz){bx(sg,.06,yt-yb,.04,'subGreen',F+.03,(yb+yt)/2,zz,{ns:1});});
+  bx(sg,.03,yt-yb-.14,zHV-za-.04,'subGreen',F+.015,(yb+yt-.14)/2,(za+zHV)/2,{tip:'High-voltage compartment (10 kV) \u2014 locked'});
+  lab(sg,'\u26a1 10 kV \u2014 DANGER',F-.003,1.25,(za+zHV)/2,{h:.07,bg:'#f2c41b',c:'#15181b',f:'-x'});
+  lab(sg,'SUBSTATION \u00b7 10 kV \u2192 400 V',F+.7,1.62,zb+.004,{h:.11,bg:'#ffffff',c:'#1d232a'});lab(sg,'grid company',F+.7,1.48,zb+.004,{h:.07,c:'#ffffff'});
+  // the doors that open (transformer, low voltage)
+  var doors=[];[[zHV+.02,zLV-zHV-.04,1,'Transformer compartment door'],[zb-.02,zb-zLV-.04,-1,'Low-voltage compartment door']].forEach(function(q){
+    var d=grp(sg,F+.015,0,q[0],q[3]);bx(d,.03,yt-yb-.14,q[1],'subGreen',0,(yb+yt-.14)/2,q[2]*q[1]/2,{tip:q[3]});for(var i=0;i<8;i++)bx(d,.012,.012,q[1]*.8,'subRoof',-.016,.4+i*.12,q[2]*q[1]/2,{ns:1});
+    lab(d,'\u26a1',-.017,1.3,q[2]*q[1]/2,{h:.12,bg:'#f2c41b',c:'#15181b',f:'-x'});doors.push({g:d,s:q[2]});});
+  // transformer
+  var tz=(zHV+zLV)/2,TT='Distribution transformer 10 / 0.4 kV, Dyn11 (example 500 kVA)';
+  bx(sg,.62,.78,.6,'trGrey',F+.75,yb+.41,tz,{tip:TT});for(var i=0;i<7;i++)bx(sg,.01,.6,.5,'trGrey',F+1.09+i*.038,yb+.39,tz,{tip:'Cooling radiator'});
+  decal(sg,.34,.17,drawPlate2(['TRANSFORMER','10 kV / 0.4 kV','Dyn11  \u00b7  e.g. 500 kVA']),F+.439,.62,tz,{f:'-x',tip:TT});
+  [-.2,0,.2].forEach(function(dz){var x=F+.95,zz=tz+dz;cy(sg,.026,.026,.2,'porcelain',x,1.1,zz,null,{tip:'High-voltage bushing (10 kV)'});for(var j=0;j<3;j++)cy(sg,.045,.045,.012,'porcelain',x,1.04+j*.06,zz,null,{ns:1});
+    stat(0x2a2f35,.012,vv([[x,1.2,zz],[x,1.5,zz],[x+.15,1.62,zz],[F+1.2,1.62,zHV+.03]]),{tip:'10 kV cable from the HV compartment'});});
+  var LVB={},lvz={L1:tz-.24,L2:tz-.08,L3:tz+.08,N:tz+.24};
+  Object.keys(lvz).forEach(function(k){var x=F+.56,zz=lvz[k];cy(sg,.018,.018,.11,'porcelain',x,1.04,zz,null,{tip:'Low-voltage bushing '+k+(k==='N'?' (star point)':'')});cy(sg,.008,.008,.04,'brass',x,1.11,zz,null,{ns:1});
+    lab(sg,k,F+.439,.86,zz,{h:.05,bg:k==='N'?'#2f6fd6':'#ffffff',c:k==='N'?'#ffffff':'#1d232a',f:'-x'});LVB[k]=V(x,1.13,zz);});
+  // low-voltage switchboard: busbars, PEN bar, fuse switch-disconnectors (NH)
+  var bz0=zLV+.04,bz1=zb-.06,bys={L1:1.56,L2:1.49,L3:1.42};
+  Object.keys(bys).forEach(function(k){bx(sg,.02,.035,bz1-bz0,'copper',F+1.33,bys[k],(bz0+bz1)/2,{tip:'Busbar '+k+' (400 V)'});lab(sg,k,F+1.318,bys[k],bz0+.03,{h:.03,c:'#1d232a',f:'-x'});});
+  bx(sg,.02,.035,bz1-bz0,'copper',F+1.33,.36,(bz0+bz1)/2,{tip:'PEN bar \u2014 the transformer star point, earthed'});bx(sg,.022,.012,bz1-bz0,'pebar',F+1.33,.36,(bz0+bz1)/2,{ns:1});lab(sg,'PEN',F+1.318,.42,bz0+.04,{h:.035,c:'#1e7a3d',f:'-x'});
+  var fz=[zLV+.16,zLV+.35,zLV+.54],FS={};
+  fz.forEach(function(zz,j){var u=grp(sg,F+1.27,.98,zz,j===1?'Fuse switch-disconnector (NH, 3-pole) \u2014 the feeder to your house':'Fuse switch-disconnector (NH, 3-pole) \u2014 another feeder');
+    bx(u,.1,.52,.16,'black',0,0,0,{tip:u.userData.tip});[-.15,0,.15].forEach(function(dy){bx(u,.03,.11,.12,'mid',-.065,dy,0,{tip:u.userData.tip});});
+    if(j===1){lab(u,'\u2192 HOUSE',-.081,.3,0,{h:.04,bg:'#1f8a4c',c:'#ffffff',f:'-x'});FS=V(F+1.27,.72,zz);}});
+  ['L1','L2','L3'].forEach(function(k){var p=LVB[k];stat(k,.011,vv([[p.x,p.y,p.z],[p.x,1.7,p.z],[F+1.0,1.72,zLV-.02],[F+1.0,1.72,zLV+.05],[F+1.31,bys[k],bz0+.02]]),{tip:'Transformer '+k+' \u2192 busbar'});});
+  var pN=LVB.N;stat('N',.011,vv([[pN.x,pN.y,pN.z],[pN.x,1.72,pN.z],[F+.9,1.75,zLV-.02],[F+.9,1.72,zLV+.06],[F+.95,.6,zLV+.06],[F+1.31,.36,bz0+.02]]),{tip:'Transformer star point (N) \u2192 PEN bar'});
+  // system earth: PEN bar \u2192 earth electrode outside the station
+  var rodE=V(F-.7,0,za+.2);
+  stat('PE',.006,vv([[F+1.31,.36,bz1-.02],[F+1.31,.2,bz1-.02],[F+.9,.17,bz1-.05]]),{tip:'Earthing conductor from the PEN bar'});
+  stat('PE',.006,vv([[F-.02,.02,za+.5],[F-.3,.012,za+.35],[rodE.x+.03,.03,rodE.z],[rodE.x,.06,rodE.z]]),{tip:'Earthing conductor \u2192 system earth electrode'});
+  cy(R.root,.012,.012,.12,'copper',rodE.x,.04,rodE.z,null,{tip:'System earth electrode (transformer star point)'});cy(R.root,.11,.11,.03,'grey',rodE.x,.012,rodE.z,null,{ns:1});
+  lab(R.root,'System earth \u2014 star point (PEN) earthed',rodE.x-.01,.5,rodE.z,{h:.07,bg:'#1f8a4c',c:'#ffffff',f:'-x'});bx(R.root,.006,.3,.006,'mid',rodE.x,.2,rodE.z-.02,{ns:1});
+  // outgoing 4-core cable: L1 L2 L3 from the house feeder, PEN from the PEN bar
+  ['L1','L2','L3'].forEach(function(k,i){stat(k,.008,vv([[FS.x-.02,FS.y,FS.z-.04+i*.04],[FS.x-.05,.35,FS.z-.03+i*.03],[F+1.15,.22,FS.z]]),{tip:k+' \u2192 house cable'});});
+  stat('PE',.008,vv([[F+1.31,.36,FS.z+.06],[F+1.2,.3,FS.z+.06],[F+1.15,.22,FS.z+.01]]),{tip:'PEN \u2192 house cable'});
+  // the underground route (shown in an open trench)
+  var cab=GS.cab,rt=vv([[F+1.15,.2,FS.z],[F+1.15,-.08,FS.z],[F-.1,-.03,FS.z],[F-.35,.012,z+.25],[F-.7,.012,z],[cab+.5,.012,z],[cab+.18,.04,z],[cab+.12,.3,z],[cab-.12,.3,z],[cab-.18,.04,z],[cab-.5,.012,z],[X0+.4,.012,z]].concat(wit?[[X0+.15,-.05,z],[ROOM.R-.3,-.12,z]]:[[X0+.1,.03,z],[X0+.07,.15,z],[X0+.07,.84,z]]));
+  var curve=new T.CatmullRomCurve3(rt,false,'centripetal'),tg=new T.TubeGeometry(curve,500,.014,8,false),cm=new T.Mesh(tg,M('jblack'));cm.userData.tip='Underground service cable, 4-core: L1 \u00b7 L2 \u00b7 L3 \u00b7 PEN (buried \u2014 shown in an open trench here)';cm.castShadow=true;R.root.add(cm);
+  function trench(a,b){var d=V(b[0]-a[0],0,b[1]-a[1]);var m=bx(R.root,d.length(),.004,.32,'soil',(a[0]+b[0])/2,.002,(a[1]+b[1])/2,{ns:1,tip:'Cable trench (in reality 0.35\u20130.7 m deep)'});m.rotation.y=-Math.atan2(d.z,d.x);}
+  trench([F-.05,z+.2],[F-.7,z]);trench([F-.7,z],[X0+.05,z]);
+  lab(R.root,'Underground cable: L1 \u00b7 L2 \u00b7 L3 \u00b7 PEN',(cab+X0)/2,.32,z+.3,{h:.09,bg:'#ffffff',c:'#1d232a'});
+  // cable cabinet at the property boundary
+  var cc=grp(R.root,cab,0,z,'Cable cabinet (grid company) \u2014 at the property boundary');bx(cc,.4,.08,.62,'concrete',0,.04,0);bx(cc,.36,.82,.56,'subGreen',0,.49,0,{r:.01,tip:cc.userData.tip});bx(cc,.38,.03,.58,'subRoof',0,.915,0,{ns:1});
+  lab(cc,'CABLE CABINET',0,.7,.285,{h:.05,bg:'#ffffff',c:'#1d232a'});
+  for(var f=0;f<40;f++){var zf=-2.6+f*.38;if(Math.abs(zf-z)>.3)bx(R.root,.08,.75,.02,'fence',11.2,.375,zf,{ns:1,tip:'Property boundary'});}bx(R.root,.03,.05,15.2,'fence',11.21,.6,5.0,{ns:1});bx(R.root,.03,.05,15.2,'fence',11.21,.2,5.0,{ns:1});
+  var A={doors:doors,FS:FS,LVB:LVB,rt:rt,c:V(F+.6,.9,z)};
+  if(wit){lab(R.root,'Service cable \u2192 main switchboard (from below)',X0+.2,.25,z-.35,{h:.06,bg:'#ffffff',c:'#1d232a',ry:-1.2});}
+  else{
+    // meter cabinet on the outside wall: main fuses, the grid company's meter, PEN split, out to the house
+    var mz0=z-.28,mz1=z+.28,my0=.82,my1=1.72,mx1=X0+.22,TM='Meter cabinet (on the outside wall)',mc=grp(R.root,0,0,0,TM);
+    bx(mc,.22,my1-my0,.02,'boxGrey',X0+.11,(my0+my1)/2,mz0+.01,{tip:TM});bx(mc,.22,my1-my0,.02,'boxGrey',X0+.11,(my0+my1)/2,mz1-.01,{tip:TM});
+    bx(mc,.22,.02,mz1-mz0,'boxGrey',X0+.11,my1-.01,z,{tip:TM});bx(mc,.22,.02,mz1-mz0,'boxGrey',X0+.11,my0+.01,z,{tip:TM});bx(mc,.01,my1-my0,mz1-mz0,'plate',X0+.005,(my0+my1)/2,z,{ns:1});
+    cy(R.root,.03,.03,my0,'grey',X0+.07,my0/2,z,null,{tip:'Protective tube for the incoming cable'});
+    // utility meter
+    var me=grp(R.root,X0+.045,1.48,z,'Electricity meter \u2014 owned by the grid company');bx(me,.07,.26,.18,'dark',0,0,0,{r:.006,tip:me.userData.tip});decal(me,.17,.24,drawMeterFace,.0352,0,0,{f:'x',tip:me.userData.tip});
+    var mt=[];for(var i=0;i<8;i++)mt.push(V(X0+.08,1.36,z+.07-i*.02));
+    // main fuses (D type)
+    var fzs=[z+.1,z,z-.1],fcol=mf<=20?'#5aa0e6':mf<=25?'#e8c21b':mf<=35?'#1d232a':mf<=50?'#eef0f2':'#c98a3a',fT=[],fB=[];
+    fzs.forEach(function(zz,i){var g=grp(R.root,X0+.05,1.16,zz,'Main fuse '+['L1','L2','L3'][i]+' \u2014 '+mf+' A (grid company, sealed)');bx(g,.04,.1,.06,'white',0,0,0,{r:.004,tip:g.userData.tip});
+      cy(g,.022,.022,.03,'porcelain',.033,0,0,'x',{tip:g.userData.tip});var dm=new T.Mesh(new T.CylinderGeometry(.01,.01,.004,16),new T.MeshStandardMaterial({color:fcol,roughness:.4}));dm.rotation.z=-Math.PI/2;dm.position.x=.05;g.add(dm);
+      fT.push(V(X0+.06,1.215,zz));fB.push(V(X0+.06,1.105,zz));});
+    lab(R.root,'MAIN FUSES 3 \u00d7 '+mf+' A',X0+.072,1.255,z,{h:.022,c:'#1d232a',f:'x'});
+    // PEN split: PE (PEN) bar and N bar with a link
+    bx(R.root,.02,.025,.13,'pebar',X0+.03,.95,z+.11,{tip:'PE bar \u2014 the incoming PEN lands here'});bx(R.root,.021,.008,.13,'yellow',X0+.03,.95,z+.11,{ns:1});
+    bx(R.root,.02,.025,.13,'nbar',X0+.03,.95,z-.11,{tip:'N bar'});bx(R.root,.008,.008,.1,'copper',X0+.045,.95,z,{tip:'PEN link: PE bar \u2192 N bar \u2014 the PEN is split here (TN-C-S); after this point N and PE are never joined again'});
+    lab(R.root,'PEN \u2192 PE + N',X0+.042,.995,z,{h:.02,bg:'#1f8a4c',c:'#ffffff',f:'x'});
+    var gIn=V(X0+.07,.86,z);
+    ['L1','L2','L3'].forEach(function(k,i){var t=fB[i];stat(k,.0035,vv([[gIn.x,gIn.y,gIn.z+(i-1)*.006],[gIn.x,.93,gIn.z+(i-1)*.01],[t.x,t.y-.04,t.z],[t.x,t.y,t.z]]),{tip:'Incoming '+k+' \u2192 main fuse'});
+      var m1=mt[i*2],m2=mt[i*2+1];stat(k,.0032,vv([[fT[i].x,fT[i].y,fT[i].z],[fT[i].x,fT[i].y+.04,fT[i].z],[m1.x,m1.y-.04,m1.z],[m1.x,m1.y,m1.z]]),{tip:'Main fuse '+k+' \u2192 meter'});});
+    stat('PE',.0035,vv([[gIn.x,gIn.y,gIn.z+.012],[gIn.x,.9,gIn.z+.012],[X0+.05,.93,z+.08],[X0+.04,.95,z+.07]]),{tip:'Incoming PEN \u2192 PE bar (green-yellow, marked blue at the ends)'});
+    cy(R.root,.0045,.0045,.012,'blue',X0+.05,.927,z+.08,null,{ns:1});
+    stat('N',.0032,vv([[X0+.04,.95,z-.13],[X0+.06,1.0,z-.15],[X0+.07,1.25,z-.15],[mt[6].x,mt[6].y-.06,mt[6].z],[mt[6].x,mt[6].y,mt[6].z]]),{tip:'N bar \u2192 meter'});
+    var ex=V(X0+.04,1.68,z+.2),outs=[1,3,5,7];
+    outs.forEach(function(j,i){var m=mt[j],k=['L1','L2','L3','N'][i];stat(k,.0032,vv([[m.x,m.y,m.z],[m.x+.03,m.y-.03,m.z],[X0+.1,1.32,z+.13+i*.006],[X0+.1,1.6,z+.15+i*.006],[ex.x,ex.y,ex.z-.01+i*.005]]),{tip:'Meter '+k+' \u2192 to the house'});});
+    stat('PE',.0032,vv([[X0+.04,.95,z+.17],[X0+.05,1.0,z+.235],[X0+.05,1.58,z+.235],[X0+.05,1.665,z+.22],[ex.x,ex.y,ex.z+.012]]),{tip:'PE bar \u2192 to the house'});
+    // door
+    var dr=grp(R.root,mx1,(my0+my1)/2,mz0,'Meter cabinet door');bx(dr,.02,my1-my0,mz1-mz0,'boxGrey',0,0,(mz1-mz0)/2,{tip:'Meter cabinet door'});
+    var win=new T.Mesh(new T.BoxGeometry(.004,.16,.2),new T.MeshStandardMaterial({color:0xa9bfcf,transparent:true,opacity:.35,roughness:.1}));win.position.set(.011,.2,(mz1-mz0)/2);dr.add(win);lab(dr,'\u26a1',.011,-.05,(mz1-mz0)/2,{h:.07,bg:'#f2c41b',c:'#15181b',f:'x'});
+    lab(R.root,'METER CABINET',X0+.225,my1+.05,z,{h:.045,bg:'#ffffff',c:'#1d232a',f:'x'});
+    A.door=dr;A.meter=V(X0+.05,1.3,z);A.mt=mt;A.fT=fT;A.fB=fB;
+    // main cable into the house: through the wall, up, along the walls to the board
+    var Jt=V(J.x,ROOM.H-.35,.03),ip=vv([[ex.x,ex.y,ex.z],[X0-.02,ex.y,ex.z],[ROOM.R-.03,ex.y,ex.z],[ROOM.R-.03,ROOM.H-.35,ex.z],[ROOM.R-.03,ROOM.H-.35,.25],[ROOM.R-.03,ROOM.H-.35,.04],[ROOM.R-.25,ROOM.H-.35,.03],[J.x+.15,ROOM.H-.35,.03],[Jt.x,Jt.y,Jt.z]]);
+    stat(0,.011,ip,{mat:'jblack',tip:'Main cable from the meter cabinet: L1 \u00b7 L2 \u00b7 L3 \u00b7 N \u00b7 PE'});
+    for(var q=1;q<ip.length-1;q++){var a=ip[q],b=ip[q+1],d=a.distanceTo(b),n=Math.floor(d/.45);for(var j=1;j<=n;j++){var p=a.clone().lerp(b,j/(n+1));bx(R.root,.022,.022,.022,'clip',p.x,p.y,p.z,{ns:1});}}
+    A.inPath=[V(X0+.07,.84,z),V(X0+.07,1.0,z)].concat(ip);
+  }
+  reg('gDoor',function(t){var u=ease(t);doors.forEach(function(d){d.g.rotation.y=-d.s*1.9*u;});});
+  reg('gCable',function(t){var n=Math.round(Math.min(1,t)*500);tg.setDrawRange(0,n*8*6);});
+  reg('gMeter',function(t){if(A.door)A.door.rotation.y=1.9*ease(t);});
+  R.hitAdd('gDoor',V(F-.02,.95,tz));R.hitAdd('gCable',V((cab+X0)/2,.03,z));R.hitAdd('gMeter',wit?V(X0+.1,.3,z):V(mx1+.01,1.27,z));
+  if(!stepped)['gDoor','gCable','gMeter'].forEach(function(k){R.an[k].t=1;R.an[k].set(1);});
+  R.st.grid={c:V((F+X0)/2+.6,.6,z),s:4.2,fr:V(-.05,.5,1)};
+  // a phase path (substation \u2192 house) for the phase-check pulses
+  A.phase=function(k,i){var o=(i-1)*.006,p=[LVB[k].clone(),V(LVB[k].x,1.7,LVB[k].z),V(F+1.31,bys[k],bz0+.02),V(FS.x,FS.y,FS.z)].concat(rt.slice(1).map(function(v){return v.clone().add(V(0,0,o));}));
+    if(!wit)p=p.concat([A.fB[i],A.fT[i],A.mt[i*2],A.mt[i*2+1]]).concat(A.inPath.slice(2));return p;};
+  return A;
 }
 // ---------------------------------------------------------------- MOD 3-15KTL3-HU (wall mounted, all connections underneath)
 function buildMOD(){
@@ -5816,7 +6000,7 @@ function buildBoardDirect(brand,feed){
   if(!feed)['L1','L2','L3','N'].forEach(function(k,i){var s=q0.bot[i],t=rcd.top[i];stat(k,.0024,vv([[s.x,s.y,.045],[s.x,s.y-.04,.05],[s.x+.02,gy-.21,.05],[gx-xi+.012,gy-.2,.05],[gx-xi+.016,gy-.02,.05],[t.x,gy-.01,.05],[t.x,t.y+.015,.047],[t.x,t.y,.045]]),{tip:k+' main switch \u2192 RCD'});});
   // ---- incoming supply from above (from the utility meter / main fuses)
   var J=W(-.315,.205,.055);
-  stat(0,.011,vv([[J.x,gy+1.0,.03],[J.x,gy+.5,.04],[J.x,gy+.31,.05],[J.x,J.y+.02,.055],[J.x,J.y,.055]]),{mat:'jblack',tip:'Incoming supply (from the utility meter and main fuses)'});
+  stat(0,.011,vv([[J.x,gy+.88,.03],[J.x,gy+.5,.04],[J.x,gy+.31,.05],[J.x,J.y+.02,.055],[J.x,J.y,.055]]),{mat:'jblack',tip:'Incoming supply (from the utility meter and main fuses)'});
   var peBar=W(.09,.265,.04);
   stat('PE',.0028,vv([[J.x+.004,J.y,.055],[J.x+.03,J.y+.02,.05],[gx-.02,gy+.225,.045],[peBar.x-.03,gy+.24,.045],[peBar.x,peBar.y,peBar.z]]),{tip:'Incoming PE \u2192 PE bar'});
   var cores={};
@@ -5861,7 +6045,7 @@ function buildBoardDirect(brand,feed){
   });
   ['gr','wg','br','wbr','bl','or'].forEach(function(c,i){var a=nj.clone().add(V(-.003+(i%3)*.003,.002,.003-Math.floor(i/3)*.003));stat(c,.0011,[a,a.clone().add(V(0,.006,0))],{tip:'Unused core \u2014 cut back'});});
   var nx=gx-.08;
-  return {g:g,gx:gx,gy:gy,xi:xi,peAt:function(x){return W(x,.265,.04);},byp:byp,bypC:W(-.116,y2,.06),ldJ:ldJ,mt:mt,gridT:gridT,houseT:houseT,q0:q0,qi:qi,qiC:W(qx,y2,.06),cores:cores,netStart:nj,invOut:jout,meterC:W(-.29,y1,.06),c:W(0,0,.07),
+  return {g:g,J:J,gx:gx,gy:gy,xi:xi,peAt:function(x){return W(x,.265,.04);},byp:byp,bypC:W(-.116,y2,.06),ldJ:ldJ,mt:mt,gridT:gridT,houseT:houseT,q0:q0,qi:qi,qiC:W(qx,y2,.06),cores:cores,netStart:nj,invOut:jout,meterC:W(-.29,y1,.06),c:W(0,0,.07),
     netRoute:[[nj.x,nj.y,nj.z],[nj.x+.06,nj.y-.004,.058],[nx,gy-.008,.058],[nx,gy-.22,.058],[nx,gy-.3,.05],[nx-.002,.6,.03],[nx-.008,.27,.012]],
     gridRoute:[[jout.x,jout.y,.05],[jout.x,gy-.32,.05],[jout.x,.6,.03],[jout.x-.01,.34,.012]]};
 }
@@ -5926,15 +6110,17 @@ function addTrace(paths){
   R.pulses=[];
   Object.keys(paths).forEach(function(k){
     var curve=new T.CatmullRomCurve3(paths[k],false,'centripetal'),ms=[];
-    for(var i=0;i<6;i++){var m=new T.Mesh(new T.SphereGeometry(.012,12,10),new T.MeshBasicMaterial({color:PCOL[k],toneMapped:false}));m.visible=false;R.root.add(m);ms.push(m);}
-    R.pulses.push({k:k,c:curve,m:ms,len:curve.getLength()});
+    var len=curve.getLength(),n=Math.max(6,Math.round(len/.45));
+    for(var i=0;i<n;i++){var m=new T.Mesh(new T.SphereGeometry(.012,12,10),new T.MeshBasicMaterial({color:PCOL[k],toneMapped:false}));m.visible=false;R.root.add(m);ms.push(m);}
+    R.pulses.push({k:k,c:curve,m:ms,len:len});
   });
   reg('trace',function(t){R.traceOn=t>.5;R.pulses.forEach(function(p){p.m.forEach(function(m){m.visible=R.traceOn;});});});
 }
-function runTrace(){if(!R.traceOn||!R.pulses)return;var tn=now();R.pulses.forEach(function(p,j){var sp=.45/p.len;p.m.forEach(function(m,i){var u=((tn*sp+i/6+j*.05)%1);m.position.copy(p.c.getPointAt(u));});});}
+function runTrace(){if(!R.traceOn||!R.pulses)return;var tn=now();R.pulses.forEach(function(p,j){var sp=.6/p.len,n=p.m.length;p.m.forEach(function(m,i){var u=((tn*sp+i/n+j*.05/n)%1);m.position.copy(p.c.getPointAt(u));});});}
 // ---- MODA
 function worldMODA(brand){
   var A=buildMODA(),Bd=buildBoardDirect(brand,true),IM=A.IM;R.noClips=true;
+  var GSD=gridSide(true,Bd.J,false),PV=pvArray(true);
   R.st.meter={c:Bd.c,s:.52,ang:true};
   var X=A.X,W=A.W,yi=A.yi,nb=A.nb,SS=S(),q=sp0(),xo=X+W/2,rc=rCore(SS.cab);
   // the inverter's own AC breaker (Q-INV) in a box on the wall, to the right of the MODA
@@ -5988,8 +6174,12 @@ function worldMODA(brand){
   var g=A.gnd,peB=[[peM.x,peM.y,peM.z],[peM.x+.015,gy+.235,.045],[gx+xi-.055,gy+.2,.05],[gx+xi-.055,gy-.25,.052],[xB+.01,gy-.29,.05],[xB+.01,gy-.34,.028],[xB+.01,LY.PE+.05,.028],[xB-.015,LY.PE,.014],[xR+.035,LY.PE,.014],[xR+.025,LY.PE+.05,.028],[xR+.025,yR-.05,.028],[xR+.02,yR,.022],[xo-.015,yi+.03,.024],[g.x+.012,g.y-.045,g.z-.06],[g.x+.012,g.y-.045,g.z],[g.x+.004,g.y-.03,g.z],[g.x+.004,g.y-.018,g.z]];
   var pe=new Core({col:WCOL.PE,r:.0026,a:looseOf(peB,[.06,-.05,.04],2),b:peB,end:'lug',lugThin:'x',tip:'PE \u2014 MODA enclosure \u2192 PE bar in the board (OT ring terminal, M6)'});
   reg('mPE',function(t){pe.set(t);});R.hitAdd('mPE',g);
-  // PV1 strings from the roof: out of the left bay towards the wall, up the trunking
-  IM.pv.forEach(function(p,i){var zz=p.z,xl=xL-.012+i*.014;stat(i?0x1a1c1f:0xc8322b,.0032,vv([[p.x,p.y,zz],[p.x,yi+.06,zz],[p.x-.004,yi+.03,.024],[X-W/2-.015,yi+.03,.022],[xl,yR+.03,.028],[xl,yR+.3,.028],[xl,ROOM.H-.03,.028],[xl,ROOM.H+.05,.028]]),{tip:'PV1 '+(i?'\u2212':'+')+' string cable (from the roof)'});});
+  // PV1 string cables: down from the ceiling in the trunking, into the left bay, MC4 plugs up into PV1 + / \u2212
+  var pvC=[];IM.pv.forEach(function(p,i){var zz=p.z,xl=xL-.012+i*.014,b=[[xl,ROOM.H+.05,.028],[xl,ROOM.H-.03,.028],[xl,yR+.3,.028],[xl,yR+.03,.028],[X-W/2-.015,yi+.03,.022],[p.x-.004,yi+.03,.024],[p.x,yi+.06,zz],[p.x,p.y,zz]],n=b.length;
+    var a=b.map(function(q,j){return j>=n-2?[q[0],q[1]-.07,q[2]]:j===n-3?[q[0],q[1]-.035,q[2]]:q;});
+    pvC.push(new Core({col:i?0x1a1c1f:0xc8322b,r:.0032,a:a,b:b,end:'none',par:R.root,tip:'PV1 '+(i?'\u2212':'+')+' string cable (4\u20136 mm\u00b2 solar cable, from the roof)'}));});
+  R.asm.push({first:'pvCab',set:function(v){pvC.forEach(function(c){c.mesh.visible=v;});IM.pvPl.forEach(function(g){g.visible=v;});}});
+  reg('pvPlug',function(t){pvC.forEach(function(c){c.set(t);});IM.pvPl.forEach(function(g){g.position.y=-.07*(1-ease(t));});});R.hitAdd('pvPlug',IM.pv[0].clone().add(V(0,-.05,0)));
   // network cable: board \u2192 trunking \u2192 left side \u2192 up into the Meter port (underneath the COM block)
   var mp=A.meterPort,nr=Bd.netRoute.slice(0,4).concat([[xB+.045,Bd.gy-.32,.03],[xB+.045,LY.RS+.05,.028],[xB+.02,LY.RS,.014],[xL+.03,LY.RS,.014],[xL+.012,LY.RS+.05,.028],[xL+.012,yR-.05,.028],[xL+.01,yR,.022],[X-W/2+.012,yi+.03,.024],[mp.x,yi+.045,(mp.z+.025)/2],[mp.x,yi+.07,mp.z]]);
   netCable(nr,mp,V(0,1,0),[[X-W/2-.05,yi+.08,mp.z+.03],[X-W/2-.056,yi+.045,mp.z+.04],[X-W/2-.057,yi+.02,mp.z+.045]]);
@@ -6015,7 +6205,10 @@ function worldMODA(brand){
     L.state=on?'on':init?'init':'off';
   });
   R.hitAdd('ledOn',V(X-(IM.xin+.024),yi+.118,A.zc+.09));
-  var st=[],mc=V(X-.62,.42,.75),wide=stepCam(mc,[.05,.62,1],3.5),ord=['first','second','third','fourth','fifth','sixth'];
+  var st=[],mc=V(X-.62,.42,.75),wide=stepCam(mc,[.05,.62,1],3.5),ord=['first','second','third','fourth','fifth','sixth'],mf=mainFuse(),GZ=GS.z,X0=ROOM.R+ROOM.T;
+  st.push({st:'grid',grp:'grid',t:'The substation',d:'Your electricity starts at the grid company\u2019s substation. A transformer steps <b>10 kV</b> down to <b>400 V</b> between phases and <b>230 V</b> from a phase to neutral. Its low-voltage side is star-connected (Dyn11): three phases <b>L1, L2, L3</b> and the <b>star point</b>. The star point is earthed right here \u2014 the system earth \u2014 and leaves the station as <b>PEN</b>: protective earth and neutral in one conductor. This is the grid company\u2019s equipment \u2014 only they may open it.',call:'10 kV \u2192 400 V \u00b7 star point earthed',col:'L1',keys:['gDoor'],cam:stepCam(V(GS.F+.6,.95,GZ+.1),[-1,.38,.32],3.7),btn:'Open the doors'});
+  st.push({st:'grid',grp:'grid',t:'The underground service cable',d:'From a fuse switch-disconnector in the substation a <b>4-core cable</b> runs underground \u2014 through the cable cabinet at the property boundary \u2014 to the meter cabinet on the house: <b>L1</b> (brown), <b>L2</b> (black), <b>L3</b> (grey) and <b>PEN</b> (green-yellow, marked blue). It is shown in an open trench here; in reality it is buried.',call:'L1 \u00b7 L2 \u00b7 L3 \u00b7 PEN',col:'L2',keys:['gCable'],cam:stepCam(V((GS.cab+X0)/2+1.2,.2,GZ),[-.05,.6,1],8.2),btn:'Lay the cable'});
+  st.push({st:'grid',grp:'grid',t:'Meter cabinet \u00b7 fuses, meter, PEN split',d:'In the meter cabinet on the outside wall: the <b>main fuses 3 \u00d7 '+mf+' A</b> on L1, L2, L3 and the grid company\u2019s <b>electricity meter</b>. The PEN lands on the PE bar and a link feeds the N bar \u2014 the PEN is <b>split into N and PE</b> here (TN-C-S). From this point on N and PE are never joined again: five conductors \u2014 <b>L1, L2, L3, N, PE</b> \u2014 run inside to the distribution board, first through the smart meter and the main switch Q0.',call:'PEN \u2192 N + PE \u00b7 5 conductors in',col:'N',keys:['gMeter'],cam:stepCam(V(X0+.1,1.27,GZ),[1,.15,.38],1.55),btn:'Open the cabinet'});
   st.push({st:'inv',grp:'mount',t:'Base \u00b7 place and level',d:'Floor mounting (manual 3.8.2). Place the base against the wall with <b>30\u201350 mm</b> to the wall \u2014 keep \u2265 150 mm to the sides and \u2265 300 mm above the finished stack. Level it with the supplied shims (<b>1 mm \u00d7 4, 2 mm \u00d7 4</b>) until it does not wobble.',call:'Base \u2192 30\u201350 mm from the wall',col:'L3',keys:['mtBase'],cam:wide,btn:'Place base'});
   for(var i=0;i<nb;i++)st.push({st:'inv',grp:'mount',t:'Battery module '+(i+1)+' of '+nb,d:(i===0?'Carry the first APX 5.0P-B3 module by its two handles (45 kg \u2014 two people), align it with the base and lower it <b>vertically</b> into position. ':'Lift the '+ord[i]+' module on top, aligned with the guides, and lower it vertically \u2014 the connector on top of the module below plugs straight in. Fold the handles down. ')+'Secure it with <b>M4 screws, 1.2 N\u00b7m</b> (two on the left side, one on the right).'+(i===nb-1?' One BMS handles up to 6 modules.':''),call:'M4 \u00b7 1.2 N\u00b7m',col:'L3',keys:['mtBat'+i],cam:stepCam(V(X-.5,.25+i*.27,.62),[-.12,.42,1],2.45+i*.08),btn:'Lift into place'});
   st.push({st:'inv',grp:'mount',t:'Inverter on top',d:'Align the MODA inverter with the top battery module, lower it vertically into position and secure it from the sides with <b>M4 screws, 1.2 N\u00b7m</b>. Check that the whole stack is firm.',call:'Inverter \u2192 M4 \u00b7 1.2 N\u00b7m',col:'L3',keys:['mtInv'],cam:stepCam(V(X-.55,yi-.1,.65),[-.1,.4,1],2.55+nb*.08),btn:'Lift into place'});
@@ -6025,6 +6218,11 @@ function worldMODA(brand){
   st.push({st:'earth',grp:'earth',t:'Earth rods \u00b7 drive them in',d:'Outside the house, drive <b>two earth rods</b> (copper-clad steel) vertically into the ground, spaced at least one rod length apart. Leave the tops in small inspection wells so the joints can be checked later.',call:'2 \u00d7 earth rod',col:'PE',keys:['eRod0','eRod1'],cam:ext,btn:'Drive in'});
   st.push({st:'earth',grp:'earth',t:'Earth rods \u00b7 earth conductor',d:'Lay the earth conductor in a trench from the house wall to both rods and fasten it with a <b>rod clamp</b> on each rod. Use the conductor size and material your local rules require.',call:'Conductor \u2192 rod clamps',col:'PE',keys:['eCond'],cam:stepCam(rodC.clone().add(V(-.15,0,0)),[1.1,.75,.7],2.2)});
   st.push({st:'earth',grp:'earth',t:'Earth conductor \u2192 PE bar in the board',d:'Take the earth conductor up the outside wall, through a sleeve and in the trunking to the <b>PE bar in the distribution board</b> \u2014 the main earthing terminal of the house. The MODA enclosure is earthed to the same bar.',call:'Earth rods \u2192 PE bar',col:'PE',keys:['eMEB'],cam:stepCam(V(1.85,1.0,.1),[.12,.12,1],2.45)});
+  var pc=PV.c;
+  st.push({st:'roof',grp:'pv',t:'Roof hooks and rails',d:'Fit roof hooks under the tiles into the rafters and fasten two aluminium rails for each row of panels. Follow the mounting system\u2019s instructions for the hook spacing, the screws and the torque.',call:'Hooks + rails',col:'L3',keys:['pvRail'],cam:stepCam(pc,[1,.9,.45],8.6),btn:'Fit rails'});
+  st.push({st:'roof',grp:'pv',t:'Panels onto the rails',d:'Lay the <b>12 panels</b> (example: 440 W, two rows of six, portrait) on the rails and lock them with end clamps and middle clamps. 12 \u00d7 440 W \u2248 <b>5.3 kWp</b> on one MPPT.',call:'12 panels \u00b7 clamps',col:'L3',keys:['pvPan'],cam:stepCam(pc,[1,.9,.45],8.6),btn:'Place panels'});
+  st.push({st:'roof',grp:'pv',t:'Connect the string (series)',d:'Connect the panels in series with their MC4 leads: <b>+ of one panel to \u2212 of the next</b> (the panels are shown see-through so you can see the leads under them). Example panel: Voc \u2248 41 V, Vmp \u2248 34 V \u2192 about <b>490 V</b> open circuit (\u2248 550 V on a cold day) and <b>410 V</b> working. MODA: start 160 V, MPPT 140\u20131000 V, full power 400\u2013800 V; never above <b>1100 V</b> open circuit (it stops above 1000 V). Max <b>20 A</b> per MPPT, short-circuit \u2264 25 A.',call:'+ \u2192 \u2212 \u00b7 12 in series',col:'L1',keys:['pvStr'],cam:stepCam(PV.first,[1,1.1,.35],3.6)});
+  st.push({st:'roof',grp:'pv',t:'String cable to the inverter',d:'Run the <b>+ (red)</b> and <b>\u2212 (black)</b> solar cables (4\u20136 mm\u00b2) through the sealed roof entry and down the trunking to the MODA. Before plugging in, measure the string\u2019s open-circuit voltage and polarity with a multimeter and label + and \u2212. <b>Never earth PV\u2212</b> \u2014 the MODA is transformerless.',call:'+ / \u2212 \u2192 roof entry \u2192 PV1',col:'L1',keys:['pvCab'],cam:stepCam(PV.E,[1,1,.55],3.4)});
   st.push({st:'inv',grp:'inv',t:'Earth the enclosure',d:'Start with protective earth. Crimp an <b>OT ring terminal</b> on a green-yellow PE cable and fasten it to the grounding point at the bottom of the right-hand bay (<b>M6, 3.5 N\u00b7m</b>). The cable leaves the bay towards the wall and runs in the trunking to the <b>PE bar in the board</b>. Never use N as earth.',call:'PE \u2192 grounding point',col:'PE',keys:['mPE'],cam:stepCam(g.clone().add(V(.02,.03,.0)),[1,.25,.5],.4)});
   var pinTxt={L1:'brown',L2:'black',L3:'grey',N:'blue',PE:'green-yellow'};
   ['L1','L2','L3','N','PE'].forEach(function(k,i){
@@ -6032,6 +6230,7 @@ function worldMODA(brand){
   });
   st.push({st:'inv',grp:'inv',t:'Plug in the GRID connector',d:'Screw the housing onto the insert and tighten the coupling nut and the cable gland. Then push the black connector straight <b>up</b> into the <b>GRID</b> socket under the label band until it locks. The GRID cable leaves the bay towards the wall and runs in the trunking to the junction box under the AC isolator.',call:'Plug into GRID',col:'L3',keys:['mGPlug'],cam:stepCam(A.grid.clone().add(V(0,-.08,0)),[1,-.08,.6],.5)});
   st.push({st:'inv',grp:'inv',t:'LOAD connector (whole house)',d:'Same pin order \u2014 L1, L2, L3, N, PE \u2014 for the blue <b>LOAD</b> connector, then push it up into the LOAD socket. The LOAD cable runs in the trunking to the bypass switch <b>Q-BYP</b> in the board: the <b>whole house</b> is fed from the inverter\u2019s LOAD output.',call:'LOAD \u2192 whole house',col:'N',keys:['mL_L1','mL_L2','mL_L3','mL_N','mL_PE','mLPlug'],cam:stepCam(El.clone().add(V(-.03,.0,0)),[1,.15,.5],.42)});
+  st.push({st:'inv',grp:'inv',t:'PV1 \u00b7 plug in the string',d:'Check that the <b>DC SWITCH is OFF</b>. Crimp the MC4 metal contacts with a dedicated crimper (strip 8\u201310 mm), click the connectors together and push them up into <b>PV1+</b> and <b>PV1\u2212</b> on the left side \u2014 polarity matters. Tug-test them and leave at least 50 mm of slack. PV2 and PV3 keep their sealing caps.',call:'PV1 + / \u2212 \u2190 string',col:'L1',keys:['pvPlug'],cam:stepCam(IM.pv[0].clone().add(V(0,-.02,.01)),[-1,-.35,.65],.48)});
   st.push({st:'inv',grp:'inv',t:'RJ45 into the Meter port',d:'The COM block on the left side has six RJ45 ports on its <b>underside</b>. Push the network cable up into <b>Meter</b> \u2014 outer row, at the back (see the label on the wall: Meter \u00b7 Para.out \u00b7 NC / CT \u00b7 Para.in \u00b7 NC). It carries RS485 to the smart meter: <b>pin 5 = 485-2_A</b>, <b>pin 1 = 485-2_B</b>.',call:'RJ45 \u2192 Meter',col:'A',keys:['rj'],cam:stepCam(mp.clone().add(V(0,-.03,0)),[-1,-.45,.55],.3)});
   st.push({st:'inv',grp:'inv',t:'COM connector housing',d:'Slide the black COM housing (marked <b>1 \u2026 18</b>) straight up over the COM block until the latch clicks, then tighten its cable gland. It holds the RJ45 in place and keeps water and dust out.',call:'Housing 1 \u2026 18 \u2192 COM',col:'A',keys:['comH'],cam:stepCam(V(cc.x,cc.y-.08,cc.z),[-1,-.12,.5],.45),btn:'Push up'});
   st.push({st:'inv',grp:'inv',t:'Protective covers',d:'Fit the left and right protective covers (manual 3.8.4): slide each one down along the guide slots, then push it in evenly until the snaps engage. Check that they sit tight with no gaps.',call:'Covers \u2192 left \u00b7 right',col:'L3',keys:['mtCov'],cam:stepCam(V(X,yi+.12,A.zc),[1,.35,1.1],1.45),btn:'Fit covers',tgtKey:'none'});
@@ -6047,14 +6246,14 @@ function worldMODA(brand){
   st.push({st:'meter',grp:'byp',t:'Q-BYP \u00b7 grid bypass from the main switch (II)',d:'From the bottom of the main switch Q0: <b>L1, L2, L3, N</b> to the <b>II</b> inputs of Q-BYP. In position II the house runs straight from the grid \u2014 for example while the inverter is switched off for service.',call:'Q0 \u2192 Q-BYP II',col:'L1',keys:['by_L1','by_L2','by_L3','by_N'],cam:stepCam(bq.clone().add(V(-.06,.02,0)),[.2,.1,1],.55)});
   st.push({st:'meter',grp:'byp',t:'Q-BYP \u00b7 out to the house',d:'From the outputs of Q-BYP to the RCD and on to all the house circuits: <b>L1, L2, L3, N</b>. First the main switch, then the inverter \u2014 and every load in the house is fed from the inverter\u2019s LOAD output.',call:'Q-BYP \u2192 house circuits',col:'L2',keys:['bh_L1','bh_L2','bh_L3','bh_N'],cam:stepCam(bq.clone().add(V(.06,-.02,0)),[.15,.05,1],.6)});
   st=st.concat(meterSteps(brand,Bd,false));
-  st.push({st:'inv',grp:'pwr',t:'Power on \u00b7 LED display',d:'Manual 5.2: <b>1</b> BAT SWITCH \u2192 ON, <b>2</b> DC SWITCH on the left side \u2192 ON (both behind the left cover), <b>3</b> AC isolator handle \u2192 <b>ON</b> (the fuse F-INV in the board is on; check the grid voltage first), <b>4</b> bypass switch <b>Q-BYP \u2192 I</b>: the whole house now runs from the inverter. The outer ring rotates through its colours while the system starts, then the display shows the status. <b>Click any icon on the display</b> to see what it means.',call:'BAT \u2192 DC \u2192 isolator: ON',col:'L3',keys:['ledOn'],cam:stepCam(V(X+.12,yi+.13,A.zc),[-.3,.18,1],1.25),btn:'Power on'});
-  var tr={};['L1','L2','L3'].forEach(function(k,i){tr[k]=[Bd.houseT[k],Bd.q0.top[i],Bd.q0.bot[i],Bd.qi.top[i],Bd.qi.bot[i]].concat(vv(feedRoute.slice(1))).concat([AB.top[i],AB.bot[i]]).concat(vv(gridRoute)).concat([V(A.grid.x,A.grid.y-.2,A.grid.z),A.grid.clone()]);});
+  st.push({st:'inv',grp:'pwr',t:'Power on \u00b7 LED display',d:'Manual 5.2: <b>1</b> BAT SWITCH \u2192 ON, <b>2</b> DC SWITCH on the left side \u2192 ON \u2014 the PV string is now live (both behind the left cover), <b>3</b> AC isolator handle \u2192 <b>ON</b> (the fuse F-INV in the board is on; check the grid voltage first), <b>4</b> bypass switch <b>Q-BYP \u2192 I</b>: the whole house now runs from the inverter. The outer ring rotates through its colours while the system starts, then the display shows the status. <b>Click any icon on the display</b> to see what it means.',call:'BAT \u2192 DC \u2192 isolator: ON',col:'L3',keys:['ledOn'],cam:stepCam(V(X+.12,yi+.13,A.zc),[-.3,.18,1],1.25),btn:'Power on'});
+  var tr={};['L1','L2','L3'].forEach(function(k,i){tr[k]=GSD.phase(k,i).concat([Bd.J.clone(),Bd.gridT[k],Bd.houseT[k],Bd.q0.top[i],Bd.q0.bot[i],Bd.qi.top[i],Bd.qi.bot[i]]).concat(vv(feedRoute.slice(1))).concat([AB.top[i],AB.bot[i]]).concat(vv(gridRoute)).concat([V(A.grid.x,A.grid.y-.2,A.grid.z),A.grid.clone()]);});
   addTrace(tr);
   return st;
 }
 // ---- MOD-HU
 function worldMOD(brand){
-  var A=buildMOD(),Bd=buildBoardDirect(brand);var bb=backupBoard(.3,1.4),SS=S(),q=sp0(),pT=Bd.peAt(.25);earthing(false,[[ROOM.R-.06,.47,.08],[Bd.gx+.42,.47,.02],[Bd.gx+.42,Bd.gy-.38,.02],[Bd.gx+Bd.xi-.045,Bd.gy-.27,.05],[Bd.gx+Bd.xi-.045,Bd.gy+.2,.05],[pT.x+.018,Bd.gy+.235,.045],[pT.x,pT.y,pT.z]],pT);
+  var A=buildMOD(),Bd=buildBoardDirect(brand);var bb=backupBoard(.3,1.4),SS=S(),q=sp0(),pT=Bd.peAt(.25);gridSide(false,Bd.J,false);pvArray(false);earthing(false,[[ROOM.R-.06,.47,.08],[Bd.gx+.42,.47,.02],[Bd.gx+.42,Bd.gy-.38,.02],[Bd.gx+Bd.xi-.045,Bd.gy-.27,.05],[Bd.gx+Bd.xi-.045,Bd.gy+.2,.05],[pT.x+.018,Bd.gy+.235,.045],[pT.x,pT.y,pT.z]],pT);
   R.st.meter={c:Bd.c,s:.52,ang:true};var X=A.X;
   var gridRoute=Bd.gridRoute.concat([[X+.34,.34,.012],[X+.24,.34,.02],[X+.18,.38,.12],[X+.175,.62,.16]]);
   var loadRoute=[[bb.x,bb.y,bb.z],[bb.x,bb.y-.15,.04],[bb.x,.46,.02],[bb.x-.01,.40,.012],[X+.34,.40,.012],[X+.26,.40,.02],[X+.215,.44,.12],[X+.21,.62,.16]];
@@ -6081,7 +6280,7 @@ function worldMOD(brand){
 }
 // ---- WIT 50-100K-HU
 function worldWIT(brand){
-  var A=buildWIT(),Bd=buildBoardCT(brand),X=A.X,SS=S(),q=sp0(),rg=rCore(SS.cab),rl=rCore(q.lcab[SS.kw]),pW=V(Bd.gx+.15,Bd.gy-.52,.05);
+  gridSide(false,null,true);pvArray(false);var A=buildWIT(),Bd=buildBoardCT(brand),X=A.X,SS=S(),q=sp0(),rg=rCore(SS.cab),rl=rCore(q.lcab[SS.kw]),pW=V(Bd.gx+.15,Bd.gy-.52,.05);
   earthing(false,[[ROOM.R-.06,.47,.08],[Bd.gx+.46,.47,.02],[Bd.gx+.46,Bd.gy-.66,.02],[pW.x,Bd.gy-.64,.035],[pW.x,pW.y-.03,.05],[pW.x,pW.y,pW.z]],pW);
   R.st.meter={c:Bd.c,s:.8,ang:true};
   var bb=backupBoard(.35,1.45);
@@ -6169,7 +6368,7 @@ function init(){
 function disposeTree(o){var shared=Object.keys(MATS).map(function(k){return MATS[k];});o.traverse(function(m){if(m.geometry)m.geometry.dispose();if(m.material){var ms=Array.isArray(m.material)?m.material:[m.material];ms.forEach(function(x){if(shared.indexOf(x)<0){if(x.map)x.map.dispose();x.dispose();}});}});}
 function buildWorld(){
   if(R.root){R.scene.remove(R.root);disposeTree(R.root);}
-  R.root=new T.Group();R.scene.add(R.root);R.an={};R.tw=[];R.hits={};R.st={};R.asm=[];R.pulses=null;R.traceOn=false;R.busy=false;R.elec=null;R.par=null;R.elecFirst=null;R.led=null;R.grille=null;R.trkLid=null;R.noClips=false;ledHide();sp0();
+  R.root=new T.Group();R.scene.add(R.root);R.an={};R.tw=[];R.hits={};R.st={};R.asm=[];R.pulses=null;R.traceOn=false;R.busy=false;R.elec=null;R.par=null;R.elecFirst=null;R.led=null;R.grille=null;R.trkLid=null;R.noClips=false;R.stepHooks=[];ledHide();sp0();
   buildRoom();
   var s=S();
   R.steps=s.inv==='MOD'?worldMOD(s.meter):s.inv==='WIT'?worldWIT(s.meter):worldMODA(s.meter);
@@ -6179,7 +6378,7 @@ function buildWorld(){
 }
 function bkey(){var s=S();return s.inv+'|'+s.meter+'|'+s.kw+'|'+s.cab+'|'+s.brk+'|'+(s.inv==='MODA'?s.nb:'');}
 function stepOf(k){var idx=-1;R.steps.forEach(function(st,i){if(idx<0&&st.keys.indexOf(k)>=0)idx=i;});return idx;}
-function applyVis(){var s=S();(R.asm||[]).forEach(function(a){var idx=stepOf(a.first);a.set(idx<0||s.step>=idx);});if(R.elec&&R.elecFirst){var e=stepOf(R.elecFirst);R.elec.visible=e<0||s.step>=e;}}
+function applyVis(){var s=S();(R.asm||[]).forEach(function(a){var idx=stepOf(a.first);a.set(idx<0||s.step>=idx);});(R.stepHooks||[]).forEach(function(f){f(s.step);});if(R.elec&&R.elecFirst){var e=stepOf(R.elecFirst);R.elec.visible=e<0||s.step>=e;}}
 function size(){var v=document.getElementById('ph-view');if(!v||!R)return;var w=v.clientWidth||600,h=v.clientHeight||400;if(R.w===w&&R.h===h)return;R.w=w;R.h=h;R.renderer.setSize(w,h,false);R.camera.aspect=w/h;R.camera.updateProjectionMatrix();}
 function loop(){
   if(!R||!R.alive)return;
@@ -6254,14 +6453,14 @@ function gotoStep(j){var s=S(),n=R.steps.length;j=Math.max(0,Math.min(n-1,j));R.
 function connect(){
   var s=S(),st=R.steps[s.step];if(!st||R.busy||s.done>s.step)return;R.busy=true;
   var d=0,end=0,ks=st.keys;
-  ks.forEach(function(k,i){var mt=/^mt/.test(k),big=/Plug|Com1|^wC|^ct|trace|bMount|comH|^abCov|^e(Cond|MEB)/.test(k),dur=mt||/^eRod/.test(k)?2.5:k==='ledOn'?4.2:big?1.15:.85,start=/Plug|Com1/.test(k)?end:d;
+  ks.forEach(function(k,i){var mt=/^mt/.test(k),big=/Plug|Com1|^wC|^ct|trace|bMount|comH|^abCov|^e(Cond|MEB)|^g(Door|Meter)|^pv(Str|Cab|Plug)/.test(k),dur=mt||/^eRod|^pvRail|^gCable/.test(k)?2.5:k==='pvPan'?4.2:k==='ledOn'?4.2:big?1.15:.85,start=/Plug|Com1/.test(k)?end:d;
     tween(k,1,dur,start,i===ks.length-1?function(){R.busy=false;s.done=Math.max(s.done,s.step+1);ui();}:null);
     end=Math.max(end,start+dur);d+=ks.length>4?.16:.3;});
   ui();
 }
 function next(){var s=S();if(s.step<R.steps.length-1){s.step++;focus();ui();}}
 // ---------------------------------------------------------------- HTML
-var GRP={mount:'Mounting',inv:'Inverter',brk:'AC breaker',acb:'AC isolator',feed:'Board',byp:'Backup',earth:'Earthing',meter:'Smart meter',pwr:'Power on'},GRPL={mount:'Mounting the system',inv:'At the inverter',brk:'In the board \u00b7 AC breaker',acb:'AC isolator \u00b7 beside the inverter',earth:'Earthing \u00b7 earth rods outside',feed:'In the board \u00b7 fuse F-INV',byp:'In the board \u00b7 whole-house backup',meter:'At the smart meter',pwr:'Commissioning \u00b7 power on'};
+var GRP={mount:'Mounting',inv:'Inverter',brk:'AC breaker',acb:'AC isolator',feed:'Board',byp:'Backup',earth:'Earthing',grid:'Grid',pv:'Solar',meter:'Smart meter',pwr:'Power on'},GRPL={mount:'Mounting the system',inv:'At the inverter',brk:'In the board \u00b7 AC breaker',acb:'AC isolator \u00b7 beside the inverter',grid:'The grid supply \u00b7 grid company',pv:'Solar panels on the roof',earth:'Earthing \u00b7 earth rods outside',feed:'In the board \u00b7 fuse F-INV',byp:'In the board \u00b7 whole-house backup',meter:'At the smart meter',pwr:'Commissioning \u00b7 power on'};
 var INVS=[['MODA','MODA 4\u201315K'],['MOD','MOD 3\u201315K-HU'],['WIT','WIT 50\u2013100K-HU']],METERS=[['eastron','Eastron SDM630'],['chint','CHINT DTSU666']];
 function toolsHTML(){var s=S();
   return '<div class="ph-tg"><span class="ph-tl">Inverter</span>'+INVS.map(function(q){return '<button class="bt-chip'+(s.inv===q[0]?' on':'')+'" data-act="phinv" data-k="'+q[0]+'">'+q[1]+'</button>';}).join('')+'</div>'+
@@ -6284,7 +6483,7 @@ function onSel(id,v){
 }
 document.addEventListener('change',function(e){var id=e.target&&e.target.id;if(id==='ph-kw'||id==='ph-cab'||id==='ph-brk'||id==='ph-nb')onSel(id,e.target.value);});
 function stationsHTML(){var st=R?R.station:'inv';
-  return [['inv','Inverter'],['meter','Smart meter']].concat(R&&R.st&&R.st.earth?[['earth','Earth rods']]:[]).concat([['all','Overview']]).map(function(q){return '<button class="ph-sb'+(st===q[0]?' on':'')+'" data-act="phst" data-k="'+q[0]+'">'+q[1]+'</button>';}).join('');}
+  return [['inv','Inverter'],['meter','Smart meter']].concat(R&&R.st&&R.st.earth?[['earth','Earth rods']]:[]).concat(R&&R.st&&R.st.grid?[['grid','Grid']]:[]).concat(R&&R.st&&R.st.roof?[['roof','Solar']]:[]).concat([['all','Overview']]).map(function(q){return '<button class="ph-sb'+(st===q[0]?' on':'')+'" data-act="phst" data-k="'+q[0]+'">'+q[1]+'</button>';}).join('');}
 function viewsHTML(){return [['front','Front'],['top','Top'],['bottom','Bottom'],['left','Left'],['right','Right']].map(function(q){return '<button class="ph-vb" data-act="phview" data-k="'+q[0]+'">'+q[1]+'</button>';}).join('');}
 function panelHTML(){
   if(!R||!R.steps.length)return '<div class="ph-card"><h3>3D is not available</h3><p>This browser could not start WebGL, so the 3D world cannot be shown. Try Chrome, Edge or Safari with hardware acceleration switched on.</p></div>';
