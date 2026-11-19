@@ -884,6 +884,7 @@
   .ph-o-tr{top:10px;right:10px;justify-content:flex-end}
   .ph-o-bl{bottom:10px;left:10px}
   .ph-o-br{bottom:10px;right:10px}
+  .ph-o-fs{bottom:46px;right:10px}
   .ph-sb,.ph-vb{font-family:inherit;font-size:12px;font-weight:700;color:#1d232a;background:rgba(255,255,255,.9);border:1px solid rgba(0,0,0,.12);border-radius:9px;padding:6px 10px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.12)}
   .ph-sb.on{background:#1f8a4c;color:#fff;border-color:#1f8a4c}
   .ph-vb:hover,.ph-sb:hover{border-color:#1f8a4c}
@@ -946,6 +947,13 @@
   .ph-li.on .ph-n{box-shadow:0 0 0 2px #33da7a}
   .ph-rs{color:#9fb0c2;margin-top:4px;border-top:1px solid rgba(255,255,255,.06);border-radius:0 0 9px 9px}
   @media(max-width:980px){.ph-main{grid-template-columns:1fr}.ph-panel{max-height:none}.ph-stage{height:58vh;min-height:360px}}
+  .ph-main.ph-fs{position:fixed;inset:0;z-index:9000;margin:0;padding:10px;background:#0b131b;grid-template-columns:minmax(0,1fr) 360px;grid-template-rows:minmax(0,1fr);align-items:stretch;height:100vh;height:100dvh;box-sizing:border-box}
+  .ph-main.ph-fs .ph-stage{height:auto;min-height:0;border-radius:12px}
+  .ph-main.ph-fs .ph-panel{max-height:none;height:auto;min-height:0;overflow:auto}
+  body.ph-fs-on{overflow:hidden}
+  .ph-vb.ph-fsb{background:#1d2a36;color:#fff;border-color:#1d2a36}.ph-vb.ph-fsb.on{background:#fff;color:#1d232a;border-color:rgba(0,0,0,.12)}
+  @media(max-width:600px){.ph-o-fs{top:10px;bottom:auto}.ph-o-tl{max-width:calc(100% - 130px)}}
+  @media(max-width:980px){.ph-main.ph-fs{grid-template-columns:1fr;grid-template-rows:minmax(0,60%) minmax(0,1fr);padding:6px;gap:8px}}
   @media(max-width:600px){.ph-body{padding:8px 10px 40px}.ph-hint{display:none}.ph-legend{max-width:calc(100% - 20px);font-size:10px;gap:6px}.ph-o-tr{top:auto;bottom:50px;left:10px;right:10px;justify-content:center}.ph-sb,.ph-vb{font-size:11px;padding:5px 8px}}
   .ph-spec{display:flex;flex-wrap:wrap;gap:8px 14px;width:100%}
   .ph-sl{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#8ffcb8}
@@ -956,6 +964,115 @@
   .ph-chk .ok{color:#8ffcb8;background:rgba(51,218,122,.1);border:1px solid rgba(51,218,122,.35)}
   .ph-chk .wa{color:#ffcf8a;background:rgba(255,180,84,.1);border:1px solid rgba(255,180,84,.45)}
   .ph-chk .src{color:#7f8ea0;border:1px dashed rgba(255,255,255,.14)}
+  .ph-sysb{border-color:rgba(51,218,122,.55);color:#8ffcb8}
+  .ph-setup{border-color:rgba(51,218,122,.55)}
+  .ph-su{display:grid;grid-template-columns:78px minmax(0,1fr);gap:8px;align-items:start;margin:10px 0}
+  .ph-sul{font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#8ffcb8;padding-top:7px}
+  .ph-suc{display:flex;flex-wrap:wrap;gap:6px;min-width:0}
+  .ph-suc .bt-chip.on{background:#1f8a4c;border-color:#1f8a4c;color:#fff}
+  .ph-suc .bt-chip[disabled],.ph-add[disabled],.ph-del[disabled]{opacity:.4;cursor:default}
+  .ph-sun{width:100%;font-size:11.5px;color:#8a9aac;line-height:1.45}
+  .ph-ssel{font-family:inherit;font-size:12.5px;font-weight:700;color:#fff;background:#0d1826;border:1px solid rgba(255,255,255,.18);border-radius:9px;padding:6px 8px;cursor:pointer;max-width:100%;min-width:0;flex:1}
+  .ph-ssel:focus{outline:2px solid #33da7a;outline-offset:1px}
+  .ph-step{display:flex;align-items:center;gap:10px}.ph-step b{font-size:16px;min-width:18px;text-align:center}
+  .ph-tw{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:8px;margin:8px 0}
+  .ph-twh{font-size:11px;font-weight:800;color:#c9d5e1;margin-bottom:6px}
+  .ph-mr{display:flex;align-items:center;gap:6px;margin:4px 0}
+  .ph-mn{font-size:11px;color:#8a9aac;width:58px;flex-shrink:0}
+  .ph-del{font-family:inherit;width:28px;height:28px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:#c9d5e1;cursor:pointer;flex-shrink:0}
+  .ph-del:hover:not([disabled]){border-color:#ff8a7a;color:#ff8a7a}
+  .ph-add{margin-top:4px}
+  .ph-sum{display:flex;flex-direction:column;gap:2px;background:rgba(51,218,122,.08);border-radius:10px;padding:8px 10px;margin:10px 0}
+  .ph-sum span{font-size:11.5px;color:#9fb0c2}
+  .ph-start{width:100%;margin-top:12px;justify-content:center}
+  .ph-wkb{background:#1f8a4c;color:#fff;border-color:#1f8a4c}
+  .ph-bbl{display:block;margin:14px 0 6px}
+  .ph-bb{margin:8px 0 12px}
+  .ph-pal{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .ph-pm{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:1px;text-align:left;font-family:inherit;color:#dfe6ee;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.16);border-radius:11px;padding:8px 10px 8px 26px;cursor:pointer;min-width:0}
+  .ph-pm:hover:not([disabled]){border-color:#33da7a;background:rgba(51,218,122,.1)}
+  .ph-pm b{font-size:14px;color:#fff}.ph-pm span{font-size:10.5px;color:#8a9aac}
+  .ph-pm em{font-style:normal;font-size:10.5px;color:#ffcf8a}
+  .ph-pm i{position:absolute;left:9px;top:11px;width:10px;height:14px;border-radius:3px;background:#e9edf0}
+  .ph-pm[disabled]{opacity:.5;cursor:not-allowed}
+  .m70 i,.ph-blk.m70{background:#dde7ef}.m94 i,.ph-blk.m94{background:#cfe0d6}.m113 i,.ph-blk.m113{background:#e8dcc6}.m50 i,.ph-blk.m50{background:#eceff2}
+  .ph-bnote{font-size:11.5px;color:#8a9aac;line-height:1.45;margin:8px 0}
+  .ph-bnote b{color:#dfe6ee}
+  .ph-towers{display:flex;align-items:flex-end;justify-content:center;gap:12px;flex-wrap:wrap;padding:10px 6px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:12px}
+  .ph-tow{display:flex;flex-direction:column;align-items:center;gap:4px;border-radius:10px;padding:4px;border:2px solid transparent}
+  .ph-tow[data-act]{cursor:pointer}.ph-tow.on{border-color:#33da7a;background:rgba(51,218,122,.08)}
+  .ph-th{font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#8ffcb8;display:flex;align-items:center;gap:4px}
+  .ph-twx{border:0;background:rgba(255,255,255,.1);color:#ffb3a8;border-radius:6px;width:18px;height:18px;font-size:10px;cursor:pointer;padding:0;font-family:inherit}
+  .ph-col{display:flex;flex-direction:column;width:84px}.ph-tow.wide .ph-col{width:104px}
+  .ph-blk{position:relative;height:22px;margin-top:2px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:800;color:#2b3138}
+  .ph-blk span{pointer-events:none}
+  .ph-blk button{position:absolute;right:3px;top:3px;width:16px;height:16px;border:0;border-radius:4px;background:rgba(0,0,0,.12);color:#2b3138;font-size:9px;line-height:16px;padding:0;cursor:pointer;font-family:inherit}
+  .ph-blk button:hover{background:#e0352b;color:#fff}
+  .ph-blk.moda{height:30px;background:#f7f8f9;color:#4a5158;border:1px solid #c9ced3;width:84px;align-self:center}
+  .ph-blk.lid{height:8px;background:#eceff2;font-size:0}
+  .ph-blk.empty{height:22px;background:none;border:1px dashed rgba(255,255,255,.3);color:#8a9aac;font-weight:600}
+  .ph-blk.base{height:6px;background:#dfe3e7;border-radius:2px}
+  .ph-tf{font-size:10.5px;color:#9fb0c2;text-align:center}
+  .ph-addtw{align-self:stretch;display:flex;flex-direction:column;justify-content:center;gap:2px;font-family:inherit;color:#8ffcb8;background:none;border:1px dashed rgba(51,218,122,.5);border-radius:10px;padding:8px 10px;cursor:pointer;min-height:70px}
+  .ph-addtw b{font-size:12.5px}.ph-addtw span{font-size:10.5px;color:#8a9aac}
+  .ph-addtw[disabled]{opacity:.45;cursor:not-allowed}
+  .ph-bwarn{color:#ffcf8a!important}
+  .ph-clr{font-family:inherit;font-size:11.5px;color:#9fb0c2;background:none;border:0;text-decoration:underline;cursor:pointer;padding:2px 0}
+  .ph-start[disabled]{opacity:.45;cursor:not-allowed}
+  .ph-bpt{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#8ffcb8;margin:8px 0 4px}
+  .ph-bsel{display:flex;gap:3px;margin-top:3px;align-items:center}
+  .ph-bsel span{font-size:9.5px;font-weight:800;color:#8a9aac;text-transform:uppercase;letter-spacing:.04em;margin-right:2px}
+  .ph-side{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin:0 0 8px}
+  .ph-side span{font-size:11px;color:#9fb0c2;margin-right:2px}
+  .ph-simc{display:flex;flex-direction:column;gap:6px;margin:4px 0 10px}
+  .ph-simc div{display:flex;flex-wrap:wrap;align-items:center;gap:5px}
+  .ph-simc span{width:52px;font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#8ffcb8}
+  .ph-simc .bt-chip.on{background:#1f8a4c;border-color:#1f8a4c;color:#fff}
+  .ph-sim{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:11px;padding:6px 10px;margin-bottom:8px}
+  .ph-sim div{display:flex;justify-content:space-between;gap:10px;font-size:12px;padding:3px 0;border-top:1px solid rgba(255,255,255,.06)}
+  .ph-sim div:first-child{border-top:0}
+  .ph-sim span{color:#9fb0c2}.ph-sim b{text-align:right}
+  .ph-sim b.g{color:#8ffcb8!important}.ph-sim b.r{color:#ff9a8a!important}.ph-sim b.o{color:#ffc46b!important}.ph-sim b.b{color:#7fb2ff!important}
+  .ph-dia{display:block;width:100%;height:auto;background:#0d151d;border:1px solid rgba(255,255,255,.1);border-radius:11px;margin-bottom:8px;font-family:inherit}
+  .ph-dia path{fill:none;stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+  .ph-dia .ph-df{stroke-dasharray:7 5;animation:phdash .7s linear infinite}
+  .ph-dia .ph-dl{stroke-opacity:.38}
+  .ph-dia .ph-dd{stroke-dasharray:2 4;stroke-width:2}
+  @keyframes phdash{to{stroke-dashoffset:-12}}
+  @media (prefers-reduced-motion:reduce){.ph-dia .ph-df{animation:none}}
+  .ph-simt{font-size:12px;color:#c9d5e1;border-left:3px solid #33da7a;padding-left:9px;margin-bottom:8px;line-height:1.5}
+  .ph-bch{font-family:inherit;font-size:10px;font-weight:700;color:#c9d5e1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:3px 7px;cursor:pointer}
+  .ph-bch.on{background:#1f8a4c;border-color:#1f8a4c;color:#fff}
+  .ph-bch[disabled]{opacity:.35;cursor:not-allowed}
+  .ph-bch.big{display:flex;flex-direction:column;align-items:flex-start;gap:1px;border-radius:11px;padding:8px 10px;font-size:12px;text-align:left;flex:1;min-width:0}
+  .ph-bch.big b{font-size:13px;color:#fff}.ph-bch.big span{font-size:10.5px;color:#9fb0c2}.ph-bch.big.on span{color:#d8f5e3}
+  .ph-bch.big em{font-style:normal;font-size:10.5px;color:#ffcf8a}
+  .ph-bpick{display:flex;gap:6px;margin:4px 0 12px}
+  .ph-blk.base{height:12px;font-size:8.5px;font-weight:700;color:#5b6570}
+  .ph-fl{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 8px}
+  .ph-fl .bt-chip.on{background:#1f8a4c;border-color:#1f8a4c;color:#fff}
+  .ph-flk{display:flex;gap:12px;font-size:11.5px;color:#9fb0c2;margin-bottom:10px}
+  .ph-flk span{display:inline-flex;align-items:center;gap:5px}.ph-flk i{width:10px;height:10px;border-radius:50%;display:inline-block}
+  .ph-walk{position:absolute;inset:0;z-index:5;display:none;pointer-events:none}
+  .ph-stage.walking .ph-o-tl,.ph-stage.walking .ph-o-br,.ph-stage.walking .ph-o-bl{display:none}
+  .ph-cross{position:absolute;left:50%;top:50%;width:22px;height:22px;margin:-11px 0 0 -11px}
+  .ph-cross:before,.ph-cross:after{content:'';position:absolute;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.55)}
+  .ph-cross:before{left:10px;top:0;width:2px;height:22px}.ph-cross:after{top:10px;left:0;height:2px;width:22px}
+  .ph-aim{position:absolute;left:50%;top:calc(50% + 22px);transform:translateX(-50%);display:none;max-width:min(420px,90%);text-align:center;background:rgba(11,20,32,.84);color:#e7edf5;font-size:12px;font-weight:600;padding:6px 10px;border-radius:9px}
+  .ph-aim b{display:block;color:#8ffcb8;margin-top:2px}
+  .ph-whelp{position:absolute;left:10px;bottom:10px;max-width:calc(100% - 150px);background:rgba(11,20,32,.78);color:#dfe6ee;font-size:11.5px;padding:6px 10px;border-radius:9px}
+  .ph-whelp b{color:#fff}
+  .ph-wpause{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:none;flex-direction:column;align-items:center;gap:8px;text-align:center;background:rgba(11,20,32,.9);color:#dfe6ee;border:1px solid rgba(51,218,122,.5);border-radius:14px;padding:16px 18px;pointer-events:auto;max-width:90%}
+  .ph-wpause b{color:#fff;font-size:15px}.ph-wpause div{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .ph-wx{position:absolute;right:10px;bottom:10px;pointer-events:auto;font-family:inherit;font-size:12px;font-weight:700;color:#1d232a;background:rgba(255,255,255,.92);border:1px solid rgba(0,0,0,.12);border-radius:9px;padding:6px 10px;cursor:pointer}
+  .ph-pad{display:none;position:absolute;left:12px;bottom:56px;width:150px;height:110px;pointer-events:auto}
+  .ph-pad button{position:absolute;width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.3);background:rgba(11,20,32,.6);color:#fff;font-size:16px;touch-action:none;-webkit-user-select:none;user-select:none}
+  .ph-pad [data-wk=KeyW]{left:53px;top:0}.ph-pad [data-wk=KeyA]{left:4px;top:50px}.ph-pad [data-wk=KeyS]{left:53px;top:50px}.ph-pad [data-wk=KeyD]{left:102px;top:50px}
+  .ph-pad .use{left:auto;right:-130px;top:50px;width:64px;background:rgba(31,138,76,.85);font-size:13px;font-weight:700}
+  .ph-pad2{display:none;position:absolute;right:12px;bottom:56px;width:96px;pointer-events:auto;flex-wrap:wrap;gap:6px}
+  .ph-pad2 button{width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.3);background:rgba(11,20,32,.6);color:#fff;font-size:17px;touch-action:none;-webkit-user-select:none;user-select:none}
+  .ph-wst{position:absolute;left:50%;top:12px;transform:translateX(-50%);background:rgba(11,20,32,.84);color:#8ffcb8;font-size:12px;font-weight:700;padding:5px 11px;border-radius:9px;opacity:0;transition:opacity .25s;pointer-events:none}
+  @media (pointer:coarse){.ph-pad{display:block}.ph-pad2{display:flex}.ph-whelp{display:none}.ph-pad .use{right:auto;left:160px}}
 </style>
 </head>
 <body>
@@ -4837,7 +4954,7 @@ var PH=(function(){
 'use strict';
 var T=null,R=null;
 function V(x,y,z){return new T.Vector3(x,y,z);}
-function S(){if(!state.ph)state.ph={inv:'MODA',meter:'eastron',step:0,done:0,view:'front'};return state.ph;}
+function S(){if(!state.ph)state.ph={inv:'MODA',meter:'eastron',step:0,done:0,view:'front',setup:true};return state.ph;}
 var WCOL={L1:0x6e4225,L2:0x1c1e21,L3:0x8f969d,N:0x1f66c8,PE:'pe',A:'wb',B:'wo',bl:0x2f6fd6,or:0xe8862a,gr:0x2f9e57,br:0x6b4a2e,wg:'wg',wbr:'wbr',s1:0xe8eaec,s2:0x2b2f34};
 var CSS={L1:'#7a4a28',L2:'#1c1e21',L3:'#8f969d',N:'#1f66c8',PE:'linear-gradient(90deg,#2fae5b 50%,#f2d21b 50%)',A:'linear-gradient(90deg,#f4f6f8 50%,#2f6fd6 50%)',B:'linear-gradient(90deg,#f4f6f8 50%,#e8862a 50%)'};
 
@@ -4925,6 +5042,13 @@ Core.prototype.set=function(t){
 function looseOf(b,off,k){k=k||2;var a=b.map(function(q){return q.slice();});for(var i=a.length-k;i<a.length;i++){var f=(i-(a.length-k)+1)/k;a[i]=[a[i][0]+off[0]*f,a[i][1]+off[1]*f,a[i][2]+off[2]*f];}return a;}
 // ---------------------------------------------------------------- animatables, tweens
 function reg(k,fn){R.an[k]={t:0,set:fn};fn(0);}
+// ---- things you can open / remove with a click (covers, doors), on top of the guided steps
+function togAdd(o){o.v=0;o.to=0;R.togs[o.key]=o;(o.objs||[]).forEach(function(ob){ob.userData.tog=o.key;});o.apply(0);return o;}
+function togV(k){var o=R.togs&&R.togs[k];return o?o.v:0;}
+function togOf(ob){while(ob){if(ob.userData&&ob.userData.tog&&R.togs[ob.userData.tog])return R.togs[ob.userData.tog];ob=ob.parent;}return null;}
+function togFlip(o){if(!o||!o.can())return false;o.to=o.to?0:1;return true;}
+function togReset(){Object.keys(R.togs||{}).forEach(function(k){var o=R.togs[k];o.v=o.to=0;o.apply(0);});}
+function runTogs(dt){Object.keys(R.togs||{}).forEach(function(k){var o=R.togs[k];if(o.v===o.to)return;o.v=o.to>o.v?Math.min(o.to,o.v+dt/.9):Math.max(o.to,o.v-dt/.9);o.apply(o.v);});}
 function put(k,t){var a=R.an[k];if(!a)return;if(a.t===t)return;a.t=t;a.set(t);}
 function getT(k){return R.an[k]?R.an[k].t:0;}
 function now(){return performance.now()/1000;}
@@ -4970,7 +5094,46 @@ var IZ={1.5:22,2.5:30,4:40,6:51,10:70,16:94,25:119,35:148,50:180,70:232,95:282,1
 // MODA manual 2.6.4.1: the BMS supports up to 6 APX 5.0P-B3 modules (2.5 kW each); table 2.4 = max off-grid output (kW) for 1..6 modules
 var OFFG={4:[2.5,4,4,4,4,4],5:[2.5,5,5,5,5,5],6:[2.5,5,5,6,6,6],8:[2.5,5,7.5,8,8,8],10:[2.5,5,7.5,10,10,10],12:[2.5,5,7.5,10,12,12],15:[2.5,5,7.5,10,12.5,15]};
 function nbNeed(kw){var t=OFFG[kw]||OFFG[10];for(var i=0;i<6;i++)if(t[i]>=kw)return i+1;return 6;}
-function sp0(){var s=S(),q=SPEC[s.inv];if(!(s.nb>=1&&s.nb<=6))s.nb=4;if(!s.kw||q.kws.indexOf(s.kw)<0)s.kw=q.def;if(!s.cab||q.cabs.indexOf(s.cab)<0)s.cab=q.rec(s.kw);if(!s.brk||q.brks.indexOf(s.brk)<0)s.brk=q.brk[s.kw];return q;}
+// APX battery modules (datasheets: APX 5.0-30.0M-S3-2.0, APX 7.0-49.0M-S3, APX 9.4-65.5M-S3, APX 11.3-78.9M-S3). kw = max output per module, 3-phase
+var BT={'5.0':{n:'APX 5.0P-B3',kwh:5,W:.59,D:.255,H:.265,kg:45,kw:2.5},'7.0':{n:'APX 7.0P-B3',kwh:7,W:.74,D:.255,H:.265,kg:56.8,kw:3},
+  '9.4':{n:'APX 9.4P-B3',kwh:9.36,W:.74,D:.265,H:.27,kg:74.5,kw:5.5},'11.3':{n:'APX 11.3P-B3',kwh:11.27,W:.74,D:.265,H:.27,kg:84.4,kw:6}};
+var HVT=['7.0','9.4','11.3'];
+// battery config: every tower has a base \u2014 '5' (APX 5.0P-B3 only) or 'hv' (APX 7.0 / 9.4 / 11.3, mixed). Tower 1 carries the MODA (as wide as its base);
+// tower 2 (optional) stands beside it with a top cover and an extension cable. Each tower has its own base: a 5 kWh tower holds only 5 kWh modules,
+// an HV tower 7 / 9.4 / 11.3 (mixed). Either tower may have either base. Max 6 \u00d7 5 kWh (MODA BMS) and max 7 modules in total.
+function famOf(t){return t==='5.0'?'5':'hv';}
+function batNorm(){var s=S();
+  if(!Array.isArray(s.bm)){s.bm=[];for(var i=0,n=s.nb>=1&&s.nb<=6?s.nb:4;i<n;i++)s.bm.push({t:'5.0',tw:1});}
+  s.bm=s.bm.filter(function(m){return m&&BT[m.t];});
+  if(s.tw!==2)s.tw=1;s.bm.forEach(function(m){if(s.tw===1||m.tw!==2)m.tw=1;});
+  function first(t){for(var i=0;i<s.bm.length;i++)if(s.bm[i].tw===t)return famOf(s.bm[i].t);return null;}
+  if(s.b1!=='5'&&s.b1!=='hv')s.b1=first(1)||(s.fam==='hv'?'hv':'5');
+  if(s.tw===2){if(s.b2!=='5'&&s.b2!=='hv')s.b2=first(2)||'hv';}else s.b2=null;
+  s.bm=s.bm.filter(function(m){return famOf(m.t)===(m.tw===1?s.b1:s.b2);});
+  var t1=s.bm.filter(function(m){return m.tw===1;}),t2=s.bm.filter(function(m){return m.tw===2;});
+  if(s.b1==='5')t1=t1.slice(0,6);if(s.b2==='5')t2=t2.slice(0,6);
+  if(s.b1==='5'&&s.b2==='5')while(t1.length+t2.length>6){if(t2.length)t2.pop();else t1.pop();}
+  while(t1.length+t2.length>7){if(t2.length)t2.pop();else t1.pop();}
+  s.bm=t1.concat(t2);s.fam=s.b1;
+  if(s.at!==2||s.tw!==2)s.at=1;s.nb=s.bm.length;return s.bm;}
+function batCnt(t){return S().bm.filter(function(m){return m.tw===t;}).length;}
+function baseOf(t){var s=S();return t===2?s.b2:s.b1;}
+function towW(t){return baseOf(t)==='5'?.59:.74;}
+function towD(t){return baseOf(t)==='5'?.255:.265;}
+// what is still missing before the stack is complete ('' = fine)
+function batMsg(){var s=S();if(!batCnt(1))return 'Tower 1 (under the MODA) needs at least one battery module.';if(s.tw===2&&!batCnt(2))return 'Tower 2 is empty \u2014 add a module to it or remove the tower.';return '';}
+function batOk(){return S().inv!=='MODA'||!batMsg();}
+// why a module type cannot be added to the active tower right now ('' = it can)
+function addWhy(t){var s=S(),tw=s.tw===2?s.at:1,b=baseOf(tw);
+  if(famOf(t)!==b)return b==='5'?'needs the HV base \u2014 tower '+tw+' has the 5 kWh base':'needs the 5 kWh base \u2014 tower '+tw+' has the HV base';
+  if(s.bm.length>=7)return 'max 7 modules';if(b==='5'&&n5()>=6)return 'max 6 \u00d7 5 kWh (MODA BMS)';return '';}
+function n5(){return S().bm.filter(function(m){return m.t==='5.0';}).length;}
+function twWhy(){var s=S();if(!batCnt(1))return 'start tower 1 first';if(s.bm.length>=7)return 'max 7 modules';return '';}
+function baseWhy(t,b){return '';}
+function batKwh(){return S().bm.reduce(function(a,m){return a+BT[m.t].kwh;},0);}
+function batKw(){var s=S(),bm=s.bm;if(!bm.length)return 0;if(bm.every(function(m){return m.t==='5.0';}))return (OFFG[s.kw]||OFFG[10])[bm.length-1];
+  var sum=bm.reduce(function(a,m){return a+BT[m.t].kw;},0),cap=bm.every(function(m){return m.t==='7.0';})?18:33;return Math.min(sum,cap,s.kw);}
+function sp0(){var s=S(),q=SPEC[s.inv];batNorm();if(!s.kw||q.kws.indexOf(s.kw)<0)s.kw=q.def;if(!s.cab||q.cabs.indexOf(s.cab)<0)s.cab=q.rec(s.kw);if(!s.brk||q.brks.indexOf(s.brk)<0)s.brk=q.brk[s.kw];return q;}
 function rCore(a){return (1.13*Math.sqrt(a)+1.6)/2000;}
 function rJack(a){return rCore(a)*2.7+.0015;}
 function specChecks(){
@@ -4984,9 +5147,13 @@ function specChecks(){
   else out.push([0,'AC cable '+s.cab+' mm\u00b2 is above the manual\u2019s '+rng+' \u2014 check that it fits the '+(s.inv==='WIT'?'terminal and lug':'AC connector and its gland')]);
   if(s.inv!=='WIT'&&IZ[s.cab]&&s.brk>IZ[s.cab])out.push([0,'A '+s.brk+' A '+nm.toLowerCase()+' does not protect '+s.cab+' mm\u00b2 (\u2248 '+IZ[s.cab]+' A on a wall, IEC 60364-5-52) \u2014 choose a bigger cable']);
   if(s.inv==='MODA'){if(s.brk>32)out.push([0,'AC isolator BYAF-32 is rated 32 A, below the '+s.brk+' A fuse \u2014 use an isolator rated \u2265 '+s.brk+' A (the GRID port carries up to 63 A in bypass)']);else out.push([1,'AC isolator BYAF-32 (32 A, 3-pole) \u2265 the '+s.brk+' A fuse']);
-    var og=(OFFG[s.kw]||OFFG[10])[s.nb-1],nd=nbNeed(s.kw);
-    if(og>=s.kw)out.push([1,s.nb+' \u00d7 APX 5.0P-B3 \u2014 full '+s.kw+' kW off-grid output (manual table 2.4)']);
-    else out.push([0,s.nb+' \u00d7 APX 5.0P-B3 \u2014 off-grid output limited to '+og+' kW; '+nd+' modules give the full '+s.kw+' kW (manual table 2.4)']);}
+    if(!s.nb)out.push([0,'No battery modules yet \u2014 build the stack']);
+    else if(s.bm.every(function(m){return m.t==='5.0';})){var og=(OFFG[s.kw]||OFFG[10])[s.nb-1],nd=nbNeed(s.kw);
+      if(og>=s.kw)out.push([1,s.nb+' \u00d7 APX 5.0P-B3 \u2014 full '+s.kw+' kW off-grid output (manual table 2.4)']);
+      else out.push([0,s.nb+' \u00d7 APX 5.0P-B3 \u2014 off-grid output limited to '+og+' kW; '+nd+' modules give the full '+s.kw+' kW (manual table 2.4)']);}
+    else{var bk=batKw();
+      if(bk>=s.kw)out.push([1,s.nb+' battery modules ('+(Math.round(batKwh()*10)/10)+' kWh) \u2014 the battery can deliver the full '+s.kw+' kW (datasheets)']);
+      else out.push([0,s.nb+' battery modules \u2014 the battery delivers about '+bk+' kW, less than the MODA\u2019s '+s.kw+' kW; add a module or choose bigger ones (datasheets)']);}}
   return out;
 }
 // ---------------------------------------------------------------- the room
@@ -5031,32 +5198,69 @@ function screwSet(list,t0,t){ // screws drive in one after another between t0 an
     var h=sc.userData.home,ax=sc.userData.ax,o=.03*(1-ease(v));if(sc.userData.drv)sc.userData.drv.visible=v>0&&v<1;sc.position.set(h.x+(ax==='x'?o:ax==='-x'?-o:0),h.y+(ax==='y'?o:0),h.z+(ax==='z'?o:0));sc.rotation[ax==='x'||ax==='-x'?'x':'y']=v*9;});
 }
 function buildMODA(){
-  var BH=.06,X=IX,D=.255,W=.59,zc=.04+D/2,nb=S().nb||4,yi=BH+nb*.27,F=zc+D/2;
-  // ---- base (white plinth with the arched cut-out at the sides)
-  var gb=grp(R.root,X,0,zc,'Base (pre-installed under the inverter at delivery)');apxBase(gb,W,D,BH);
-  var shims=[];[[-1,-1],[-1,1],[1,-1],[1,1]].forEach(function(q){var sh=bx(R.root,.045,.003,.035,'grey',X+q[0]*(W/2-.04),.0015,zc+q[1]*(D/2-.035),{tip:'Leveling shim (1 mm / 2 mm)'});shims.push(sh);});
-  var dim=grp(R.root,X-W/2+.06,.12,.025,'Clearance to the wall: 30\u201350 mm');bx(dim,.004,.004,.05,'green',0,-.115,0,{ns:1});lab(dim,'30\u201350 mm',0,0,.03,{h:.022,bg:'#1f8a4c',c:'#ffffff'});bx(dim,.002,.11,.002,'green',0,-.06,.026,{ns:1});
-  reg('mtBase',function(t){var u=ease(Math.min(1,t/.75));gb.position.set(X,0,zc+.7*(1-u));shims.forEach(function(sh){sh.visible=t>.72;});dim.visible=t>.5&&getT('mtBat0')<.3;});
-  R.hitAdd('mtBase',V(X,.1,zc+.13));
-  // ---- battery modules (up to 6 on one BMS); they wait on the floor and are lifted on one by one
-  var waits=[[X-1.0,.75],[X-1.0,1.35],[X-1.66,.75],[X-1.66,1.35],[X-1.0,1.95],[X-1.66,1.95],[X-1.33,2.55]],mods=[];
-  function tops(){mods.forEach(function(m,i){if(!m)return;var up=i<nb-1?getT('mtBat'+(i+1)):getT('mtInv'),f=Math.max(0,Math.min(1,(up-.3)/.25));
+  // the MODA is always as wide as the battery tower under it: 590 mm on the 5 kWh base, 740 mm on the HV base
+  var SS=S(),bm=batNorm(),BH=.06,X=IX,zc=.04+.255/2,nb=bm.length,two=SS.tw===2,W=towW(1),D=towD(1),Wt=W,Dt=D,W2=two?towW(2):.74,D2=two?towD(2):.265;
+  var t1=bm.filter(function(m){return m.tw===1;}),t2=bm.filter(function(m){return m.tw===2;}),right=SS.side==='R',X2=right?X+W/2+.42+W2/2:X-W/2-.42-W2/2;
+  var yi=BH+t1.reduce(function(a,m){return a+BT[m.t].H;},0),F=zc+D/2;
+  // ---- bases (white plinth with the arched cut-out at the sides); tower 2 gets its own base
+  var shims=[],bases=[{x:X,k:'mtBase',w:W,d:D,b:SS.b1}].concat(two?[{x:X2,k:'mtBase2',w:W2,d:D2,b:SS.b2}]:[]);
+  bases.forEach(function(q){var gb=grp(R.root,q.x,0,zc,(q.b==='5'?'Base for APX 5.0P-B3 (5 kWh)':'Base for APX HV (7 \u00b7 9.4 \u00b7 11.3 kWh)')+(q.k==='mtBase2'?' \u2014 tower 2':' \u2014 tower 1, the MODA on top'));apxBase(gb,q.w,q.d,BH);
+    var sh=[];[[-1,-1],[-1,1],[1,-1],[1,1]].forEach(function(p){sh.push(bx(R.root,.045,.003,.035,'grey',q.x+p[0]*(q.w/2-.04),.0015,zc+p[1]*(q.d/2-.035),{tip:'Leveling shim (1 mm / 2 mm)'}));});
+    reg(q.k,function(t){var u=ease(Math.min(1,t/.75));gb.position.set(q.x,0,zc+.7*(1-u));sh.forEach(function(m){m.visible=t>.72;});if(q.dim)q.dim.visible=t>.5&&getT('mtBat0')<.3;});
+    R.hitAdd(q.k,V(q.x,.1,zc+.13));q.gb=gb;});
+  var dim=grp(R.root,X-Wt/2+.06,.12,.025,'Clearance to the wall: 30\u201350 mm');bx(dim,.004,.004,.05,'green',0,-.115,0,{ns:1});lab(dim,'30\u201350 mm',0,0,.03,{h:.022,bg:'#1f8a4c',c:'#ffffff'});bx(dim,.002,.11,.002,'green',0,-.06,.026,{ns:1});
+  bases[0].dim=dim;R.an.mtBase.set(0);
+  // ---- battery modules; they wait on the floor and are lifted on one by one (tower 1 first, then tower 2)
+  var waits=[],mods=[],i;for(i=0;i<8;i++)waits.push([-2.55+(i%4)*.9,1.2+Math.floor(i/4)*.85]);
+  var place=[],y1=BH,y2=BH;bm.forEach(function(m,j){var H=BT[m.t].H;if(m.tw===1){place.push({x:X,y:y1,H:H,tw:1});y1+=H;}else{place.push({x:X2,y:y2,H:H,tw:2});y2+=H;}});
+  function upKey(j){for(var k=j+1;k<nb;k++)if(bm[k].tw===bm[j].tw)return 'mtBat'+k;return bm[j].tw===1?'mtInv':'mtTop2';}
+  function tops(){mods.forEach(function(m,j){if(!m)return;var up=getT(upKey(j)),f=Math.max(0,Math.min(1,(up-.3)/.25));
     m.hs.forEach(function(h){h.g.rotation.z=-h.s*f*Math.PI/2;h.g.visible=f<.98;});m.cn.visible=up<.7;});}
-  function flyer(g,i,y0,list){
-    var fx=waits[i][0]-X,fz=waits[i][1]-zc;
+  function flyer(g,i,y0,list,Xt){
+    var fx=waits[i][0]-Xt,fz=waits[i][1]-zc;
     return function(t){var u=Math.min(1,t/.8),p,P0=V(fx,-y0,fz),P1=V(fx,.13,fz),P2=V(0,.13,0),P3=V(0,0,0);
       if(u<.3)p=P0.clone().lerp(P1,ease(u/.3));else if(u<.72)p=P1.clone().lerp(P2,ease((u-.3)/.42));else p=P2.clone().lerp(P3,ease((u-.72)/.28));
-      g.position.set(X+p.x,p.y,zc+p.z);screwSet(list,.82,t);tops();};
+      g.position.set(Xt+p.x,p.y,zc+p.z);screwSet(list,.82,t);tops();};
   }
-  for(var i=0;i<nb;i++)(function(i){var y0=BH+i*.27,nm='APX 5.0P-B3 battery module '+(i+1),g=grp(R.root,X,0,zc,nm);
-    mods[i]=apxModule(g,W,D,y0,nm);
-    var sc=[screwHead(g,-W/2-.0012,y0+.022,-.1,'-x','M4 screw, 1.2 N\u00b7m'),screwHead(g,-W/2-.0012,y0+.022,.1,'-x','M4 screw, 1.2 N\u00b7m'),screwHead(g,W/2+.0012,y0+.022,0,'x','M4 screw, 1.2 N\u00b7m')];
-    reg('mtBat'+i,flyer(g,i,y0,sc));R.hitAdd('mtBat'+i,V(X,y0+.15,zc+D/2));
+  for(i=0;i<nb;i++)(function(i){var b=BT[bm[i].t],P=place[i],y0=P.y,nm=b.n+' battery module '+(i+1)+' \u00b7 '+b.kwh+' kWh'+(two?' \u00b7 tower '+P.tw:''),g=grp(R.root,P.x,0,zc,nm);
+    mods[i]=apxModule(g,b.W,b.D,y0,nm,b.H,(bm[i].t==='5.0'?'5':bm[i].t)+' kWh');
+    var sc=[screwHead(g,-b.W/2-.0012,y0+.022,-.1,'-x','M4 screw, 1.2 N\u00b7m'),screwHead(g,-b.W/2-.0012,y0+.022,.1,'-x','M4 screw, 1.2 N\u00b7m'),screwHead(g,b.W/2+.0012,y0+.022,0,'x','M4 screw, 1.2 N\u00b7m')];
+    reg('mtBat'+i,flyer(g,i,y0,sc,P.x));R.hitAdd('mtBat'+i,V(P.x,y0+.15,zc+b.D/2));
   })(i);
+  // ---- tower 2: top cover and the battery extension cable between the two bases
+  var T2=null;
+  if(two){var top2=y2,cv2=grp(R.root,X2,0,zc,'Top cover \u2014 tower 2');bx(cv2,W2-.002,.025,D2,'apx',0,top2+.0125,0,{r:.004,tip:'Top cover \u2014 tower 2'});
+    reg('mtTop2',function(t){var u=ease(Math.min(1,t/.7));cv2.visible=t>0;cv2.position.set(X2,.35*(1-u),zc+.25*(1-u));tops();});R.hitAdd('mtTop2',V(X2,top2+.03,zc+D2/2));
+    // extension cables (power + communication) as in Growatt's split-tower drawings: from the right side of the left tower, straight across,
+    // up and over the right tower and down to the right side of its top module \u2014 neat, clipped, no loose loops
+    var Lt=right?{x:X,w:W,y:yi}:{x:X2,w:W2,y:top2},Rt=right?{x:X2,w:W2,y:top2,over:top2+.025}:{x:X,w:W,y:yi,over:yi+.36+.06},ET='Battery extension cables \u2014 power (red) + communication (blue): tower 2 \u2194 tower 1 (MODA)';
+    var pL=V(Lt.x+Lt.w/2+.016,Lt.y-.07,zc+.04),pR=V(Rt.x+Rt.w/2+.016,Rt.y-.07,zc+.04),ex=[];
+    [pL,pR].forEach(function(c){var pg=grp(R.root,c.x,c.y,c.z,'Battery extension port (right side of the top module)');bx(pg,.02,.06,.07,'dark2',-.004,0,0,{r:.004});bx(pg,.006,.022,.022,'orange',.006,.012,-.016,{ns:1});bx(pg,.006,.016,.016,'blue',.006,-.012,.016,{ns:1});});
+    function corner(pts){var o=[pts[0]];for(var i=1;i<pts.length-1;i++){var a=pts[i-1],b=pts[i],c=pts[i+1],r=.03;var d1=b.clone().sub(a),d2=c.clone().sub(b),l1=d1.length(),l2=d2.length();
+      o.push(b.clone().sub(d1.normalize().multiplyScalar(Math.min(r,l1/2))));o.push(b.clone().add(d2.normalize().multiplyScalar(Math.min(r,l2/2))));}o.push(pts[pts.length-1]);return o;}
+    // tower 2 on the left: the cables run in trunking \u2014 a short duct from tower 2 into the left riser (with the PV cables),
+    // a duct over the MODA (under the wall display) and down the right riser to the top module of tower 1
+    var xLr=X-Wt/2-.065,xRr=X+Wt/2+.065,oy=yi+.36+.09,tagX=(pL.x+Rt.x-Rt.w/2)/2,tagY=pL.y+.05;
+    if(!right){trunk(pL.x+.085,pL.y,xLr-.03,pL.y,.05,'Cable trunking \u2014 battery extension cables');trunk(xLr+.03,oy,xRr-.035,oy,.05,'Cable trunking over the MODA \u2014 battery extension cables');
+      trunk(xRr,yi+.035,xRr,oy+.025,.07,'Cable trunking \u2192 MODA right side \u00b7 battery extension cables');tagX=(pL.x+.085+xLr-.03)/2;tagY=pL.y+.045;}
+    [[0,.0065,0xc8322b,'red'],[1,.0035,0x2f6fd6,'blue']].forEach(function(q){var dz=q[0]?-.024:.0,yo=q[0]?-.024:0,z=pL.z+dz,lx=Rt.x-Rt.w/2-.014-q[0]*.012,rx=Rt.x+Rt.w/2+.014+q[0]*.012,top=Rt.over+.012+q[0]*.014;
+      var b;if(right)b=corner([V(pL.x+.012,pL.y+yo,z),V(lx,pL.y+yo,z),V(lx,top,z),V(rx,top,z),V(rx,pR.y+yo,z),V(pR.x+.012,pR.y+yo,z)]);
+      else{var zb=.0095;
+        // lanes chosen so the two never cross: blue on the outside of every bend, red on the inside (red sits on the upper socket)
+        if(!q[0])b=[V(pL.x+.012,pL.y+.012,pL.z-.016),V(pL.x+.035,pL.y+.012,pL.z-.016)].concat(corner([V(pL.x+.06,pL.y-.002,.035),V(pL.x+.09,pL.y-.008,zb),V(xLr-.013,pL.y-.008,zb),V(xLr-.013,oy-.008,zb),V(xRr-.028,oy-.008,zb),V(xRr-.028,pR.y+.012,zb),V(xRr-.028,pR.y+.012,pR.z-.056)])).concat([V(xRr-.028,pR.y+.012,pR.z-.016),V(pR.x+.012,pR.y+.012,pR.z-.016)]);
+        else b=[V(pL.x+.012,pL.y-.012,pL.z+.016),V(pL.x+.035,pL.y-.012,pL.z+.016)].concat(corner([V(pL.x+.065,pL.y+.004,.05),V(pL.x+.095,pL.y+.008,zb),V(xLr-.025,pL.y+.008,zb),V(xLr-.025,oy+.008,zb),V(xRr-.016,oy+.008,zb),V(xRr-.016,pR.y-.012,zb),V(xRr-.028,pR.y-.012,zb),V(xRr-.028,pR.y-.012,pR.z-.024)])).concat([V(xRr-.028,pR.y-.012,pR.z+.016),V(pR.x+.012,pR.y-.012,pR.z+.016)]);}
+      var a=b.map(function(v,j){var f=j/(b.length-1);return V(pL.x+.06+Math.cos(f*9)*.07,.012+j*.0015,zc+.32+Math.sin(f*9)*.07);});a[0]=b[0].clone();
+      var c=new Core({col:q[2],r:q[1],a:a,b:b,end:'none',tip:ET});ex.push(c);
+      // cable clips along the run
+      if(right)for(var j=1;j<b.length-1;j+=2){var m=b[j].clone().lerp(b[j+1],.5);var cl=bx(R.root,.016,.016,.016,'clip',m.x,m.y,m.z,{ns:1,tip:'Cable clip'});cl.visible=false;c.clips=(c.clips||[]).concat([cl]);}});
+    var etag=lab(R.root,'EXTENSION CABLES',tagX,tagY,right?zc+.05:TRK.d+.006,{h:.024,bg:'#e8862a',c:'#ffffff'});
+    reg('mtExt',function(t){ex.forEach(function(c){c.set(t);c.mesh.visible=t>0||getT('mtTop2')>0;(c.clips||[]).forEach(function(cl){cl.visible=t>.97;});});etag.visible=t>.5;});R.hitAdd('mtExt',pL.clone().add(V(.02,0,0)));
+    R.extC=ex;
+    T2={x:X2,top:top2,cov:cv2,w:W2,right:right};}
   // ---- the inverter module (everything on it moves with it): see modaInverter()
   var IM=modaInverter(X,W,D,zc,yi),g=IM.g;
   var isc=[screwHead(g,-W/2-.0012,yi+.024,D/2-.007,'-x','M4 screw, 1.2 N\u00b7m'),screwHead(g,W/2+.0012,yi+.024,-(D/2-.007),'x','M4 screw, 1.2 N\u00b7m')];
-  reg('mtInv',flyer(g,nb,yi,isc));R.hitAdd('mtInv',V(X,yi+.18,zc+D/2));
+  reg('mtInv',flyer(g,nb,yi,isc,X));R.hitAdd('mtInv',V(X,yi+.18,zc+D/2));
   // ---- anti-tipping plates (top back corners to the wall)
   var top=yi+.36,tips=[];
   [-1,1].forEach(function(s){var x=X+s*(W/2-.06),pg=grp(R.root,x,0,0,'Anti-tipping plate (M4 to the unit, M6 to the wall)');
@@ -5071,8 +5275,10 @@ function buildMODA(){
   // ---- anchors (world, mounted position)
   var A={};
   A.grid=IM.grid;A.load=IM.load;A.gnd=IM.gnd;A.meterPort=IM.meterPort;A.IM=IM;
-  A.c=V(X,.75,zc);A.top=top;A.yi=yi;A.zc=zc;A.X=X;A.W=W;A.F=F;A.D=D;A.nb=nb;A.covs=covs;A.BH=BH;
-  R.st.inv={c:V(X,Math.max(.72,top*.5+.04),zc),s:Math.max(.82,top*.52),low:false};
+  A.c=V(X,.75,zc);A.top=top;A.yi=yi;A.zc=zc;A.X=X;A.W=W;A.F=F;A.D=D;A.nb=nb;A.covs=covs;A.BH=BH;A.Wt=Wt;A.T2=T2;A.bm=bm;A.place=place;A.X2=X2;A.W2=W2;
+  R.moda={W:W,D:D,W2:T2?W2:0,Wb:[].concat([W],T2?[W2]:[])};
+  var cx=T2?(X+X2)/2:X;R.st.inv={c:V(cx,Math.max(.72,top*.5+.04),zc),s:Math.max(T2?1.05:.82,top*.52),low:false};
+  R.obst.push([X-W/2,0,X+W/2,.32]);if(T2)R.obst.push([X2-W2/2,0,X2+W2/2,.32]);
   return A;
 }
 // MODA / MOD-HU style round AC plug wiring: exploded insert (face +x) under the socket, 5 cores, then plug in
@@ -5266,12 +5472,15 @@ function modaInverter(X,W,D,zc,yi){
 // slotted protective covers, slide down then push in (manual 3.8.4)
 function modaCovers(X,W,D,zc,yi){
   var covs=[];
-  [-1,1].forEach(function(s){var nm=(s<0?'Left':'Right')+' protective cover',cv=grp(R.root,X,0,zc,nm);
+  [-1,1].forEach(function(s){var nm=(s<0?'Left':'Right')+' protective cover',wr=grp(R.root,0,0,0),cv=grp(wr,X,0,zc,nm);
     var pl=new T.Mesh(new T.PlaneGeometry(D-.004,.275),new T.MeshStandardMaterial({map:slotTex(s),roughness:.55,alphaTest:.5,side:T.DoubleSide}));
     pl.position.set(s*(W/2+.0025),yi+.1675,0);pl.rotation.y=s*Math.PI/2;pl.userData.tip=nm;pl.castShadow=true;cv.add(pl);cv.userData.pane=pl;
     [-1,1].forEach(function(f){bx(cv,.007,.275,.004,'band',s*(W/2+.0005),yi+.1675,f*(D/2-.004),{tip:nm});});
     bx(cv,.007,.004,D-.004,'band',s*(W/2+.0005),yi+.032,0,{tip:nm});bx(cv,.007,.004,D-.004,'band',s*(W/2+.0005),yi+.303,0,{tip:nm});
-    covs.push({g:cv,s:s,pane:pl});});
+    covs.push({g:cv,s:s,pane:pl});
+    togAdd({key:s<0?'covL':'covR',objs:[cv],can:function(){return getT('mtCov')>.99;},
+      label:function(on){return on?'Fit the '+(s<0?'left':'right')+' cover again':'Remove the '+(s<0?'left':'right')+' cover';},
+      apply:function(u){var a=ease(Math.min(1,u*2)),b=ease(Math.max(0,u*2-1));wr.position.set(s*(.09*a+.3*b),-(yi+.031)*b,.16*b);wr.rotation.z=s*-.12*b;}});});
   reg('mtCov',function(t){covs.forEach(function(c){var u=ease(Math.min(1,t/.6)),v=ease(Math.max(0,(t-.6)/.4));c.g.visible=t>0;c.g.position.set(X+c.s*.06*(1-v),.3*(1-u),zc);});});
   R.hitAdd('mtCov',V(X+W/2+.03,yi+.18,zc+D/2));
   return covs;
@@ -5310,14 +5519,15 @@ function grilleTex(){
   k.fillStyle='#8d959d';[[10,10],[123,10],[240,10],[10,252],[123,252],[240,252]].forEach(function(p){k.fillRect(p[0],p[1],7,7);});
   var t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;t.anisotropy=8;R.grille=t;return t;
 }
-function apxModule(g,W,D,y0,nm){
-  bx(g,W-.002,.265,D,'apx',0,y0+.1325,0,{r:.004,tip:nm});
-  var gm=new T.Mesh(new T.PlaneGeometry(D-.016,.252),new T.MeshStandardMaterial({map:grilleTex(),roughness:.6}));
-  gm.position.set(-W/2-.0006,y0+.1325,0);gm.rotation.y=-Math.PI/2;gm.userData.tip=nm+' \u2014 air inlet (fan behind the grille)';g.add(gm);
-  var hs=[];[-1,1].forEach(function(s){var h=grp(g,s*(W/2-.08),y0+.265,0,'Handle (folds down when the next module is stacked)');
+function apxModule(g,W,D,y0,nm,H,tl){
+  H=H||.265;bx(g,W-.002,H,D,'apx',0,y0+H/2,0,{r:.004,tip:nm});
+  var gm=new T.Mesh(new T.PlaneGeometry(D-.016,H-.013),new T.MeshStandardMaterial({map:grilleTex(),roughness:.6}));
+  gm.position.set(-W/2-.0006,y0+H/2,0);gm.rotation.y=-Math.PI/2;gm.userData.tip=nm+' \u2014 air inlet (fan behind the grille)';g.add(gm);
+  if(tl)lab(g,tl,W/2-.06,y0+.03,D/2+.0012,{h:.016,c:'#9aa3ab',w:700});
+  var hs=[];[-1,1].forEach(function(s){var h=grp(g,s*(W/2-.08),y0+H,0,'Handle (folds down when the next module is stacked)');
     cy(h,.0045,.0045,.034,'hgrey',-.032,.017,0);cy(h,.0045,.0045,.034,'hgrey',.032,.017,0);cy(h,.0045,.0045,.064,'hgrey',0,.034,0,'x');
     sp(h,.0045,'hgrey',-.032,.034,0);sp(h,.0045,'hgrey',.032,.034,0);hs.push({g:h,s:s});});
-  var cn=bx(g,.07,.022,.05,'hgrey',-W/2+.13,y0+.276,-D/2+.045,{tip:'Battery connector (plugs into the module above)'});
+  var cn=bx(g,.07,.022,.05,'hgrey',-W/2+.13,y0+H+.011,-D/2+.045,{tip:'Battery connector (plugs into the module above)'});
   return {hs:hs,cn:cn};
 }
 function apxBase(p,W,D,h){
@@ -5394,8 +5604,8 @@ function texOf(key,draw,rx,ry){
   var t=b.clone();t.repeat.set(rx,ry);t.needsUpdate=true;return t;
 }
 function drawPanels(k){
-  k.fillStyle='#d0d5da';k.fillRect(0,0,256,256);
-  for(var i=0;i<8;i++){var y=i*32;k.fillStyle='rgba(255,255,255,.35)';k.fillRect(0,y+3,256,2);k.fillStyle='#aeb5bc';k.fillRect(0,y,256,2);
+  k.fillStyle='#9ea6ae';k.fillRect(0,0,256,256);
+  for(var i=0;i<8;i++){var y=i*32;k.fillStyle='rgba(255,255,255,.18)';k.fillRect(0,y+3,256,2);k.fillStyle='#7f878f';k.fillRect(0,y,256,2);
     for(var j=0;j<40;j++){k.fillStyle='rgba(120,128,136,'+(.03+Math.random()*.04)+')';k.fillRect(Math.random()*256,y+4+Math.random()*26,20+Math.random()*60,1);}}
 }
 function drawTiles(k){
@@ -5431,7 +5641,7 @@ function buildRoom(){
     for(var z=1.2;z<D;z+=1.3)bx(g,.03,.09,.03,'steel',x,H-.05,z,{ns:1});});
   for(var i=0;i<4;i++)bx(g,Wd-.34,.012,.5,'white',(L+Rr)/2,H-.14,D-.35-i*.5,{ns:1,tip:'Garage door (open)'});
   // the garden
-  [[6.2,-1.6,.55],[7.6,.6,.7],[5.6,8.6,.5],[9.2,-.9,.6],[8.8,7.9,.7]].forEach(function(q){var m=new T.Mesh(new T.SphereGeometry(q[2],8,6),new T.MeshStandardMaterial({color:0x4f7d3a,roughness:.9,flatShading:true}));m.position.set(q[0],q[2]*.7,q[1]);m.castShadow=true;m.userData.tip='Garden';g.add(m);});
+  [[6.2,-1.6,.55],[7.6,.6,.7],[5.6,8.6,.5],[9.2,-.9,.6],[8.8,7.9,.7]].forEach(function(q){R.obst.push([q[0]-q[2]*.8,q[1]-q[2]*.8,q[0]+q[2]*.8,q[1]+q[2]*.8]);var m=new T.Mesh(new T.SphereGeometry(q[2],8,6),new T.MeshStandardMaterial({color:0x4f7d3a,roughness:.9,flatShading:true}));m.position.set(q[0],q[2]*.7,q[1]);m.castShadow=true;m.userData.tip='Garden';g.add(m);});
   buildRoof();
   for(var f=0;f<26;f++)bx(g,.09,1.1,.02,'fence',Rr+Tw+.6+f*.24,.55,-2.6,{ns:1,tip:'Fence'});bx(g,6.4,.06,.03,'fence',Rr+Tw+3.6,.85,-2.62,{ns:1});bx(g,6.4,.06,.03,'fence',Rr+Tw+3.6,.25,-2.62,{ns:1});
 }
@@ -5648,9 +5858,11 @@ function gridSide(stepped,J,wit){
     for(var q=1;q<ip.length-1;q++){var a=ip[q],b=ip[q+1],d=a.distanceTo(b),n=Math.floor(d/.45);for(var j=1;j<=n;j++){var p=a.clone().lerp(b,j/(n+1));bx(R.root,.022,.022,.022,'clip',p.x,p.y,p.z,{ns:1});}}
     A.inPath=[V(X0+.07,.84,z),V(X0+.07,1.0,z)].concat(ip);
   }
-  reg('gDoor',function(t){var u=ease(t);doors.forEach(function(d){d.g.rotation.y=-d.s*1.9*u;});});
+  reg('gDoor',function(t){var u=ease(Math.abs(t-togV('sDoor')));doors.forEach(function(d){d.g.rotation.y=-d.s*1.9*u;});});
   reg('gCable',function(t){var n=Math.round(Math.min(1,t)*500);tg.setDrawRange(0,n*8*6);});
-  reg('gMeter',function(t){if(A.door)A.door.rotation.y=1.9*ease(t);});
+  reg('gMeter',function(t){if(A.door)A.door.rotation.y=1.9*ease(Math.abs(t-togV('mDoor')));});
+  togAdd({key:'sDoor',objs:doors.map(function(d){return d.g;}),can:function(){var t=getT('gDoor');return t<.01||t>.99;},label:function(){return Math.abs(getT('gDoor')-togV('sDoor'))>.5?'Close the substation doors':'Open the substation doors';},apply:function(){R.an.gDoor.set(R.an.gDoor.t);}});
+  if(A.door)togAdd({key:'mDoor',objs:[A.door],can:function(){var t=getT('gMeter');return t<.01||t>.99;},label:function(){return Math.abs(getT('gMeter')-togV('mDoor'))>.5?'Close the meter cabinet':'Open the meter cabinet';},apply:function(){R.an.gMeter.set(R.an.gMeter.t);}});
   R.hitAdd('gDoor',V(F-.02,.95,tz));R.hitAdd('gCable',V((cab+X0)/2,.03,z));R.hitAdd('gMeter',wit?V(X0+.1,.3,z):V(mx1+.01,1.27,z));
   if(!stepped)['gDoor','gCable','gMeter'].forEach(function(k){R.an[k].t=1;R.an[k].set(1);});
   R.st.grid={c:V((F+X0)/2+.6,.6,z),s:4.2,fr:V(-.05,.5,1)};
@@ -5851,7 +6063,7 @@ function enclosure(gx,gy,Wb,Hb,Db,tip){
   return g;
 }
 function core(col,r,b,off,o){o=o||{};return new Core({col:WCOL[col],r:r,a:off?looseOf(b,off,o.k||2):b,b:b,end:o.end||'ferrule',tip:o.tip,mat:o.mat});}
-function stat(col,r,pts,o){o=o||{};return new Core({col:typeof col==='string'&&WCOL[col]!==undefined?WCOL[col]:col,mat:o.mat,r:r,a:pts,b:pts,end:o.end||'none',tip:o.tip});}
+function stat(col,r,pts,o){o=o||{};var c=new Core({col:typeof col==='string'&&WCOL[col]!==undefined?WCOL[col]:col,mat:o.mat,r:r,a:pts,b:pts,end:o.end||'none',tip:o.tip});if(DEC)DEC.push(c);return c;}
 // ---------------------------------------------------------------- WIT switchboard: CT meter on the incoming conductors
 function buildBoardCT(brand){
   var SS=S(),q=sp0(),brk=SS.brk,rcb=rCore(SS.cab);
@@ -5951,11 +6163,12 @@ function devM(p,gx,gy,x,y,poles,mods,o){
     T0.push(V(gx+x+qx,gy+y+h/2+.002,.045));B0.push(V(gx+x+qx,gy+y-h/2-.002,.045));}
   return {top:T0,bot:B0,g:g,tg:tg};
 }
-function termBar(p,w,x,y,n,lbl,col,tip){
-  bx(p,w,.02,.02,'dark2',x,y,.016,{tip:tip});bx(p,w-.01,.008,.011,'brass',x,y+.003,.03,{tip:tip});
-  for(var i=0;i<n;i++)cy(p,.0034,.0034,.004,'metal',x-w/2+.012+i*(w-.024)/(n-1),y+.003,.037,'z',{ns:1});
-  lab(p,lbl,x-w/2-.018,y,.02,{h:.013,c:col});
+function termBar(p,w,x,y,n,lbl,col,tip,body){
+  bx(p,w,.022,.02,body||'dark2',x,y,.016,{tip:tip});if(body==='pebar')bx(p,w+.001,.006,.021,'yellow',x,y-.006,.016,{ns:1});bx(p,w-.01,.009,.012,'brass',x,y+.003,.031,{tip:tip});
+  for(var i=0;i<n;i++)cy(p,.0034,.0034,.004,'metal',x-w/2+.012+i*(w-.024)/(n-1),y+.003,.039,'z',{ns:1});
+  lab(p,lbl,body==='nbar'?x+w/2+.024:x-w/2-.024,y,.03,{h:.018,bg:col,c:'#ffffff'});
 }
+var DEC=null; // while set, stat() also collects the decorative cores (so they can be dimmed)
 function buildBoardDirect(brand,feed){
   var SS=S(),q=sp0(),brk=SS.brk,rcb=rCore(SS.cab);
   var gx=BX,gy=1.45,Wb=.7,Hb=.6,xi=Wb/2-.012,y1=.1,y2=-.105;
@@ -5964,7 +6177,7 @@ function buildBoardDirect(brand,feed){
   bx(g,Wb,Hb,.008,'black',0,0,.004,{tip:'Distribution board (front cover removed)'});
   [-1,1].forEach(function(s){bx(g,.012,Hb,.09,'black',s*(Wb/2-.006),0,.045,{tip:'Board frame'});bx(g,Wb,.012,.09,'black',0,s*(Hb/2-.006),.045,{tip:'Board frame'});});
   // terminal bars at the top (N left, PE right)
-  termBar(g,.29,-.165,.262,16,'N','#1f66c8','N terminal bar');termBar(g,.25,.185,.262,13,'PE','#1e7a3d','PE bar \u2014 main earthing terminal (the earth rods connect here)');
+  termBar(g,.29,-.165,.262,16,'N','#1f66c8','N bar \u2014 neutral (blue): the neutral conductors of the house circuits','nbar');termBar(g,.25,.185,.262,13,'PE','#1e7a3d','PE bar \u2014 main earthing terminal (the earth rods connect here)','pebar');
   // ducts
   duct(g,Wb-.03,.05,0,.205);duct(g,Wb-.03,.064,0,-.002);duct(g,Wb-.03,.064,0,-.218);
   // row 1: the smart meter first, then MCBs
@@ -5982,14 +6195,16 @@ function buildBoardDirect(brand,feed){
   var rcd=devM(g,gx,gy,P.rcd,y2,4,4,{tog:'black',test:1,noTog:1,lbl:'RCD 40/0.03',tip:'RCD 30 mA (house groups)'});
   devM(g,gx,gy,P.c25,y2,3,3,{tog:'yellow',lbl:'C25',tip:'MCB 3-pole C25'});
   bx(g,.12,.008,.012,'yellow',P.comb,y2+.052,.05,{tip:'Comb busbar'});
-  var byp=feed?bypSw(g,gx,gy,-.116,y2):null;
+  var byp=null,fbp=feed?devM(g,gx,gy,-.155,y2,4,4,{tog:'black',lbl:'C'+brk+' F-BYP',tip:'F-BYP \u2014 4-pole MCB: the grid feed for the bypass (II) in the backup board'}):null;
+  if(fbp){bx(fbp.g,.05,.009,.002,'orange',0,-.042,.0545,{ns:1});lab(fbp.g,'BYPASS',0,-.0415,.0556,{h:.0048,c:'#ffffff'});}
   var qx=P.qx,np=feed?3:4,qi=devM(g,gx,gy,qx,y2,np,np,{tog:'black',lbl:'C'+brk+(feed?' F-INV':' INV'),tip:feed?'F-INV \u2014 3-pole fuse for the inverter cable ('+brk+' A)':'Inverter AC breaker Q-INV ('+q.poles+', '+brk+' A)'});
   var PH4=feed?['L1','L2','L3']:['L1','L2','L3','N'];
   bx(qi.g,.05,.009,.002,'red',0,-.045+.003,.0545,{ns:1});lab(qi.g,'INVERTER',0,-.0415,.0556,{h:.0048,c:'#ffffff'});
   for(i=0;i<6;i++)devM(g,gx,gy,P.rcbo+i*.037,y2,2,2,{tog:'black',test:1,noTog:1,lbl:'RCBO',tip:'RCBO 30 mA (house group)'});
-  if(byp){reg('byMount',function(t){var u=ease(t);byp.g.position.set(-.116,y2+.05*(1-u),.17*(1-u));byp.g.rotation.x=-.55*(1-u);});R.hitAdd('byMount',W(-.116,y2,.08));}
+  if(fbp){reg('fbMount',function(t){var u=ease(t);fbp.g.position.set(-.155,y2+.05*(1-u),.17*(1-u));fbp.g.rotation.x=-.55*(1-u);});R.hitAdd('fbMount',W(-.155,y2,.08));}
   reg('bMount',function(t){var u=ease(t);qi.g.position.set(qx,y2+.05*(1-u),.17*(1-u));qi.g.rotation.x=-.55*(1-u);});R.hitAdd('bMount',W(qx,y2,.08));
   // ---- decoration: house circuits out of the top, wires in the ducts
+  DEC=[];
   [-.2,-.1,-.02,.07,.16,.25].forEach(function(x,j){stat(0,.0045,vv([[gx+x,gy+.205,.03],[gx+x+.01,gy+.26,.02],[gx+x+.02,gy+.38,.015],[gx+x+.03,gy+.95,.012]]),{mat:'jwhite',tip:'House circuit cable'});});
   var dc=['L1','N','L1','N','L1','N','L2','N','L3','N'];
   for(i=0;i<10;i++){var x0=-.236+i*.019+(i>6?.0:0);stat(dc[i],.0016,vv([[gx+x0,gy+y1-.047,.045],[gx+x0,gy+y1-.075,.05],[gx+x0+.03,gy-.002,.045],[gx+x0+.1,gy-.01,.04]]),{tip:'House circuit wire'});
@@ -5997,7 +6212,11 @@ function buildBoardDirect(brand,feed){
   for(i=0;i<16;i++){var x1=i*.019;stat(i%2?'N':['L1','L2','L3'][i%3],.0016,vv([[gx+x1,gy+y1-.047,.045],[gx+x1,gy+y1-.075,.05],[gx+x1-.04,gy-.002,.045],[gx+x1-.12,gy-.01,.04]]),{tip:'House circuit wire'});var sg=i<8?1:-1;stat(i%3?'L1':'N',.0016,vv([[gx+x1,gy+y1+.047,.045],[gx+x1,gy+y1+.075,.05],[gx+x1+sg*.03,gy+.2,.04],[gx+x1+sg*.1,gy+.207,.035]]),{tip:'House circuit wire'});}
   for(i=0;i<6;i++){var x2=P.rcbo+i*.037;stat(['L1','L2','L3'][i%3],.0016,vv([[gx+x2-.009,gy+y2-.047,.045],[gx+x2-.009,gy+y2-.09,.05],[gx+x2+.02,gy-.215,.045],[gx+x2+.08,gy-.222,.04]]),{tip:'House circuit wire'});stat('N',.0016,vv([[gx+x2+.009,gy+y2-.047,.045],[gx+x2+.009,gy+y2-.095,.05],[gx+x2+.03,gy-.218,.045],[gx+x2+.09,gy-.225,.04]]),{tip:'House circuit wire'});
     stat(['L1','L2','L3'][i%3],.0016,vv([[gx+x2-.009,gy+y2+.047,.045],[gx+x2-.009,gy+y2+.07,.05],[gx+x2-.03,gy-.004,.045],[gx+x2-.07,gy+.0,.04]]),{tip:'Supply to RCBO'});}
-  if(!feed)['L1','L2','L3','N'].forEach(function(k,i){var s=q0.bot[i],t=rcd.top[i];stat(k,.0024,vv([[s.x,s.y,.045],[s.x,s.y-.04,.05],[s.x+.02,gy-.21,.05],[gx-xi+.012,gy-.2,.05],[gx-xi+.016,gy-.02,.05],[t.x,gy-.01,.05],[t.x,t.y+.015,.047],[t.x,t.y,.045]]),{tip:k+' main switch \u2192 RCD'});});
+  var houseC={};['L1','L2','L3','N'].forEach(function(k,i){var s=q0.bot[i],t=rcd.top[i];houseC[k]=stat(k,.0026,vv([[s.x,s.y,.045],[s.x,s.y-.04,.05],[s.x+.02,gy-.21,.05],[gx-xi+.012,gy-.2,.05],[gx-xi+.016,gy-.02,.05],[t.x,gy-.01,.05],[t.x,t.y+.015,.047],[t.x,t.y,.045]]),{tip:k+' main switch Q0 \u2192 RCD \u2192 the house circuits (not backed up)'});});
+  ['L1','L2','L3','N'].forEach(function(k){DEC.splice(DEC.indexOf(houseC[k]),1);});
+  var decor=DEC;DEC=null;
+  // house neutral: RCD N out \u2192 N bar (blue), clearly visible along the left edge
+  if(feed){var rn=rcd.bot[3];stat('N',.0026,vv([[rn.x,rn.y,.045],[rn.x,gy-.2,.055],[rn.x-.04,gy-.226,.058],[gx-xi+.02,gy-.226,.058],[gx-xi+.016,gy-.05,.058],[gx-xi+.018,gy+.24,.052],[gx-.3,gy+.258,.045],[gx-.298,gy+.265,.04]]),{tip:'N from the RCD \u2192 N bar (the house neutrals)'});}
   // ---- incoming supply from above (from the utility meter / main fuses)
   var J=W(-.315,.205,.055);
   stat(0,.011,vv([[J.x,gy+.88,.03],[J.x,gy+.5,.04],[J.x,gy+.31,.05],[J.x,J.y+.02,.055],[J.x,J.y,.055]]),{mat:'jblack',tip:'Incoming supply (from the utility meter and main fuses)'});
@@ -6025,16 +6244,13 @@ function buildBoardDirect(brand,feed){
   cores.bo_PE=core('PE',rcb,peb,[-.02,-.04,.05],{tip:'Inverter cable PE \u2192 PE bar'});reg('bo_PE',function(tt){cores.bo_PE.set(tt);});R.hitAdd('bo_PE',peT);
   if(feed){var nT=q0.bot[3],nb2=[[jout.x-.004,jout.y,.05],[jout.x-.02,jout.y+.03,.052],[nT.x+.004,nT.y-.035,.05],[nT.x+.004,nT.y-.012,.046],[nT.x+.004,nT.y,.045]];
     cores.bo_N=core('N',rcb,nb2,[-.03,-.04,.05],{tip:'Inverter cable N \u2192 main switch Q0 N (grid side, not switched)'});reg('bo_N',function(tt){cores.bo_N.set(tt);});R.hitAdd('bo_N',nT);}
-  // ---- whole-house backup: LOAD from the inverter \u2192 Q-BYP I, grid bypass Q0 \u2192 Q-BYP II, Q-BYP out \u2192 RCD / house circuits
-  var ldJ=W(-.215,-.245,.05);
-  if(byp){var Q4=['L1','L2','L3','N'],cr=function(key,k,b,off,tip,t){cores[key]=core(k,rcb,b,off,{tip:tip});reg(key,function(tt){cores[key].set(tt);});R.hitAdd(key,t);};
-    Q4.forEach(function(k,i){var t=byp.top[i],xg=gx+.066+i*.0045;
-      cr('ld_'+k,k,[[ldJ.x+(i-1.5)*.003,ldJ.y,.05],[ldJ.x+(i-1.5)*.004+.02,gy-.228,.052],[xg,gy-.232,.058],[xg,gy-.025,.058],[t.x,gy-.016,.058],[t.x,t.y+.02,.048],[t.x,t.y,.045]],[.03+i*.006,-.02,.05],'LOAD from the inverter '+k+' \u2192 Q-BYP I ('+SS.cab+' mm\u00b2)',t);});
-    var pT=W(.27,.265,.04);cr('ld_PE','PE',[[ldJ.x+.004,ldJ.y,.05],[ldJ.x+.04,ldJ.y+.01,.052],[gx+xi-.03,gy-.22,.052],[gx+xi-.03,gy+.19,.05],[pT.x+.02,gy+.228,.045],[pT.x,pT.y,pT.z]],[-.02,-.04,.05],'LOAD cable PE \u2192 PE bar',pT);
-    Q4.forEach(function(k,i){var s=q0.bot[i],t=byp.top[4+i],xg=gx+P.gap1+.014+i*.0042;
-      cr('by_'+k,k,[[s.x-.003,s.y,.046],[s.x-.003,s.y-.04,.055],[s.x+.03,gy-.215,.055],[xg,gy-.225,.057],[xg,gy-.02,.057],[t.x,gy-.012,.056],[t.x,t.y+.02,.048],[t.x,t.y,.045]],[.03,.03,.05],'Grid bypass '+k+': main switch Q0 \u2192 Q-BYP II',t);});
-    Q4.forEach(function(k,i){var s=byp.bot[i],t=rcd.top[i],xg=gx+.081+i*.0045;
-      cr('bh_'+k,k,[[s.x,s.y,.046],[s.x,s.y-.04,.055],[s.x+.03,gy-.215,.055],[xg,gy-.228,.059],[xg,gy-.028,.059],[t.x,gy-.02,.059],[t.x,t.y+.02,.048],[t.x,t.y,.045]],[.03,-.03,.05],'House '+k+': Q-BYP out \u2192 RCD and the house circuits',t);});}
+  // ---- bypass feeder: Q0 \u2192 F-BYP (top), F-BYP (bottom) \u2192 cable to the backup board (Q-BYP II)
+  var jbp=W(-.155,-.262,.05);
+  if(fbp){var Q4=['L1','L2','L3','N'],cr=function(key,k,b,off,tip,t){cores[key]=core(k,rcb,b,off,{tip:tip});reg(key,function(tt){cores[key].set(tt);});R.hitAdd(key,t);};
+    Q4.forEach(function(k,i){var s=q0.bot[i],t=fbp.top[i],xg=gx+P.gap1+.014+i*.0042;
+      cr('fb_'+k,k,[[s.x-.003,s.y,.046],[s.x-.003,s.y-.04,.055],[s.x+.03,gy-.215,.055],[xg,gy-.225,.057],[xg,gy-.02,.057],[t.x,gy-.012,.056],[t.x,t.y+.02,.048],[t.x,t.y,.045]],[.03,.03,.05],'Bypass feed '+k+': main switch Q0 \u2192 F-BYP',t);});
+    Q4.forEach(function(k,i){var t=fbp.bot[i];cr('fo_'+k,k,[[jbp.x+(i-1.5)*.003,jbp.y,.05],[jbp.x+(i-1.5)*.006,jbp.y+.03,.052],[t.x,t.y-.035,.05],[t.x,t.y-.012,.046],[t.x,t.y,.045]],[.02+i*.006,-.02,.05],'Bypass feeder '+k+' \u2192 backup board, Q-BYP II',t);});
+    var pT2=W(.27,.265,.04);cr('fo_PE','PE',[[jbp.x+.004,jbp.y,.05],[jbp.x+.04,jbp.y+.01,.052],[gx+xi-.03,gy-.22,.052],[gx+xi-.03,gy+.19,.05],[pT2.x+.02,gy+.228,.045],[pT2.x,pT2.y,pT2.z]],[-.02,-.04,.05],'Bypass feeder PE \u2192 PE bar',pT2);}
   // ---- network cable (meter end): jacket in the middle duct, RS485 cores to the meter, the rest cut back
   var nj=W(-.235,.0,.062);
   ['A','B'].forEach(function(k,i){
@@ -6045,7 +6261,9 @@ function buildBoardDirect(brand,feed){
   });
   ['gr','wg','br','wbr','bl','or'].forEach(function(c,i){var a=nj.clone().add(V(-.003+(i%3)*.003,.002,.003-Math.floor(i/3)*.003));stat(c,.0011,[a,a.clone().add(V(0,.006,0))],{tip:'Unused core \u2014 cut back'});});
   var nx=gx-.08;
-  return {g:g,J:J,gx:gx,gy:gy,xi:xi,peAt:function(x){return W(x,.265,.04);},byp:byp,bypC:W(-.116,y2,.06),ldJ:ldJ,mt:mt,gridT:gridT,houseT:houseT,q0:q0,qi:qi,qiC:W(qx,y2,.06),cores:cores,netStart:nj,invOut:jout,meterC:W(-.29,y1,.06),c:W(0,0,.07),
+  if(feed){[[qx-.012,'F-INV \u2192 MODA GRID','#b32626'],[-.13,'F-BYP \u2192 backup board II','#c76a14'],[P.rcd+.012,'\u2192 house (not backed up)','#1f8a4c']].forEach(function(q,j){lab(g,q[1],q[0],-.274+(j===1?-.0:0),.066,{h:.0098,bg:q[2],c:'#ffffff'});});
+    lab(g,'grid in \u2193 Q0',-.29,-.04,.075,{h:.0095,bg:'#e8862a',c:'#ffffff'});}
+  return {g:g,J:J,gx:gx,gy:gy,xi:xi,decor:decor,rcd:rcd,houseC:houseC,fbp:fbp,fbC:W(-.155,y2,.06),jbp:jbp,peAt:function(x){return W(x,.265,.04);},byp:byp,mt:mt,gridT:gridT,houseT:houseT,q0:q0,qi:qi,qiC:W(qx,y2,.06),cores:cores,netStart:nj,invOut:jout,meterC:W(-.29,y1,.06),c:W(0,0,.07),
     netRoute:[[nj.x,nj.y,nj.z],[nj.x+.06,nj.y-.004,.058],[nx,gy-.008,.058],[nx,gy-.22,.058],[nx,gy-.3,.05],[nx-.002,.6,.03],[nx-.008,.27,.012]],
     gridRoute:[[jout.x,jout.y,.05],[jout.x,gy-.32,.05],[jout.x,.6,.03],[jout.x-.01,.34,.012]]};
 }
@@ -6063,6 +6281,43 @@ function bypSw(p,gx,gy,x,y){
   [-.04,-.0135,.0135,.04].forEach(function(qx){cy(g,.003,.003,.002,'black',qx,-h/2+.007,.052,'z',{ns:1});bot.push(V(gx+x+qx,gy+y-h/2-.002,.045));});
   lab(g,'I \u00b7 inverter',-.027,.0335,.0537,{h:.0048,c:'#1f8a4c'});lab(g,'II \u00b7 grid',.027,.0335,.0537,{h:.0048,c:'#b32626'});
   return {g:g,top:top,bot:bot,kn:kn};
+}
+// ---------------------------------------------------------------- backup board (partial board) beside the main board: the backup loads only.
+// Q-BYP (4-pole changeover) picks the source: I = the MODA's LOAD output, II = the grid through F-BYP in the main board (inverter faulty / service)
+function drawLoadPlate(k,w,h){k.fillStyle='#f4f5f6';k.fillRect(0,0,w,h);k.fillStyle='#2b3138';k.textAlign='center';k.textBaseline='middle';k.font='800 '+Math.round(h*.3)+'px Arial';k.fillText('BACKUP BOARD',w/2,h*.36);
+  k.font='600 '+Math.round(h*.2)+'px Arial';k.fillStyle='#4a5158';k.fillText('fed by the MODA LOAD output \u00b7 bypass Q-BYP',w/2,h*.74);}
+function partialBoard(brand,x0,y0,cab){
+  var SS=S(),rcb=rCore(cab),gx=x0,gy=y0,Wb=.38,Hb=.44,g=grp(R.root,gx,gy,0,'Backup board (partial board) \u2014 only the backup loads');
+  function W(x,y,z){return V(gx+x,gy+y,z);}
+  bx(g,Wb,Hb,.008,'boxGrey',0,0,.004,{tip:g.userData.tip});
+  [-1,1].forEach(function(s){bx(g,.012,Hb,.085,'boxGrey',s*(Wb/2-.006),0,.0425,{tip:g.userData.tip});bx(g,Wb,.012,.085,'boxGrey',0,s*(Hb/2-.006),.0425,{tip:g.userData.tip});});
+  decal(g,.3,.05,drawLoadPlate,0,Hb/2-.04,.0095,{ppm:2200,tip:g.userData.tip});
+  termBar(g,.13,-.075,.12,8,'N','#1f66c8','N bar (backup loads)','nbar');termBar(g,.12,.105,.12,7,'PE','#1e7a3d','PE bar (backup board)','pebar');
+  duct(g,Wb-.03,.04,0,.065);duct(g,Wb-.03,.045,0,-.13);
+  var y2=-.03;din(g,Wb-.03,y2);
+  var byp=bypSw(g,gx,gy,-.105,y2),rcd=devM(g,gx,gy,.012,y2,4,4,{tog:'black',test:1,noTog:1,lbl:'RCD 40/0.03',tip:'RCD 30 mA (backup loads)'}),mc=[],names=['Fridge / freezer','Lighting','Heat pump control','Sockets'];
+  for(var i=0;i<4;i++)mc.push(devM(g,gx,gy,.075+i*.019,y2,1,1,{tog:'grey',lbl:'C10',tip:'MCB C10 \u2014 backup load: '+names[i]}));
+  names.forEach(function(n,i){lab(g,n,.075+i*.019,y2+.07+(i%2)*.012,.07,{h:.0062,bg:'#ffffff',c:'#2b3138'});});
+  reg('byMount',function(t){var u=ease(t);byp.g.position.set(-.105,y2+.05*(1-u),.17*(1-u));byp.g.rotation.x=-.55*(1-u);});R.hitAdd('byMount',W(-.105,y2,.08));
+  // static: RCD \u2192 MCBs, MCBs \u2192 backup load cables out of the top, N to the N bar
+  DEC=[];
+  mc.forEach(function(m,i){var r=rcd.bot[i%3],t=m.top[0];stat(['L1','L2','L3'][i%3],.0016,vv([[r.x,r.y,.045],[r.x,r.y-.03,.05],[r.x+.02,gy-.13,.05],[t.x+.006,gy-.13,.05],[t.x+.01,gy+.06,.05],[t.x,t.y+.015,.047],[t.x,t.y,.045]]),{tip:'RCD \u2192 MCB'});
+    var b=m.bot[0];stat(0,.004,vv([[t.x,t.y+.02,.045],[t.x,gy+.065,.04],[t.x+.01,gy+.25,.03],[t.x+.015,gy+.7,.015]]),{mat:'jwhite',tip:'Backup load circuit: '+names[i]});});
+  var rN=rcd.bot[3];stat('N',.0022,vv([[rN.x,rN.y,.045],[rN.x,gy-.13,.05],[gx-.16,gy-.13,.05],[gx-.16,gy+.065,.05],[gx-.13,gy+.12,.045],[gx-.13,gy+.12,.04]]),{tip:'N from the RCD \u2192 N bar'});
+  var decor=DEC;DEC=null;
+  // cores (animated): LOAD in at the left gland \u2192 Q-BYP I; bypass feeder in at the middle gland \u2192 Q-BYP II; Q-BYP out \u2192 RCD
+  var lJ=W(-.13,-.205,.05),bJ=W(-.06,-.205,.05),cores={},Q4=['L1','L2','L3','N'],cr=function(key,k,b,off,tip,t,r){cores[key]=core(k,r||rcb,b,off,{tip:tip});reg(key,function(tt){cores[key].set(tt);});R.hitAdd(key,t);};
+  [lJ,bJ].forEach(function(J,j){cy(g,.012,.012,.02,'dark',J.x-gx,-Hb/2-.004,.05,null,{seg:12,tip:'Cable gland \u2014 '+(j?'bypass feeder from F-BYP':'LOAD cable from the MODA')});});
+  Q4.forEach(function(k,i){var t=byp.top[i],xg=gx-.16+i*.005;
+    cr('ld_'+k,k,[[lJ.x+(i-1.5)*.003,lJ.y,.05],[lJ.x+(i-1.5)*.004,gy-.16,.052],[xg,gy-.17,.056],[xg,gy+.04,.056],[t.x,gy+.055,.056],[t.x,t.y+.02,.048],[t.x,t.y,.045]],[.03+i*.006,-.02,.05],'LOAD from the MODA '+k+' \u2192 Q-BYP I ('+cab+' mm\u00b2)',t);});
+  var pT=W(.06,.12,.04);cr('ld_PE','PE',[[lJ.x+.004,lJ.y,.05],[lJ.x+.02,gy-.17,.052],[gx+.17,gy-.17,.052],[gx+.17,gy+.09,.05],[pT.x+.01,gy+.105,.045],[pT.x,pT.y,pT.z]],[-.02,-.04,.05],'LOAD cable PE \u2192 PE bar',pT);
+  Q4.forEach(function(k,i){var t=byp.top[4+i],xg=gx-.04+i*.005;
+    cr('by_'+k,k,[[bJ.x+(i-1.5)*.003,bJ.y,.05],[bJ.x+(i-1.5)*.004,gy-.16,.052],[xg,gy-.165,.058],[xg,gy+.035,.058],[t.x,gy+.05,.058],[t.x,t.y+.02,.048],[t.x,t.y,.045]],[.02+i*.006,-.02,.05],'Bypass feeder '+k+' from F-BYP \u2192 Q-BYP II',t);});
+  var pT2=W(.08,.12,.04);cr('by_PE','PE',[[bJ.x+.004,bJ.y,.05],[bJ.x+.03,gy-.172,.052],[gx+.165,gy-.172,.052],[gx+.165,gy+.088,.05],[pT2.x+.01,gy+.105,.045],[pT2.x,pT2.y,pT2.z]],[-.02,-.04,.05],'Bypass feeder PE \u2192 PE bar',pT2);
+  Q4.forEach(function(k,i){var s0=byp.bot[i],t=rcd.top[i];
+    cr('bh_'+k,k,[[s0.x,s0.y,.046],[s0.x,s0.y-.03,.055],[s0.x+.02,gy-.135,.056],[t.x-.02,gy-.135,.056],[t.x-.012,gy+.045,.056],[t.x,gy+.055,.052],[t.x,t.y+.02,.048],[t.x,t.y,.045]],[.03,-.03,.05],'Q-BYP out '+k+' \u2192 RCD \u2192 the backup loads',t);});
+  [[-.105,'Q-BYP  I: MODA \u00b7 II: grid','#1d232a'],[.03,'\u2192 backup loads','#1f8a4c']].forEach(function(q){lab(g,q[1],q[0],-.175,.066,{h:.0095,bg:q[2],c:'#ffffff'});});
+  return {g:g,byp:byp,rcd:rcd,mc:mc,cores:cores,decor:decor,lJ:lJ,bJ:bJ,c:W(0,0,.07),bypC:W(-.105,y2,.06),x:gx,y:gy,Hb:Hb,Wb:Wb};
 }
 // ---------------------------------------------------------------- the three worlds and their guided steps
 function stepCam(t,dir,dist){return camAt(t,dir,dist);}
@@ -6117,45 +6372,133 @@ function addTrace(paths){
   reg('trace',function(t){R.traceOn=t>.5;R.pulses.forEach(function(p){p.m.forEach(function(m){m.visible=R.traceOn;});});});
 }
 function runTrace(){if(!R.traceOn||!R.pulses)return;var tn=now();R.pulses.forEach(function(p,j){var sp=.6/p.len,n=p.m.length;p.m.forEach(function(m,i){var u=((tn*sp+i/n+j*.05/n)%1);m.position.copy(p.c.getPointAt(u));});});}
+
+// ---------------------------------------------------------------- how the bypass switch works: pulses along the real conductors
+// I: grid \u2192 Q0 \u2192 F-INV \u2192 AC isolator \u2192 MODA GRID (amber) and MODA LOAD \u2192 Q-BYP I \u2192 RCD \u2192 house (green); II: grid \u2192 Q0 \u2192 Q-BYP II \u2192 house
+var FLC={g:0xffa62b,i:0x33da7a,pv:0xf5d330,b:0xb27cff};
+function flowCurve(pts,col,sp){var p=[];pts.forEach(function(v){if(!p.length||p[p.length-1].distanceTo(v)>.004)p.push(v.clone());});if(p.length<2)return null;
+  var c=new T.CatmullRomCurve3(p,false,'centripetal'),len=c.getLength(),n=Math.max(6,Math.min(48,Math.round(len/.16))),ms=[];
+  // drawn on top (x-ray) so the power can be followed inside the trunking and the boards
+  var mat=new T.MeshBasicMaterial({color:col,toneMapped:false,depthTest:false,transparent:true,opacity:.95});
+  for(var i=0;i<n;i++){var m=new T.Mesh(R.flowGeo,mat);m.renderOrder=12;R.root.add(m);ms.push(m);}
+  var tb=new T.Mesh(new T.TubeGeometry(c,Math.max(8,Math.round(len/.03)),.004,6,false),new T.MeshBasicMaterial({color:col,toneMapped:false,transparent:true,opacity:.3,depthWrite:false,depthTest:false}));tb.renderOrder=11;tb.userData.flow=1;R.root.add(tb);ms.push(tb);
+  return {c:c,m:ms,len:len,sp:sp||1,tb:tb};}
+// the simulation: grid ON / OFF, MODA running / faulty, Q-BYP I / 0 / II \u2192 which paths carry power, what is dimmed, what the LED shows
+function simState(){var F=R.sim,st=R.steps&&R.steps[S().step];if(!F||!st||!st.sim||S().setup||getT(st.keys[0])<.99)return null;return st.sim==='byp'?{grid:1,inv:1,byp:F.byp,m:'byp'}:{grid:F.grid,inv:F.inv,byp:F.byp,m:'full'};}
+function simSig(q){return q?q.grid+''+q.inv+q.byp+(q.m==='byp'?'b':''):'';}
+function simApply(){var F=R.sim;if(!F)return;var q=simState(),sig=simSig(q);if(F.sig===sig)return;F.sig=sig;
+  F.cur.forEach(function(p){p.m.forEach(function(x){R.root.remove(x);});if(p.tb){p.tb.geometry.dispose();p.tb.material.dispose();}});F.cur=[];
+  if(!R.flowGeo)R.flowGeo=new T.SphereGeometry(.011,10,8);
+  if(!F.dim)F.dim=new T.MeshStandardMaterial({color:0x6d747b,transparent:true,opacity:.22,roughness:.6,depthWrite:false});
+  var on=q?F.active(q):{},off=[];if(q){off=(F.decor||[]).slice();Object.keys(F.groups).forEach(function(g){if(!on[g])off=off.concat(F.groups[g]);});}
+  (F.all||[]).forEach(function(c){if(!c||!c.mesh)return;if(!c.mesh.userData.m0)c.mesh.userData.m0=c.mesh.material;c.mesh.material=q&&off.indexOf(c)>=0?F.dim:c.mesh.userData.m0;});
+  F.look(q,on);
+  if(q)F.paths(q,on).forEach(function(r){var c=flowCurve(r[0],r[1],r[2]);if(c)F.cur.push(c);});
+  if(!R.building)ui();
+}
+function runFlow(){var F=R.sim;if(F&&F.knT!=null&&F.kn){var dk=F.knT-F.kn.rotation.z;F.kn.rotation.z+=Math.abs(dk)<.002?dk:dk*.16;}if(!F||!F.cur.length)return;var tn=now(),cp=R.camera.position;F.cur.forEach(function(p,j){var n=p.m.length-(p.tb?1:0),sp=.32/p.len*p.sp;p.m.forEach(function(m,i){if(m===p.tb)return;var u=(tn*sp+i/n+j*.013)%1;if(u<0)u+=1;m.position.copy(p.c.getPointAt(u));var k=Math.max(.4,Math.min(1.4,m.position.distanceTo(cp)/3));m.scale.set(k,k,k);});});}
+function simCtl(mode,done){var F=R.sim;if(!F)return '';var ch=function(key,v,t){return '<button class="bt-chip'+(done&&F[key]===v?' on':'')+'" data-act="phsim" data-k="'+key+':'+v+'">'+t+'</button>';};
+  var h='<div class="ph-simc">'+(mode==='full'?'<div><span>Grid</span>'+ch('grid',1,'ON')+ch('grid',0,'OFF \u00b7 outage')+'</div><div><span>MODA</span>'+ch('inv',1,'Running')+ch('inv',0,'Faulty')+'</div>':'')+
+    '<div><span>Q-BYP</span>'+ch('byp',1,'I \u00b7 MODA')+ch('byp',0,'0 \u00b7 off')+ch('byp',2,'II \u00b7 grid')+'</div></div>';
+  return h+(done?simText()+'<div class="ph-flk"><span><i style="background:#ffa62b"></i>grid</span><span><i style="background:#33da7a"></i>to the backup loads</span>'+(mode==='full'?'<span><i style="background:#f5d330"></i>PV</span><span><i style="background:#b27cff"></i>battery</span>':'')+'</div>':'');}
+// single-line diagram of the backup system: the live route is drawn with moving dashes, the backup feed always in green
+function simDiagram(q,on){
+  var G='#ffa62b',B='#33da7a',P='#b27cff',Y='#f5d330',D='#3a4654';
+  var seg=function(d,st,col){return '<path d="'+d+'" class="'+(st==='f'?'ph-df':st==='l'?'ph-dl':'ph-dd')+'" stroke="'+(st==='d'?D:col)+'"/>';};
+  var box=function(x,y,w,h,t,on2,col,t2){return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="5" fill="'+(on2?'#14212d':'#10161d')+'" stroke="'+(on2?col:'#3a4654')+'"/><text x="'+(x+w/2)+'" y="'+(y+h/2+(t2?-1:3.5))+'" fill="'+(on2?'#fff':'#7d8a98')+'" font-size="10" font-weight="800" text-anchor="middle">'+t+'</text>'+(t2?'<text x="'+(x+w/2)+'" y="'+(y+h/2+10)+'" fill="'+(on2?'#c9d5e1':'#6b7785')+'" font-size="8" text-anchor="middle">'+t2+'</text>':'');};
+  var g=q.grid,iv=q.inv,full=q.m==='full',bat=g?'M188,24 L188,16':'M188,16 L188,24';
+  var h='<svg class="ph-dia" viewBox="0 0 320 178" role="img" aria-label="Diagram: where the backup loads get their power">';
+  h+=seg('M52,89 L72,89',g?'f':'d',G);                                                   // grid \u2192 Q0
+  h+=seg('M72,89 L92,89',g?'f':'d',G);                                                   // Q0 \u2192 house
+  h+=seg('M72,89 L72,40 L94,40 M128,40 L146,40',g?(iv?'f':'l'):'d',G);                    // Q0 \u2192 F-INV \u2192 MODA
+  h+=seg('M204,40 L238,40 L238,71',iv?(q.byp===1?'f':'l'):'d',B);                          // MODA LOAD \u2192 I
+  h+=seg('M72,89 L72,146 L94,146 M128,146 L238,146 L238,107',g?(q.byp===2?'f':'l'):'d',q.byp===2?B:G); // Q0 \u2192 F-BYP \u2192 II
+  h+=seg('M262,89 L276,89',on.out?'f':'d',B);                                             // Q-BYP \u2192 backup loads
+  if(full){h+=seg('M159,16 L159,24',iv?'f':'d',Y);h+=seg(bat,iv?'f':'d',P);}
+  h+=box(6,74,46,30,'GRID',g,G,g?'ON':'OFF')+box(92,79,52,20,'House',g,G)+box(94,31,34,18,'F-INV',g,G)+box(146,24,58,32,'MODA',iv,iv?'#2fc7e6':'#ff6b5b',iv?(g?'on-grid':'off-grid'):'faulty')+box(94,137,34,18,'F-BYP',g,q.byp===2?B:G);
+  if(full)h+=box(146,4,26,12,'PV',iv,Y)+box(172,4,32,12,'BAT',iv,P);
+  h+='<circle cx="72" cy="89" r="3" fill="'+(g?G:D)+'"/><text x="66" y="83" fill="#9fb0c2" font-size="8" text-anchor="end">Q0</text>';
+  // Q-BYP: three contacts and the blade
+  var cy=q.byp===1?71:q.byp===2?107:89,bc=on.out?B:'#9fb0c2';
+  h+='<rect x="224" y="58" width="48" height="62" rx="7" fill="none" stroke="#56636f" stroke-dasharray="3 3"/><text x="266" y="131" fill="#c9d5e1" font-size="9" font-weight="800" text-anchor="middle">Q-BYP</text>';
+  [[71,'I'],[89,'0'],[107,'II']].forEach(function(c){h+='<circle cx="238" cy="'+c[0]+'" r="3" fill="'+(c[0]===cy?bc:'#56636f')+'"/><text x="232" y="'+(c[0]+3)+'" fill="'+(c[0]===cy?'#fff':'#7d8a98')+'" font-size="8" font-weight="800" text-anchor="end">'+c[1]+'</text>';});
+  h+='<line x1="262" y1="89" x2="241" y2="'+cy+'" stroke="'+bc+'" stroke-width="3" stroke-linecap="round"/><circle cx="262" cy="89" r="3.5" fill="'+bc+'"/>';
+  h+=box(276,70,40,38,'Backup',on.out,B,'loads');
+  h+='<text x="6" y="172" fill="#9fb0c2" font-size="9">'+(on.inv?'<tspan fill="'+B+'" font-weight="800">\u25cf</tspan> Backup loads fed by the MODA (Q-BYP I)':on.byp?'<tspan fill="'+B+'" font-weight="800">\u25cf</tspan> Backup loads fed by the grid: Q0 \u2192 F-BYP \u2192 Q-BYP II':'<tspan fill="#ff6b5b" font-weight="800">\u25cf</tspan> Backup loads without power')+'</text>';
+  return h+'</svg>';
+}
+function simText(){var F=R.sim,q=simState();if(!F||!q)return '';var on=F.active(q),r=function(a,b,c){return '<div><span>'+a+'</span><b class="'+(c||'')+'">'+b+'</b></div>';};
+  var moda=!q.inv?'Faulty \u2014 off':q.grid?'On-grid':'Off-grid (battery + PV)',bl=on.inv?'ON \u2014 from the MODA LOAD':on.byp?'ON \u2014 straight from the grid (bypass)':'OFF';
+  var h=simDiagram(q,on)+'<div class="ph-sim">'+r('Grid',q.grid?'ON':'OFF \u2014 outage',q.grid?'g':'r')+r('MODA',moda,!q.inv?'r':q.grid?'g':'b')+r('Q-BYP','Position '+(q.byp===1?'I':q.byp===2?'II':'0'))+
+    r('Backup loads',bl,on.inv?'g':on.byp?'o':'r')+r('Other house circuits',q.grid?'ON \u2014 from the grid':'OFF (no grid)',q.grid?'o':'r')+'</div>';
+  var tip=!q.grid&&q.byp===2?'Grid outage with Q-BYP in II: nothing feeds the backup loads \u2014 switch Q-BYP to I so the MODA can run them from the battery.':
+    !q.inv&&q.byp===1?'The MODA is faulty: the backup loads are dead. Switch Q-BYP to II to feed them straight from the grid until the MODA is repaired.':
+    !q.grid&&q.inv&&q.byp===1?'Grid outage: the MODA disconnects from the grid and keeps the backup loads running from the battery and PV (the LED grid icon goes blue). The other house circuits are off.':
+    q.byp===2?'Bypass: the backup loads run straight from the grid through F-BYP and Q-BYP II \u2014 the MODA is not in the path, so it can be serviced or replaced.':
+    q.byp===0?'Q-BYP in 0: the backup loads are switched off from both sources.':'Normal operation: the grid feeds the MODA through F-INV and the AC isolator; the MODA\u2019s LOAD output feeds the backup board through Q-BYP I.';
+  return h+'<div class="ph-simt">'+tip+'</div>';}
+// a slim wall display above a tower: battery capacity (and the inverter size on tower 1)
+function wallSign(x,y,w,cols,tip){
+  var hpx=150,wpx=Math.round(w/.155*hpx),c=document.createElement('canvas');c.width=wpx*2;c.height=hpx*2;var k=c.getContext('2d');k.scale(2,2);
+  k.fillStyle='rgba(13,20,28,.94)';rrect(k,2,2,wpx-4,hpx-4,18);k.fill();k.strokeStyle='rgba(51,218,122,.55)';k.lineWidth=2;rrect(k,2,2,wpx-4,hpx-4,18);k.stroke();
+  k.fillStyle='#33da7a';rrect(k,14,22,6,hpx-44,3);k.fill();
+  var cw=(wpx-40)/cols.length;
+  cols.forEach(function(q,i){var x0=34+i*cw;if(i){k.fillStyle='rgba(255,255,255,.14)';k.fillRect(x0-12,26,2,hpx-52);}
+    k.textAlign='left';k.textBaseline='alphabetic';k.fillStyle='#8ffcb8';k.font='700 17px Arial';k.fillText(q[0],x0,44);
+    k.fillStyle='#ffffff';k.font='800 48px Arial';k.fillText(q[1],x0,96);var bw=k.measureText(q[1]).width;k.fillStyle='#9fb0c2';k.font='700 22px Arial';k.fillText(q[2],x0+bw+8,96);
+    k.fillStyle='#9fb0c2';k.font='600 16px Arial';k.fillText(q[3]||'',x0,126);});
+  var t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;t.anisotropy=8;
+  var g=grp(R.root,x,y,0,tip),pl=new T.Mesh(new T.PlaneGeometry(w,.155),new T.MeshBasicMaterial({map:t,transparent:true,toneMapped:false}));pl.position.z=.014;pl.userData.tip=tip;g.add(pl);
+  bx(g,w-.02,.135,.01,'black',0,0,.006,{ns:1,tip:tip});return g;
+}
 // ---- MODA
 function worldMODA(brand){
   var A=buildMODA(),Bd=buildBoardDirect(brand,true),IM=A.IM;R.noClips=true;
-  var GSD=gridSide(true,Bd.J,false),PV=pvArray(true);
+  var GSD=gridSide(true,Bd.J,false);pvArray(false);delete R.st.roof;
   R.st.meter={c:Bd.c,s:.52,ang:true};
-  var X=A.X,W=A.W,yi=A.yi,nb=A.nb,SS=S(),q=sp0(),xo=X+W/2,rc=rCore(SS.cab);
+  var X=A.X,W=A.W,Wt=A.Wt,yi=A.yi,nb=A.nb,SS=S(),q=sp0(),xo=X+W/2,xt=X+Wt/2,rc=rCore(SS.cab);
   // the inverter's own AC breaker (Q-INV) in a box on the wall, to the right of the MODA
-  var JB=null,AB=benyIso(xo+.40,Math.max(.9,Math.min(1.6,yi+.15))),abHome=V(AB.x,AB.y,0);
+  var JB=null,AB=benyIso(A.T2&&A.T2.right?A.X2+A.W2/2+.33:xt+.40,Math.max(.9,Math.min(1.6,yi+.15))),abHome=V(AB.x,AB.y,0);
   reg('mtBox',function(t){var u=ease(Math.min(1,t/.7));AB.g.position.set(abHome.x,abHome.y-.06*(1-u),.38*(1-u));screwSet(AB.sc,.72,t);});
   R.asm.push({first:'mtBox',set:function(v){AB.g.visible=v;}});R.hitAdd('mtBox',AB.c.clone().add(V(0,-.06,.3)));
   var cvv=true;reg('abCov',function(t){var u=Math.min(1,t/.65),P;if(u<.5)P=V(abHome.x-.22,abHome.y-.03,.12).lerp(V(abHome.x,abHome.y,.1),ease(u/.5));else P=V(abHome.x,abHome.y,.1).lerp(abHome,ease((u-.5)/.5));
     AB.cv.visible=cvv;AB.cv.position.copy(P);AB.cv.rotation.y=.5*(1-ease(Math.min(1,u*2)));screwSet(AB.csc,.7,t);if(JB){JB.lid.visible=cvv;JB.lid.position.z=.22*(1-ease(u));}});
   R.asm.push({first:'abCov',set:function(v){cvv=v;AB.cv.visible=v;if(JB)JB.lid.visible=v;}});R.hitAdd('abCov',AB.c.clone().add(V(-.22,-.03,.17)));
+  var awr=grp(R.root,0,0,0),lwr=grp(R.root,0,0,0);R.root.remove(AB.cv);awr.add(AB.cv);
+  togAdd({key:'isoCov',objs:[AB.cv],can:function(){return getT('abCov')>.99;},label:function(on){return on?'Fit the isolator cover again':'Take the isolator cover off';},
+    apply:function(u){var a=ease(Math.min(1,u*2)),b=ease(Math.max(0,u*2-1));awr.position.set(.22*b,-(AB.y-.09)*b,.12*a+.2*b);if(JB){JB.lid.parent!==lwr&&JB.lid.parent&&(JB.lid.parent.remove(JB.lid),lwr.add(JB.lid));lwr.position.set(.3*b,-(JB.y-.06)*b,.1*a+.2*b);}}});
   // junction box under the isolator (N and PE are joined there), two short conduits up into the isolator
-  JB=jBox(AB.x,AB.y-AB.Hb/2-.11);R.an.abCov.set(0);
+  JB=jBox(AB.x,AB.y-AB.Hb/2-.11);R.an.abCov.set(0);JB.lid.userData.tog='isoCov';
   [AB.G1,AB.G2].forEach(function(G){cy(R.root,.011,.011,G.y-.006-(JB.y+JB.Hb/2),'grey',G.x,(G.y-.006+JB.y+JB.Hb/2)/2,.03,null,{tip:'Conduit: junction box \u2192 isolator'});});
   R.asm.push({first:'mtBox',set:function(v){JB.g.visible=v;}});
   R.elec=new T.Group();R.root.add(R.elec);R.par=R.elec;R.elecFirst='mPE';
   // ---- cable trunking on the wall (clear lid): every cable leaves the MODA towards the wall and runs in it
-  var HY=.3,HWd=.1,HT=HY+HWd/2,xR=xo+.065,xL=X-W/2-.065,xI=AB.x,xB=Bd.gx-.13,yR=yi+.035,LY={LOAD:.335,GRID:.315,PE:.297,RS:.281,EC:.265},jb0=JB.y-JB.Hb/2-.03;
+  var HY=.3,HWd=.1,HT=HY+HWd/2,xR=xt+.065,xL=X-Wt/2-.065,xI=AB.x,xB=Bd.gx-.13,yR=yi+.035,LY={LOAD:.335,BYP:.325,GRID:.315,PE:.297,RS:.281,EC:.265},jb0=JB.y-JB.Hb/2-.03;
   R.par=null;
   trunk(xL-.03,HY,ROOM.R-.02,HY,HWd,'Cable trunking (clear lid)');
   trunk(xR,HT,xR,yR,.07,'Cable trunking \u2192 MODA right side');trunk(xL,HT,xL,ROOM.H-.01,.06,'Cable trunking \u2192 MODA left side \u00b7 PV up to the roof');
   trunk(xI,HT,xI,jb0,.07,'Cable trunking \u2192 junction box / AC isolator');
   trunk(xB,HT,xB,Bd.gy-.3,.22,'Cable trunking \u2192 distribution board');
+  var BB=partialBoard(brand,2.17,1.45,SS.cab);R.st.bb={c:BB.c.clone(),s:.4,ang:true};var xBB=BB.x-.095;trunk(xBB,HT,xBB,BB.y-BB.Hb/2-.03,.1,'Cable trunking \u2192 backup board');
+  [['LOAD',-.025,'#2f6fd6'],['BYPASS',.025,'#c76a14']].forEach(function(q){tag(q[0],xBB+q[1],BB.y-BB.Hb/2-.15,q[2],{c:'#ffffff',h:.014});});
   [['GRID',yR-.12,'#ffffff'],['LOAD',yR-.16,'#2f6fd6'],['PE',yR-.2,'#2fae5b']].forEach(function(q){tag(q[0],xR,q[1],q[2],{c:q[2]==='#ffffff'?'#1d232a':'#ffffff',h:.017});});
   tag('RS485',xL,yR-.12,'#e8862a',{c:'#ffffff',h:.015});tag('PV1',xL,yR+.18,'#c8322b',{c:'#ffffff',h:.016});
   tag('GRID',xI,jb0-.12,'#ffffff',{h:.017});
-  [['LOAD',-.085,'#2f6fd6'],['GRID',-.04,'#ffffff'],['PE',.01,'#2fae5b'],['RS485',.045,'#e8862a'],['EARTH',.088,'#8a5a2b']].forEach(function(q){tag(q[0],xB+q[1],Bd.gy-.45,q[2],{c:q[2]==='#ffffff'?'#1d232a':'#ffffff',h:.015});});
-  tag('GRID  \u00b7  LOAD  \u00b7  PE  \u00b7  RS485',(xR+xI)/2,HY+.065,'#ffffff',{h:.018});tag('LOAD \u00b7 GRID \u2192 AC isolator  \u00b7  RS485 \u00b7 PE',(xI+xB)/2+.1,HY+.065,'#ffffff',{h:.018});tag('EARTH \u2192 PE bar in the board',(xB+ROOM.R)/2+.08,HY+.065,'#8a5a2b',{c:'#ffffff',h:.018});
+  [['BYPASS',-.085,'#c76a14'],['GRID',-.04,'#ffffff'],['PE',.01,'#2fae5b'],['RS485',.045,'#e8862a'],['EARTH',.088,'#8a5a2b']].forEach(function(q){tag(q[0],xB+q[1],Bd.gy-.45,q[2],{c:q[2]==='#ffffff'?'#1d232a':'#ffffff',h:.015});});
+  tag('GRID  \u00b7  LOAD  \u00b7  PE  \u00b7  RS485',(xR+xI)/2,HY+.065,'#ffffff',{h:.018});tag('LOAD \u2192 backup board \u00b7 GRID \u2192 AC isolator \u00b7 RS485 \u00b7 PE',(xI+xB)/2+.1,HY+.065,'#ffffff',{h:.018});tag('EARTH \u2192 PE bar in the board',(xB+ROOM.R)/2+.08,HY+.065,'#8a5a2b',{c:'#ffffff',h:.018});
   var gx=Bd.gx,gy=Bd.gy,xi=Bd.xi,peE=Bd.peAt(.25),peM=Bd.peAt(.23);
   var EA=earthing(true,[[ROOM.R-.05,.42,.15],[ROOM.R-.09,LY.EC+.02,.024],[ROOM.R-.14,LY.EC,.014],[xB+.105,LY.EC,.014],[xB+.088,LY.EC+.05,.028],[xB+.088,gy-.34,.028],[xB+.088,gy-.29,.05],[gx+xi-.045,gy-.255,.052],[gx+xi-.045,gy+.2,.05],[peE.x+.018,gy+.235,.045],[peE.x,peE.y,peE.z]],peE);
   R.par=R.elec;
   // GRID: junction box \u2192 down \u2192 along \u2192 up beside the MODA \u2192 behind the unit \u2192 up into the bay to the GRID plug
   var gridRoute=[[JB.G1.x,JB.G1.y,.03],[JB.G1.x,JB.G1.y-.04,.026],[xI-.012,jb0-.06,.028],[xI-.012,LY.GRID+.05,.028],[xI-.035,LY.GRID,.014],[xR+.035,LY.GRID,.014],[xR-.012,LY.GRID+.05,.028],[xR-.012,yR-.05,.028],[xR-.015,yR,.022],[xo-.01,yi+.025,.022],[A.grid.x-.01,yi+.045,A.grid.z-.04]];
-  var lj=Bd.ldJ,loadRoute=[[lj.x,lj.y,lj.z],[lj.x,Bd.gy-.29,.05],[xB-.085,Bd.gy-.34,.028],[xB-.085,LY.LOAD+.05,.028],[xB-.11,LY.LOAD,.014],[xR+.035,LY.LOAD,.014],[xR+.012,LY.LOAD+.05,.028],[xR+.012,yR-.05,.028],[xR+.008,yR,.022],[xo-.004,yi+.03,.024],[A.load.x+.012,yi+.045,A.load.z-.04]];
+  var lj=BB.lJ,loadRoute=[[lj.x,lj.y,lj.z],[lj.x,lj.y-.05,.04],[xBB-.025,BB.y-BB.Hb/2-.07,.028],[xBB-.025,LY.LOAD+.05,.028],[xBB-.05,LY.LOAD,.014],[xR+.035,LY.LOAD,.014],[xR+.012,LY.LOAD+.05,.028],[xR+.012,yR-.05,.028],[xR+.008,yR,.022],[xo-.004,yi+.03,.024],[A.load.x+.012,yi+.045,A.load.z-.04]];
   var Eg=V(A.grid.x+.1,yi+.19,A.grid.z),El=V(A.load.x+.1,yi+.19,A.load.z);
   acRoundPlug('mG','GRID',A.grid,Eg,gridRoute,'devBlack');
   acRoundPlug('mL','LOAD',A.load,El,loadRoute,'devBlue');
+  // bypass feeder: F-BYP in the main board \u2192 down its trunking \u2192 along \u2192 up into the backup board (Q-BYP II)
+  var jb2=Bd.jbp,bpRoute=vv([[jb2.x,jb2.y,jb2.z],[jb2.x,Bd.gy-.29,.05],[xB-.085,Bd.gy-.34,.028],[xB-.085,LY.BYP+.05,.028],[xB-.06,LY.BYP,.014],[xBB,LY.BYP,.014],[xBB+.025,LY.BYP+.05,.028],[xBB+.025,BB.y-BB.Hb/2-.07,.028],[BB.bJ.x,BB.bJ.y-.05,.04],[BB.bJ.x,BB.bJ.y,BB.bJ.z]]);
+  R.par=null;var bpCab=stat(0,rJack(SS.cab),bpRoute,{mat:'jblack',tip:'Bypass feeder 5G'+SS.cab+' mm\u00b2: F-BYP in the main board \u2192 backup board, Q-BYP II'});R.par=R.elec;
+  R.asm.push({first:'fo_L1',set:function(v){bpCab.mesh.visible=v;}});
   // feeder: from F-INV in the board, down the board's trunking, along, up into the junction box
   var jo=Bd.invOut,feedRoute=[[jo.x,jo.y,jo.z],[jo.x,Bd.gy-.29,.05],[xB-.04,Bd.gy-.34,.028],[xB-.04,LY.GRID+.05,.028],[xB-.065,LY.GRID,.014],[xI+.035,LY.GRID,.014],[xI+.012,LY.GRID+.05,.028],[xI+.012,jb0-.06,.028],[JB.G2.x,JB.G2.y-.04,.026],[JB.G2.x,JB.G2.y,.03]];
   stat(0,rJack(SS.cab),vv(feedRoute),{mat:'jblack',tip:'GRID cable from the fuse F-INV in the board (5G'+SS.cab+' mm\u00b2) \u2192 junction box / AC isolator'});
@@ -6197,7 +6540,7 @@ function worldMODA(brand){
     var b=Math.min(1,t/.14),dd=Math.max(0,Math.min(1,(t-.16)/.14)),ac=Math.max(0,Math.min(1,(t-.32)/.1));
     IM.knobs.bat.rotation.x=-ease(b)*Math.PI/2;IM.knobs.dc.rotation.x=-ease(dd)*Math.PI/2;
     if(lc){var gh=t>0&&t<.36;if(lc.gh!==gh){var m=lc.pane.material;m.transparent=gh;m.opacity=gh?.28:1;m.depthWrite=!gh;m.needsUpdate=true;lc.gh=gh;}}
-    (Bd.qi.tg||[]).forEach(function(m){m.position.y=-.001+.014*ease(ac);});AB.hd.rotation.z=Math.PI/2*(1-ease(ac));if(Bd.byp)Bd.byp.kn.rotation.z=Math.PI/3*ease(Math.max(0,Math.min(1,(t-.36)/.08)));
+    (Bd.qi.tg||[]).forEach(function(m){m.position.y=-.001+.014*ease(ac);});AB.hd.rotation.z=Math.PI/2*(1-ease(ac));if(BB&&BB.byp)BB.byp.kn.rotation.z=Math.PI/3*ease(Math.max(0,Math.min(1,(t-.36)/.08)));if(R.sim&&R.sim.lmat){R.sim.lmat.emissive.setHex(t>.9?0xfff2d6:0);R.sim.lpt.intensity=t>.9?1.4:0;}
     var init=t>.45&&t<.84,on=t>=.84,n=init?Math.floor((t-.45)/.39*6):on?5:0;
     L.disc.material.map=on?L.on:L.off;
     L.soc.forEach(function(s,j){s.material.color.setHex(j<n?0x3ff0d0:0x1d2b2c);});
@@ -6205,32 +6548,63 @@ function worldMODA(brand){
     L.state=on?'on':init?'init':'off';
   });
   R.hitAdd('ledOn',V(X-(IM.xin+.024),yi+.118,A.zc+.09));
-  var st=[],mc=V(X-.62,.42,.75),wide=stepCam(mc,[.05,.62,1],3.5),ord=['first','second','third','fourth','fifth','sixth'],mf=mainFuse(),GZ=GS.z,X0=ROOM.R+ROOM.T;
+  // wall displays above the towers
+  var kw1=A.bm.filter(function(m){return m.tw===1;}),kw2=A.bm.filter(function(m){return m.tw===2;}),sumK=function(l){return Math.round(l.reduce(function(a,m){return a+BT[m.t].kwh;},0)*10)/10;},mlist=function(l){return l.length?l.length+' \u00d7 '+(l.every(function(m){return m.t===l[0].t;})?BT[l[0].t].kwh+' kWh':'mixed: '+l.map(function(m){return m.t==='5.0'?'5':m.t;}).join(' + ')):'no modules yet';};
+  wallSign(X,A.top+.21,Math.min(.58,A.W-.02),[['INVERTER',''+SS.kw,'kW','MODA '+SS.kw+'K TL3-HU'],[A.T2?'TOWER 1':'BATTERY',''+sumK(kw1),'kWh',mlist(kw1)]].concat(A.T2?[['SYSTEM',''+sumK(A.bm),'kWh','2 towers']]:[]),'Tower 1: MODA '+SS.kw+' kW \u00b7 '+sumK(kw1)+' kWh');
+  if(A.T2)wallSign(A.T2.x,A.T2.top+.24,Math.max(.36,A.W2-.1),[['TOWER 2',''+sumK(kw2),'kWh',mlist(kw2)]],'Tower 2: '+sumK(kw2)+' kWh \u2014 extension cable to tower 1');
+  // the simulation (power flows along the real conductors)
+  var bcs=function(C,re){return Object.keys(C).filter(function(k){return re.test(k);}).map(function(k){return C[k];});},C=Bd.cores,BC=BB.cores;
+  var lamp=grp(R.root,-.2,ROOM.H-.03,2.3,'Garage light \u2014 on a backup circuit'),lmat=new T.MeshStandardMaterial({color:0xf2f4f6,emissive:0x000000,emissiveIntensity:1,roughness:.4});
+  var lm=new T.Mesh(new T.BoxGeometry(1.1,.03,.12),lmat);lm.userData.tip='Garage light \u2014 on a backup circuit (lit when the backup loads have power)';lamp.add(lm);bx(lamp,1.12,.012,.14,'white',0,.02,0,{ns:1});var lpt=new T.PointLight(0xfff0d0,0,7,1.6);lpt.position.set(0,-.12,0);lamp.add(lpt);
+  // status sign above the backup board: where the backup loads get their power right now
+  var sgC=document.createElement('canvas');sgC.width=520;sgC.height=230;var sgT=new T.CanvasTexture(sgC);sgT.colorSpace=T.SRGBColorSpace;sgT.anisotropy=8;
+  var sgG=grp(R.root,BB.x-.07,BB.y+BB.Hb/2+.1,.012,'Backup loads \u2014 where the power comes from right now'),sgP=new T.Mesh(new T.PlaneGeometry(.26,.115),new T.MeshBasicMaterial({map:sgT,transparent:true,toneMapped:false}));
+  sgP.position.z=.012;sgP.userData.tip=sgG.userData.tip;sgG.add(sgP);bx(sgG,.25,.105,.01,'black',0,0,.005,{ns:1,tip:sgG.userData.tip});sgG.visible=false;
+  function bbSign(q,on){if(!q){sgG.visible=false;return;}sgG.visible=true;var k=sgC.getContext('2d');k.setTransform(1,0,0,1,0,0);k.clearRect(0,0,520,230);
+    var src=on.inv?['ON','from the MODA','Q-BYP in I \u00b7 battery / PV / grid via the MODA']:on.byp?['ON','from the GRID','Q-BYP in II \u00b7 bypass through F-BYP']:['OFF','no supply',q.byp===0?'Q-BYP in 0':q.byp===2?'Q-BYP in II \u00b7 but the grid is off':'Q-BYP in I \u00b7 but the MODA is off'],ok=on.out,col=ok?'#33da7a':'#ff6b5b';
+    k.fillStyle='rgba(13,20,28,.95)';rrect(k,3,3,514,224,26);k.fill();k.strokeStyle=col;k.lineWidth=5;rrect(k,3,3,514,224,26);k.stroke();
+    k.fillStyle='#9fb0c2';k.font='800 30px Arial';k.textBaseline='alphabetic';k.fillText('BACKUP LOADS',30,56);
+    k.fillStyle=col;k.beginPath();k.arc(44,118,15,0,7);k.fill();k.font='900 62px Arial';k.fillText(src[0],72,140);var w0=k.measureText(src[0]).width;
+    k.fillStyle='#ffffff';k.font='800 38px Arial';k.fillText(src[1],72+w0+18,136);k.fillStyle='#c9d5e1';k.font='600 25px Arial';k.fillText(src[2],30,196);sgT.needsUpdate=true;}
+  R.sim={grid:1,inv:1,byp:1,sig:'',cur:[],lmat:lmat,lpt:lpt,decor:Bd.decor.concat(BB.decor),
+    groups:{gin:bcs(C,/^(mg|mh)_/),house:['L1','L2','L3','N'].map(function(k){return Bd.houseC[k];}),toInv:bcs(C,/^(bf|bo)_/),inv:bcs(BC,/^ld_/),byp:bcs(C,/^(fb|fo)_/).concat(bcs(BC,/^by_/)),out:bcs(BC,/^bh_/)},
+    active:function(q){var o={gin:!!q.grid,house:!!q.grid,toInv:!!(q.grid&&q.inv),inv:!!(q.inv&&q.byp===1),byp:!!(q.grid&&q.byp===2)};o.out=o.inv||o.byp;return o;},
+    look:function(q,on){var kn=BB.byp.kn,L=IM.led;
+      if(!q){R.sim.knT=null;bbSign(null);var lo=R.an.ledOn;lo.set(lo.t);return;}
+      R.sim.kn=kn;R.sim.knT=q.byp===1?Math.PI/3:q.byp===2?-Math.PI/3:0;bbSign(q,on);
+      L.disc.material.map=q.inv?L.on:L.off;L.soc.forEach(function(sg,j){sg.material.color.setHex(q.inv&&j<4?0x3ff0d0:0x1d2b2c);});
+      L.ring.material.emissive.setHex(!q.inv?0xe0352b:q.grid?0x2fc7e6:0x2f6fe6);L.state=q.inv?'on':'off';
+      lmat.emissive.setHex(on.out?0xfff2d6:0);lpt.intensity=on.out?1.4:0;},
+    paths:function(q,on){var out=[];['L1','L2','L3'].forEach(function(k,i){var gin=[Bd.J,Bd.gridT[k],Bd.houseT[k],Bd.q0.top[i],Bd.q0.bot[i]],bl=BC['bh_'+k].b.concat([BB.rcd.top[i],BB.rcd.bot[i]]);
+        if(on.gin)out.push([q.m==='full'?gin.concat(Bd.houseC[k].b).concat([Bd.rcd.top[i],Bd.rcd.bot[i]]):gin,FLC.g]);
+        if(on.toInv)out.push([[Bd.q0.bot[i]].concat(C['bf_'+k].b).concat([Bd.qi.top[i],Bd.qi.bot[i]]).concat(C['bo_'+k].b.slice().reverse()).concat(vv(feedRoute)).concat(bc['as_'+k].b).concat([AB.top[i],AB.bot[i]]).concat(bc['ab_'+k].b.slice().reverse()).concat(vv(gridRoute)).concat([A.grid.clone()]),FLC.g]);
+        if(on.inv)out.push([[A.load.clone()].concat(vv(loadRoute).reverse()).concat(BC['ld_'+k].b).concat([BB.byp.top[i],BB.byp.bot[i]]).concat(bl),FLC.i]);
+        if(on.byp)out.push([[Bd.q0.bot[i]].concat(C['fb_'+k].b).concat([Bd.fbp.top[i],Bd.fbp.bot[i]]).concat(C['fo_'+k].b.slice().reverse()).concat(bpRoute).concat(BC['by_'+k].b).concat([BB.byp.top[4+i],BB.byp.bot[i]]).concat(bl),FLC.i]);});
+      if(q.inv&&q.m==='full'){out.push([pvC[0].b.slice(),FLC.pv]);var bx0=X+W/2-.035,bz=A.zc+A.D/2+.006,dn=q.grid?-1:1,bp=[V(bx0,.08,bz),V(bx0,yi-.02,bz)];out.push([dn>0?bp:bp.slice().reverse(),FLC.b]);
+        if(R.extC&&R.extC[0]){var ep=R.extC[0].b.slice();out.push([dn>0?ep:ep.slice().reverse(),FLC.b,.8]);}}
+      return out;}};
+  R.sim.all=[].concat.apply([],Object.keys(R.sim.groups).map(function(g){return R.sim.groups[g];})).concat(R.sim.decor);
+  reg('bypHow',function(){simApply();});reg('simOn',function(){simApply();});R.stepHooks.push(function(){simApply();});
+  var st=[],T2=A.T2,mc=V(T2?(X+A.X2)/2:X-.62,.42,.75),wide=stepCam(mc,[.05,.62,1],T2?4.1:3.5),ord=['first','second','third','fourth','fifth','sixth','seventh'],mf=mainFuse(),GZ=GS.z,X0=ROOM.R+ROOM.T;
   st.push({st:'grid',grp:'grid',t:'The substation',d:'Your electricity starts at the grid company\u2019s substation. A transformer steps <b>10 kV</b> down to <b>400 V</b> between phases and <b>230 V</b> from a phase to neutral. Its low-voltage side is star-connected (Dyn11): three phases <b>L1, L2, L3</b> and the <b>star point</b>. The star point is earthed right here \u2014 the system earth \u2014 and leaves the station as <b>PEN</b>: protective earth and neutral in one conductor. This is the grid company\u2019s equipment \u2014 only they may open it.',call:'10 kV \u2192 400 V \u00b7 star point earthed',col:'L1',keys:['gDoor'],cam:stepCam(V(GS.F+.6,.95,GZ+.1),[-1,.38,.32],3.7),btn:'Open the doors'});
   st.push({st:'grid',grp:'grid',t:'The underground service cable',d:'From a fuse switch-disconnector in the substation a <b>4-core cable</b> runs underground \u2014 through the cable cabinet at the property boundary \u2014 to the meter cabinet on the house: <b>L1</b> (brown), <b>L2</b> (black), <b>L3</b> (grey) and <b>PEN</b> (green-yellow, marked blue). It is shown in an open trench here; in reality it is buried.',call:'L1 \u00b7 L2 \u00b7 L3 \u00b7 PEN',col:'L2',keys:['gCable'],cam:stepCam(V((GS.cab+X0)/2+1.2,.2,GZ),[-.05,.6,1],8.2),btn:'Lay the cable'});
   st.push({st:'grid',grp:'grid',t:'Meter cabinet \u00b7 fuses, meter, PEN split',d:'In the meter cabinet on the outside wall: the <b>main fuses 3 \u00d7 '+mf+' A</b> on L1, L2, L3 and the grid company\u2019s <b>electricity meter</b>. The PEN lands on the PE bar and a link feeds the N bar \u2014 the PEN is <b>split into N and PE</b> here (TN-C-S). From this point on N and PE are never joined again: five conductors \u2014 <b>L1, L2, L3, N, PE</b> \u2014 run inside to the distribution board, first through the smart meter and the main switch Q0.',call:'PEN \u2192 N + PE \u00b7 5 conductors in',col:'N',keys:['gMeter'],cam:stepCam(V(X0+.1,1.27,GZ),[1,.15,.38],1.55),btn:'Open the cabinet'});
-  st.push({st:'inv',grp:'mount',t:'Base \u00b7 place and level',d:'Floor mounting (manual 3.8.2). Place the base against the wall with <b>30\u201350 mm</b> to the wall \u2014 keep \u2265 150 mm to the sides and \u2265 300 mm above the finished stack. Level it with the supplied shims (<b>1 mm \u00d7 4, 2 mm \u00d7 4</b>) until it does not wobble.',call:'Base \u2192 30\u201350 mm from the wall',col:'L3',keys:['mtBase'],cam:wide,btn:'Place base'});
-  for(var i=0;i<nb;i++)st.push({st:'inv',grp:'mount',t:'Battery module '+(i+1)+' of '+nb,d:(i===0?'Carry the first APX 5.0P-B3 module by its two handles (45 kg \u2014 two people), align it with the base and lower it <b>vertically</b> into position. ':'Lift the '+ord[i]+' module on top, aligned with the guides, and lower it vertically \u2014 the connector on top of the module below plugs straight in. Fold the handles down. ')+'Secure it with <b>M4 screws, 1.2 N\u00b7m</b> (two on the left side, one on the right).'+(i===nb-1?' One BMS handles up to 6 modules.':''),call:'M4 \u00b7 1.2 N\u00b7m',col:'L3',keys:['mtBat'+i],cam:stepCam(V(X-.5,.25+i*.27,.62),[-.12,.42,1],2.45+i*.08),btn:'Lift into place'});
-  st.push({st:'inv',grp:'mount',t:'Inverter on top',d:'Align the MODA inverter with the top battery module, lower it vertically into position and secure it from the sides with <b>M4 screws, 1.2 N\u00b7m</b>. Check that the whole stack is firm.',call:'Inverter \u2192 M4 \u00b7 1.2 N\u00b7m',col:'L3',keys:['mtInv'],cam:stepCam(V(X-.55,yi-.1,.65),[-.1,.4,1],2.55+nb*.08),btn:'Lift into place'});
+  st.push({st:'inv',grp:'mount',basePick:true,t:T2?'Bases \u00b7 choose and place (tower 1 + 2)':'Base \u00b7 choose and place',d:(T2?'Each tower gets its own base \u2014 choose one for <b>tower 1</b> (the MODA goes on it) and one for <b>tower 2</b>. ':'')+'First choose the base: one for the <b>5 kWh</b> modules (APX 5.0P-B3, 590 mm) or one for the <b>7 \u00b7 9.4 \u00b7 11.3 kWh</b> modules (APX HV, 740 mm). 5 kWh stacks only on its own base; the HV modules stack on theirs and can be mixed. The MODA on top is as wide as its base. Floor mounting (manual 3.8.2): place the base against the wall with <b>30\u201350 mm</b> to the wall \u2014 keep \u2265 150 mm to the sides and \u2265 300 mm above the finished stack. Level it with the supplied shims (<b>1 mm \u00d7 4, 2 mm \u00d7 4</b>) until it does not wobble.',call:'Base \u2192 30\u201350 mm from the wall',col:'L3',keys:['mtBase'].concat(T2?['mtBase2']:[]),cam:wide,btn:'Place base'});
+  var bm=A.bm,n1=bm.filter(function(m){return m.tw===1;}).length,bk=bm.map(function(m,i){return 'mtBat'+i;}),X2c=A.X2;
+  st.push({st:'inv',grp:'mount',builder:true,t:'Battery stack \u00b7 choose and build',d:'Click a module to lift it onto the stack: <b>5 kWh</b> (APX 5.0P-B3), or <b>7 \u00b7 9.4 \u00b7 11.3 kWh</b> (APX HV 2.0) \u2014 the HV modules can be mixed. Each module is lowered <b>vertically</b> onto the one below; the connector on top plugs straight in, no wiring. Secure every module with <b>M4 screws, 1.2 N\u00b7m</b> (two on the left, one on the right). Need more room? Add a <b>second tower beside</b> \u2014 the MODA stays on tower 1, tower 2 is joined with an extension cable.',
+    call:'Build the battery stack',col:'L3',keys:bk,cam:stepCam(V((X+X2c)/2,.62,.15),[.04,.5,1],3.45),tgtKey:'none'});
+  st.push({st:'inv',grp:'mount',t:'Inverter on top',d:'Align the MODA inverter with the top battery module, lower it vertically into position and secure it from the sides with <b>M4 screws, 1.2 N\u00b7m</b>. Check that the whole stack is firm.',call:'Inverter \u2192 M4 \u00b7 1.2 N\u00b7m',col:'L3',keys:['mtInv'],cam:stepCam(V(X-.55,yi-.1,.65),[-.1,.4,1],2.55+n1*.08),btn:'Lift into place'});
+  if(T2)st.push({st:'inv',grp:'mount',t:'Tower 2 \u00b7 top cover and extension cables',d:'Put the top cover on tower 2 \u2014 no MODA on this tower. Then connect the two towers with the <b>extension cables</b> \u2014 power (red) and communication (blue) \u2014 between the ports on the <b>right side of the top module</b> of each tower'+(T2.right?': straight across from the left tower, up and over the right tower and down to its port, fixed with cable clips':' (tower 2 stands to the left): from tower 2 through a short duct into the left riser (with the PV cables), up and through a duct over the MODA \u2014 under the wall display \u2014 and down the right riser to the port on tower 1. Lay them side by side, red and blue never crossing, no loose loops')+'. Tower 2 then joins the same battery system and the MODA sees all '+nb+' modules ('+(Math.round(batKwh()*10)/10)+' kWh).',call:'Extension cables \u00b7 tower '+(T2.right?'1 \u2192 2':'2 \u2192 1'),col:'L3',keys:['mtTop2','mtExt'],cam:stepCam(V((X+T2.x)/2,Math.max(A.top,T2.top)*.62+.2,.2),[.0,.25,1],2.35),btn:'Fit cover + cables'});
   st.push({st:'inv',grp:'mount',t:'Anti-tipping plates',d:'Mark the wall holes (19 mm and 7 mm from the edges, 15 mm up), drill <b>\u03a6 8 mm, 45\u201350 mm deep</b> at 90\u00b0 and insert the anchors. Fasten the plates to the unit with <b>M4, 1.2 N\u00b7m</b> and to the wall with <b>M6, 5 N\u00b7m</b>.',call:'M4 1.2 N\u00b7m \u00b7 M6 5 N\u00b7m',col:'L3',keys:['mtTip'],cam:stepCam(V(X,A.top-.05,.08),[.3,.85,1],1.25),btn:'Fit plates'});
   st.push({st:'inv',grp:'mount',t:'AC isolator on the wall',d:'Mount the AC isolator (BENY BYAF-32: <b>3-pole, 32 A, IP65</b>, IEC 60947-3) on the wall <b>to the right of the MODA</b>, with a small junction box under it and two short conduits between them. Take the isolator\u2019s front cover off (four corner screws) and fasten both boxes with four screws each.',call:'Isolator + junction box \u2192 wall',col:'L3',keys:['mtBox'],cam:stepCam(AB.c.clone().add(V(-.15,-.08,0)),[.3,.15,1],1.35),btn:'Mount isolator'});
   var rodC=V(EA.rodX-.25,.25,1.2),ext=stepCam(rodC,[1.15,.62,.9],2.7);
   st.push({st:'earth',grp:'earth',t:'Earth rods \u00b7 drive them in',d:'Outside the house, drive <b>two earth rods</b> (copper-clad steel) vertically into the ground, spaced at least one rod length apart. Leave the tops in small inspection wells so the joints can be checked later.',call:'2 \u00d7 earth rod',col:'PE',keys:['eRod0','eRod1'],cam:ext,btn:'Drive in'});
   st.push({st:'earth',grp:'earth',t:'Earth rods \u00b7 earth conductor',d:'Lay the earth conductor in a trench from the house wall to both rods and fasten it with a <b>rod clamp</b> on each rod. Use the conductor size and material your local rules require.',call:'Conductor \u2192 rod clamps',col:'PE',keys:['eCond'],cam:stepCam(rodC.clone().add(V(-.15,0,0)),[1.1,.75,.7],2.2)});
   st.push({st:'earth',grp:'earth',t:'Earth conductor \u2192 PE bar in the board',d:'Take the earth conductor up the outside wall, through a sleeve and in the trunking to the <b>PE bar in the distribution board</b> \u2014 the main earthing terminal of the house. The MODA enclosure is earthed to the same bar.',call:'Earth rods \u2192 PE bar',col:'PE',keys:['eMEB'],cam:stepCam(V(1.85,1.0,.1),[.12,.12,1],2.45)});
-  var pc=PV.c;
-  st.push({st:'roof',grp:'pv',t:'Roof hooks and rails',d:'Fit roof hooks under the tiles into the rafters and fasten two aluminium rails for each row of panels. Follow the mounting system\u2019s instructions for the hook spacing, the screws and the torque.',call:'Hooks + rails',col:'L3',keys:['pvRail'],cam:stepCam(pc,[1,.9,.45],8.6),btn:'Fit rails'});
-  st.push({st:'roof',grp:'pv',t:'Panels onto the rails',d:'Lay the <b>12 panels</b> (example: 440 W, two rows of six, portrait) on the rails and lock them with end clamps and middle clamps. 12 \u00d7 440 W \u2248 <b>5.3 kWp</b> on one MPPT.',call:'12 panels \u00b7 clamps',col:'L3',keys:['pvPan'],cam:stepCam(pc,[1,.9,.45],8.6),btn:'Place panels'});
-  st.push({st:'roof',grp:'pv',t:'Connect the string (series)',d:'Connect the panels in series with their MC4 leads: <b>+ of one panel to \u2212 of the next</b> (the panels are shown see-through so you can see the leads under them). Example panel: Voc \u2248 41 V, Vmp \u2248 34 V \u2192 about <b>490 V</b> open circuit (\u2248 550 V on a cold day) and <b>410 V</b> working. MODA: start 160 V, MPPT 140\u20131000 V, full power 400\u2013800 V; never above <b>1100 V</b> open circuit (it stops above 1000 V). Max <b>20 A</b> per MPPT, short-circuit \u2264 25 A.',call:'+ \u2192 \u2212 \u00b7 12 in series',col:'L1',keys:['pvStr'],cam:stepCam(PV.first,[1,1.1,.35],3.6)});
-  st.push({st:'roof',grp:'pv',t:'String cable to the inverter',d:'Run the <b>+ (red)</b> and <b>\u2212 (black)</b> solar cables (4\u20136 mm\u00b2) through the sealed roof entry and down the trunking to the MODA. Before plugging in, measure the string\u2019s open-circuit voltage and polarity with a multimeter and label + and \u2212. <b>Never earth PV\u2212</b> \u2014 the MODA is transformerless.',call:'+ / \u2212 \u2192 roof entry \u2192 PV1',col:'L1',keys:['pvCab'],cam:stepCam(PV.E,[1,1,.55],3.4)});
   st.push({st:'inv',grp:'inv',t:'Earth the enclosure',d:'Start with protective earth. Crimp an <b>OT ring terminal</b> on a green-yellow PE cable and fasten it to the grounding point at the bottom of the right-hand bay (<b>M6, 3.5 N\u00b7m</b>). The cable leaves the bay towards the wall and runs in the trunking to the <b>PE bar in the board</b>. Never use N as earth.',call:'PE \u2192 grounding point',col:'PE',keys:['mPE'],cam:stepCam(g.clone().add(V(.02,.03,.0)),[1,.25,.5],.4)});
-  var pinTxt={L1:'brown',L2:'black',L3:'grey',N:'blue',PE:'green-yellow'};
-  ['L1','L2','L3','N','PE'].forEach(function(k,i){
-    st.push({st:'inv',grp:'inv',t:'GRID connector \u00b7 '+k,d:(i===0?'Strip the GRID cable (<b>5G'+SS.cab+' mm\u00b2</b>; the manual gives 12\u201316 mm\u00b2) and crimp ferrules (L2 = L1 + 2 mm). ':'')+'Push the <b>'+pinTxt[k]+'</b> core into the hole marked <b>'+k+'</b> in the GRID connector insert and tighten it.'+(k==='PE'?' The insert pattern: N and PE on top, L1 \u00b7 L2 \u00b7 L3 below.':''),call:k+' \u2192 '+k,col:k,keys:['mG_'+k],cam:stepCam(Eg,[1,.3,.42],.3)});
-  });
-  st.push({st:'inv',grp:'inv',t:'Plug in the GRID connector',d:'Screw the housing onto the insert and tighten the coupling nut and the cable gland. Then push the black connector straight <b>up</b> into the <b>GRID</b> socket under the label band until it locks. The GRID cable leaves the bay towards the wall and runs in the trunking to the junction box under the AC isolator.',call:'Plug into GRID',col:'L3',keys:['mGPlug'],cam:stepCam(A.grid.clone().add(V(0,-.08,0)),[1,-.08,.6],.5)});
-  st.push({st:'inv',grp:'inv',t:'LOAD connector (whole house)',d:'Same pin order \u2014 L1, L2, L3, N, PE \u2014 for the blue <b>LOAD</b> connector, then push it up into the LOAD socket. The LOAD cable runs in the trunking to the bypass switch <b>Q-BYP</b> in the board: the <b>whole house</b> is fed from the inverter\u2019s LOAD output.',call:'LOAD \u2192 whole house',col:'N',keys:['mL_L1','mL_L2','mL_L3','mL_N','mL_PE','mLPlug'],cam:stepCam(El.clone().add(V(-.03,.0,0)),[1,.15,.5],.42)});
-  st.push({st:'inv',grp:'inv',t:'PV1 \u00b7 plug in the string',d:'Check that the <b>DC SWITCH is OFF</b>. Crimp the MC4 metal contacts with a dedicated crimper (strip 8\u201310 mm), click the connectors together and push them up into <b>PV1+</b> and <b>PV1\u2212</b> on the left side \u2014 polarity matters. Tug-test them and leave at least 50 mm of slack. PV2 and PV3 keep their sealing caps.',call:'PV1 + / \u2212 \u2190 string',col:'L1',keys:['pvPlug'],cam:stepCam(IM.pv[0].clone().add(V(0,-.02,.01)),[-1,-.35,.65],.48)});
+  st.push({st:'inv',grp:'inv',t:'GRID connector \u00b7 L1 L2 L3 N PE',d:'Strip the GRID cable (<b>5G'+SS.cab+' mm\u00b2</b>; the manual gives 12\u201316 mm\u00b2) and crimp ferrules (L2 = L1 + 2 mm). All five cores go into the insert in one go \u2014 <b>L1</b> brown, <b>L2</b> black, <b>L3</b> grey, <b>N</b> blue, <b>PE</b> green-yellow (N and PE on top, L1 \u00b7 L2 \u00b7 L3 below). Tighten, screw the housing on and push the black connector straight <b>up</b> into the <b>GRID</b> socket until it locks. The cable leaves the bay towards the wall and runs in the trunking to the junction box under the AC isolator.',call:'L1 L2 L3 N PE \u2192 GRID',col:'L1',keys:['mG_L1','mG_L2','mG_L3','mG_N','mG_PE','mGPlug'],cam:stepCam(Eg.clone().lerp(A.grid,.45),[1,.12,.5],.5)});
+  st.push({st:'inv',grp:'inv',t:'LOAD connector (backup loads)',d:'Same pin order \u2014 L1, L2, L3, N, PE \u2014 for the blue <b>LOAD</b> connector, then push it up into the LOAD socket. The LOAD cable runs in the trunking to the <b>backup board</b> beside the main board \u2014 the circuits there keep running from the MODA during a grid outage.',call:'LOAD \u2192 backup board',col:'N',keys:['mL_L1','mL_L2','mL_L3','mL_N','mL_PE','mLPlug'],cam:stepCam(El.clone().lerp(A.load,.45),[1,.12,.5],.5)});
+  st.push({st:'inv',grp:'inv',t:'PV strings \u00b7 plug into PV1',d:'The PV string comes from the panels on the roof, down in the trunking. Check that the <b>DC SWITCH is OFF</b>, and measure the open-circuit voltage and polarity first: max <b>1100 V</b> open circuit, MPPT 140\u20131000 V, max 20 A per MPPT \u2014 and never earth PV\u2212. Crimp the MC4 metal contacts with a dedicated crimper (strip 8\u201310 mm), click the connectors together and push them up into <b>PV1+</b> and <b>PV1\u2212</b> on the left side \u2014 polarity matters. Tug-test them and leave at least 50 mm of slack. PV2 and PV3 keep their sealing caps.',call:'PV1 + / \u2212 \u2190 string',col:'L1',keys:['pvPlug'],cam:stepCam(IM.pv[0].clone().add(V(0,-.02,.01)),[-1,-.35,.65],.48)});
   st.push({st:'inv',grp:'inv',t:'RJ45 into the Meter port',d:'The COM block on the left side has six RJ45 ports on its <b>underside</b>. Push the network cable up into <b>Meter</b> \u2014 outer row, at the back (see the label on the wall: Meter \u00b7 Para.out \u00b7 NC / CT \u00b7 Para.in \u00b7 NC). It carries RS485 to the smart meter: <b>pin 5 = 485-2_A</b>, <b>pin 1 = 485-2_B</b>.',call:'RJ45 \u2192 Meter',col:'A',keys:['rj'],cam:stepCam(mp.clone().add(V(0,-.03,0)),[-1,-.45,.55],.3)});
   st.push({st:'inv',grp:'inv',t:'COM connector housing',d:'Slide the black COM housing (marked <b>1 \u2026 18</b>) straight up over the COM block until the latch clicks, then tighten its cable gland. It holds the RJ45 in place and keeps water and dust out.',call:'Housing 1 \u2026 18 \u2192 COM',col:'A',keys:['comH'],cam:stepCam(V(cc.x,cc.y-.08,cc.z),[-1,-.12,.5],.45),btn:'Push up'});
   st.push({st:'inv',grp:'inv',t:'Protective covers',d:'Fit the left and right protective covers (manual 3.8.4): slide each one down along the guide slots, then push it in evenly until the snaps engage. Check that they sit tight with no gaps.',call:'Covers \u2192 left \u00b7 right',col:'L3',keys:['mtCov'],cam:stepCam(V(X,yi+.12,A.zc),[1,.35,1.1],1.45),btn:'Fit covers',tgtKey:'none'});
@@ -6240,13 +6614,18 @@ function worldMODA(brand){
   st.push({st:'inv',grp:'acb',t:'N and PE \u00b7 straight through',d:'<b>N and PE never go through the AC isolator.</b> In the junction box, join N to N and PE to PE with connectors \u2014 the inverter cable on one side, the board cable on the other.',call:'N \u2192 N \u00b7 PE \u2192 PE',col:'N',keys:['jN_a','jN_b','jPE_a','jPE_b'],cam:stepCam(JB.c.clone(),[.1,.05,1],.32)});
   st.push({st:'inv',grp:'acb',t:'Fit the covers',d:'Put the isolator\u2019s front cover on with the handle in <b>OFF</b> \u2014 its shaft engages the switch \u2014 and tighten the four corner screws. Close the junction box with its clear lid and tighten the glands. The handle can be padlocked in OFF while you work on the system.',call:'Covers on \u00b7 handle OFF',col:'L3',keys:['abCov'],cam:stepCam(bc0.clone().add(V(-.1,-.06,0)),[.2,.12,1],.85),btn:'Fit covers'});
   st=st.concat(breakerSteps(Bd,false,true));
-  var bq=Bd.bypC;
-  st.push({st:'meter',grp:'byp',t:'Bypass switch Q-BYP \u00b7 onto the DIN rail',d:'Whole-house backup: <b>every circuit in the house</b> is fed through the inverter. Fit the 4-pole bypass switch <b>Q-BYP</b> (changeover <b>I \u2013 0 \u2013 II</b>) next to the main switch. <b>I</b> = the house from the MODA\u2019s LOAD output, <b>0</b> = off, <b>II</b> = the house straight from the grid, bypassing the inverter. It switches all four poles: <b>L1, L2, L3 and N</b>.',call:'Q-BYP 4-pole \u2192 DIN rail',col:'L3',keys:['byMount'],cam:stepCam(bq.clone().add(V(-.02,.02,0)),[.3,.18,1],.5)});
-  st.push({st:'meter',grp:'byp',t:'Q-BYP \u00b7 LOAD from the inverter (I)',d:'The LOAD cable from the MODA comes up the trunking into the board: <b>L1, L2, L3, N</b> on the <b>I</b> inputs of Q-BYP, <b>PE</b> on the PE bar.',call:'LOAD \u2192 Q-BYP I',col:'N',keys:['ld_L1','ld_L2','ld_L3','ld_N','ld_PE'],cam:stepCam(bq.clone().add(V(.06,.02,0)),[.15,.1,1],.62)});
-  st.push({st:'meter',grp:'byp',t:'Q-BYP \u00b7 grid bypass from the main switch (II)',d:'From the bottom of the main switch Q0: <b>L1, L2, L3, N</b> to the <b>II</b> inputs of Q-BYP. In position II the house runs straight from the grid \u2014 for example while the inverter is switched off for service.',call:'Q0 \u2192 Q-BYP II',col:'L1',keys:['by_L1','by_L2','by_L3','by_N'],cam:stepCam(bq.clone().add(V(-.06,.02,0)),[.2,.1,1],.55)});
-  st.push({st:'meter',grp:'byp',t:'Q-BYP \u00b7 out to the house',d:'From the outputs of Q-BYP to the RCD and on to all the house circuits: <b>L1, L2, L3, N</b>. First the main switch, then the inverter \u2014 and every load in the house is fed from the inverter\u2019s LOAD output.',call:'Q-BYP \u2192 house circuits',col:'L2',keys:['bh_L1','bh_L2','bh_L3','bh_N'],cam:stepCam(bq.clone().add(V(.06,-.02,0)),[.15,.05,1],.6)});
+  var bq=BB.bypC,fq=Bd.fbC,bbc=BB.c;
+  st.push({st:'bb',grp:'byp',t:'Backup board \u00b7 Q-BYP onto the DIN rail',d:'The backup loads \u2014 here the fridge/freezer, lighting, the heat-pump control and some sockets \u2014 get their own small <b>backup board</b> beside the main board. Fit the 4-pole bypass switch <b>Q-BYP</b> (changeover <b>I \u2013 0 \u2013 II</b>): <b>I</b> = the backup loads from the MODA\u2019s LOAD output, <b>0</b> = off, <b>II</b> = straight from the grid if the inverter fails or is serviced. It switches L1, L2, L3 <b>and N</b>.',call:'Q-BYP 4-pole \u2192 DIN rail',col:'L3',keys:['byMount'],cam:stepCam(bq.clone().add(V(.02,.02,0)),[.25,.15,1],.55)});
+  st.push({st:'bb',grp:'byp',t:'Backup board \u00b7 LOAD from the MODA (I)',d:'The LOAD cable from the MODA comes up the trunking into the backup board through the left gland: <b>L1, L2, L3, N</b> on the <b>I</b> inputs of Q-BYP, <b>PE</b> on the PE bar.',call:'MODA LOAD \u2192 Q-BYP I',col:'N',keys:['ld_L1','ld_L2','ld_L3','ld_N','ld_PE'],cam:stepCam(bq.clone().add(V(-.02,-.05,0)),[.15,.05,1],.55)});
+  st.push({st:'meter',grp:'byp',t:'Main board \u00b7 F-BYP, the grid feed for the bypass',d:'In the main board, fit the 4-pole MCB <b>F-BYP</b> and feed it from the main switch Q0: <b>L1, L2, L3, N</b>. Its outputs go into a cable to the backup board \u2014 this is the grid supply that Q-BYP uses in position <b>II</b>.',call:'Q0 \u2192 F-BYP \u2192 cable out',col:'L1',keys:['fbMount','fb_L1','fb_L2','fb_L3','fb_N','fo_L1','fo_L2','fo_L3','fo_N','fo_PE'],cam:stepCam(fq.clone().add(V(0,-.03,0)),[.22,.08,1],.62)});
+  st.push({st:'bb',grp:'byp',t:'Backup board \u00b7 bypass feeder (II)',d:'The cable from F-BYP comes into the backup board through the middle gland: <b>L1, L2, L3, N</b> on the <b>II</b> inputs of Q-BYP, <b>PE</b> on the PE bar.',call:'F-BYP \u2192 Q-BYP II',col:'L2',keys:['by_L1','by_L2','by_L3','by_N','by_PE'],cam:stepCam(bq.clone().add(V(.02,-.05,0)),[.12,.05,1],.55)});
+  st.push({st:'bb',grp:'byp',t:'Backup board \u00b7 out to the backup loads',d:'From the outputs of Q-BYP to the RCD, and from the RCD to the MCBs of the backup loads. Whatever position Q-BYP is in, this is what the backup loads get.',call:'Q-BYP \u2192 RCD \u2192 backup loads',col:'L3',keys:['bh_L1','bh_L2','bh_L3','bh_N'],cam:stepCam(bbc.clone(),[.12,.05,1],.62)});
+  st.push({st:'bb',grp:'byp',sim:'byp',t:'How Q-BYP works \u00b7 I and II',d:'Switch Q-BYP and follow the power. <b>I</b> (normal): the grid feeds the MODA through F-INV and the AC isolator (<b style="color:#ffb44f">amber</b>), and the MODA\u2019s LOAD output feeds the backup board. <b>II</b> (bypass): the backup loads are fed straight from the grid \u2014 main switch Q0 \u2192 F-BYP \u2192 cable \u2192 Q-BYP II \u2014 the MODA is out of the path. Whatever feeds the backup loads is always shown in <b style="color:#33da7a">green</b>, so you can follow the route change when you turn Q-BYP. <b>0</b> = the backup loads are off. Q-BYP always breaks before it makes, so the two sources are never connected together.',
+    call:'I: MODA \u2192 backup \u00b7 II: grid \u2192 backup',col:'L1',keys:['bypHow'],cam:stepCam(V((Bd.gx+BB.x)/2+.05,1.35,.1),[.1,.12,1],1.55),btn:'Show the power flow',tgtKey:'none'});
   st=st.concat(meterSteps(brand,Bd,false));
-  st.push({st:'inv',grp:'pwr',t:'Power on \u00b7 LED display',d:'Manual 5.2: <b>1</b> BAT SWITCH \u2192 ON, <b>2</b> DC SWITCH on the left side \u2192 ON \u2014 the PV string is now live (both behind the left cover), <b>3</b> AC isolator handle \u2192 <b>ON</b> (the fuse F-INV in the board is on; check the grid voltage first), <b>4</b> bypass switch <b>Q-BYP \u2192 I</b>: the whole house now runs from the inverter. The outer ring rotates through its colours while the system starts, then the display shows the status. <b>Click any icon on the display</b> to see what it means.',call:'BAT \u2192 DC \u2192 isolator: ON',col:'L3',keys:['ledOn'],cam:stepCam(V(X+.12,yi+.13,A.zc),[-.3,.18,1],1.25),btn:'Power on'});
+  st.push({st:'inv',grp:'pwr',t:'Power on \u00b7 LED display',d:'Manual 5.2: <b>1</b> BAT SWITCH \u2192 ON, <b>2</b> DC SWITCH on the left side \u2192 ON \u2014 the PV string is now live (both behind the left cover), <b>3</b> AC isolator handle \u2192 <b>ON</b> (the fuse F-INV in the board is on; check the grid voltage first), <b>4</b> bypass switch <b>Q-BYP \u2192 I</b> in the backup board: the backup loads now run from the MODA. The outer ring rotates through its colours while the system starts, then the display shows the status. <b>Click any icon on the display</b> to see what it means.',call:'BAT \u2192 DC \u2192 isolator: ON',col:'L3',keys:['ledOn'],cam:stepCam(V(X+.12,yi+.13,A.zc),[-.3,.18,1],1.25),btn:'Power on'});
+  st.push({st:'inv',grp:'pwr',sim:'full',t:'Try it \u00b7 on-grid, off-grid and bypass',d:'Now test the system. Switch the <b>grid</b> off (an outage), make the <b>MODA</b> faulty, or turn <b>Q-BYP</b> \u2014 and watch the power: <b style="color:#ffb44f">amber</b> from the grid, <b style="color:#33da7a">green</b> to the backup loads (from the MODA in I, from the grid through F-BYP in II), <b style="color:#f5d330">yellow</b> from the PV string, <b style="color:#b27cff">purple</b> into or out of the battery. The garage light is on a backup circuit, and the LED ring shows the MODA\u2019s state: teal on-grid, <b>blue off-grid</b>, red fault. You can also walk around while it runs.',
+    call:'Grid \u00b7 MODA \u00b7 Q-BYP \u2192 watch the power',col:'L1',keys:['simOn'],cam:{p:V(.85,1.62,4.75),t:V(.85,1.12,0)},btn:'Start the simulation',tgtKey:'none'});
   var tr={};['L1','L2','L3'].forEach(function(k,i){tr[k]=GSD.phase(k,i).concat([Bd.J.clone(),Bd.gridT[k],Bd.houseT[k],Bd.q0.top[i],Bd.q0.bot[i],Bd.qi.top[i],Bd.qi.bot[i]]).concat(vv(feedRoute.slice(1))).concat([AB.top[i],AB.bot[i]]).concat(vv(gridRoute)).concat([V(A.grid.x,A.grid.y-.2,A.grid.z),A.grid.clone()]);});
   addTrace(tr);
   return st;
@@ -6363,29 +6742,32 @@ function init(){
   el.addEventListener('pointerup',function(e){if(!down)return;var dx=e.clientX-down[0],dy=e.clientY-down[1];down=null;if(dx*dx+dy*dy>36)return;onClick(e);});
   el.addEventListener('pointermove',function(e){var t=performance.now();if(t-last<70)return;last=t;onHover(e);});
   el.addEventListener('pointerleave',function(){var tp=document.getElementById('ph-tip');if(tp)tp.style.display='none';});
+  walkEvents(el);fsEvents();
   return true;
 }
 function disposeTree(o){var shared=Object.keys(MATS).map(function(k){return MATS[k];});o.traverse(function(m){if(m.geometry)m.geometry.dispose();if(m.material){var ms=Array.isArray(m.material)?m.material:[m.material];ms.forEach(function(x){if(shared.indexOf(x)<0){if(x.map)x.map.dispose();x.dispose();}});}});}
 function buildWorld(){
+  R.building=true;
   if(R.root){R.scene.remove(R.root);disposeTree(R.root);}
-  R.root=new T.Group();R.scene.add(R.root);R.an={};R.tw=[];R.hits={};R.st={};R.asm=[];R.pulses=null;R.traceOn=false;R.busy=false;R.elec=null;R.par=null;R.elecFirst=null;R.led=null;R.grille=null;R.trkLid=null;R.noClips=false;R.stepHooks=[];ledHide();sp0();
+  R.root=new T.Group();R.scene.add(R.root);R.an={};R.tw=[];R.hits={};R.st={};R.asm=[];R.pulses=null;R.traceOn=false;R.busy=false;R.elec=null;R.par=null;R.elecFirst=null;R.led=null;R.grille=null;R.trkLid=null;R.noClips=false;R.stepHooks=[];R.sim=null;R.extC=null;R.flowGeo=null;R.togs={};R.obst=[];ledHide();sp0();
   buildRoom();
   var s=S();
   R.steps=s.inv==='MOD'?worldMOD(s.meter):s.inv==='WIT'?worldWIT(s.meter):worldMODA(s.meter);
   if(s.step>=R.steps.length)s.step=0;if(s.done>R.steps.length)s.done=0;
   R.steps.forEach(function(st,i){st.keys.forEach(function(k){put(k,i<s.done?1:0);});});
-  R.built=bkey();applyVis();
+  R.built=bkey();R.building=false;applyVis();if(s.setup)setupPreview();
 }
-function bkey(){var s=S();return s.inv+'|'+s.meter+'|'+s.kw+'|'+s.cab+'|'+s.brk+'|'+(s.inv==='MODA'?s.nb:'');}
+function bkey(){var s=S();return s.inv+'|'+s.meter+'|'+s.kw+'|'+s.cab+'|'+s.brk+'|'+(s.inv==='MODA'?s.b1+s.b2+s.tw+(s.side==='R'?'R':'L')+s.bm.map(function(m){return m.t+'/'+m.tw;}).join(','):'');}
 function stepOf(k){var idx=-1;R.steps.forEach(function(st,i){if(idx<0&&st.keys.indexOf(k)>=0)idx=i;});return idx;}
 function applyVis(){var s=S();(R.asm||[]).forEach(function(a){var idx=stepOf(a.first);a.set(idx<0||s.step>=idx);});(R.stepHooks||[]).forEach(function(f){f(s.step);});if(R.elec&&R.elecFirst){var e=stepOf(R.elecFirst);R.elec.visible=e<0||s.step>=e;}}
 function size(){var v=document.getElementById('ph-view');if(!v||!R)return;var w=v.clientWidth||600,h=v.clientHeight||400;if(R.w===w&&R.h===h)return;R.w=w;R.h=h;R.renderer.setSize(w,h,false);R.camera.aspect=w/h;R.camera.updateProjectionMatrix();}
 function loop(){
   if(!R||!R.alive)return;
-  if(!document.body.contains(R.renderer.domElement)){R.alive=false;return;}
+  if(!document.body.contains(R.renderer.domElement)){R.alive=false;if(FS)fsSet(false);return;}
   requestAnimationFrame(loop);
-  size();runTweens();runCam();R.controls.update();runTrace();
-  var s=S(),st=R.steps[s.step],tg=st&&R.station===st.st?target(st):null,show=!!(tg&&s.done<=s.step&&!R.busy);
+  var tn=now(),dt=Math.min(.1,tn-(R.lastT||tn));R.lastT=tn;
+  size();runTweens();runTogs(dt);if(R.walk)walkTick(dt);else{runCam();R.controls.update();}runTrace();runFlow();
+  var s=S(),st=R.steps[s.step],tg=st&&!s.setup&&(R.walk||R.station===st.st)?target(st):null,show=!!(tg&&s.done<=s.step&&!R.busy);
   R.marker.visible=show;if(show){R.marker.position.copy(tg);var k=.042+.012*Math.sin(now()*5);R.marker.scale.set(k,k,1);}
   R.renderer.render(R.scene,R.camera);
   callout(st,tg);ledSync();
@@ -6407,21 +6789,25 @@ function ray(e){var r=R.renderer.domElement.getBoundingClientRect(),m=new T.Vect
 function tipOf(o){while(o){if(o.userData&&o.userData.tip)return o.userData.tip;o=o.parent;}return null;}
 function onHover(e){
   var tp=document.getElementById('ph-tip'),stg=document.getElementById('ph-stage');if(!tp||!stg||!R.root)return;
-  var hs=ray(e),t=null;for(var i=0;i<hs.length&&i<6;i++){t=tipOf(hs[i].object);if(t)break;}
+  if(R.walk)return;var hs=ray(e),t=null;for(var i=0;i<hs.length&&i<6;i++){t=tipOf(hs[i].object);if(t)break;}
+  var to=hs[0]&&togOf(hs[0].object);if(to&&to.can())t=(t||'')+' \u2014 click: '+to.label(to.to);
   if(!t){tp.style.display='none';return;}
   var r=stg.getBoundingClientRect();tp.textContent=t;tp.style.display='block';tp.style.left=(e.clientX-r.left+14)+'px';tp.style.top=(e.clientY-r.top+14)+'px';
 }
 function onClick(e){
-  var s=S(),st=R.steps[s.step],tg=st&&R.station===st.st?target(st):null;
+  if(R.walk){walkClick(e);return;}
+  var s=S(),st=R.steps[s.step],tg=st&&!s.setup&&R.station===st.st?target(st):null;
   if(tg&&s.done<=s.step&&!R.busy){var r=R.renderer.domElement.getBoundingClientRect(),p=project(tg);
     if(p){var dx=e.clientX-r.left-p.x,dy=e.clientY-r.top-p.y;if(dx*dx+dy*dy<38*38){connect();return;}}}
+  var h0=ray(e)[0],tgo=h0&&togOf(h0.object);if(tgo&&togFlip(tgo)){ledHide();return;}
   ledClick(e);
 }
 // ---- LED display notices
 function ledHide(){var b=document.getElementById('ph-led');if(b)b.style.display='none';}
-function ledClick(e){
+function ledClick(e){ledHit(ray(e)[0]);}
+function ledHit(h){
   if(!R.led){ledHide();return;}
-  var hs=ray(e),h=hs[0],kind=h&&h.object.userData.led;
+  var kind=h&&h.object.userData.led;
   if(!kind){ledHide();return;}
   if(kind==='disc'&&h.uv){var x=(h.uv.x-.5)*2,y=(h.uv.y-.5)*2,r=Math.sqrt(x*x+y*y),best=null,bd=.3;
     LEDPOS.forEach(function(q){var a=q[1]*Math.PI/180,dx=x-.64*Math.cos(a),dy=y-.64*Math.sin(a),d=Math.sqrt(dx*dx+dy*dy);if(d<bd){bd=d;best=q[0];}});
@@ -6446,21 +6832,121 @@ function ledPos(){
   var L=Math.round(x)+'px',Tp=Math.round(Math.max(52,Math.min(c.y-bh/2,h-bh-46)))+'px';if(box.style.left!==L)box.style.left=L;if(box.style.top!==Tp)box.style.top=Tp;
 }
 function ledSync(){var b=document.getElementById('ph-led');if(!R.led||!b||b.style.display!=='block')return;if(R.ledSt!==R.led.state)ledShow(R.ledKind);else ledPos();}
+
+// ---------------------------------------------------------------- walk around freely (first person, like a shooter game: WASD + mouse)
+var WK=null;
+function wBoxes(){var L=ROOM.L,Rr=ROOM.R,Tw=ROOM.T,D=ROOM.D;return [[-40,-40,Rr+Tw,.08],[-40,-40,L+.02,D],[Rr,-.1,Rr+Tw,ROOM.DZ0],[Rr,ROOM.DZ1,Rr+Tw,D+.1],
+  [GS.F-.05,GS.z-1.25,GS.F+1.65,GS.z+1.25],[GS.cab-.22,GS.z-.33,GS.cab+.22,GS.z+.33],[11.12,-4,11.28,GS.z-.32],[11.12,GS.z+.32,11.28,14]].concat(R.obst||[]);}
+function wHit(x,z){var r=.2;if(x<-9.5||x>17.5||z<-2.35||z>12)return true;var b=WK.boxes;for(var i=0;i<b.length;i++){var q=b[i];if(x>q[0]-r&&x<q[2]+r&&z>q[1]-r&&z<q[3]+r)return true;}return false;}
+function walkStart(){
+  if(!R||R.walk)return;var c=R.camera,d=new T.Vector3();c.getWorldDirection(d);ledHide();
+  WK={keys:{},yaw:Math.atan2(-d.x,-d.z),pitch:Math.max(-.08,Math.min(.08,Math.asin(Math.max(-1,Math.min(1,d.y))))),y:0,vy:0,eye:1.62,h:1.62,fov:70,shown:'',stT:0,locked:false,drag:null,last:0,noLock:!R.renderer.domElement.requestPointerLock};
+  WK.boxes=wBoxes();var p=V(c.position.x,0,c.position.z);
+  if(wHit(p.x,p.z)){p.set(-.35,0,2.3);WK.yaw=0;WK.pitch=-.12;}
+  WK.pos=p;R.walk=true;R.ct=null;R.controls.enabled=false;R.camera.fov=70;R.camera.updateProjectionMatrix();
+  var stg=document.getElementById('ph-stage');if(stg)stg.classList.add('walking');walkLock();walkUI();
+}
+function walkLock(){if(!WK||WK.noLock)return;var el=R.renderer.domElement;try{var pr=el.requestPointerLock();if(pr&&pr.catch)pr.catch(function(){if(WK){WK.noLock=true;walkUI();}});}catch(e){WK.noLock=true;}}
+function walkStop(){
+  if(!R||!R.walk)return;R.walk=false;try{if(document.pointerLockElement)document.exitPointerLock();}catch(e){}
+  var c=R.camera,d=new T.Vector3();c.getWorldDirection(d);R.controls.target.copy(c.position).add(d.multiplyScalar(1.2));
+  R.camera.fov=42;R.camera.updateProjectionMatrix();R.controls.enabled=true;WK=null;var ws=document.getElementById('ph-wst');if(ws)ws.style.opacity=0;
+  var stg=document.getElementById('ph-stage');if(stg)stg.classList.remove('walking');walkUI();
+}
+function walkTick(dt){
+  var k=WK.keys,f=(k.KeyW||k.ArrowUp?1:0)-(k.KeyS||k.ArrowDown?1:0),sd=(k.KeyD||k.ArrowRight?1:0)-(k.KeyA||k.ArrowLeft?1:0);
+  var crouch=k.KeyC||k.ControlLeft||k.ControlRight,sp=(k.ShiftLeft||k.ShiftRight?3.4:1.7)*(crouch?.5:1);
+  // forward goes where you look: look down and you go down, look up and you go up (between 0.15 and 2.4 m eye height)
+  var hz=1;if(f&&Math.abs(WK.pitch)>.08){var l0=Math.sqrt(f*f+sd*sd),nh=WK.h+f*Math.sin(WK.pitch)*sp*dt/l0,ch=Math.max(.15,Math.min(2.4,nh));if(ch===nh)hz=Math.cos(WK.pitch);WK.h=ch;}
+  if(f||sd){var l=Math.sqrt(f*f+sd*sd),cy=Math.cos(WK.yaw),sy=Math.sin(WK.yaw),dx=(-sy*f*hz+cy*sd)/l*sp*dt,dz=(-cy*f*hz-sy*sd)/l*sp*dt;
+    if(!wHit(WK.pos.x+dx,WK.pos.z))WK.pos.x+=dx;if(!wHit(WK.pos.x,WK.pos.z+dz))WK.pos.z+=dz;}
+  if(k.Space&&WK.y<=0&&WK.vy<=0)WK.vy=3.1;
+  WK.vy-=9.8*dt;WK.y=Math.max(0,WK.y+WK.vy*dt);if(WK.y<=0&&WK.vy<0)WK.vy=0;
+  var up=(k.KeyR||k.PageUp?1:0)-(k.KeyF||k.PageDown?1:0),zm=(k.zin?1:0)-(k.zout?1:0);
+  if(up)WK.h=Math.max(.15,Math.min(2.4,WK.h+up*1.1*dt));
+  if(zm)WK.fov=Math.max(22,Math.min(85,WK.fov*(1-zm*1.1*dt)));
+  WK.eye+=((crouch?Math.min(WK.h,1.05):WK.h)-WK.eye)*Math.min(1,dt*10);
+  if(Math.abs(R.camera.fov-WK.fov)>.05){R.camera.fov+=(WK.fov-R.camera.fov)*Math.min(1,dt*12);R.camera.updateProjectionMatrix();}
+  walkStat();
+  var c=R.camera,cp=Math.cos(WK.pitch);c.position.set(WK.pos.x,WK.y+WK.eye,WK.pos.z);
+  c.lookAt(c.position.x-Math.sin(WK.yaw)*cp,c.position.y+Math.sin(WK.pitch),c.position.z-Math.cos(WK.yaw)*cp);
+  if(now()-WK.last>.12){WK.last=now();walkAim();}
+}
+// little read-out while the zoom or the eye height changes
+function walkStat(){var el=document.getElementById('ph-wst');if(!el||!WK)return;var z=70/WK.fov,t=(z>1.04||z<.96?'Zoom '+(Math.round(z*10)/10)+'\u00d7 \u00b7 ':'')+'Eye height '+(Math.round(WK.h*100)/100).toFixed(2)+' m';
+  if(t!==WK.shown){WK.shown=t;el.textContent=t;WK.stT=now();}el.style.opacity=now()-WK.stT<1.6&&(Math.abs(WK.h-1.62)>.01||Math.abs(z-1)>.04||now()-WK.stT<.2)?1:0;}
+function walkReset(){if(!WK)return;WK.fov=70;WK.h=1.62;WK.stT=now();WK.shown='';}
+function centerHit(){var rc=new T.Raycaster();rc.setFromCamera(new T.Vector2(0,0),R.camera);rc.far=6;return rc.intersectObject(R.root,true).filter(function(h){return shown(h.object);})[0]||null;}
+function stepTgt(){var s=S(),st=R.steps[s.step];return st&&!s.setup&&s.done<=s.step&&!R.busy?target(st):null;}
+function aimAt(tg,h,sx,sy){if(R.camera.position.distanceTo(tg)>4.5)return false;if(h&&h.point.distanceTo(tg)<.3)return true;var p=project(tg);return !!p&&Math.abs(p.x-sx)<70&&Math.abs(p.y-sy)<70;}
+function walkAim(){
+  var el=document.getElementById('ph-aim');if(!el||!WK)return;var h=centerHit(),txt=h?tipOf(h.object)||'':'',act='',to=h&&togOf(h.object),tg=stepTgt(),st=R.steps[S().step];
+  if(to&&to.can())act=to.label(to.to);if(tg&&aimAt(tg,h,R.w/2,R.h/2))act=(st.btn||'Connect')+' \u2014 '+st.call;
+  var html=(txt?'<div>'+txt+'</div>':'')+(act?'<b>E / click: '+act+'</b>':'');if(el._h!==html){el.innerHTML=html;el._h=html;}el.style.display=html?'block':'none';
+}
+function walkUse(e){
+  var useMouse=e&&(WK.noLock||!WK.locked),h=useMouse?ray(e)[0]:centerHit(),r=R.renderer.domElement.getBoundingClientRect(),sx=useMouse?e.clientX-r.left:R.w/2,sy=useMouse?e.clientY-r.top:R.h/2,tg=stepTgt();
+  if(tg&&aimAt(tg,h,sx,sy)){connect();return;}
+  var to=h&&togOf(h.object);if(to&&togFlip(to)){WK.last=0;return;}
+  if(h&&h.object.userData.led){ledHit(h);return;}
+  ledHide();
+}
+function walkClick(e){if(!WK)return;if(!WK.locked&&!WK.noLock){walkLock();return;}walkUse(WK.locked?null:e);}
+function walkUI(){
+  var w=document.getElementById('ph-walk');if(!w)return;var on=!!(R&&R.walk&&WK);w.style.display=on?'block':'none';if(!on)return;
+  var pz=document.getElementById('ph-wpause');if(pz)pz.style.display=!WK.locked&&!WK.noLock?'flex':'none';
+  var hp=document.getElementById('ph-whelp');if(hp)hp.innerHTML=WK.noLock||!WK.locked?'<b>Drag</b> to look \u00b7 <b>WASD</b> / arrows: walk where you look (look down = go down) \u00b7 <b>Shift</b>: run \u00b7 <b>Space</b>: jump \u00b7 <b>C</b>: crouch \u00b7 <b>R</b> / <b>F</b>: up / down \u00b7 <b>scroll</b>: zoom \u00b7 <b>Z</b>: reset \u00b7 <b>click</b> / <b>E</b>: use \u00b7 <b>Q</b>: stop':'<b>Mouse</b>: look \u00b7 <b>WASD</b> / arrows: walk where you look (look down = go down) \u00b7 <b>Shift</b>: run \u00b7 <b>Space</b>: jump \u00b7 <b>C</b>: crouch \u00b7 <b>R</b> / <b>F</b>: up / down \u00b7 <b>scroll</b>: zoom \u00b7 <b>Z</b>: reset \u00b7 <b>click</b> / <b>E</b>: use \u00b7 <b>Esc</b>: free the mouse';
+}
+// ---------------------------------------------------------------- full screen: the 3D view and the step panel fill the screen
+var FS=false,FSN=false,FSE=false;
+var FSI='<svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:-2px;margin-right:4px"><path d="M1.5 5.5v-4h4M10.5 1.5h4v4M14.5 10.5v4h-4M5.5 14.5h-4v-4"/></svg>';
+function fsLabel(){return FS?'\u2715 Exit full screen':FSI+'Full screen';}
+function fsSet(on){FS=!!on;var m=document.querySelector('.ph-main');if(m)m.classList.toggle('ph-fs',FS);document.body.classList.toggle('ph-fs-on',FS);
+  var b=document.querySelector('[data-act="phfs"]');if(b){b.innerHTML=fsLabel();b.classList.toggle('on',FS);}
+  var de=document.documentElement,fe=document.fullscreenElement||document.webkitFullscreenElement;
+  if(FS&&!fe){var rq=de.requestFullscreen||de.webkitRequestFullscreen;if(rq){try{var pr=rq.call(de);if(pr&&pr.then)pr.then(function(){FSN=true;},function(){FSN=false;});else FSN=true;}catch(e){FSN=false;}}}
+  if(!FS&&fe&&FSN){FSN=false;try{(document.exitFullscreen||document.webkitExitFullscreen).call(document);}catch(e){}}
+  if(R)R.w=0;}
+function fsEvents(){if(FSE)return;FSE=true;
+  var ch=function(){var fe=document.fullscreenElement||document.webkitFullscreenElement;if(!fe&&FSN){FSN=false;if(FS)fsSet(false);}};
+  document.addEventListener('fullscreenchange',ch);document.addEventListener('webkitfullscreenchange',ch);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&FS&&!(R&&R.walk)&&!(document.fullscreenElement||document.webkitFullscreenElement))fsSet(false);});}
+function walkEvents(el){
+  document.addEventListener('keydown',function(e){if(!R||!R.walk||!WK)return;var tn=e.target&&e.target.tagName;if(tn==='INPUT'||tn==='SELECT'||tn==='TEXTAREA')return;
+    if(!WK.keys[e.code]){if(e.code==='KeyE')walkUse();if(e.code==='KeyZ')walkReset();if(e.code==='KeyQ'){walkStop();return;}}
+    WK.keys[e.code]=true;if(/^(Arrow|Space|Page|Key[WASDCEQRFZ]$)/.test(e.code))e.preventDefault();});
+  document.addEventListener('keyup',function(e){if(WK)WK.keys[e.code]=false;});
+  window.addEventListener('blur',function(){if(WK)WK.keys={};});
+  document.addEventListener('mousemove',function(e){if(!R||!R.walk||!WK||document.pointerLockElement!==el)return;WK.yaw-=e.movementX*.0022;WK.pitch=Math.max(-1.45,Math.min(1.45,WK.pitch-e.movementY*.0022));});
+  document.addEventListener('pointerlockchange',function(){if(!R||!R.walk||!WK)return;WK.locked=document.pointerLockElement===el;walkUI();});
+  el.addEventListener('wheel',function(e){if(!R||!R.walk||!WK)return;e.preventDefault();e.stopPropagation();var d=e.deltaMode===1?e.deltaY*16:e.deltaY;
+    WK.fov=Math.max(22,Math.min(85,WK.fov*Math.exp(d*.0011)));WK.stT=now();WK.shown='';},{passive:false,capture:true});
+  el.addEventListener('pointerdown',function(e){if(R&&R.walk&&WK&&!WK.locked)WK.drag=[e.clientX,e.clientY];});
+  el.addEventListener('pointermove',function(e){if(!R||!R.walk||!WK||!WK.drag)return;WK.yaw+=(e.clientX-WK.drag[0])*.005;WK.pitch=Math.max(-1.45,Math.min(1.45,WK.pitch+(e.clientY-WK.drag[1])*.005));WK.drag=[e.clientX,e.clientY];});
+  window.addEventListener('pointerup',function(){if(WK)WK.drag=null;});
+  document.addEventListener('pointerdown',function(e){var b=e.target.closest&&e.target.closest('[data-wk]');if(!b||!WK)return;e.preventDefault();var k=b.getAttribute('data-wk');if(k==='use')walkUse();else if(k==='reset')walkReset();else WK.keys[k]=true;});
+  ['pointerup','pointercancel','pointerout'].forEach(function(ev){document.addEventListener(ev,function(e){var b=e.target.closest&&e.target.closest('[data-wk]');if(b&&WK)WK.keys[b.getAttribute('data-wk')]=false;});});
+}
 // ---------------------------------------------------------------- steps
-function focus(d){var st=R.steps[S().step];if(!st)return;ledHide();R.station=st.st;applyVis();camTo(st.cam.p,st.cam.t,d);}
-function gotoStep(j){var s=S(),n=R.steps.length;j=Math.max(0,Math.min(n-1,j));R.tw=[];R.busy=false;
+function focus(d){if(S().setup){setupPreview(d);return;}var st=R.steps[S().step];if(!st)return;ledHide();R.station=st.st;applyVis();if(!R.walk)camTo(st.cam.p,st.cam.t,d);}
+// set-up view: every mounting step shown finished, the camera on the stack
+function setupPreview(d){if(!R||!R.steps)return;R.steps.forEach(function(st){if(st.grp==='mount')st.keys.forEach(function(k){put(k,1);});});applyVis();
+  var b=R.st.inv;if(b&&!R.walk){R.station='inv';var c=b.c.clone(),sc=b.s*3.1;camTo(c.clone().add(V(.38*sc,.12*sc,sc)),c,d);}}
+function gotoStep(j){var s=S(),n=R.steps.length;j=Math.max(0,Math.min(n-1,j||0));R.tw=[];R.busy=false;togReset();
   R.steps.forEach(function(st,i){st.keys.forEach(function(k){put(k,i<j?1:0);});});s.done=j;s.step=j;focus();ui();}
 function connect(){
-  var s=S(),st=R.steps[s.step];if(!st||R.busy||s.done>s.step)return;R.busy=true;
-  var d=0,end=0,ks=st.keys;
-  ks.forEach(function(k,i){var mt=/^mt/.test(k),big=/Plug|Com1|^wC|^ct|trace|bMount|comH|^abCov|^e(Cond|MEB)|^g(Door|Meter)|^pv(Str|Cab|Plug)/.test(k),dur=mt||/^eRod|^pvRail|^gCable/.test(k)?2.5:k==='pvPan'?4.2:k==='ledOn'?4.2:big?1.15:.85,start=/Plug|Com1/.test(k)?end:d;
+  var s=S(),st=R.steps[s.step];if(!st||R.busy||s.done>s.step)return;if(st.builder&&!batOk())return;
+  var d=0,end=0,ks=st.builder?st.keys.filter(function(k){return getT(k)<1;}):st.keys;
+  if(!ks.length){s.done=Math.max(s.done,s.step+1);ui();return;}R.busy=true;
+  var core5=ks.every(function(k){return /^m[GL](_|Plug)/.test(k);});
+  ks.forEach(function(k,i){var mt=/^mt/.test(k),big=/Plug|Com1|^wC|^ct|trace|bMount|comH|^abCov|^e(Cond|MEB)|^g(Door|Meter)|^pv(Str|Cab|Plug)/.test(k),dur=core5?(/Plug/.test(k)?.9:.5):st.builder?(/^mtBat/.test(k)?1.3:1.1):mt||/^eRod|^pvRail|^gCable/.test(k)?2.5:k==='pvPan'?4.2:k==='ledOn'?4.2:big?1.15:.85,start=/Plug|Com1/.test(k)||st.builder?end:d;
     tween(k,1,dur,start,i===ks.length-1?function(){R.busy=false;s.done=Math.max(s.done,s.step+1);ui();}:null);
-    end=Math.max(end,start+dur);d+=ks.length>4?.16:.3;});
+    end=Math.max(end,start+dur);d+=core5?.08:ks.length>4?.16:.3;});
   ui();
 }
 function next(){var s=S();if(s.step<R.steps.length-1){s.step++;focus();ui();}}
 // ---------------------------------------------------------------- HTML
-var GRP={mount:'Mounting',inv:'Inverter',brk:'AC breaker',acb:'AC isolator',feed:'Board',byp:'Backup',earth:'Earthing',grid:'Grid',pv:'Solar',meter:'Smart meter',pwr:'Power on'},GRPL={mount:'Mounting the system',inv:'At the inverter',brk:'In the board \u00b7 AC breaker',acb:'AC isolator \u00b7 beside the inverter',grid:'The grid supply \u00b7 grid company',pv:'Solar panels on the roof',earth:'Earthing \u00b7 earth rods outside',feed:'In the board \u00b7 fuse F-INV',byp:'In the board \u00b7 whole-house backup',meter:'At the smart meter',pwr:'Commissioning \u00b7 power on'};
+var GRP={mount:'Mounting',inv:'Inverter',brk:'AC breaker',acb:'AC isolator',feed:'Board',byp:'Backup',earth:'Earthing',grid:'Grid',pv:'Solar',meter:'Smart meter',pwr:'Power on'},GRPL={mount:'Mounting the system',inv:'At the inverter',brk:'In the board \u00b7 AC breaker',acb:'AC isolator \u00b7 beside the inverter',grid:'The grid supply \u00b7 grid company',pv:'Solar panels on the roof',earth:'Earthing \u00b7 earth rods outside',feed:'In the board \u00b7 fuse F-INV',byp:'Backup board (partial) \u00b7 backup loads',meter:'At the smart meter',pwr:'Commissioning \u00b7 power on'};
 var INVS=[['MODA','MODA 4\u201315K'],['MOD','MOD 3\u201315K-HU'],['WIT','WIT 50\u2013100K-HU']],METERS=[['eastron','Eastron SDM630'],['chint','CHINT DTSU666']];
 function toolsHTML(){var s=S();
   return '<div class="ph-tg"><span class="ph-tl">Inverter</span>'+INVS.map(function(q){return '<button class="bt-chip'+(s.inv===q[0]?' on':'')+'" data-act="phinv" data-k="'+q[0]+'">'+q[1]+'</button>';}).join('')+'</div>'+
@@ -6471,29 +6957,85 @@ function specHTML(){
   var h='<div class="ph-spec">'+o('ph-kw','Model',q.kws,s.kw,function(v){return q.name(v);},function(){return false;})+
     o('ph-cab','AC cable',q.cabs,s.cab,function(v){return (s.inv==='WIT'?'':'5G')+v+' mm\u00b2';},function(v){return v>=rc[0]&&v<=rc[1]||v===q.rec(s.kw);})+
     o('ph-brk',s.inv==='MODA'?'Fuse':'AC breaker',q.brks,s.brk,function(v){return v+' A';},function(v){return v===rb;})+
-    (s.inv==='MODA'?o('ph-nb','Batteries',[1,2,3,4,5,6],s.nb,function(v){return v+' \u00d7 APX 5.0P';},function(){return false;}):'')+'</div>';
+    '<button class="bt-chip ph-sysb" data-act="phsetup">\u2699 System: '+sysSum()+'</button></div>';
   h+='<div class="ph-chk">'+specChecks().map(function(c){return '<span class="'+(c[0]?'ok':'wa')+'">'+(c[0]?'\u2713 ':'\u26a0 ')+c[1]+'</span>';}).join('')+'<span class="src">'+q.src+'</span></div>';
   return h;
 }
+function sysSum(){var s=S(),q=sp0();if(s.inv!=='MODA')return q.short(s.kw);return q.short(s.kw)+' \u00b7 '+s.nb+' module'+(s.nb===1?'':'s')+' \u00b7 '+(Math.round(batKwh()*10)/10)+' kWh'+(s.tw===2?' \u00b7 2 towers':'');}
+function setupHTML(){
+  var s=S(),q=sp0(),hv=s.fam==='hv',row=function(l,c,n){return '<div class="ph-su"><span class="ph-sul">'+l+'</span><div class="ph-suc">'+c+(n?'<div class="ph-sun">'+n+'</div>':'')+'</div></div>';},
+    chip=function(a,k,on,t,dis){return '<button class="bt-chip'+(on?' on':'')+'" data-act="'+a+'" data-k="'+k+'"'+(dis?' disabled':'')+'>'+t+'</button>';};
+  var h='<div class="ph-card ph-setup"><div class="ph-prog"><span>Before you start</span><span class="ph-where">System setup</span></div><h3>Set up your system</h3><p>Choose the inverter and its size'+(s.inv==='MODA'?', then build the battery stack the way you want it':'')+'. The 3D model follows your choices.</p>';
+  h+=row('Inverter',INVS.map(function(x){return chip('phinv',x[0],s.inv===x[0],x[1]);}).join(''));
+  h+=row('Model','<select class="ph-ssel" data-sel="kw">'+q.kws.map(function(v){return '<option value="'+v+'"'+(v===s.kw?' selected':'')+'>'+q.name(v)+'</option>';}).join('')+'</select>');
+  if(s.inv==='MODA'){
+    h+='<div class="ph-sul ph-bbl">Battery \u2014 choose and build</div>'+bbHTML();}
+  h+='<div class="ph-chk">'+specChecks().filter(function(c){return s.inv!=='MODA'||/APX|HV mod/.test(c[1]);}).map(function(c){return '<span class="'+(c[0]?'ok':'wa')+'">'+(c[0]?'\u2713 ':'\u26a0 ')+c[1]+'</span>';}).join('')+'</div>';
+  return h+'<button class="bt-btn g ph-go ph-start" data-act="phstart"'+(batOk()?'':' disabled')+'>Start the installation \u25b6</button>'+(s.inv==='MODA'?'<div class="ph-hint2">You can change the battery stack again when you get to the battery step.</div>':'')+'</div>';
+}
+// ---- the battery builder: click a module to add it to the active tower, a second tower can be added beside (no MODA on it)
+function baseChips(t,big){var s=S();return ['5','hv'].map(function(b){var on=baseOf(t)===b,w=on?'':baseWhy(t,b);
+    return '<button class="ph-bch'+(on?' on':'')+(big?' big':'')+'" data-act="phbase" data-k="'+t+':'+b+'"'+(w?' disabled title="'+w+'"':'')+'>'+(big?(b==='5'?'<b>Base for 5 kWh</b><span>APX 5.0P-B3 \u00b7 590 mm</span>':'<b>Base for 7 \u00b7 9.4 \u00b7 11.3 kWh</b><span>APX HV \u00b7 740 mm</span>'):(b==='5'?'5 kWh':'HV'))+(w&&big?'<em>'+w+'</em>':'')+'</button>';}).join('');}
+function bbHTML(){
+  var s=S(),at=s.tw===2?s.at:1,ab=baseOf(at),h='<div class="ph-bb">';
+  h+='<div class="ph-pal">'+['5.0','7.0','9.4','11.3'].map(function(t){var b=BT[t],w=addWhy(t);
+    return '<button class="ph-pm m'+t.replace('.','')+'" data-act="phbadd" data-k="'+t+'"'+(w?' disabled title="'+w+'"':'')+'><i></i><b>'+(t==='5.0'?'5':t==='7.0'?'7':t)+' kWh</b><span>'+b.n+' \u00b7 '+b.kg+' kg</span>'+(w?'<em>'+w+'</em>':'')+'</button>';}).join('')+'</div>';
+  h+='<div class="ph-bnote">'+(ab==='5'?'Tower '+at+' has the <b>5 kWh base</b>: only APX 5.0P-B3 on it \u2014 up to <b>6 \u00d7 5 kWh</b> in total'+(at===1&&s.tw!==2?' (with the MODA on top that makes 7)':'')+'.':'Tower '+at+' has the <b>HV base</b>: <b>7 \u00b7 9.4 \u00b7 11.3 kWh</b> can be mixed.')+' Max <b>7 modules</b> in total. Each tower has its own base \u2014 change it under the tower.'+(s.tw===2?' New modules go on <b>tower '+at+'</b> (green frame) \u2014 click a tower to switch.':'')+'</div>';
+  function col(t){var list=[];s.bm.forEach(function(m,i){if(m.tw===t)list.push(i);});var on=s.tw===2&&s.at===t,wide=baseOf(t)==='hv',kwh=list.reduce(function(a,i){return a+BT[s.bm[i].t].kwh;},0);
+    var c='<div class="ph-tow'+(on?' on':'')+(wide?' wide':'')+'"'+(s.tw===2?' data-act="phbat" data-k="'+t+'" title="Add the next modules to tower '+t+'"':'')+'><div class="ph-th">Tower '+t+(s.tw===2&&t===2?'<button class="ph-twx" data-act="phbtwx" title="Remove tower 2">\u2715</button>':'')+'</div><div class="ph-col">';
+    c+=t===1?'<div class="ph-blk moda">MODA '+S().kw+'K</div>':'<div class="ph-blk lid">top cover</div>';
+    if(!list.length)c+='<div class="ph-blk empty">empty</div>';
+    list.slice().reverse().forEach(function(i){var m=s.bm[i];c+='<div class="ph-blk m'+m.t.replace('.','')+'"><span>'+(m.t==='5.0'?'5':m.t)+' kWh</span><button data-act="phbdel" data-i="'+i+'" aria-label="Remove this module" title="Remove">\u2715</button></div>';});
+    c+='<div class="ph-blk base">'+(wide?'HV base':'5 kWh base')+'</div></div><div class="ph-bsel"><span>Base</span>'+baseChips(t)+'</div><div class="ph-tf">'+list.length+' \u00d7 \u00b7 '+(Math.round(kwh*10)/10)+' kWh'+(t===2?' \u00b7 extension cable':'')+'</div></div>';return c;}
+  if(s.tw===2)h+='<div class="ph-side"><span>Tower 2 stands</span><button class="ph-bch'+(s.side!=='R'?' on':'')+'" data-act="phside" data-k="L" title="Tower 2 to the left of the MODA tower">\u25c0 Left</button><button class="ph-bch'+(s.side==='R'?' on':'')+'" data-act="phside" data-k="R" title="Tower 2 to the right of the MODA tower">Right \u25b6</button></div>';
+  h+='<div class="ph-towers">'+(s.tw===2&&s.side!=='R'?col(2):'')+col(1)+(s.tw===2&&s.side==='R'?col(2):'');
+  if(s.tw===1){var tw=twWhy();h+='<button class="ph-addtw" data-act="phbtw"'+(tw?' disabled title="'+tw+'"':'')+'><b>+ Tower beside</b><span>'+(tw||'no MODA on it \u00b7 own base')+'</span></button>';}
+  h+='</div>';
+  var kg=s.bm.reduce(function(a,m){return a+BT[m.t].kg;},0)+32,ht=.06+s.bm.filter(function(m){return m.tw===1;}).reduce(function(a,m){return a+BT[m.t].H;},0)+.36,msg=batMsg();
+  h+='<div class="ph-sum"><b>'+s.nb+' module'+(s.nb===1?'':'s')+' \u00b7 '+(Math.round(batKwh()*10)/10)+' kWh</b><span>about '+Math.round(kg)+' kg with the MODA \u00b7 tower 1 \u2248 '+Math.round(ht*1000)+' mm high</span>'+(msg?'<span class="ph-bwarn">\u26a0 '+msg+'</span>':'')+'</div>';
+  if(s.bm.length)h+='<button class="ph-clr" data-act="phbclr">Clear the stack</button>';
+  return h+'</div>';
+}
+// change the stack: in the set-up the world is rebuilt; at the battery step the placed modules stay placed and the new one is lifted in
+function bEdit(fn){
+  var s=S();if(R&&R.busy)return;fn();batNorm();
+  var st=R&&R.steps&&R.steps[s.step],inStep=!s.setup&&st&&(st.builder||st.basePick)&&s.done<=s.step;
+  if(!R||!R.root){ui();return;}
+  if(!inStep){cfgChanged();return;}
+  var c=R.camera.position.clone(),t=R.controls.target.clone(),had=R.an.mtBase2?1:0;buildWorld();R.camera.position.copy(c);R.controls.target.copy(t);R.ct=null;
+  var fi=-1;s.bm.forEach(function(m,i){if(m.fresh){fi=i;delete m.fresh;}});R.built=bkey();
+  if(!st.builder){ui();return;}
+  s.bm.forEach(function(m,i){if(i!==fi)put('mtBat'+i,1);});
+  if(R.an.mtBase2){if(had)put('mtBase2',1);else tween('mtBase2',1,1.2,0);}
+  if(fi>=0)tween('mtBat'+fi,1,1.7,R.an.mtBase2&&!had?1:0,function(){ui();});
+  else if(R.an.mtBase2&&!had)R.tw.forEach(function(w){if(w.k==='mtBase2')w.cb=function(){ui();};});
+  ui();
+}
+function cfgChanged(){var s=S();s.step=0;s.done=0;batNorm();if(R&&R.root){buildWorld();focus();}ui();}
 function onSel(id,v){
   var s=S(),q=sp0();v=+v;
   if(id==='ph-kw'){s.kw=v;s.cab=q.rec(v);s.brk=q.brk[v];}else if(id==='ph-cab')s.cab=v;else if(id==='ph-brk')s.brk=v;else if(id==='ph-nb'){if(s.nb===v)return;s.nb=v;s.step=0;s.done=0;}
   if(R&&R.root){var c=R.camera.position.clone(),t=R.controls.target.clone();buildWorld();if(id==='ph-nb')focus();else{R.camera.position.copy(c);R.controls.target.copy(t);}}
   ui();
 }
-document.addEventListener('change',function(e){var id=e.target&&e.target.id;if(id==='ph-kw'||id==='ph-cab'||id==='ph-brk'||id==='ph-nb')onSel(id,e.target.value);});
+document.addEventListener('change',function(e){var id=e.target&&e.target.id;if(id==='ph-kw'||id==='ph-cab'||id==='ph-brk')onSel(id,e.target.value);
+  var ds=e.target&&e.target.getAttribute&&e.target.getAttribute('data-sel');if(!ds||!document.getElementById('ph-panel'))return;
+  if(ds==='kw')onSel('ph-kw',e.target.value);});
 function stationsHTML(){var st=R?R.station:'inv';
-  return [['inv','Inverter'],['meter','Smart meter']].concat(R&&R.st&&R.st.earth?[['earth','Earth rods']]:[]).concat(R&&R.st&&R.st.grid?[['grid','Grid']]:[]).concat(R&&R.st&&R.st.roof?[['roof','Solar']]:[]).concat([['all','Overview']]).map(function(q){return '<button class="ph-sb'+(st===q[0]?' on':'')+'" data-act="phst" data-k="'+q[0]+'">'+q[1]+'</button>';}).join('');}
-function viewsHTML(){return [['front','Front'],['top','Top'],['bottom','Bottom'],['left','Left'],['right','Right']].map(function(q){return '<button class="ph-vb" data-act="phview" data-k="'+q[0]+'">'+q[1]+'</button>';}).join('');}
+  return [['inv','Inverter'],['meter','Smart meter']].concat(R&&R.st&&R.st.bb?[['bb','Backup board']]:[]).concat(R&&R.st&&R.st.earth?[['earth','Earth rods']]:[]).concat(R&&R.st&&R.st.grid?[['grid','Grid']]:[]).concat([['all','Overview']]).map(function(q){return '<button class="ph-sb'+(st===q[0]?' on':'')+'" data-act="phst" data-k="'+q[0]+'">'+q[1]+'</button>';}).join('');}
+function viewsHTML(){return '<button class="ph-vb ph-wkb" data-act="phwalk">\ud83d\udeb6 Walk</button>'+[['front','Front'],['top','Top'],['bottom','Bottom'],['left','Left'],['right','Right']].map(function(q){return '<button class="ph-vb" data-act="phview" data-k="'+q[0]+'">'+q[1]+'</button>';}).join('');}
 function panelHTML(){
-  if(!R||!R.steps.length)return '<div class="ph-card"><h3>3D is not available</h3><p>This browser could not start WebGL, so the 3D world cannot be shown. Try Chrome, Edge or Safari with hardware acceleration switched on.</p></div>';
-  var s=S(),n=R.steps.length,st=R.steps[s.step],done=s.done>s.step,last=s.step===n-1;
+  if(!R||!R.steps.length)return (S().setup?setupHTML():'')+'<div class="ph-card"><h3>3D is not available</h3><p>This browser could not start WebGL, so the 3D world cannot be shown. Try Chrome, Edge or Safari with hardware acceleration switched on.</p></div>';
+  if(S().setup)return setupHTML();
+  var s=S(),n=R.steps.length,st=R.steps[s.step],done=s.done>s.step,last=s.step===n-1,unp=st.builder?st.keys.filter(function(k){return /^mtBat/.test(k)&&getT(k)<1;}).length:0;
+  if(st.builder&&!done&&!R.busy)st.btn=unp?'Lift '+unp+' module'+(unp>1?'s':'')+' into place':'Stack ready';
   var btn=R.busy?(st.grp==='mount'?'Working\u2026':'Connecting\u2026'):(!done?(st.btn?st.btn:st.keys[0]==='trace'?'Show phase check':st.keys[0]==='wCov'?'Open cover':st.keys[0]==='wClose'?'Close cover':/^ct/.test(st.keys[0])?'Clamp CTs':/Plug$/.test(st.keys[0])?'Plug in':'Connect')+' \u25b6':(last?'Start over \u21ba':'Next step \u203a'));
   var h='<div class="ph-card"><div class="ph-prog"><span>Step '+(s.step+1)+' of '+n+'</span><span class="ph-where '+st.st+'">'+GRP[st.grp||st.st]+'</span></div>'+
     '<div class="ph-bar"><i style="width:'+Math.round(Math.min(s.done,n)/n*100)+'%"></i></div>'+
     '<h3>'+st.t+'</h3><div class="ph-call2'+(done?' done':'')+'"><span class="ph-dot" style="background:'+(CSS[st.col]||'#33da7a')+'"></span>'+(done?'\u2713 ':'')+st.call+'</div>'+
-    '<p>'+st.d+'</p>'+
-    '<div class="ph-btns"><button class="bt-btn o" data-act="phback"'+(s.step===0||R.busy?' disabled':'')+'>\u2039 Back</button><button class="bt-btn g ph-go'+(done?' nx':'')+'" data-act="phgo"'+(R.busy?' disabled':'')+'>'+btn+'</button></div>'+
+    '<p>'+st.d+'</p>'+(st.builder&&!done?bbHTML():'')+(st.basePick&&!done?(S().tw===2?'<div class="ph-bpt">Tower 1 \u00b7 the MODA goes on top</div>':'')+'<div class="ph-bpick">'+baseChips(1,true)+'</div>'+(S().tw===2?'<div class="ph-bpt">Tower 2 \u00b7 '+(S().side==='R'?'right':'left')+' of the MODA</div><div class="ph-bpick">'+baseChips(2,true)+'</div>':''):'')+(st.sim?simCtl(st.sim,done):'')+
+    '<div class="ph-btns"><button class="bt-btn o" data-act="phback"'+(s.step===0||R.busy?' disabled':'')+'>\u2039 Back</button><button class="bt-btn g ph-go'+(done?' nx':'')+'" data-act="phgo"'+(R.busy||st.builder&&!done&&!batOk()?' disabled':'')+'>'+btn+'</button></div>'+
+    (st.builder&&done?'<div class="ph-hint2">'+s.nb+' modules \u00b7 '+(Math.round(batKwh()*10)/10)+' kWh. To change the stack, go back to this step.</div>':'')+
     (!done&&!R.busy&&st.tgtKey!=='none'?'<div class="ph-hint2">Tip: you can also click the pulsing green marker in the 3D view.</div>':'')+
     (last&&done?'<div class="ph-ok">\u2713 All connected \u2014 '+n+' steps. The pulses show L1 \u00b7 L2 \u00b7 L3 running in the same order from the meter to the inverter.'+(R.led?' Click the icons on the LED display to see what each one means.':'')+'</div>':'')+
     '</div><div class="ph-list">';
@@ -6508,16 +7050,23 @@ function pageHTML(){
   return '<div class="aipage phpage">'+
     '<div class="ai-hero ph-hero"><button class="ai-back" data-act="goback">'+ic('arrowl',13)+'<span>Back to System Designer</span></button>'+
       '<div class="ph-head"><div class="ai-badge">'+ic('zap',13)+'PHASES \u00b7 3D</div><h1>Connect the phases \u2014 in 3D</h1>'+
-      '<p class="ai-tag">A real installation, step by step: earth, L1 \u00b7 L2 \u00b7 L3 \u00b7 N \u00b7 PE into the inverter, the RJ45 / RS485 to the smart meter, and the meter at the incoming supply. Drag to look around \u2014 or jump between views.</p></div></div>'+
+      '<p class="ai-tag">Set up your system first \u2014 inverter, battery and modules \u2014 then install it step by step, from the grid company\u2019s transformer to the LED display. Drag to look around, or press <b>Walk</b> to move around the installation like in a game and open covers with a click.</p></div></div>'+
     '<div class="ph-body"><div class="ph-tools" id="ph-tools">'+toolsHTML()+'</div>'+
-      '<div class="ph-main"><div class="ph-stage" id="ph-stage"><div class="ph-view" id="ph-view"></div>'+
+      '<div class="ph-main'+(FS?' ph-fs':'')+'"><div class="ph-stage" id="ph-stage"><div class="ph-view" id="ph-view"></div>'+
         '<div class="ph-ovl ph-o-tl" id="ph-stations">'+stationsHTML()+'</div>'+
         '<div class="ph-ovl ph-o-tr" id="ph-views">'+viewsHTML()+'</div>'+
+        '<div class="ph-ovl ph-o-fs"><button class="ph-vb ph-fsb'+(FS?' on':'')+'" data-act="phfs" title="Show the 3D view and the steps on the whole screen (Esc to leave)">'+fsLabel()+'</button></div>'+
         '<div class="ph-call" id="ph-call"></div><div class="ph-tip" id="ph-tip"></div><div class="ph-led" id="ph-led"></div>'+
+        '<div class="ph-walk" id="ph-walk"><div class="ph-cross"></div><div class="ph-aim" id="ph-aim"></div><div class="ph-whelp" id="ph-whelp"></div>'+
+          '<div class="ph-wpause" id="ph-wpause"><b>Walk around the installation</b><span>Click to look around with the mouse \u2014 like in a game.</span><div><button class="bt-btn g" data-act="phwalkgo">\u25b6 Look around</button><button class="bt-btn o" data-act="phwalkx">\u2715 Stop walking</button></div></div>'+
+          '<div class="ph-pad"><button data-wk="KeyW" aria-label="Forward">\u25b2</button><button data-wk="KeyA" aria-label="Left">\u25c0</button><button data-wk="KeyS" aria-label="Back">\u25bc</button><button data-wk="KeyD" aria-label="Right">\u25b6</button><button data-wk="use" class="use">Use</button></div>'+
+          '<div class="ph-pad2"><button data-wk="KeyR" aria-label="Up">\u2912</button><button data-wk="KeyF" aria-label="Down">\u2913</button><button data-wk="zin" aria-label="Zoom in">\uff0b</button><button data-wk="zout" aria-label="Zoom out">\uff0d</button></div>'+
+          '<div class="ph-wst" id="ph-wst"></div>'+
+          '<button class="ph-wx" data-act="phwalkx">\u2715 Stop walking</button></div>'+
         '<div class="ph-ovl ph-o-bl ph-legend">'+['L1','L2','L3','N','PE','A','B'].map(function(k){return '<span><i style="background:'+CSS[k]+'"></i>'+(k==='A'?'RS485 A':k==='B'?'B':k)+'</span>';}).join('')+'</div>'+
-        '<div class="ph-ovl ph-o-br ph-hint">Drag: rotate \u00b7 Scroll / pinch: zoom \u00b7 Right-drag: pan</div>'+
+        '<div class="ph-ovl ph-o-br ph-hint">Drag: rotate \u00b7 Scroll / pinch: zoom \u00b7 Right-drag: pan \u00b7 Click a cover or door to open it</div>'+
       '</div><div class="ph-panel" id="ph-panel"></div></div>'+
-      '<div class="ai-foot">Terminal layouts from the Growatt user manuals (MODA 4\u201315KTL3-HU 2026-09, MOD 3\u201315KTL3-HU, WIT 50\u2013100K) and the meter wiring figures in them. The room, cable routes and the board are illustrations \u2014 always follow the manual, the meter\u2019s own label and local rules.</div>'+
+      '<div class="ai-foot">Terminal layouts from the Growatt user manuals (MODA 4\u201315KTL3-HU 2026-09, MOD 3\u201315KTL3-HU, WIT 50\u2013100K) and the meter wiring figures in them. Battery modules from the APX 5.0\u201330.0M-S3, 7.0\u201349.0M-S3, 9.4\u201365.5M-S3 and 11.3\u201378.9M-S3 datasheets. The room, cable routes and the board are illustrations \u2014 always follow the manual, the meter\u2019s own label and local rules.</div>'+
     '</div></div>';
 }
 function mount(){
@@ -6525,9 +7074,9 @@ function mount(){
   if(!R&&!init()){ui();return;}
   if(!R)return;
   var s=S(),first=!R.root;
-  sp0();if(R.built!==bkey())buildWorld();
+  if(R.walk)walkStop();sp0();if(R.built!==bkey())buildWorld();
   v.appendChild(R.renderer.domElement);R.w=0;size();
-  if(first)focus(0);
+  if(first){focus(0);if(s.setup&&R.steps[0]){var c0=R.steps[0].cam;R.station=R.steps[0].st;camTo(c0.p,c0.t,0);}}
   if(!R.alive){R.alive=true;requestAnimationFrame(loop);}
   if(!R.ro&&window.ResizeObserver){R.ro=new ResizeObserver(function(){size();});}
   if(R.ro){R.ro.disconnect();R.ro.observe(v);}
@@ -6535,6 +7084,22 @@ function mount(){
 }
 function act(a,el){
   var s=S(),k=el&&el.getAttribute('data-k');
+  if(a==='phfs'){fsSet(!FS);return true;}
+  if(a==='phwalk'){if(R&&R.walk)walkStop();else walkStart();return true;}
+  if(a==='phwalkgo'){walkLock();return true;}
+  if(a==='phwalkx'){walkStop();return true;}
+  if(a==='phsetup'){if(R&&R.walk)walkStop();s.setup=true;if(R&&R.root){R.tw=[];R.busy=false;togReset();R.steps.forEach(function(st,i){st.keys.forEach(function(kk){put(kk,i<s.done?1:0);});});setupPreview();}ui();return true;}
+  if(a==='phstart'){if(!batOk())return true;s.setup=false;s.step=0;s.done=0;if(R&&R.root)gotoStep(0);else ui();return true;}
+  if(a==='phbadd'){if(addWhy(k))return true;bEdit(function(){var tw=s.tw===2?s.at:1,m={t:k,tw:tw,fresh:true},at=-1;s.bm.forEach(function(x,i){if(x.tw===tw)at=i;});s.bm.splice(at+1,0,m);});return true;}
+  if(a==='phbdel'){var di=+el.getAttribute('data-i');if(!s.bm[di])return true;bEdit(function(){s.bm.splice(di,1);});return true;}
+  if(a==='phbtw'){if(twWhy())return true;bEdit(function(){s.tw=2;s.at=2;s.b2=s.b1==='5'&&n5()>=6?'hv':s.b1;});return true;}
+  if(a==='phside'){if((k==='R'?'R':'L')===(s.side==='R'?'R':'L'))return true;bEdit(function(){s.side=k==='R'?'R':'L';});return true;}
+  if(a==='phbase'){var bp=(k||'').split(':'),bt=+bp[0],bb=bp[1];if(bb!=='5'&&bb!=='hv'||baseWhy(bt,bb)||baseOf(bt)===bb)return true;bEdit(function(){if(bt===2)s.b2=bb;else s.b1=bb;s.at=s.tw===2?bt:1;});return true;}
+  if(a==='phbtwx'){bEdit(function(){s.bm=s.bm.filter(function(m){return m.tw!==2;});s.tw=1;s.at=1;s.b2=null;});return true;}
+  if(a==='phsim'){if(!R||!R.sim)return true;var kv=(k||'').split(':'),F=R.sim;F[kv[0]]=+kv[1];var fst=R.steps[s.step];if(fst&&fst.sim&&s.done<=s.step)connect();else{F.sig='-';simApply();}ui();return true;}
+  if(a==='phbat'){s.at=+k===2?2:1;ui();return true;}
+  if(a==='phbclr'){bEdit(function(){s.bm=[];s.tw=1;s.at=1;s.b2=null;});return true;}
+  if((a==='phst'||a==='phview')&&R&&R.walk)walkStop();
   if(a==='phinv'||a==='phmeter'){if(a==='phinv'){if(k===s.inv)return true;s.inv=k;}else{if(k===s.meter)return true;s.meter=k;}
     if(a==='phinv'){s.step=0;s.done=0;s.kw=null;s.cab=null;s.brk=null;sp0();}else{var keep=0;if(R)while(keep<R.steps.length&&R.steps[keep].st!=='meter')keep++;s.step=Math.min(s.step,keep);s.done=Math.min(s.done,keep);}
     if(R){buildWorld();focus();}ui();return true;}
@@ -6547,7 +7112,7 @@ function act(a,el){
   if(a==='phreset'){gotoStep(0);return true;}
   return false;
 }
-return {pageHTML:pageHTML,mount:mount,act:act,_R:function(){return R;},_S:S};
+return {pageHTML:pageHTML,mount:mount,act:act,_R:function(){return R;},_S:S,_W:function(){return WK;},_tick:function(dt){walkTick(dt);}};
 })();
 function apx2PageHTML(){
   // Same visual language as the Growatt AI page: one product picture up top, then tiles you tap
@@ -6776,7 +7341,7 @@ document.addEventListener('click',function(e){
   else if(a==='goback'){state.page='main';render();}
   else if(a==='gobatt'){state.page='batt';state.btTop=true;render();}
   else if(a==='gophases'){state.page='phases';state.phTop=true;render();}
-  else if(/^ph(inv|meter|st|view|go|back|step|reset)$/.test(a)){PH.act(a,el);}
+  else if(/^ph[a-z0-9]+$/.test(a)){PH.act(a,el);}
   else if(a==='btch'){btS().ch=el.getAttribute('data-k');render();var btd=document.getElementById('bt-detail');if(btd)btd.scrollIntoView({block:'start'});}
   else if(a==='btset'){var btk=el.getAttribute('data-k'),btv=el.getAttribute('data-v');btS()[btk]=(btk==='bHeat')?(+btv):btv;var bto={ch2:'pack',bHeat:'bms',pv:'pwr'}[btk];var btw=bto&&document.getElementById('bto-'+bto);if(btw){el.parentNode.querySelectorAll('.bt-chip').forEach(function(c){c.classList.toggle('on',c===el);});btw.innerHTML=btOut(bto);}else render();}
   else if(a==='btbal'){btBalAct(el.getAttribute('data-v'));var btb=document.getElementById('bto-bal');if(btb)btb.innerHTML=btOut('bal');}
